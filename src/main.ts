@@ -1,6 +1,5 @@
 // styles
 import "./index.css";
-import "./styles/base-colors.css";
 
 // components
 export * from "./components";

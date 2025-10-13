@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2017",
     "sourceMap": true,
     "outDir": "out",
     "lib": ["dom", "dom.iterable", "esnext"],

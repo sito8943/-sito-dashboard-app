@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
-import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
 import { libInjectCss } from "vite-plugin-lib-inject-css";
 import dts from "vite-plugin-dts";
 
@@ -12,10 +13,17 @@ export default defineConfig({
       components: resolve(srcPath, "components"),
       providers: resolve(srcPath, "providers"),
       lib: resolve(srcPath, "lib"),
-      hooks: resolve(srcPath,"hooks")
+      hooks: resolve(srcPath, "hooks"),
+      layouts: resolve(__dirname, "layouts"),
+      views: resolve(__dirname, "views"),
     },
   },
-  plugins: [react(), dts({ insertTypesEntry: true }), libInjectCss()],
+  plugins: [
+    react(),
+    dts({ insertTypesEntry: true }),
+    libInjectCss(),
+    tailwindcss(),
+  ],
   build: {
     copyPublicDir: false,
     lib: {
