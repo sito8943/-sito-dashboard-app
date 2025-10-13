@@ -1,4 +1,4 @@
-@reference "../../styles/variables.css";
+@reference "../../index.css";
 
 .notification-portal {
   z-index: 51;

@@ -1,4 +1,4 @@
-@reference "../../styles/variables.css";
+@reference "../../index.css";
 
 .form-container {
   @apply flex flex-col gap-7 pt-1;

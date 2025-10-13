@@ -1,4 +1,4 @@
-@reference "../../styles/variables.css";
+@reference "../../index.css";
 
 .actions-container {
   @apply flex w-full items-center justify-end gap-1;

@@ -1,4 +1,4 @@
-@reference "../../styles/variables.css";
+@reference "../../index.css";
 
 .dialog .button {
   @apply px-4 py-1 rounded-4xl;

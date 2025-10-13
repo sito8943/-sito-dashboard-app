@@ -1,57 +1,25 @@
 @import "tailwindcss";
 
-a,
-button {
-  @apply text-sm font-medium;
-}
-
-input {
-  @apply text-sm text-text-muted;
-}
-
-.button {
-  @apply text-text bg-base hover:bg-base-light transition flex items-center gap-2 justify-center rounded-4xl px-4 py-2 cursor-pointer;
-}
-
-.button.close {
-  @apply hover:bg-red-500;
-}
-
-.fab {
-  @apply w-12 h-12 fixed right-4 bottom-4 text-lg;
-}
-
-.input {
-  @apply text-white bg-base border-border border-2 px-4 py-1 rounded-sm;
-}
-
-.input.error {
-  @apply border-red-500;
-}
-
-svg.primary,
-p.primary,
-a.primary {
-  @apply hover:text-hover-primary;
-}
-
-.outlined {
-  @apply bg-base border-border text-text border-2 hover:bg-border;
-}
-
-.outlined.primary {
-  @apply border-bg-primary hover:bg-primary hover:border-primary hover:text-base;
-}
-
-.submit.primary {
-  @apply bg-bg-primary hover:bg-primary text-base hover:text-text;
-}
-
-.primary {
-  @apply transition duration-300;
-}
-
-.password-icon {
-  top: 50%;
-  transform: translateY(-50%);
+@theme {
+  --color-primary: #4cc2ff;
+  --color-bg-primary: #013a55;
+  --color-hover-primary: #48b2e9;
+  --color-secondary: #d27d6b;
+  /** NEW COLOR **/
+  --color-base-dark: hsl(0 0% 90%);
+  --color-base: hsl(0 0% 95%);
+  --color-base-light: hsl(0 0% 100%);
+  --color-text: #0d0d0d;
+  --color-border: hsl(0 0% 80%);
+  --color-text-muted: hsl(0 0% 30%);
+  /** Notification colors **/
+  --color-bg-info: #0070ba;
+  --color-info: #fbfbfb;
+  --color-bg-success: hsl(149.76, 68%, 36%);
+  --color-success: #fbfbfb;
+  --color-bg-warning: #ffa500;
+  --color-warning: #000000;
+  --color-bg-error: hsl(0, 50%, 51%);
+  --color-error: #fbfbfb;
+  --breakpoint-xs: 28rem;
 }

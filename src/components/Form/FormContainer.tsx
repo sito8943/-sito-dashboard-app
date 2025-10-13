@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@sito/dashboard";
 import { FieldValues } from "react-hook-form";
 
 // components

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, MouseEvent } from "react";
 import { createPortal } from "react-dom";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "@sito/dashboard";
 
 // icons
 import { faClose } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +9,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@emotion/css";
 
 // types
-import { DialogPropsType } from "./types.ts";
+import { DialogPropsType } from "./types";
 
 // components
 import { IconButton } from "components";
