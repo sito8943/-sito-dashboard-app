@@ -1,27 +1,27 @@
 {
-  "name": "@sito/dashboard",
+  "name": "@sito/dashboard-app",
   "private": false,
   "version": "0.0.47",
   "type": "module",
-  "description": "UI library with custom components for dashboards",
-  "main": "dist/dashboard.cjs",
-  "module": "dist/dashboard.js",
+  "description": "UI Library with prefab components",
+  "main": "dist/dashboard-app.cjs",
+  "module": "dist/dashboard-app.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
-  "homepage": "https://github.com/sito8943/-sito-dashboard#readme",
+  "homepage": "https://github.com/sito8943/-sito-dashboard-app#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sito8943/-sito-dashboard.git"
+    "url": "https://github.com/sito8943/-sito-dashboard-app.git"
   },
   "bugs": {
-    "url": "https://github.com/sito8943/-sito-dashboard/issues"
+    "url": "https://github.com/sito8943/-sito-dashboard-app/issues"
   },
   "exports": {
     ".": {
-      "import": "./dist/dashboard.js",
-      "require": "./dist/dashboard.cjs",
+      "import": "./dist/dashboard-app.js",
+      "require": "./dist/dashboard-app.cjs",
       "types": "./dist/index.d.ts"
     }
   },
@@ -37,13 +37,15 @@
   },
   "keywords": [
     "sito",
-    "dashboard"
+    "dashboard",
+    "components"
   ],
   "author": "sito8943",
   "license": "ISC",
   "peerDependencies": {
     "@emotion/css": "11.13.5",
-    "react": "18.3.1"
+    "react": "18.3.1",
+    "@sito/dashboard": "0.0.47"
   },
   "devDependencies": {
     "@types/node": "20.8.10",
@@ -63,5 +65,6 @@
     "vite": "4.2.0",
     "vite-plugin-dts": "4.0.2",
     "vite-plugin-lib-inject-css": "1.3.0"
-  }
+  },
+  "dependencies": {}
 }

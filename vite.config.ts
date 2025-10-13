@@ -20,8 +20,8 @@ export default defineConfig({
     copyPublicDir: false,
     lib: {
       entry: resolve(__dirname, "src/main.ts"),
-      name: "@sito/dashboard",
-      fileName: "dashboard",
+      name: "@sito/dashboard-app",
+      fileName: "dashboard-app",
       formats: ["es", "cjs"],
     },
     rollupOptions: {
