@@ -33,7 +33,19 @@ export default defineConfig({
       formats: ["es", "cjs"],
     },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime"],
+      external: [
+        "react",
+        "react/jsx-runtime",
+        "react-dom",
+        "@emotion/css",
+        "@sito/dashboard",
+        "@tanstack/react-query",
+        "@fortawesome/fontawesome-svg-core",
+        "@fortawesome/free-brands-svg-icons",
+        "@fortawesome/free-regular-svg-icons",
+        "@fortawesome/free-solid-svg-icons",
+        "@fortawesome/react-fontawesome",
+      ],
     },
   },
 });
