@@ -8,7 +8,7 @@ export default class AuthClient {
   api: APIClient;
 
   constructor(baseUrl: string, userKey: string = "user") {
-    this.api = new APIClient(userKey, baseUrl, false);
+    this.api = new APIClient(baseUrl, userKey, false);
   }
 
   async login(data: AuthDto) {

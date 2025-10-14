@@ -57,11 +57,15 @@ export class APIClient {
     header?: HeadersInit
   ) {
     const securedHeader = this.secured ? this.defaultTokenAcquirer() : {};
-
-    const { data: result, status } = await makeRequest(`${this.baseUrl}${endpoint}`, method, body, {
-      ...securedHeader,
-      ...(header ?? {}),
-    });
+    const { data: result, status } = await makeRequest(
+      `${this.baseUrl}${endpoint}`,
+      method,
+      body,
+      {
+        ...securedHeader,
+        ...(header ?? {}),
+      }
+    );
 
     if (status !== 200 && status !== 204) throw new Error(String(status));
 

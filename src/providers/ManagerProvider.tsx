@@ -2,11 +2,7 @@ import { createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // manager
-import {
-  ManagerProviderContextType,
-  BasicProviderPropTypes,
-  ManagerProviderPropTypes,
-} from "./types";
+import { ManagerProviderContextType, ManagerProviderPropTypes } from "./types";
 
 const queryClient = new QueryClient({
   defaultOptions: {
