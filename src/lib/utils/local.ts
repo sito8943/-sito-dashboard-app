@@ -14,7 +14,8 @@ export const fromLocal = (key: string, as = "") => {
       case "number":
         return Number(result);
       case "boolean":
-        return Boolean(result);
+        if (result === "true" || result === "1") return true;
+        return false;
       default: // "string"
         return result;
     }
