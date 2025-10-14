@@ -1,4 +1,4 @@
-import AuthClient from "./AuthClient";
+import { AuthClient } from "./AuthClient";
 
 export class IManager {
   auth: AuthClient;

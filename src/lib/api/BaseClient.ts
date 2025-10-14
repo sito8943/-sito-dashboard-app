@@ -16,7 +16,7 @@ import {
 } from "lib";
 import { parseQueries } from "./utils/query";
 
-export default class BaseClient<
+export class BaseClient<
   Tables,
   TDto extends BaseEntityDto,
   TCommonDto extends BaseCommonEntityDto,

@@ -4,7 +4,7 @@ import { APIClient } from "./APIClient";
 import { AuthDto, RegisterDto, SessionDto } from "../entities";
 import { Methods } from "./utils/services";
 
-export default class AuthClient {
+export class AuthClient {
   api: APIClient;
 
   constructor(baseUrl: string, userKey: string = "user") {
