@@ -10,8 +10,8 @@ export * from "./Navbar";
 export * from "./Notification";
 export * from "./Drawer";
 export * from "./Loading";
-export * from "./Card";
 export * from "./TabsLayout";
 export * from "./Onboarding";
 export * from "./Buttons"
 export * from "./Empty"
+export * from "./Dropdown";

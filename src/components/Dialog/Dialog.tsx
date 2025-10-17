@@ -14,6 +14,9 @@ import { DialogPropsType } from "./types";
 // components
 import { IconButton } from "components";
 
+// styles
+import "./styles.css";
+
 export const Dialog = (props: DialogPropsType) => {
   const { t } = useTranslation();
   const {

@@ -9,6 +9,9 @@ import { Button, Loading } from "components";
 // types
 import { ConfirmationDialogPropsType } from "./types";
 
+// styles
+import "./styles.css";
+
 export const ConfirmationDialog = (props: ConfirmationDialogPropsType) => {
   const { t } = useTranslation();
 

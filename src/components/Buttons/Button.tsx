@@ -6,6 +6,7 @@ import "./styles.css";
 export const Button = (props: ButtonPropsType) => {
   const {
     children,
+    type = "button",
     variant = "text",
     color = "default",
     className = "",
@@ -13,7 +14,7 @@ export const Button = (props: ButtonPropsType) => {
   } = props;
 
   return (
-    <button className={`button ${variant} ${color} ${className}`} {...rest}>
+    <button type={type} className={`button ${variant} ${color} ${className}`} {...rest}>
       {children}
     </button>
   );
