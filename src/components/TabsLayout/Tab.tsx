@@ -1,8 +1,13 @@
 // types
 import { TabPropsType } from "./types";
 
+// providers
+import { useConfig } from "providers/ConfigProvider";
+
 export const Tab = (props: TabPropsType) => {
-  const { id, active, onClick, children, to, linkComponent } = props;
+  const { id, active, onClick, children, to } = props;
+
+  const { linkComponent } = useConfig();
 
   return (
     <linkComponent.type

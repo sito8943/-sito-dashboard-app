@@ -8,14 +8,16 @@ import { DrawerPropsTypes } from "./types";
 import "./styles.css";
 
 // providers
-import { useAuth } from "providers";
+import { useAuth, useConfig } from "providers";
 
 export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const { t } = useTranslation();
 
-  const { open, onClose, menuMap, location, linkComponent } = props;
+  const { open, onClose, menuMap } = props;
 
   const { account } = useAuth();
+
+  const { linkComponent } = useConfig();
 
   const parsedMenu = useMemo(() => {
     return menuMap.filter((item) => {

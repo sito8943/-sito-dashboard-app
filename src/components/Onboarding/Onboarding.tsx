@@ -11,7 +11,7 @@ import "./styles.css";
 import { OnboardingPropsType } from "./types";
 
 export const Onboarding = (props: OnboardingPropsType) => {
-  const { steps, linkComponent } = props;
+  const { steps } = props;
 
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -31,11 +31,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
 
   return (
     <div className="onboarding-main">
-      <TabsLayout
-        defaultTab={currentStep}
-        tabs={onboardingSteps}
-        linkComponent={linkComponent}
-      />
+      <TabsLayout defaultTab={currentStep} tabs={onboardingSteps} />
     </div>
   );
 };

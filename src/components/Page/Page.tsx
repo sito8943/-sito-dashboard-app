@@ -43,7 +43,6 @@ export const Page = <TEntity extends BaseEntityDto>(
     filterOptions,
     actions,
     queryKey,
-    navigate,
     isLoading = false,
     isAnimated = true,
     showBackButton = false,
@@ -93,12 +92,11 @@ export const Page = <TEntity extends BaseEntityDto>(
     <main className="">
       <div className={`flex flex-col`}>
         <PageHeader
-          navigate={navigate}
           showBackButton={showBackButton}
           actions={parsedActions}
           title={title}
         />
-        <div className={`px-5 py-3 h-full ${isAnimated ? "appear" : ""}`}>
+        <div className={`px-5 py-3 h-useConfigfull ${isAnimated ? "appear" : ""}`}>
           {isLoading ? (
             <Loading containerClassName="flex justify-center items-center h-50" />
           ) : (

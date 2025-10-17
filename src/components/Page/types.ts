@@ -14,12 +14,10 @@ export type PagePropsType<TRow extends BaseEntityDto> = {
   actions?: Action<TRow>[];
   showBackButton?: boolean;
   queryKey?: string[];
-  navigate: (route: string | number) => void;
 };
 
 export type PageHeaderPropsType<TRow extends BaseEntityDto> = {
   title?: string;
   actions?: Action<TRow>[];
   showBackButton?: boolean;
-  navigate: (route: string | number) => void;
 };

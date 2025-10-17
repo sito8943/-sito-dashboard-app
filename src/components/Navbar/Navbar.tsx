@@ -19,10 +19,15 @@ import { IconButton } from "components";
 // utils
 import { isMac } from "lib";
 
+// providers
+import { useConfig } from "providers";
+
 export function Navbar(props: NavbarPropsType) {
   const { t } = useTranslation();
 
-  const { openDrawer, searchComponent, location } = props;
+  const { openDrawer } = props;
+
+  const { searchComponent } = useConfig();
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -43,7 +48,7 @@ export function Navbar(props: NavbarPropsType) {
 
   return (
     <>
-      {location.pathname !== "/" && (
+      {location.pathname !== "/" && !!searchComponent && (
         <searchComponent.type
           open={showDialog}
           onClose={() => setShowDialog(false)}

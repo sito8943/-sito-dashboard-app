@@ -1,3 +1,4 @@
 export type ErrorPropsType = {
-  message?: string | null;
+  error: any;
+  resetErrorBoundary?: (...args: any[]) => void;
 };

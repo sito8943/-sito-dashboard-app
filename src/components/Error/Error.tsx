@@ -8,14 +8,14 @@ import { faSadTear } from "@fortawesome/free-regular-svg-icons";
 import { ErrorPropsType } from "./types";
 
 export function Error(props: ErrorPropsType) {
-  const { message } = props;
+  const { error } = props;
   const { t } = useTranslation();
 
   return (
     <div className="flex flex-col items-center justify-center pt-10 gap-5">
       <FontAwesomeIcon icon={faSadTear} className="text-red-300 text-4xl" />
       <p className="text-text text-center">
-        {message ?? t("_accessibility:errors.unknownError")}
+        {error?.message ?? t("_accessibility:errors.unknownError")}
       </p>
     </div>
   );

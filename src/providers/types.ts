@@ -1,7 +1,13 @@
-import { ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 
 // lib
-import { BaseEntityDto, IManager, NotificationType, SessionDto } from "lib";
+import {
+  BaseEntityDto,
+  IManager,
+  NotificationType,
+  SessionDto,
+  Location,
+} from "lib";
 
 export type BasicProviderPropTypes = {
   children: ReactNode;
@@ -18,6 +24,20 @@ export interface ManagerProviderPropTypes extends BasicProviderPropTypes {
 
 export type ManagerProviderContextType = {
   client: IManager;
+};
+
+export interface ConfigProviderPropTypes extends BasicProviderPropTypes {
+  location: Location;
+  navigate: (route: string | number) => void;
+  linkComponent: ReactElement;
+  searchComponent?: ReactElement;
+}
+
+export type ConfigProviderContextType = {
+  location: Location;
+  navigate: (route: string | number) => void;
+  linkComponent: ReactElement;
+  searchComponent?: ReactElement;
 };
 
 export type AuthProviderContextType = {

@@ -1,11 +1,10 @@
-import { ReactElement, ReactNode } from "react";
+import { ReactNode } from "react";
 
 export type TabsLayoutPropsType = {
   tabs: TabsType[];
   defaultTab?: number;
   className?: string;
   tabsContainerClassName?: string;
-  linkComponent: ReactElement;
 };
 
 export type TabsType = {
@@ -22,5 +21,4 @@ export type TabPropsType = {
   active: boolean;
   onClick: () => void;
   siblings?: boolean;
-  linkComponent: ReactElement;
 };

@@ -15,19 +15,22 @@ import { Actions, ActionsDropdown, IconButton } from "components";
 // hooks
 import { useScrollTrigger } from "hooks";
 
+// providers
+import { useConfig } from "providers";
+
+// styles
+import "./styles.css";
+
 export const PageHeader = <TEntity extends BaseEntityDto>(
   props: PageHeaderPropsType<TEntity>
 ) => {
-  const {
-    showBackButton,
-    title,
-    actions,
-    navigate
-  } = props;
+  const { showBackButton, title, actions } = props;
 
   const { t } = useTranslation();
 
   const passedOffset = useScrollTrigger(200);
+
+  const { navigate } = useConfig();
 
   return (
     <div className={`page-header ${passedOffset ? "fixed" : ""}`}>

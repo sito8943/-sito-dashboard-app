@@ -15,7 +15,6 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
     defaultTab,
     className = "",
     tabsContainerClassName = "",
-    linkComponent,
   } = props;
   const [activeTab, setActiveTab] = useState(tabs[0]?.id);
 
@@ -40,7 +39,6 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
               to={to ?? ""}
               siblings={tabs.length > 1}
               active={activeTab === id}
-              linkComponent={linkComponent}
             >
               {label}
             </Tab>

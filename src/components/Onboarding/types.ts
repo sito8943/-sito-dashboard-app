@@ -1,5 +1,3 @@
-import { ReactElement } from "react";
-
 export type StepPropsType = {
   translation: string;
   onClickNext: () => void;
@@ -10,5 +8,4 @@ export type StepPropsType = {
 
 export type OnboardingPropsType = {
   steps: string[];
-  linkComponent: ReactElement;
 };

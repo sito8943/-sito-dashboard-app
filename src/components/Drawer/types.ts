@@ -1,12 +1,8 @@
-import { ReactElement } from "react";
-
 // lib
-import { MenuItemType, Location } from "lib";
+import { MenuItemType } from "lib";
 
 export type DrawerPropsTypes<MenuKeys> = {
   open: boolean;
   onClose: () => void;
   menuMap: MenuItemType<MenuKeys>[];
-  location: Location;
-  linkComponent: ReactElement;
 };
