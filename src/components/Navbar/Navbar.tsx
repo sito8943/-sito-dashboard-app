@@ -46,10 +46,12 @@ export function Navbar(props: NavbarPropsType) {
     };
   }, [openOnKeyCombination]);
 
+  const Search = searchComponent;
+
   return (
     <>
-      {location.pathname !== "/" && !!searchComponent && (
-        <searchComponent.type
+      {location.pathname !== "/" && !!Search && (
+        <Search
           open={showDialog}
           onClose={() => setShowDialog(false)}
         />

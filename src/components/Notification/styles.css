@@ -6,5 +6,9 @@
 }
 
 .notification {
-  @apply pointer-events-auto flex justify-between gap-2 items-center min-w-40 max-xs:w-full relative z-10 p-2 px-2.5 rounded-3xl;
+  @apply pointer-events-auto flex justify-between gap-2 items-center min-w-40 max-xs:w-full relative z-10 p-2 px-2.5 rounded-3xl transition duration-300 ease-in-out opacity-100 translate-y-0;
+}
+
+.notification.closing {
+  @apply opacity-0 translate-y-2;
 }

@@ -9,13 +9,15 @@ export const Tab = (props: TabPropsType) => {
 
   const { linkComponent } = useConfig();
 
+  const Link = linkComponent
+
   return (
-    <linkComponent.type
+    <Link
       to={to ?? `#${id}`}
       onClick={() => onClick()}
       className={`button submit tab ${active ? "primary" : "outlined"}`}
     >
       {children}
-    </linkComponent.type>
+    </Link>
   );
 };

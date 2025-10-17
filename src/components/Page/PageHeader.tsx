@@ -28,12 +28,10 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
 
   const { t } = useTranslation();
 
-  const passedOffset = useScrollTrigger(200);
-
   const { navigate } = useConfig();
 
   return (
-    <div className={`page-header ${passedOffset ? "fixed" : ""}`}>
+    <div className="page-header">
       <div className="flex gap-2 items-center justify-start">
         {showBackButton && (
           <IconButton

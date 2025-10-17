@@ -5,7 +5,7 @@
 }
 
 .dialog-backdrop {
-  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-xs:z-30;
+  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-xs:z-36;
 }
 
 .dialog-backdrop.opened {

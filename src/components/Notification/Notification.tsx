@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "@sito/dashboard";
 import { createPortal } from "react-dom";
 
@@ -25,9 +25,22 @@ export function Notification() {
 
   const { notification, removeNotification } = useNotification();
 
-  const onClose = useCallback(
-    (index?: number) => removeNotification(index),
-    [removeNotification]
+  // track items that are playing the closing animation
+  const [closing, setClosing] = useState<Set<number>>(new Set());
+
+  const closeWithAnimation = useCallback(
+    (index?: number) => {
+      if (index === undefined) {
+        // close all with animation
+        const all = new Set<number>(notification.map((_, i) => i));
+        setClosing(all);
+        window.setTimeout(() => removeNotification(), 300);
+      } else {
+        setClosing((prev) => new Set(prev).add(index));
+        window.setTimeout(() => removeNotification(index), 300);
+      }
+    },
+    [notification, removeNotification]
   );
 
   const renderIcon = useCallback((type: NotificationEnumType) => {
@@ -65,13 +78,25 @@ export function Notification() {
     }
   }, []);
 
+  const windowClickHandlerRef = useRef<(e: MouseEvent) => void>();
+
   useEffect(() => {
-    if (notification?.length) window.addEventListener("click", () => onClose());
+    windowClickHandlerRef.current = () => closeWithAnimation();
+  }, [closeWithAnimation]);
+
+  useEffect(() => {
+    if (!notification?.length) return;
+    const handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
+    window.addEventListener("click", handler);
     return () => {
-      if (notification?.length)
-        window.removeEventListener("click", () => onClose());
+      window.removeEventListener("click", handler);
     };
-  }, [notification, onClose]);
+  }, [notification?.length]);
+
+  // reset closing state when list changes externally
+  useEffect(() => {
+    setClosing(new Set());
+  }, [notification]);
 
   return createPortal(
     <div
@@ -83,9 +108,10 @@ export function Notification() {
         ? notification?.map(({ id, type, message }, i) => (
             <div
               key={id}
-              className={`appear notification ${bgColor(
+              className={`notification ${closing.has(i) ? "closing" : ""} ${bgColor(
                 type ?? NotificationEnumType.error
               )}`}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="flex gap-3 items-center">
                 <FontAwesomeIcon
@@ -105,7 +131,10 @@ export function Notification() {
                 icon={faClose}
                 color="error"
                 className="group"
-                onClick={() => onClose(i)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeWithAnimation(i);
+                }}
                 iconClassName={`${textColor(
                   type ?? NotificationEnumType.error
                 )} group-hover:!text-red-400 cursor-pointer`}

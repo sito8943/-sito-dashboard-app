@@ -18,6 +18,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const { account } = useAuth();
 
   const { linkComponent } = useConfig();
+  const Link = linkComponent;
 
   const parsedMenu = useMemo(() => {
     return menuMap.filter((item) => {
@@ -70,8 +71,8 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
                 link.path === location.pathname ? "bg-base-light" : ""
               } animated`}
             >
-              {link.type !== "divider" && linkComponent ? (
-                <linkComponent.type
+              {link.type !== "divider" && Link ? (
+                <Link
                   aria-disabled={!open}
                   to={link.path ?? `/${link.path}`}
                   aria-label={t(`_accessibility:ariaLabels.${link.path}`)}
@@ -79,7 +80,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
                 >
                   {link.icon}
                   {t(`_pages:${link.page}.title`)}
-                </linkComponent.type>
+                </Link>
               ) : (
                 <hr className="border-border border-spacing-x-0.5 w-full" />
               )}

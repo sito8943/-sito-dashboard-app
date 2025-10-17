@@ -12,6 +12,7 @@ export * from "./Drawer";
 export * from "./Loading";
 export * from "./TabsLayout";
 export * from "./Onboarding";
-export * from "./Buttons"
-export * from "./Empty"
+export * from "./Buttons";
+export * from "./Empty";
 export * from "./Dropdown";
+export * from "./types";

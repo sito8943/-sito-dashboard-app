@@ -1,7 +1,7 @@
 @reference "../../index.css";
 
 .drawer-backdrop {
-  @apply fixed z-30;
+  @apply fixed z-36;
 }
 
 .drawer-backdrop.opened {

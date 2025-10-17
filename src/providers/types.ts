@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from "react";
+import { ComponentType, ReactElement, ReactNode } from "react";
 
 // lib
 import {
@@ -8,6 +8,9 @@ import {
   SessionDto,
   Location,
 } from "lib";
+
+// components
+import { BaseLinkPropsType, BaseSearchModalPropsType } from "components";
 
 export type BasicProviderPropTypes = {
   children: ReactNode;
@@ -29,15 +32,15 @@ export type ManagerProviderContextType = {
 export interface ConfigProviderPropTypes extends BasicProviderPropTypes {
   location: Location;
   navigate: (route: string | number) => void;
-  linkComponent: ReactElement;
-  searchComponent?: ReactElement;
+  linkComponent: ComponentType<BaseLinkPropsType>;
+  searchComponent?: ComponentType<BaseSearchModalPropsType>;
 }
 
 export type ConfigProviderContextType = {
   location: Location;
   navigate: (route: string | number) => void;
-  linkComponent: ReactElement;
-  searchComponent?: ReactElement;
+  linkComponent: ComponentType<BaseLinkPropsType>;
+  searchComponent?: ComponentType<BaseSearchModalPropsType>;
 };
 
 export type AuthProviderContextType = {

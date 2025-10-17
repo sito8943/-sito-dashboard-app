@@ -3,9 +3,5 @@
 .page-header {
   transition: all 300ms ease-in-out;
   @apply flex items-center justify-between
-    px-3 py-2 bg-base w-full;
-}
-
-.page-header.fixed {
-  @apply fixed top-12 z-35;
+    pr-3 pl-4 py-2 bg-base w-full sticky top-12 z-35;
 }

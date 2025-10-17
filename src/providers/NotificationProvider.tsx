@@ -26,7 +26,7 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
             id: i,
           })) ?? [];
         case "remove":
-          if (index) return state.filter((_, i) => i !== index);
+          if (index !== undefined) return state.filter((_, i) => i !== index);
           return [];
       }
       return state;
