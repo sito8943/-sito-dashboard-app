@@ -17,7 +17,7 @@ export const usePostForm = <
   TDto,
   TMutationDto,
   TMutationOutputDto,
-  TFormType extends FieldValues
+  TFormType extends FieldValues,
 >(
   props: UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType>
 ): FormPropsType<TFormType, ValidationError> => {
@@ -82,7 +82,7 @@ export const usePostForm = <
                 ({
                   message,
                   type: NotificationEnumType.error,
-                } as NotificationType)
+                }) as NotificationType
             )
           );
         }
@@ -104,7 +104,10 @@ export const usePostForm = <
     getValues,
     setValue,
     handleSubmit,
-    onSubmit: (data) => formFn.mutate(formToDto(data)),
+    onSubmit: (data) =>
+      formFn.mutate(
+        formToDto ? formToDto(data) : (data as unknown as TMutationDto)
+      ),
     reset,
     setError,
     parseFormError,

@@ -1,35 +1,39 @@
 import { useCallback } from "react";
+// @sito-dashboard
 import { useTranslation } from "@sito/dashboard";
 
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleNotch, faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleNotch,
+  faCloudUpload,
+} from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { GlobalActions, UseExportAction } from "hooks";
+import { GlobalActions, UseImportAction } from "hooks";
 
-export const useExportAction = (props: UseExportAction) => {
+export const useImportAction = (props: UseImportAction) => {
   const { t } = useTranslation();
 
   const {
-    isLoading = false,
     onClick,
     hidden = false,
     disabled = false,
+    isLoading = false,
   } = props;
 
   const action = useCallback(
     () => ({
-      id: GlobalActions.Export,
+      id: GlobalActions.Import,
       hidden: hidden,
       disabled: disabled,
       icon: (
         <FontAwesomeIcon
-          icon={isLoading ? faCircleNotch : faCloudArrowDown}
-          className={`${isLoading ? "rotate" : ""}`}
+          className="primary"
+          icon={isLoading ? faCircleNotch : faCloudUpload}
         />
       ),
-      tooltip: t("_pages:common.actions.export.text"),
+      tooltip: t("_pages:common.actions.import.text"),
       onClick: onClick,
     }),
     [disabled, hidden, isLoading, onClick, t]
