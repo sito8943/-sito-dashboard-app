@@ -4,7 +4,7 @@ import { useTranslation } from "@sito/dashboard";
 
 // components
 import { Dialog } from "./Dialog";
-import { Button, Loading } from "components";
+import { DialogActions } from "./DialogActions";
 
 // types
 import { ConfirmationDialogPropsType } from "./types";
@@ -26,31 +26,20 @@ export const ConfirmationDialog = (props: ConfirmationDialogPropsType) => {
   return (
     <Dialog {...rest} handleClose={handleClose}>
       {children}
-      <div className="flex gap-2 mt-5">
-        <Button
-          color="primary"
-          variant="submit"
-          disabled={isLoading}
-          onClick={handleSubmit}
-          name={t("_accessibility:buttons.ok")}
-          aria-label={t("_accessibility:ariaLabels.ok")}
-        >
-          {isLoading ? (
-            <Loading color="text-text-mute" className="mt-1" />
-          ) : null}
-          {t("_accessibility:buttons.ok")}
-        </Button>
-        <Button
-          type="button"
-          variant="outlined"
-          disabled={isLoading}
-          onClick={handleClose}
-          name={t("_accessibility:buttons.cancel")}
-          aria-label={t("_accessibility:ariaLabels.cancel")}
-        >
-          {t("_accessibility:buttons.cancel")}
-        </Button>
-      </div>
+      <DialogActions
+        primaryText={t("_accessibility:buttons.ok")}
+        cancelText={t("_accessibility:buttons.cancel")}
+        onPrimaryClick={handleSubmit}
+        onCancel={handleClose}
+        isLoading={isLoading}
+        disabled={isLoading}
+        primaryType="button"
+        containerClassName="mt-5"
+        primaryName={t("_accessibility:buttons.ok")}
+        primaryAriaLabel={t("_accessibility:ariaLabels.ok")}
+        cancelName={t("_accessibility:buttons.cancel")}
+        cancelAriaLabel={t("_accessibility:ariaLabels.cancel")}
+      />
     </Dialog>
   );
 };
