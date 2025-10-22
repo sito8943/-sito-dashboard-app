@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+
 // @sito-dashboard
 import { useTranslation } from "@sito/dashboard";
 
@@ -29,7 +30,7 @@ export const useImportAction = (props: UseImportAction) => {
       disabled: disabled,
       icon: (
         <FontAwesomeIcon
-          className="primary"
+          className={`${isLoading ? "rotate" : ""}`}
           icon={isLoading ? faCircleNotch : faCloudUpload}
         />
       ),

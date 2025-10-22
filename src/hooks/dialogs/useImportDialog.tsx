@@ -9,12 +9,7 @@ import { useImportAction, usePostForm } from "hooks";
 // types
 import { UseImportDialogPropsType } from "./types";
 
-// lib
-import { ImportDto } from "lib";
-
-export function useImportDialog(
-  props: UseImportDialogPropsType<number, ImportDto>
-) {
+export function useImportDialog(props: UseImportDialogPropsType) {
   const { t } = useTranslation();
 
   const { queryKey, mutationFn, entity } = props;
