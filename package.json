@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -72,7 +72,18 @@
     "typescript-eslint": "8.22.0",
     "vite": "6.1.0",
     "vite-plugin-dts": "4.0.2",
-    "vite-plugin-lib-inject-css": "1.3.0"
+    "vite-plugin-lib-inject-css": "1.3.0",
+    "@emotion/css": "11.13.5",
+    "@tanstack/react-query": "5.83.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-hook-form": "7.61.1",
+    "@fortawesome/fontawesome-svg-core": "7.0.0",
+    "@fortawesome/free-brands-svg-icons": "7.0.0",
+    "@fortawesome/free-regular-svg-icons": "7.0.0",
+    "@fortawesome/free-solid-svg-icons": "7.0.0",
+    "@fortawesome/react-fontawesome": "0.2.3",
+    "@sito/dashboard": "^0.0.49"
   },
   "dependencies": {
     "some-javascript-utils": "^0.10.10"

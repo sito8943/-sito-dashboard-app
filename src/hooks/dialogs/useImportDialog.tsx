@@ -19,8 +19,6 @@ export function useImportDialog(
 
   const { queryKey, mutationFn, entity } = props;
 
-  console.log(entity);
-
   const [showDialog, setShowDialog] = useState(false);
 
   const formProps = usePostForm({

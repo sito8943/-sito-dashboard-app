@@ -7,7 +7,7 @@ import { Loading } from "components";
 // types
 import { ImportDialogPropsType } from "./types";
 
-const ImportDialog = (props: ImportDialogPropsType) => {
+export const ImportDialog = (props: ImportDialogPropsType) => {
   const { t } = useTranslation();
 
   const {
@@ -51,5 +51,3 @@ const ImportDialog = (props: ImportDialogPropsType) => {
     </Dialog>
   );
 };
-
-export default ImportDialog;
