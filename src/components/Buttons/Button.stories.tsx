@@ -11,11 +11,11 @@ const meta = {
   argTypes: {
     variant: {
       control: { type: "select" },
-      options: ["text", "outlined", "contained"],
+      options: ["text", "outlined", "submit"],
     },
     color: {
       control: { type: "select" },
-      options: ["default", "primary", "secondary", "danger"],
+      options: ["default", "primary", "secondary", "error", "warning", "success", "info"],
     },
   },
 } satisfies Meta<typeof Button>;
@@ -31,7 +31,6 @@ export const Outlined: Story = {
   args: { variant: "outlined", color: "default", children: "Save" },
 };
 
-export const Contained: Story = {
-  args: { variant: "contained", color: "secondary", children: "Submit" },
+export const Submit: Story = {
+  args: { variant: "submit", color: "primary", children: "Submit" },
 };
-

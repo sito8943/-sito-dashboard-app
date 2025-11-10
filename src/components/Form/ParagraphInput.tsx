@@ -29,7 +29,6 @@ export const ParagraphInput = forwardRef(function (
     label = "",
     disabled = false,
     required = false,
-    placeholder = "",
     containerClassName = "",
     inputClassName = "",
     labelClassName = "",
@@ -39,15 +38,12 @@ export const ParagraphInput = forwardRef(function (
   } = props;
 
   return (
-    <div
-      className={`relative z-0 w-full mb-5 group ${containerClassName}`}
-    >
+    <div className={`relative z-0 w-full mb-5 group ${containerClassName}`}>
       <textarea
         ref={ref}
         name={name}
         id={id}
         className={`text-input text-area ${inputStateClassName(state)} ${inputClassName} peer`}
-        placeholder=""
         required={required}
         value={value}
         onChange={onChange}
@@ -61,11 +57,13 @@ export const ParagraphInput = forwardRef(function (
         {label}
         {required ? " *" : ""}
       </label>
-      <p
-        className={`text-input-helper-text ${helperTextStateClassName(state)} ${helperTextClassName}`}
-      >
-        {state !== "error" && state !== "good" ? placeholder : helperText}
-      </p>
+      {!!helperText && (
+        <p
+          className={`text-input-helper-text ${helperTextStateClassName(state)} ${helperTextClassName}`}
+        >
+          {helperText}
+        </p>
+      )}
     </div>
   );
 });
