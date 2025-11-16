@@ -1,4 +1,4 @@
-import { Action } from "@sito/dashboard";
+import { ActionType } from "@sito/dashboard";
 import { BaseEntityDto } from "lib";
 import { ReactNode } from "react";
 
@@ -10,7 +10,7 @@ export type ActionsContainerPropsType<TRow extends BaseEntityDto> = {
 };
 
 export interface ActionPropsType<TRow extends BaseEntityDto>
-  extends Action<TRow> {
+  extends ActionType<TRow> {
   children?: ReactNode;
   showText?: boolean;
   showTooltips?: boolean;

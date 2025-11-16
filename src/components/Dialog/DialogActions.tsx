@@ -1,4 +1,8 @@
-import { Button, Loading } from "components";
+// @sito/dashboard
+import { Loading } from "@sito/dashboard";
+
+// components
+import { Button } from "components";
 
 type DialogActionsProps = {
   primaryText: string;
@@ -65,4 +69,3 @@ export const DialogActions = (props: DialogActionsProps) => {
     </div>
   );
 };
-

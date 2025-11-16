@@ -20,9 +20,9 @@ export const ImportDialog = (props: ImportDialogPropsType) => {
 
   return (
     <Dialog {...rest} handleClose={handleClose}>
-      <FileInput
+      {/* <FileInput
         label={t("_pages:common.actions.import.form.inputs.file.label")}
-      />
+      /> */}
       {children}
       <DialogActions
         primaryText={t("_accessibility:buttons.ok")}

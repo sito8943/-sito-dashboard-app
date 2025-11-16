@@ -1,8 +1,8 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, Loading } from "@sito/dashboard";
 import { FieldValues } from "react-hook-form";
 
 // components
-import { Button, Loading } from "components";
+import { Button } from "components";
 
 // types
 import { FormContainerPropsType } from "./types";

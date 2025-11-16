@@ -1,4 +1,3 @@
-export * from "./Chip/";
 export * from "./Actions";
 export * from "./Form";
 export * from "./Dialog";

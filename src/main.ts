@@ -12,3 +12,6 @@ export * from "./lib";
 
 // hooks
 export * from "./hooks";
+
+// @sito/dashboard
+export * from "@sito/dashboard"

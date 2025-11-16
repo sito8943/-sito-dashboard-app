@@ -1,13 +1,10 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, Loading } from "@sito/dashboard";
 
 // lib
 import { BaseEntityDto } from "lib";
 
 // types
 import { PrettyGridPropsType } from "./types";
-
-// component
-import { Loading } from "components";
 
 // styles
 import "./styles.css";
