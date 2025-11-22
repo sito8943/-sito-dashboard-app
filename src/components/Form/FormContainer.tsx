@@ -35,7 +35,7 @@ export const FormContainer = <TInput extends FieldValues, TError extends Error>(
           name={t("_accessibility:buttons.submit")}
           aria-label={t("_accessibility:ariaLabels.submit")}
         >
-          {isLoading ? <Loading color="text-dark" className="mt-1" /> : null}
+          {isLoading ? <Loading color="stroke-base" loaderClass="!w-6 mt-1"  strokeWidth="6" /> : null}
           {t("_accessibility:buttons.submit")}
         </Button>
         <Button

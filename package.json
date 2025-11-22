@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.6",
+  "version": "0.0.9",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -84,6 +84,7 @@
     "vite-plugin-lib-inject-css": "1.3.0"
   },
   "dependencies": {
+    "@sito/dashboard": "^0.0.53",
     "some-javascript-utils": "0.10.10"
   }
 }
