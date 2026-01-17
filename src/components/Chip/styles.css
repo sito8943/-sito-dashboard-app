@@ -1,13 +1,13 @@
 @reference "../../index.css";
 
 .chip {
-  @apply rounded-4xl pl-3 pr-3 py-1 flex items-center justify-center gap-2;
+  @apply rounded-4xl pl-3 pr-3 py-1 flex items-center justify-center gap-2 w-fit;
 }
 
 .chip.primary {
-  @apply bg-bg-primary text-base;
+  @apply bg-bg-primary text-base font-medium;
 }
 
-.chip.primary p {
-  @apply text-text font-medium;
+.chip.secondary {
+  @apply bg-bg-secondary text-base font-medium;
 }
