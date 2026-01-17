@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import { ParagraphInput } from "./ParagraphInput";
 import { State } from "@sito/dashboard";
@@ -40,7 +40,7 @@ export const Basic: Story = {
 };
 
 export const ErrorState: Story = {
-  args: { state: "error", helperText: "This field is required" },
+  args: { state: State.error, helperText: "This field is required" },
   render: (args) => {
     const [value, setValue] = useState("");
     return (

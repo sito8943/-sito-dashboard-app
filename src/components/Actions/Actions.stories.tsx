@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from "storybook/react";
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/react";
 import { Actions } from "./Actions";
 import { faPen, faTrash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +8,7 @@ type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; de
 
 const meta = {
   title: "Components/Actions/Actions",
-  component: Actions<Entity>,
+  component: Actions,
   tags: ["autodocs"],
   args: {
     showActionTexts: false,
@@ -34,7 +33,7 @@ const meta = {
       },
     ],
   },
-} satisfies Meta<typeof Actions<Entity>>;
+} satisfies Meta<typeof Actions>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -44,4 +43,3 @@ export const Basic: Story = {};
 export const WithText: Story = {
   args: { showActionTexts: true },
 };
-

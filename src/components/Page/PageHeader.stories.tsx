@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 import { PageHeader } from "./PageHeader";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +9,7 @@ type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; de
 
 const meta = {
   title: "Components/Page/PageHeader",
-  component: PageHeader<Entity>,
+  component: PageHeader,
   tags: ["autodocs"],
   args: {
     title: "Users",
@@ -29,10 +29,9 @@ const meta = {
       },
     ],
   },
-} satisfies Meta<typeof PageHeader<Entity>>;
+} satisfies Meta<typeof PageHeader>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};
-

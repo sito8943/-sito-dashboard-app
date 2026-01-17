@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import { Dialog } from "./Dialog";
 import { DialogActions } from "./DialogActions";
@@ -17,11 +17,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+  },
   render: (args) => {
     const [open, setOpen] = useState(!!args.open);
     return (
       <div>
-        <button className="button contained primary mb-4" onClick={() => setOpen(true)}>
+        <button
+          className="button contained primary mb-4"
+          onClick={() => setOpen(true)}
+        >
           Open Dialog
         </button>
         <Dialog {...args} open={open} handleClose={() => setOpen(false)}>
@@ -40,4 +47,3 @@ export const Basic: Story = {
     );
   },
 };
-

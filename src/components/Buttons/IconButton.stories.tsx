@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import { IconButton } from "./IconButton";
 import { faPlus, faTrash, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
