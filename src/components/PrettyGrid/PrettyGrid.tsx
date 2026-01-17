@@ -7,7 +7,7 @@ import { BaseEntityDto } from "lib";
 import { PrettyGridPropsType } from "./types";
 
 // component
-import { Loading } from "components";
+import { Empty, Loading } from "components";
 
 // styles
 import "./styles.css";
@@ -41,11 +41,7 @@ export const PrettyGrid = <TDto extends BaseEntityDto>(
         </ul>
       ) : (
         <>
-          {emptyComponent ? (
-            emptyComponent
-          ) : (
-            <p className="text-center mt-5">{emptyMessage}</p>
-          )}
+          {emptyComponent ? emptyComponent : <Empty message={emptyMessage} />}
         </>
       )}
     </>
