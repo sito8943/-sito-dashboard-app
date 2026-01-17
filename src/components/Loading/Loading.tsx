@@ -16,7 +16,7 @@ export function Loading(props: LoadingPropsType) {
   return (
     <div className={containerClassName}>
       <FontAwesomeIcon
-        className={`spin ${color} ${size} ${className}`}
+        className={`animate-spin ${color} ${size} ${className}`}
         icon={faCircleNotch}
       />
     </div>
