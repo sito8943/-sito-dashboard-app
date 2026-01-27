@@ -2,7 +2,7 @@ import { MutationFunction, QueryKey } from "@tanstack/react-query";
 import { DefaultValues, FieldValues } from "react-hook-form";
 
 // @sito/dashboard
-import { Action } from "@sito/dashboard";
+import { ActionType } from "@sito/dashboard";
 
 // types
 import { BaseEntityDto, ImportDto, ValidationError } from "lib";
@@ -43,7 +43,7 @@ export interface UseActionDialog<
   TRow extends BaseEntityDto,
   TFormType extends FieldValues,
 > extends TriggerFormDialogPropsType<TFormType, ValidationError> {
-  action: (record: TRow) => Action<TRow>;
+  action: (record: TRow) => ActionType<TRow>;
 }
 
 export type UseImportDialogPropsType = {

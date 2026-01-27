@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useTranslation } from "@sito/dashboard";
 
 // @sito/dashboard
-import { Action } from "@sito/dashboard";
+import { ActionType } from "@sito/dashboard";
 
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,7 +22,7 @@ export const useEditAction = <TRow extends BaseEntityDto>(
   const { onClick, hidden = false } = props;
 
   const action = useCallback(
-    (record: TRow): Action<TRow> => ({
+    (record: TRow): ActionType<TRow> => ({
       id: GlobalActions.Edit,
       hidden: record.deleted || hidden,
       disabled: record.deleted,

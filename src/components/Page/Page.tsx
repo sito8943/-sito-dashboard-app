@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "@sito/dashboard";
 
 // @sito/dashboard
-import { Action, Badge, useTableOptions } from "@sito/dashboard";
+import { ActionType, Badge, useTableOptions } from "@sito/dashboard";
 
 // components
 import { Loading, IconButton } from "components";
@@ -61,11 +61,11 @@ export const Page = <TEntity extends BaseEntityDto>(
         icon: <FontAwesomeIcon icon={faRotateLeft} />,
         tooltip: t("_pages:common.actions.refresh.text"),
       };
-      pActions.unshift(refreshAction as Action<BaseEntityDto>);
+      pActions.unshift(refreshAction as ActionType<BaseEntityDto>);
     }
     if (addOptions) {
       const addAction = {
-        ...(addOptions as Action<BaseEntityDto>),
+        ...(addOptions as ActionType<BaseEntityDto>),
         id: GlobalActions.Add,
         icon: <FontAwesomeIcon icon={faAdd} />,
       };
@@ -73,7 +73,7 @@ export const Page = <TEntity extends BaseEntityDto>(
     }
     if (filterOptions) {
       const filterAction = {
-        ...(filterOptions as Action<BaseEntityDto>),
+        ...(filterOptions as ActionType<BaseEntityDto>),
         id: "filter",
         icon: <FontAwesomeIcon icon={faFilter} />,
         children: (
