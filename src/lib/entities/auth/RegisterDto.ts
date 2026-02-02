@@ -1,5 +1,6 @@
-import { AuthDto } from "./AuthDto";
+import { BaseRegisterDto } from "./BaseRegisterDto";
 
-export interface RegisterDto extends AuthDto {
-  rPassword: string;
-}
+export type RegisterDto<
+  TExtra = Record<string, never>,
+  TAuthExtra = Record<string, never>
+> = BaseRegisterDto<TExtra, TAuthExtra>;
