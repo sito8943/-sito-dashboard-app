@@ -67,7 +67,7 @@ export class APIClient {
       }
     );
 
-    if (status !== 200 && status !== 204) throw new Error(String(status));
+    if (status < 200 || status >= 300) throw new Error(String(status));
 
     return result as TResponse;
   }
