@@ -1,3 +1,6 @@
+// types
+import { HttpResponse } from "./types";
+
 const isAnError = (status: number) => status < 200 || status > 299;
 
 export enum Methods {
@@ -21,43 +24,51 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
   method: Methods = Methods.GET,
   body?: TBody,
   customHeaders?: HeadersInit
-): Promise<{
-  data: TResponse | null;
-  status: number;
-  error: { status: number; message: string } | null;
-}> {
+): Promise<HttpResponse<TResponse>> {
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
+    ...(body ? { "Content-Type": "application/json" } : {}),
     ...customHeaders,
-  };
-  const options: RequestInit = {
-    method,
-    headers,
-    ...(body ? { body: JSON.stringify(body) } : {}),
   };
 
   try {
-    const response = await fetch(url, options);
-    const isJson = response.headers
-      .get("content-type")
-      ?.includes("application/json");
+    const response = await fetch(url, {
+      method,
+      headers,
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
 
-    const responseBody = isJson ? await response.json() : null;
-    let error = null;
-    if (!response.ok || isAnError(response.status)) {
-      const text = await response.text();
+    const rawText = await response.text();
 
-      if (text)
-        error = {
+    let parsed: unknown = null;
+    try {
+      parsed = rawText ? JSON.parse(rawText) : null;
+    } catch {
+      parsed = null;
+    }
+
+    if (!response.ok) {
+      const message =
+        typeof parsed === "object" && parsed !== null
+          ? ((parsed as any).message ?? (parsed as any).error ?? rawText)
+          : rawText || response.statusText;
+
+      return {
+        data: null,
+        status: response.status,
+        error: {
           status: response.status,
-          message: text,
-        };
+          message: message || "Unknown error occurred",
+        },
+      };
     }
 
     return {
-      data: response.ok && response.status !== 204 ? responseBody : null,
+      data:
+        response.status !== 204 && parsed !== null
+          ? (parsed as TResponse)
+          : null,
       status: response.status,
-      error,
+      error: null,
     };
   } catch (err) {
     return {
@@ -65,7 +76,7 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
       status: 500,
       error: {
         status: 500,
-        message: (err as Error).message || "Unknown error occurred",
+        message: err instanceof Error ? err.message : "Unknown error occurred",
       },
     };
   }
