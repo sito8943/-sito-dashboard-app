@@ -57,7 +57,7 @@ export class APIClient {
     header?: HeadersInit
   ) {
     const securedHeader = this.secured ? this.defaultTokenAcquirer() : {};
-    const { data: result, status } = await makeRequest(
+    const { data: result, status, error } = await makeRequest(
       `${this.baseUrl}${endpoint}`,
       method,
       body,
@@ -67,7 +67,13 @@ export class APIClient {
       }
     );
 
-    if (status < 200 || status >= 300) throw new Error(String(status));
+    if (error || status < 200 || status >= 300)
+      throw (
+        error ?? {
+          status,
+          message: String(status),
+        }
+      );
 
     return result as TResponse;
   }
@@ -94,7 +100,7 @@ export class APIClient {
       null,
       securedHeader
     );
-    if (error) throw new Error(`${error.status} ${error.message}`);
+    if (error) throw error;
 
     return result as QueryResult<TDto>;
   }
@@ -112,14 +118,20 @@ export class APIClient {
     const securedHeader = this.secured
       ? this.defaultTokenAcquirer()
       : undefined;
-    const { error, data: result } = await makeRequest<TUpdateDto, TDto>(
+    const { error, data: result, status } = await makeRequest<TUpdateDto, TDto>(
       `${this.baseUrl}${endpoint}`,
       Methods.PATCH,
       data,
       securedHeader
     );
 
-    if (error || !result) throw new Error(error?.message);
+    if (error || !result)
+      throw (
+        error ?? {
+          status,
+          message: "Unknown error",
+        }
+      );
 
     return result;
   }
@@ -133,14 +145,20 @@ export class APIClient {
     const securedHeader = this.secured
       ? this.defaultTokenAcquirer()
       : undefined;
-    const { error, data: result } = await makeRequest<number[], number>(
+    const { error, data: result, status } = await makeRequest<number[], number>(
       `${this.baseUrl}${endpoint}`,
       Methods.DELETE,
       data,
       securedHeader
     );
 
-    if (error || !result) throw new Error(error?.message);
+    if (error || !result)
+      throw (
+        error ?? {
+          status,
+          message: "Unknown error",
+        }
+      );
 
     return result;
   }
@@ -155,7 +173,7 @@ export class APIClient {
     const securedHeader = this.secured
       ? this.defaultTokenAcquirer()
       : undefined;
-    const { error, data: result } = await makeRequest<TAddDto, TDto>(
+    const { error, data: result, status } = await makeRequest<TAddDto, TDto>(
       `${this.baseUrl}${endpoint}`,
       Methods.POST,
       data,
@@ -163,7 +181,12 @@ export class APIClient {
     );
 
     if (error || !result)
-      throw new Error(error?.message ?? String(error?.status));
+      throw (
+        error ?? {
+          status,
+          message: "Unknown error",
+        }
+      );
 
     return result;
   }
