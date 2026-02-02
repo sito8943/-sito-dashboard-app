@@ -1,3 +1,4 @@
+// @sito/dashboard
 import { useTranslation, Loading } from "@sito/dashboard";
 
 // lib
@@ -6,7 +7,10 @@ import { BaseEntityDto } from "lib";
 // types
 import { PrettyGridPropsType } from "./types";
 
-// styles
+// component
+import { Empty } from "components";
+
+  // styles
 import "./styles.css";
 
 export const PrettyGrid = <TDto extends BaseEntityDto>(
@@ -38,11 +42,7 @@ export const PrettyGrid = <TDto extends BaseEntityDto>(
         </ul>
       ) : (
         <>
-          {emptyComponent ? (
-            emptyComponent
-          ) : (
-            <p className="text-center mt-5">{emptyMessage}</p>
-          )}
+          {emptyComponent ? emptyComponent : <Empty message={emptyMessage} />}
         </>
       )}
     </>

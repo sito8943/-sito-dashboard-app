@@ -1,8 +1,13 @@
 import { useMemo } from "react";
-import { useTranslation } from "@sito/dashboard";
 
 // @sito/dashboard
-import { Loading, ActionType, Badge, useTableOptions } from "@sito/dashboard";
+import {
+  ActionType,
+  Badge,
+  useTableOptions,
+  Loading,
+  useTranslation,
+} from "@sito/dashboard";
 
 // components
 import { IconButton } from "components";
@@ -96,7 +101,9 @@ export const Page = <TEntity extends BaseEntityDto>(
           actions={parsedActions}
           title={title}
         />
-        <div className={`px-5 py-3 h-useConfigfull ${isAnimated ? "appear" : ""}`}>
+        <div
+          className={`px-5 py-3 h-useConfigfull ${isAnimated ? "appear" : ""}`}
+        >
           {isLoading ? (
             <Loading className="flex justify-center items-center h-50" />
           ) : (

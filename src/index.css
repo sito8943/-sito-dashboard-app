@@ -5,6 +5,8 @@
   --color-bg-primary: #013a55;
   --color-hover-primary: #48b2e9;
   --color-secondary: #d27d6b;
+  --color-bg-secondary: #8f171d;
+  --color-hover-secondary: #d74d54;
   /** NEW COLOR **/
   --color-base-dark: hsl(0 0% 90%);
   --color-base: hsl(0 0% 95%);
