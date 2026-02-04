@@ -33,8 +33,15 @@ export const Basic: Story = {
     const [open, setOpen] = useState(true);
     return (
       <div>
-        <button className="button outlined" onClick={() => setOpen(true)}>Open drawer</button>
-        <Drawer<Keys> open={open} onClose={() => setOpen(false)} menuMap={menuMap} />
+        <button className="button outlined" onClick={() => setOpen(true)}>
+          Open drawer
+        </button>
+        <Drawer<Keys>
+          logo={<div className="logo">My App Logo</div>}
+          open={open}
+          onClose={() => setOpen(false)}
+          menuMap={menuMap}
+        />
       </div>
     );
   },

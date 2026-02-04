@@ -13,7 +13,7 @@ import { useAuth, useConfig } from "providers";
 export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const { t } = useTranslation();
 
-  const { open, onClose, menuMap } = props;
+  const { open, onClose, menuMap, logo } = props;
 
   const { account } = useAuth();
 
@@ -60,9 +60,12 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       <aside
         className={`${open ? "opened" : "closed"} bg-base drawer animated`}
       >
-        <h2 className="text-xl text-text px-5 pb-5 font-bold poppins">
-          {t("_pages:home.appName")}
-        </h2>
+        <div className="flex gap-2 items-center justify-start px-5 pb-5">
+          {logo}
+          <h2 className="text-xl text-text font-bold poppins">
+            {t("_pages:home.appName")}
+          </h2>
+        </div>
         <ul className="flex flex-col">
           {parsedMenu.map((link, i) => (
             <li
