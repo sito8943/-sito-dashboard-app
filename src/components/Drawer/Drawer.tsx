@@ -58,11 +58,11 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       onClick={() => onClose()}
     >
       <aside
-        className={`${open ? "opened" : "closed"} bg-base drawer animated`}
+        className={`${open ? "opened" : "closed"} drawer animated`}
       >
-        <div className="flex gap-2 items-center justify-start px-5 pb-5">
+        <div className="drawer-header-container">
           {logo}
-          <h2 className="text-xl text-text font-bold poppins">
+          <h2 className="drawer-header poppins">
             {t("_pages:home.appName")}
           </h2>
         </div>
@@ -70,8 +70,8 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
           {parsedMenu.map((link, i) => (
             <li
               key={`${link.page ?? i}`}
-              className={`w-full flex hover:bg-base-light ${
-                link.path === location.pathname ? "bg-base-light" : ""
+              className={`drawer-list-item ${
+                link.path === location.pathname ? "active" : ""
               } animated`}
             >
               {link.type !== "divider" && Link ? (
@@ -79,13 +79,13 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
                   aria-disabled={!open}
                   to={link.path ?? `/${link.path}`}
                   aria-label={t(`_accessibility:ariaLabels.${link.path}`)}
-                  className="text-lg text-text-muted w-full py-2 px-5 flex items-center justify-start gap-2"
+                  className="drawer-link"
                 >
                   {link.icon}
                   {t(`_pages:${link.page}.title`)}
                 </Link>
               ) : (
-                <hr className="border-border border-spacing-x-0.5 w-full" />
+                <hr className="drawer-divider" />
               )}
             </li>
           ))}
