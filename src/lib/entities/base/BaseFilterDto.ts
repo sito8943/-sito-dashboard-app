@@ -1,3 +1,3 @@
 export interface BaseFilterDto {
-  deleted?: boolean;
+  deletedAt?: Date | null;
 }

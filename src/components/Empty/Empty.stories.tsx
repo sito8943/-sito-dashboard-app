@@ -3,7 +3,7 @@ import React from "react";
 import { Empty } from "./Empty";
 import type { BaseEntityDto } from "lib";
 
-type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; deleted: boolean };
+type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; deletedAt?: Date | null };
 
 const meta = {
   title: "Components/Empty/Empty",

@@ -11,7 +11,7 @@ const sampleData: Item[] = Array.from({ length: 6 }).map((_, i) => ({
   name: `Item ${i + 1}`,
   createdAt: new Date(),
   updatedAt: new Date(),
-  deleted: false,
+  deletedAt: null,
 }));
 
 const meta = {

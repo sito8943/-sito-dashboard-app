@@ -5,7 +5,7 @@ import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { BaseEntityDto } from "lib";
 
-type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; deleted: boolean };
+type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; deletedAt?: Date | null };
 
 const meta = {
   title: "Components/Page/PageHeader",

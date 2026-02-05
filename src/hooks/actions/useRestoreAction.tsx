@@ -19,8 +19,8 @@ export const useRestoreAction = (props: UseMultipleActionPropTypes<number>) => {
   const action = useCallback(
     (record: BaseEntityDto) => ({
       id: GlobalActions.Restore,
-      hidden: !record.deleted || hidden,
-      disabled: !record.deleted,
+      hidden: !record.deletedAt || hidden,
+      disabled: !record.deletedAt,
       icon: <FontAwesomeIcon className="text-red-500" icon={faRotateLeft} />,
       tooltip: t("_pages:common.actions.restore.text"),
       onClick: () => onClick([record?.id]),

@@ -24,8 +24,8 @@ export const useEditAction = <TRow extends BaseEntityDto>(
   const action = useCallback(
     (record: TRow): ActionType<TRow> => ({
       id: GlobalActions.Edit,
-      hidden: record.deleted || hidden,
-      disabled: record.deleted,
+      hidden: !!record.deletedAt || hidden,
+      disabled: !!record.deletedAt,
       icon: <FontAwesomeIcon className="primary" icon={faPencil} />,
       tooltip: t("_pages:common.actions.edit.text"),
       onClick: () => onClick(record?.id),
