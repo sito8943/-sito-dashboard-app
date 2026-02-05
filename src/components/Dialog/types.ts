@@ -24,8 +24,3 @@ export interface FormDialogPropsType<
   TError extends Error = Error,
 > extends DialogPropsType,
     Omit<FormContainerPropsType<TFormType, TError>, "children"> {}
-
-export interface ImportDialogPropsType extends DialogPropsType {
-  handleSubmit: () => void;
-  isLoading?: boolean;
-}

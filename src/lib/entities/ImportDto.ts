@@ -1,5 +1,6 @@
-export type ImportDto = {
-  file: string;
-  entity: string;
+import { ImportPreviewDto } from "./ImportPreviewDto";
+
+export type ImportDto<TDto extends ImportPreviewDto> = {
   override: boolean;
+  items: TDto[];
 };

@@ -12,6 +12,7 @@ import {
   buildQueryUrl,
   DeleteDto,
   ImportDto,
+  ImportPreviewDto,
   Methods,
   QueryResult,
 } from "lib";
@@ -24,6 +25,7 @@ export class BaseClient<
   TAddDto,
   TUpdateDto extends DeleteDto,
   TFilter extends BaseFilterDto,
+  TImportPreviewDto extends ImportPreviewDto,
 > {
   table: Tables;
   secured: boolean;
@@ -111,7 +113,7 @@ export class BaseClient<
    * @param data - Import data
    * @returns - List of elements
    */
-  async import(data: ImportDto): Promise<number> {
+  async import(data: ImportDto<TImportPreviewDto>): Promise<number> {
     return await this.api.doQuery<number>(
       `${this.table}/import`,
       Methods.POST,

@@ -5,9 +5,14 @@ import { DefaultValues, FieldValues } from "react-hook-form";
 import { ActionType } from "@sito/dashboard";
 
 // types
-import { BaseEntityDto, ImportDto, ValidationError } from "lib";
+import {
+  BaseEntityDto,
+  ImportDto,
+  ImportPreviewDto,
+  ValidationError,
+} from "lib";
 import { UseConfirmationPropsType } from "../forms";
-import { FormDialogPropsType } from "components";
+import { FormDialogPropsType, ImportDialogPropsType } from "components";
 
 export interface UseDeleteDialogPropsType
   extends UseConfirmationPropsType<number, ValidationError> {
@@ -46,8 +51,22 @@ export interface UseActionDialog<
   action: (record: TRow) => ActionType<TRow>;
 }
 
-export type UseImportDialogPropsType = {
-  mutationFn: MutationFunction<number, ImportDto>;
+export type UseImportDialogPropsType<
+  PreviewEntityDto extends ImportPreviewDto,
+  EntityImportDto extends ImportDto<PreviewEntityDto>,
+> = {
   queryKey: QueryKey;
   entity: string;
+  mutationFn: MutationFunction<number, EntityImportDto>;
+  fileProcessor?: (
+    file: File,
+    options?: { override?: boolean }
+  ) => Promise<PreviewEntityDto[]>;
+};
+
+export type UseImportDialogReturnType<
+  EntityDto extends BaseEntityDto,
+  PreviewEntityDto extends ImportPreviewDto,
+> = ImportDialogPropsType<PreviewEntityDto> & {
+  action: () => ActionType<EntityDto>;
 };
