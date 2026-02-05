@@ -33,7 +33,7 @@
 }
 
 .drawer-link {
-  @apply text-lg text-text-muted w-full py-2 px-5 flex items-center justify-start gap-2;
+  @apply text-text-muted w-full py-2 px-5 flex items-center justify-start gap-2;
 }
 
 .drawer-divider {
