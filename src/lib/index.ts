@@ -1,9 +1,7 @@
-import { ServiceError } from "./ServiceError";
-import { ValidationError } from "./ValidationError";
 import { NotificationType, NotificationEnumType } from "./Notification";
 
 export { NotificationEnumType };
-export type { ServiceError, ValidationError, NotificationType };
+export type { NotificationType };
 
 // entities
 export * from "./entities";
@@ -13,3 +11,6 @@ export * from "./api";
 
 // utils
 export * from "./utils";
+
+// errors
+export * from "./errors";

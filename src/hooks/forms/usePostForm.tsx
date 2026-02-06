@@ -7,7 +7,13 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient, useNotification } from "providers";
 
 // lib
-import { NotificationEnumType, NotificationType, ValidationError } from "lib";
+import {
+  NotificationEnumType,
+  NotificationType,
+  ValidationError,
+  isValidationError,
+  isHttpError,
+} from "lib";
 
 // types
 import { UseFormPropsType } from "hooks";
@@ -74,8 +80,9 @@ export const usePostForm = <
       mutationFn,
       onError: (error: ValidationError) => {
         console.error(error);
-        if (error.errors) {
-          const messages = parseFormError(error);
+        const unknownErr = error as unknown;
+        if (isValidationError(unknownErr)) {
+          const messages = parseFormError(unknownErr);
           showStackNotifications(
             messages.map(
               (message) =>
@@ -85,6 +92,15 @@ export const usePostForm = <
                 }) as NotificationType
             )
           );
+        } else if (isHttpError(unknownErr)) {
+          const fallback = unknownErr.message || t("_accessibility:errors.500");
+          const translated = t(`_accessibility:errors.${unknownErr.status}`);
+          showStackNotifications([
+            {
+              message: translated || fallback,
+              type: NotificationEnumType.error,
+            } as NotificationType,
+          ]);
         }
         if (onError) onError(error);
       },

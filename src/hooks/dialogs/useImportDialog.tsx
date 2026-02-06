@@ -10,10 +10,14 @@ import {
   ImportPreviewDto,
   ImportDto,
   ValidationError,
+  isHttpError,
+  isValidationError,
+  NotificationEnumType,
+  NotificationType,
 } from "lib";
 
 // providers
-import { queryClient } from "providers";
+import { queryClient, useNotification } from "providers";
 
 // types
 import { UseImportDialogPropsType, UseImportDialogReturnType } from "./types";
@@ -29,6 +33,7 @@ export function useImportDialog<
   props: UseImportDialogPropsType<PreviewEntityDto, EntityImportDto>
 ): UseImportDialogReturnType<EntityDto, PreviewEntityDto> {
   const { t } = useTranslation();
+  const { showStackNotifications } = useNotification();
 
   const { queryKey, mutationFn, entity, fileProcessor } = props;
 
@@ -40,6 +45,27 @@ export function useImportDialog<
     mutationFn,
     onError: (error: ValidationError) => {
       console.error(error);
+      const unknownErr = error as unknown;
+      if (isValidationError(unknownErr)) {
+        showStackNotifications(
+          unknownErr.errors.map(
+            ([key, message]) =>
+              ({
+                message: t(`_pages:${key}.errors.${message}`),
+                type: NotificationEnumType.error,
+              }) as NotificationType
+          )
+        );
+      } else if (isHttpError(unknownErr)) {
+        const fallback = unknownErr.message || t("_accessibility:errors.500");
+        const translated = t(`_accessibility:errors.${unknownErr.status}`);
+        showStackNotifications([
+          {
+            message: translated || fallback,
+            type: NotificationEnumType.error,
+          } as NotificationType,
+        ]);
+      }
     },
     onSuccess: async () => {
       if (queryClient) await queryClient.invalidateQueries({ queryKey });

@@ -7,7 +7,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, useNotification } from "providers";
 
 // lib
-import { NotificationEnumType, NotificationType, ValidationError } from "lib";
+import {
+  NotificationEnumType,
+  NotificationType,
+  ValidationError,
+  isValidationError,
+  isHttpError,
+} from "lib";
 
 // hooks
 import { useDialog } from "hooks";
@@ -19,7 +25,7 @@ export const useFormDialog = <
   TDto,
   TMutationDto,
   TMutationOutputDto,
-  TFormType extends FieldValues
+  TFormType extends FieldValues,
 >(
   props: UseFormDialogPropsType<
     TDto,
@@ -120,19 +126,28 @@ export const useFormDialog = <
     mutationFn,
     onError: (error: ValidationError) => {
       console.error(error);
-      if (error.errors) {
-        const messages = parseFormError(error);
-        showStackNotifications(
-          messages.map(
-            (message) =>
-              ({
-                message,
-                type: NotificationEnumType.error,
-              } as NotificationType)
-          )
-        );
-      } else if (onError) onError(error);
-      else showErrorNotification({ message: t("_accessibility:errors.500") });
+      if (onError) onError(error);
+      else {
+        const unknownErr = error as unknown;
+        if (isValidationError(unknownErr)) {
+          const messages = parseFormError(unknownErr);
+          showStackNotifications(
+            messages.map(
+              (message) =>
+                ({
+                  message,
+                  type: NotificationEnumType.error,
+                }) as NotificationType
+            )
+          );
+        } else if (isHttpError(unknownErr)) {
+          const fallback = unknownErr.message || t("_accessibility:errors.500");
+          const translated = t(`_accessibility:errors.${unknownErr.status}`);
+          showErrorNotification({ message: translated || fallback });
+        } else {
+          showErrorNotification({ message: t("_accessibility:errors.500") });
+        }
+      }
     },
     onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey });

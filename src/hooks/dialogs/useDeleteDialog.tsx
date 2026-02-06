@@ -4,7 +4,13 @@ import { useTranslation } from "@sito/dashboard";
 import { queryClient, useNotification } from "providers";
 
 // lib
-import { NotificationEnumType, NotificationType, ValidationError } from "lib";
+import {
+  NotificationEnumType,
+  NotificationType,
+  ValidationError,
+  isValidationError,
+  isHttpError,
+} from "lib";
 
 // hooks
 import { useDeleteAction, useConfirmationForm } from "hooks";
@@ -24,9 +30,10 @@ export const useDeleteDialog = (props: UseDeleteDialogPropsType) => {
   >({
     onSuccessMessage: t("_pages:common.actions.delete.successMessage"),
     onError: (error: ValidationError) => {
-      if (error.errors)
+      const unknownErr = error as unknown;
+      if (isValidationError(unknownErr)) {
         showStackNotifications(
-          error.errors.map(
+          unknownErr.errors.map(
             ([key, message]) =>
               ({
                 message: t(`_pages:${key}.errors.${message}`),
@@ -34,6 +41,16 @@ export const useDeleteDialog = (props: UseDeleteDialogPropsType) => {
               }) as NotificationType
           )
         );
+      } else if (isHttpError(unknownErr)) {
+        const fallback = unknownErr.message || t("_accessibility:errors.500");
+        const translated = t(`_accessibility:errors.${unknownErr.status}`);
+        showStackNotifications([
+          {
+            message: translated || fallback,
+            type: NotificationEnumType.error,
+          } as NotificationType,
+        ]);
+      }
     },
     onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey });
