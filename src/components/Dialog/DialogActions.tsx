@@ -29,7 +29,7 @@ export const DialogActions = (props: DialogActionsProps) => {
     onCancel,
     isLoading = false,
     disabled = false,
-    primaryType = "button",
+    primaryType = "submit",
     containerClassName = "",
     primaryClassName = "",
     alignEnd = false,

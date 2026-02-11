@@ -30,8 +30,6 @@ export function useImportDialog<
   const [items, setItems] = useState<PreviewEntityDto[] | null>(null);
   const [override, setOverride] = useState<boolean>(false);
 
-  console.log(showDialog);
-
   const importMutation = useMutation<
     number,
     HttpError,
@@ -75,7 +73,6 @@ export function useImportDialog<
       entity: t(`_pages:${entity}.title`),
     }),
     handleClose: () => {
-      console.log("hola?");
       setShowDialog(false);
       setItems(null);
     },

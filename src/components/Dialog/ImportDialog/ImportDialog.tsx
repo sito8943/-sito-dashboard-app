@@ -34,14 +34,17 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     ...rest
   } = props;
 
-  console.log(handleClose);
-
   const [inputKey, setInputKey] = useState(0);
   const processedCallbackRef = useRef(onFileProcessed);
+  const fileProcessorRef = useRef(fileProcessor);
 
   useEffect(() => {
     processedCallbackRef.current = onFileProcessed;
   }, [onFileProcessed]);
+
+  useEffect(() => {
+    fileProcessorRef.current = fileProcessor;
+  }, [fileProcessor]);
 
   useEffect(() => {
     if (!open) {
@@ -55,10 +58,12 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
   }, [open]);
 
   const handleFileProcessed = useCallback(async () => {
-    if (fileProcessor && file) {
+    if (fileProcessorRef.current && file) {
       setProcessing(true);
       try {
-        const items = await fileProcessor(file, { override: overrideExisting });
+        const items = await fileProcessorRef.current(file, {
+          override: overrideExisting,
+        });
         setPreviewItems(items ?? []);
         setParseError(null);
         processedCallbackRef.current?.(items ?? []);
@@ -71,7 +76,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       }
       setProcessing(false);
     }
-  }, [file, fileProcessor, overrideExisting]);
+  }, [file, overrideExisting]);
 
   useEffect(() => {
     handleFileProcessed();
@@ -131,14 +136,11 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
           const canSubmit =
             !fileProcessor || (!!previewItems && previewItems.length > 0);
           if (canSubmit) handleSubmit();
+          else {
+          }
         }}
         onCancel={handleClose}
         isLoading={isLoading}
-        disabled={
-          !!isLoading ||
-          !!processing ||
-          (!!fileProcessor && (!previewItems || previewItems.length === 0))
-        }
         primaryType="button"
         containerClassName="mt-5"
         primaryName={t("_accessibility:buttons.ok")}
