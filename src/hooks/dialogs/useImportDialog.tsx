@@ -1,26 +1,17 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
-// @sito/dashboard
+// @sito-dashboard
 import { useTranslation } from "@sito/dashboard";
 
 // lib
-import {
-  BaseEntityDto,
-  ImportPreviewDto,
-  ImportDto,
-  ValidationError,
-  isHttpError,
-  isValidationError,
-  NotificationEnumType,
-  NotificationType,
-} from "lib";
-
-// providers
-import { queryClient, useNotification } from "providers";
+import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "lib";
 
 // types
 import { UseImportDialogPropsType, UseImportDialogReturnType } from "./types";
+
+// providers
+import { queryClient } from "providers";
 
 // hooks
 import { useImportAction } from "hooks";
@@ -28,44 +19,28 @@ import { useImportAction } from "hooks";
 export function useImportDialog<
   EntityDto extends BaseEntityDto,
   PreviewEntityDto extends ImportPreviewDto,
-  EntityImportDto extends ImportDto<PreviewEntityDto>,
 >(
-  props: UseImportDialogPropsType<PreviewEntityDto, EntityImportDto>
+  props: UseImportDialogPropsType<PreviewEntityDto>
 ): UseImportDialogReturnType<EntityDto, PreviewEntityDto> {
   const { t } = useTranslation();
-  const { showStackNotifications } = useNotification();
 
-  const { queryKey, mutationFn, entity, fileProcessor } = props;
+  const { queryKey, mutationFn, entity, fileProcessor, onError } = props;
 
   const [showDialog, setShowDialog] = useState(false);
   const [items, setItems] = useState<PreviewEntityDto[] | null>(null);
   const [override, setOverride] = useState<boolean>(false);
 
-  const importMutation = useMutation<number, ValidationError, EntityImportDto>({
+  console.log(showDialog);
+
+  const importMutation = useMutation<
+    number,
+    HttpError,
+    ImportDto<PreviewEntityDto>
+  >({
     mutationFn,
-    onError: (error: ValidationError) => {
+    onError: (error: HttpError) => {
       console.error(error);
-      const unknownErr = error as unknown;
-      if (isValidationError(unknownErr)) {
-        showStackNotifications(
-          unknownErr.errors.map(
-            ([key, message]) =>
-              ({
-                message: t(`_pages:${key}.errors.${message}`),
-                type: NotificationEnumType.error,
-              }) as NotificationType
-          )
-        );
-      } else if (isHttpError(unknownErr)) {
-        const fallback = unknownErr.message || t("_accessibility:errors.500");
-        const translated = t(`_accessibility:errors.${unknownErr.status}`);
-        showStackNotifications([
-          {
-            message: translated || fallback,
-            type: NotificationEnumType.error,
-          } as NotificationType,
-        ]);
-      }
+      onError?.(error);
     },
     onSuccess: async () => {
       if (queryClient) await queryClient.invalidateQueries({ queryKey });
@@ -83,7 +58,7 @@ export function useImportDialog<
         await importMutation.mutateAsync({
           items,
           override,
-        } as unknown as EntityImportDto);
+        } as unknown as ImportDto<PreviewEntityDto>);
         setShowDialog(false);
         setItems(null);
         setOverride(false);
@@ -100,6 +75,7 @@ export function useImportDialog<
       entity: t(`_pages:${entity}.title`),
     }),
     handleClose: () => {
+      console.log("hola?");
       setShowDialog(false);
       setItems(null);
     },

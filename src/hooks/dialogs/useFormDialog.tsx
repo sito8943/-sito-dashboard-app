@@ -167,7 +167,10 @@ export const useFormDialog = <
     getValues,
     setValue,
     handleSubmit,
-    onSubmit: (data) => dialogFn.mutate(formToDto(data)),
+    onSubmit: (data) =>
+      dialogFn.mutate(
+        formToDto ? formToDto(data) : (data as unknown as TMutationDto)
+      ),
     reset,
     setError,
     parseFormError,

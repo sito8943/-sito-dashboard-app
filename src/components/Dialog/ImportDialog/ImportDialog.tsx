@@ -1,19 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-// @sito/dashboard
-import { useTranslation, FileInput } from "@sito/dashboard";
+// @sito-dashboard
+import { FileInput, useTranslation } from "@sito/dashboard";
 
 // components
-import { Dialog, DialogActions, DialogPropsType } from "components";
-import { Loading } from "./Loading";
+import { Dialog, DialogActions, ImportDialogPropsType } from "components";
 import { Error as ErrorComponent } from "./Error";
+import { Loading } from "./Loading";
 import { Preview } from "./Preview";
 
 // lib
 import { ImportPreviewDto } from "lib";
-
-// types
-import { ImportDialogPropsType } from "./types";
 
 export const ImportDialog = <EntityDto extends ImportPreviewDto>(
   props: ImportDialogPropsType<EntityDto>
@@ -37,7 +34,14 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     ...rest
   } = props;
 
+  console.log(handleClose);
+
   const [inputKey, setInputKey] = useState(0);
+  const processedCallbackRef = useRef(onFileProcessed);
+
+  useEffect(() => {
+    processedCallbackRef.current = onFileProcessed;
+  }, [onFileProcessed]);
 
   useEffect(() => {
     if (!open) {
@@ -57,7 +61,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         const items = await fileProcessor(file, { override: overrideExisting });
         setPreviewItems(items ?? []);
         setParseError(null);
-        onFileProcessed?.(items ?? []);
+        processedCallbackRef.current?.(items ?? []);
       } catch (err) {
         console.error(err);
         setPreviewItems(null);
@@ -67,12 +71,11 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       }
       setProcessing(false);
     }
-  }, [file, fileProcessor, onFileProcessed, overrideExisting]);
+  }, [file, fileProcessor, overrideExisting]);
 
   useEffect(() => {
     handleFileProcessed();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file, overrideExisting]);
+  }, [handleFileProcessed]);
 
   return (
     <Dialog {...rest} open={open} handleClose={handleClose}>
@@ -83,6 +86,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
           setPreviewItems(null);
           setParseError(null);
           setProcessing(false);
+          processedCallbackRef.current?.([]);
         }}
         onChange={(e) => {
           const file = (e.target as HTMLInputElement).files?.[0];
@@ -91,6 +95,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
             setPreviewItems(null);
             setParseError(null);
             setProcessing(false);
+            processedCallbackRef.current?.([]);
             return;
           }
           setFile(file);

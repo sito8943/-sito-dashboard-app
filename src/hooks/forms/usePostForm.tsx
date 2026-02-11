@@ -81,28 +81,32 @@ export const usePostForm = <
       onError: (error: ValidationError) => {
         console.error(error);
         const unknownErr = error as unknown;
-        if (isValidationError(unknownErr)) {
-          const messages = parseFormError(unknownErr);
-          showStackNotifications(
-            messages.map(
-              (message) =>
-                ({
-                  message,
-                  type: NotificationEnumType.error,
-                }) as NotificationType
-            )
-          );
-        } else if (isHttpError(unknownErr)) {
-          const fallback = unknownErr.message || t("_accessibility:errors.500");
-          const translated = t(`_accessibility:errors.${unknownErr.status}`);
-          showStackNotifications([
-            {
-              message: translated || fallback,
-              type: NotificationEnumType.error,
-            } as NotificationType,
-          ]);
-        }
+
         if (onError) onError(error);
+        else {
+          if (isValidationError(unknownErr)) {
+            const messages = parseFormError(unknownErr);
+            showStackNotifications(
+              messages.map(
+                (message) =>
+                  ({
+                    message,
+                    type: NotificationEnumType.error,
+                  }) as NotificationType
+              )
+            );
+          } else if (isHttpError(unknownErr)) {
+            const fallback =
+              unknownErr.message || t("_accessibility:errors.500");
+            const translated = t(`_accessibility:errors.${unknownErr.status}`);
+            showStackNotifications([
+              {
+                message: translated || fallback,
+                type: NotificationEnumType.error,
+              } as NotificationType,
+            ]);
+          }
+        }
       },
       onSuccess: async (result) => {
         if (queryClient) await queryClient.invalidateQueries({ queryKey });

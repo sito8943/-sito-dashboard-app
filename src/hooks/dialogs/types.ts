@@ -1,5 +1,5 @@
 import { MutationFunction, QueryKey } from "@tanstack/react-query";
-import { DefaultValues, FieldValues } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 
 // @sito/dashboard
 import { ActionType } from "@sito/dashboard";
@@ -7,11 +7,16 @@ import { ActionType } from "@sito/dashboard";
 // types
 import {
   BaseEntityDto,
+  HttpError,
   ImportDto,
   ImportPreviewDto,
   ValidationError,
 } from "lib";
-import { UseConfirmationPropsType } from "../forms";
+import {
+  UseBaseFormProps,
+  UseConfirmationPropsType,
+  UseFormPropsType,
+} from "../forms";
 import { FormDialogPropsType, ImportDialogPropsType } from "components";
 
 export interface UseDeleteDialogPropsType
@@ -24,16 +29,7 @@ export interface UseFormDialogPropsType<
   TMutationDto,
   TMutationOutputDto,
   TFormType extends FieldValues,
-> {
-  defaultValues?: DefaultValues<TFormType>;
-  getFunction?: (id: number) => Promise<TDto>;
-  formToDto: (data: TFormType) => TMutationDto;
-  dtoToForm?: (data: TDto) => TFormType;
-  mutationFn: MutationFunction<TMutationOutputDto, TMutationDto>;
-  onError?: (errors: ValidationError) => void;
-  onSuccess?: (data: TMutationOutputDto) => void;
-  queryKey: QueryKey;
-  onSuccessMessage: string;
+> extends UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType> {
   title: string;
 }
 
@@ -51,18 +47,17 @@ export interface UseActionDialog<
   action: (record: TRow) => ActionType<TRow>;
 }
 
-export type UseImportDialogPropsType<
+export interface UseImportDialogPropsType<
   PreviewEntityDto extends ImportPreviewDto,
-  EntityImportDto extends ImportDto<PreviewEntityDto>,
-> = {
+> extends UseBaseFormProps<PreviewEntityDto, HttpError> {
   queryKey: QueryKey;
   entity: string;
-  mutationFn: MutationFunction<number, EntityImportDto>;
+  mutationFn: MutationFunction<number, ImportDto<PreviewEntityDto>>;
   fileProcessor?: (
     file: File,
     options?: { override?: boolean }
   ) => Promise<PreviewEntityDto[]>;
-};
+}
 
 export type UseImportDialogReturnType<
   EntityDto extends BaseEntityDto,
