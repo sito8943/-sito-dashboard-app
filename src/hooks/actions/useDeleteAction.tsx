@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useTranslation } from "@sito/dashboard";
+import { ActionType, useTranslation } from "@sito/dashboard";
 
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,13 +17,15 @@ export const useDeleteAction = (props: UseMultipleActionPropTypes<number>) => {
   const { onClick, hidden = false, disabled = false } = props;
 
   const action = useCallback(
-    (record: BaseEntityDto) => ({
+    (record: BaseEntityDto): ActionType<BaseEntityDto> => ({
       id: GlobalActions.Delete,
       hidden: !!record.deletedAt || hidden,
       disabled: !!record.deletedAt || disabled,
       icon: <FontAwesomeIcon className="text-red-500" icon={faTrash} />,
       tooltip: t("_pages:common.actions.delete.text"),
       onClick: () => onClick([record?.id]),
+      onMultipleClick: (rows) => onClick(rows.map((row) => row.id)),
+      multiple: true,
     }),
     [disabled, hidden, onClick, t]
   );
