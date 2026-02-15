@@ -16,9 +16,11 @@ import {
 // types
 import { NotificationEnumType } from "lib";
 
+// components
+import { IconButton } from "../Buttons";
+
 // styles
 import "./styles.css";
-import { IconButton } from "../Buttons";
 
 export function Notification() {
   const { t } = useTranslation();
@@ -92,6 +94,20 @@ export function Notification() {
       window.removeEventListener("click", handler);
     };
   }, [notification?.length]);
+
+  const onKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape" && notification.length) closeWithAnimation();
+    },
+    [notification, closeWithAnimation]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", onKeyPress);
+    return () => {
+      window.removeEventListener("keydown", onKeyPress);
+    };
+  }, [onKeyPress]);
 
   // reset closing state when list changes externally
   useEffect(() => {
