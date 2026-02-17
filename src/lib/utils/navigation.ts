@@ -40,7 +40,7 @@ export type ViewPageType<PageId> = {
   key: PageId;
   path: string;
   children?: ViewPageType<PageId>[];
-  role? : string[];
+  role?: string[];
 };
 
 export interface NamedViewPageType<PageId> extends ViewPageType<PageId> {
@@ -48,15 +48,17 @@ export interface NamedViewPageType<PageId> extends ViewPageType<PageId> {
 }
 
 export type SubMenuItemType = {
+  id: string;
   label: string;
-  path: string;
+  path?: string;
 };
 
 export type MenuItemType<MenuKeys> = {
+  id?: string;
   page?: MenuKeys;
   path?: string;
   icon?: ReactNode;
   type?: "menu" | "divider";
   auth?: boolean;
-  child?: SubMenuItemType[];
+  children?: SubMenuItemType[];
 };

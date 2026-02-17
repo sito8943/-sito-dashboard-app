@@ -7,6 +7,7 @@ import {
   NotificationType,
   SessionDto,
   Location,
+  SubMenuItemType,
 } from "lib";
 
 // components
@@ -75,4 +76,13 @@ export type NotificationContextType = {
   showNotification: (options: NotificationType) => void;
   showSuccessNotification: (options: Partial<NotificationType>) => void;
   showStackNotifications: (notifications: NotificationType[]) => void;
+};
+
+export type DrawerMenuProviderPropTypes = BasicProviderPropTypes;
+
+export type DrawerMenuContextType<MenuKeys extends string> = {
+  addChildItem: (parentId: MenuKeys, child: SubMenuItemType) => void;
+  removeChildItem: (parentId: MenuKeys, index: number) => void;
+  clearDynamicItems: (parentId?: MenuKeys) => void;
+  dynamicItems: Record<MenuKeys, SubMenuItemType[]>;
 };

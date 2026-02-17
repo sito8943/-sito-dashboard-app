@@ -25,11 +25,23 @@
 }
 
 .drawer-list-item {
-  @apply w-full flex hover:bg-base-light;
+  @apply w-full flex hover:bg-base-light flex-col;
 }
 
 .drawer-list-item.active {
   @apply bg-base-light;
+}
+
+.drawer-children-list {
+  @apply w-full flex flex-col;
+}
+
+.drawer-list-item-child {
+  @apply hover:bg-base pl-7;
+}
+
+.drawer-list-item-child.active {
+  @apply bg-base-dark;
 }
 
 .drawer-link {
