@@ -12,9 +12,6 @@ import { BaseEntityDto } from "lib";
 // components
 import { Actions, ActionsDropdown, IconButton } from "components";
 
-// hooks
-import { useScrollTrigger } from "hooks";
-
 // providers
 import { useConfig } from "providers";
 
@@ -32,7 +29,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
 
   return (
     <div className="page-header">
-      <div className="flex gap-2 items-center justify-start">
+      <div className="page-header-left">
         {showBackButton && (
           <IconButton
             icon={faArrowLeft}
@@ -42,7 +39,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
             data-tooltip-content={t("_accessibility:buttons.back")}
           />
         )}
-        <h2 className="text-3xl font-bold">{title}</h2>
+        <h2 className="page-header-title">{title}</h2>
       </div>
       <div>
         <Actions className="max-xs:!hidden" actions={actions ?? []} />

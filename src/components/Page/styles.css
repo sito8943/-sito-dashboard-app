@@ -5,3 +5,23 @@
   @apply flex items-center justify-between
     pr-3 pl-4 py-2 bg-base w-full sticky top-12 z-35;
 }
+
+.page-header-left {
+  @apply flex gap-2 items-center justify-start;
+}
+
+.page-header-title {
+  @apply text-2xl font-bold;
+}
+
+.page-main {
+  @apply flex flex-col;
+}
+
+.page-main-content {
+  @apply px-5 py-3 h-full;
+}
+
+.page-loading {
+  @apply flex justify-center items-center h-50;
+}

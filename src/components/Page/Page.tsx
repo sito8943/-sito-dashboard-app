@@ -94,30 +94,24 @@ export const Page = <TEntity extends BaseEntityDto>(
   }, [actions, addOptions, countOfFilters, filterOptions, queryKey, t]);
 
   return (
-    <main className="">
-      <div className={`flex flex-col`}>
-        <PageHeader
-          showBackButton={showBackButton}
-          actions={parsedActions}
-          title={title}
-        />
-        <div
-          className={`px-5 py-3 h-useConfigfull ${isAnimated ? "appear" : ""}`}
-        >
-          {isLoading ? (
-            <Loading className="flex justify-center items-center h-50" />
-          ) : (
-            children
-          )}
-        </div>
-      </div>
-      <IconButton
-        icon={faAdd}
-        color="primary"
-        variant="submit"
-        onClick={() => addOptions?.onClick?.()}
-        className="button fab min-xs:!hidden"
+    <main className="page-main">
+      <PageHeader
+        showBackButton={showBackButton}
+        actions={parsedActions}
+        title={title}
       />
+      <div className={`page-main-content ${isAnimated ? "appear" : ""}`}>
+        {isLoading ? <Loading className="page-loading" /> : children}
+      </div>
+      {addOptions && (
+        <IconButton
+          icon={addOptions.icon ?? faAdd}
+          color={addOptions.color ?? "primary"}
+          variant={addOptions.variant ?? "submit"}
+          onClick={() => addOptions.onClick?.()}
+          className={`button fab min-xs:!hidden ${addOptions.className ?? ""}`}
+        />
+      )}
     </main>
   );
 };
