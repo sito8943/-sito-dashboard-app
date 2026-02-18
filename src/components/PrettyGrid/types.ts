@@ -9,4 +9,6 @@ export type PrettyGridPropsType<TDto extends BaseEntityDto> = {
   emptyComponent?: ReactNode;
   data?: TDto[];
   loading?: boolean;
+  className?: string;
+  itemClassName?: string;
 };

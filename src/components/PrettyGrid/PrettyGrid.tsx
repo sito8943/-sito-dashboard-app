@@ -10,7 +10,7 @@ import { PrettyGridPropsType } from "./types";
 // component
 import { Empty } from "components";
 
-  // styles
+// styles
 import "./styles.css";
 
 export const PrettyGrid = <TDto extends BaseEntityDto>(
@@ -19,6 +19,8 @@ export const PrettyGrid = <TDto extends BaseEntityDto>(
   const { t } = useTranslation();
 
   const {
+    className = "",
+    itemClassName = "",
     loading = false,
     emptyComponent = null,
     emptyMessage = t("_accessibility:messages.empty"),
@@ -33,9 +35,9 @@ export const PrettyGrid = <TDto extends BaseEntityDto>(
   return (
     <>
       {data?.length ? (
-        <ul className="pretty-grid-main">
+        <ul className={`pretty-grid-main ${className}`}>
           {data?.map((item) => (
-            <li className="pretty-grid-item" key={item.id}>
+            <li className={`pretty-grid-item ${itemClassName}`} key={item.id}>
               {renderComponent(item)}
             </li>
           ))}
