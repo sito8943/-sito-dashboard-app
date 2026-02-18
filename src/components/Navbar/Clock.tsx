@@ -1,17 +1,30 @@
 import { useEffect, useState } from "react";
 
 // lib
-import { getFormattedDateTime } from "lib";
+import { getFormattedDateTime, getShortFormattedDateTime } from "lib";
 
 export const Clock = () => {
   const [dateNow, setDateNow] = useState(getFormattedDateTime());
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDateNow(getFormattedDateTime());
-    }, 1000);
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
 
-    return () => clearInterval(interval);
+    const updateTime = () => {
+      setDateNow(
+        !mediaQuery.matches
+          ? getShortFormattedDateTime()
+          : getFormattedDateTime()
+      );
+    };
+
+    const interval = setInterval(updateTime, 1000);
+
+    mediaQuery.addEventListener("change", updateTime);
+
+    return () => {
+      clearInterval(interval);
+      mediaQuery.removeEventListener("change", updateTime);
+    };
   }, []);
 
   return <p className="capitalize max-xs:hidden">{dateNow}</p>;

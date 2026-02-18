@@ -25,7 +25,7 @@ import { useConfig } from "providers";
 export function Navbar(props: NavbarPropsType) {
   const { t } = useTranslation();
 
-  const { openDrawer } = props;
+  const { openDrawer, showClock = true, showSearch = true } = props;
 
   const { searchComponent } = useConfig();
 
@@ -51,10 +51,7 @@ export function Navbar(props: NavbarPropsType) {
   return (
     <>
       {location.pathname !== "/" && !!Search && (
-        <Search
-          open={showDialog}
-          onClose={() => setShowDialog(false)}
-        />
+        <Search open={showDialog} onClose={() => setShowDialog(false)} />
       )}
       <header id="header" className="header">
         <div className="flex gap-2 items-center">
@@ -71,12 +68,14 @@ export function Navbar(props: NavbarPropsType) {
           </h1>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <IconButton
-            icon={faSearch}
-            className="min-xs:!hidden"
-            onClick={() => setShowDialog(true)}
-          />
-          <Clock />
+          {showSearch && (
+            <IconButton
+              icon={faSearch}
+              className="min-md:!hidden"
+              onClick={() => setShowDialog(true)}
+            />
+          )}
+          {showClock && <Clock />}
         </div>
       </header>
     </>
