@@ -106,19 +106,34 @@ export function App() {
 - `npm run build`: compile TypeScript and build the library
 - `npm run preview`: preview the Vite build locally
 - `npm run lint`: run ESLint
+- `npm run test`: run unit/component tests once (Vitest)
+- `npm run test:watch`: run tests in watch mode
 - `npm run format`: run Prettier write mode
 - `npm run storybook`: run Storybook locally
 - `npm run build-storybook`: generate static Storybook build
 
 ## Tests
 
-This repository currently does not define an automated test runner script (`npm run test` is not available yet). Current validation is done through:
+Automated tests are configured with `Vitest` + `@testing-library/react`.
+
+Run all tests once:
+
+```bash
+npm run test
+```
+
+Run tests in watch mode:
+
+```bash
+npm run test:watch
+```
+
+Current validation stack:
 
 - `npm run lint`
+- `npm run test`
 - `npm run build`
-- Storybook/manual behavior checks
-
-If you add automated tests later, expose them through a `test` script in `package.json` and document the command in this section.
+- Storybook/manual behavior checks (optional visual validation)
 
 ## Linting and formatting
 
@@ -136,7 +151,12 @@ npm run format
 
 ## Deployment / release
 
-There is no CI/CD deployment workflow committed in this repository right now. Package release is handled manually.
+CI is available through GitHub Actions:
+
+- `.github/workflows/ci.yml`: runs `lint + test + build` on `push` and `pull_request`
+- `.github/workflows/lint.yml`: runs lint checks on `push` and `pull_request`
+
+Package release/publish is still handled manually.
 
 Recommended release flow:
 
@@ -149,6 +169,7 @@ Recommended release flow:
 3. Validate package:
    ```bash
    npm run lint
+   npm run test
    npm run build
    ```
 4. Publish to npm:
