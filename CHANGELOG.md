@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.37] - 2026-02-19
+
+### Added
+
+- Upstream (`@sito/dashboard@0.0.62`): added a proper `changelog.md` for release tracking.
+
+### Changed
+
+- Updated `@sito/dashboard` dependency usage to `^0.0.62`.
+- Upstream (`@sito/dashboard@0.0.62`): reworked `README.md` to provide consistent and accurate package usage examples.
+- Upstream (`@sito/dashboard@0.0.62`): fixed imports to use `@sito/dashboard` as the public entrypoint.
+- Upstream (`@sito/dashboard@0.0.62`): corrected `Table` action usage from array literal to callback form: `(row) => ActionType[]`.
+- Upstream (`@sito/dashboard@0.0.62`): updated development instructions with valid commands from `package.json`.
+- Upstream (`@sito/dashboard@0.0.62`): added explicit sections for project description, development setup, testing, and linting.
+- Upstream (`@sito/dashboard@0.0.62`): added extra onboarding sections (`Peer dependencies`, `Additional useful scripts`, and `Contributing`).
+
 ## [0.0.36] - 2026-02-19
 
 ### Added
