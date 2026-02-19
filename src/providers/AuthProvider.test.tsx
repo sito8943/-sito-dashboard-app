@@ -115,4 +115,16 @@ describe("AuthProvider", () => {
     });
     expect(result.current.isInGuestMode()).toBe(false);
   });
+
+  it("throws when useAuth is called outside AuthProvider", () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    expect(() => renderHook(() => useAuth())).toThrow(
+      "authContext must be used within a Provider"
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
 });
