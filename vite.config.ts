@@ -1,5 +1,5 @@
-import { defineConfig } from "vite";
 import { resolve } from "path";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import { libInjectCss } from "vite-plugin-lib-inject-css";
@@ -47,5 +47,12 @@ export default defineConfig({
         "@fortawesome/react-fontawesome",
       ],
     },
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./src/test/setup.ts",
+    include: ["src/**/*.test.{ts,tsx}"],
+    exclude: ["node_modules", "dist"],
   },
 });
