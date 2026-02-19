@@ -5,6 +5,18 @@
   @apply w-full flex items-center justify-between z-20 px-3 h-12 sticky top-0 bg-base-dark;
 }
 
-.button.menu {
+.navbar-title {
+  @apply text-lg text-text pointer-events-none font-bold;
+}
+
+.navbar-left {
+  @apply flex gap-2 items-center;
+}
+
+.navbar-right {
+  @apply flex items-center justify-end gap-2;
+}
+
+.navbar-menu {
   @apply h-10 w-10 rounded-full !p-0;
 }

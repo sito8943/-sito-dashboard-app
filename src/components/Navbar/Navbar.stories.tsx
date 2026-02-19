@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { Navbar } from "./Navbar";
 
 const meta = {
@@ -32,5 +33,18 @@ export const WithoutClock: Story = {
 export const WithoutSearch: Story = {
   args: {
     showSearch: false,
+  },
+};
+
+export const WithCustomMenuButtonProps: Story = {
+  args: {
+    menuButtonProps: {
+      icon: faChevronLeft,
+      variant: "outlined",
+      color: "primary",
+      className: "custom-menu-button",
+      name: "Volver",
+      "aria-label": "Abrir navegación principal",
+    },
   },
 };

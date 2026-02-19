@@ -1,5 +1,10 @@
 import { useTranslation } from "@sito/dashboard";
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  MouseEvent as ReactMouseEvent,
+} from "react";
 
 // icons
 import { faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -25,7 +30,27 @@ import { useConfig } from "providers";
 export function Navbar(props: NavbarPropsType) {
   const { t } = useTranslation();
 
-  const { openDrawer, showClock = true, showSearch = true } = props;
+  const {
+    openDrawer,
+    showClock = true,
+    showSearch = true,
+    menuButtonProps,
+  } = props;
+
+  const defaultMenuProps = {
+    ...menuButtonProps,
+    type: menuButtonProps?.type ?? "button",
+    icon: menuButtonProps?.icon ?? faBars,
+    onClick: (e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => {
+      menuButtonProps?.onClick?.(e);
+      openDrawer();
+    },
+    name: menuButtonProps?.name ?? t("_accessibility:buttons.openMenu"),
+    ariaLabel:
+      menuButtonProps?.["aria-label"] ??
+      t("_accessibility:ariaLabels.openMenu"),
+    className: `navbar-menu animated ${menuButtonProps?.className ?? ""}`,
+  };
 
   const { searchComponent } = useConfig();
 
@@ -54,20 +79,11 @@ export function Navbar(props: NavbarPropsType) {
         <Search open={showDialog} onClose={() => setShowDialog(false)} />
       )}
       <header id="header" className="header">
-        <div className="flex gap-2 items-center">
-          <IconButton
-            type="button"
-            icon={faBars}
-            onClick={openDrawer}
-            name={t("_accessibility:buttons.openMenu")}
-            aria-label={t("_accessibility:ariaLabels.openMenu")}
-            className="menu animated"
-          />
-          <h1 className="text-lg text-text pointer-events-none poppins font-bold">
-            {t("_pages:home.appName")}
-          </h1>
+        <div className="navbar-left">
+          <IconButton {...defaultMenuProps} />
+          <h1 className="poppins navbar-title">{t("_pages:home.appName")}</h1>
         </div>
-        <div className="flex items-center justify-end gap-2">
+        <div className="navbar-right">
           {showSearch && (
             <IconButton
               icon={faSearch}
