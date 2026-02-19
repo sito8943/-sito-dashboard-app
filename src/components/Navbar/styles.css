@@ -16,7 +16,3 @@
 .navbar-right {
   @apply flex items-center justify-end gap-2;
 }
-
-.navbar-menu {
-  @apply h-10 w-10 rounded-full !p-0;
-}
