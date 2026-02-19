@@ -13,11 +13,11 @@
 }
 
 .action {
-  @apply bg-base hover:bg-base-light flex items-center justify-center gap-2;
+  @apply bg-base hover:bg-base-light text-text flex items-center justify-center gap-2 transition;
 }
 
 .icon-action {
-  @apply rounded-full w-9 h-9 ;
+  @apply rounded-full w-9 h-9;
 }
 
 .text-action {
