@@ -1,88 +1,8 @@
 # @sito/dashboard-app
 
-## Overview
-`@sito/dashboard-app` is the npm package that bundles Sitō’s dashboard component library. It ships production-ready React components, opinionated hooks, data utilities (HTTP clients, DTOs, providers) and the required styles so you can build admin panels, CRUD views and internal tools on top of React 18. The package re-exports the primitives from `@sito/dashboard`, exposes TypeScript types, and keeps the UI and data layers aligned.
-
-## Key capabilities
-- **Production-ready components**: Pages, navigation bars, tabbed layouts, dialogs, dropdowns and buttons that match the Sitō design system.
-- **Built-in critical flows**: Confirmation modals, forms, import dialogs with preview, notifications and loading states ready to wire into your endpoints.
-- **Opinionated hooks**: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useScrollTrigger` and more to remove boilerplate from common flows.
-- **Typed API clients and DTOs**: `APIClient`, `BaseClient`, `AuthClient` plus base/user/import DTOs to keep backend contracts synchronized with the UI.
-- **Internationalization and accessibility**: Every component leverages the contexts and helpers from `@sito/dashboard` to keep translations, shortcuts and accessibility consistent.
-
-## Core exports
-- **Layout & navigation**: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`.
-- **Actions & menus**: `Actions`, `Action`, `Buttons`, `Dropdown`, `ToTop`.
-- **Dialogs & forms**: `Dialog`, `DialogActions`, `FormDialog`, `ImportDialog`, `FormContainer`, `ParagraphInput`, `PasswordInput`.
-- **Visual feedback**: `Notification`, `Loading` / `SplashScreen`, `Empty`, `Error`, `Onboarding`.
-- **Business hooks**: `useImportDialog`, `useFormDialog`, `useDeleteDialog`, `useImportAction`, `useDeleteAction`, `useRestoreAction`, `usePostForm`, `useConfirmationForm`, `useTimeAge`.
-- **Providers & utilities**: `ManagerProvider`, `NotificationProvider`, `AuthProvider`, `ConfigProvider`, `queryClient`, helpers for dates, navigation, local storage and enums.
-
-## Quick example: import action dialog
-The snippet below shows how to combine `Page`, the import hooks and `ImportDialog` to enable a batch upload experience. It assumes your app is already wrapped with the providers described in the next section.
-
-```tsx
-import type { BaseEntityDto, ImportPreviewDto } from "@sito/dashboard-app";
-import {
-  APIClient,
-  ImportDialog,
-  Page,
-  useImportDialog,
-  useNotification,
-} from "@sito/dashboard-app";
-
-type CustomerDto = BaseEntityDto & {
-  name: string;
-  email: string;
-};
-
-type CustomerPreview = ImportPreviewDto & {
-  name: string;
-  email: string;
-};
-
-const api = new APIClient(import.meta.env.VITE_API_URL);
-
-const parseCustomersCsv = async (
-  file: File
-): Promise<CustomerPreview[]> => {
-  // Use your preferred CSV parser and return typed items
-  return [];
-};
-
-export function CustomersPage() {
-  const { showErrorNotification } = useNotification();
-
-  const importDialog = useImportDialog<CustomerDto, CustomerPreview>({
-    entity: "customers",
-    queryKey: ["customers"],
-    mutationFn: (payload) => api.post("/customers/import", payload),
-    fileProcessor: parseCustomersCsv,
-    onError: () =>
-      showErrorNotification({
-        title: "The file could not be processed",
-      }),
-  });
-
-  return (
-    <>
-      <Page
-        title="Customers"
-        subtitle="Manage your audience"
-        queryKey={["customers"]}
-        actions={[importDialog.action()]}
-      >
-        {/* Mount your table or grid here */}
-      </Page>
-
-      <ImportDialog {...importDialog} />
-    </>
-  );
-}
-```
+`@sito/dashboard-app` is a React 18 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
 
 ## Installation
-Install the library with your preferred package manager:
 
 ```bash
 npm install @sito/dashboard-app
@@ -92,8 +12,28 @@ yarn add @sito/dashboard-app
 pnpm add @sito/dashboard-app
 ```
 
-## Initial setup
-Wrap your application with the provided providers to enable navigation, React Query, authentication and notifications. `ConfigProvider` needs the current `location`, a `navigate` function (for example from React Router) and a link component; `ManagerProvider` exposes the shared `queryClient` and requires an instance of `IManager` that encapsulates your HTTP services.
+## Requirements
+
+- Node.js `18.18.0` (see `.nvmrc`)
+- React `18.3.1`
+- React DOM `18.3.1`
+- `@tanstack/react-query` `5.83.0`
+- `react-hook-form` `7.61.1`
+- `@sito/dashboard` `^0.0.61`
+- Font Awesome + Emotion peers defined in `package.json`
+
+## Core exports
+
+- Layout and navigation: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`
+- Actions and menus: `Actions`, `Action`, `Dropdown`, button components
+- Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
+- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
+- Hooks: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, and more
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, DTOs, API clients
+
+## Initial setup example
+
+Wrap your app with the providers to enable navigation, React Query integration, auth context, and notifications.
 
 ```tsx
 import type { ReactNode } from "react";
@@ -130,41 +70,102 @@ function AppProviders({ children }: { children: ReactNode }) {
 export function App() {
   return (
     <BrowserRouter>
-      <AppProviders>
-        <CustomersPage />
-      </AppProviders>
+      <AppProviders>{/* Your app routes/pages */}</AppProviders>
     </BrowserRouter>
   );
 }
 ```
 
-## Local development
+## Local development (step-by-step)
+
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/sito-dashboard-app.git
-   cd sito-dashboard-app
+   git clone https://github.com/sito8943/-sito-dashboard-app.git
+   cd ./-sito-dashboard-app
    ```
-2. Install dependencies:
+2. Use the project Node version:
+   ```bash
+   nvm use
+   ```
+3. Install dependencies:
    ```bash
    npm install
    ```
-3. Start the Vite dev server:
+4. Start the dev server:
    ```bash
    npm run dev
    ```
+5. (Optional) Run Storybook:
+   ```bash
+   npm run storybook
+   ```
 
-## Build the library
-Produce the distributable artifacts by running:
+## Scripts
+
+- `npm run dev`: start Vite dev server
+- `npm run build`: compile TypeScript and build the library
+- `npm run preview`: preview the Vite build locally
+- `npm run lint`: run ESLint
+- `npm run format`: run Prettier write mode
+- `npm run storybook`: run Storybook locally
+- `npm run build-storybook`: generate static Storybook build
+
+## Tests
+
+This repository currently does not define an automated test runner script (`npm run test` is not available yet). Current validation is done through:
+
+- `npm run lint`
+- `npm run build`
+- Storybook/manual behavior checks
+
+If you add automated tests later, expose them through a `test` script in `package.json` and document the command in this section.
+
+## Linting and formatting
+
+Run linters:
 
 ```bash
-npm run build
+npm run lint
 ```
 
+Run formatting:
+
+```bash
+npm run format
+```
+
+## Deployment / release
+
+There is no CI/CD deployment workflow committed in this repository right now. Package release is handled manually.
+
+Recommended release flow:
+
+1. Ensure your branch is up to date and the working tree is clean.
+2. Update version:
+   ```bash
+   npm version patch
+   # or: npm version minor / npm version major
+   ```
+3. Validate package:
+   ```bash
+   npm run lint
+   npm run build
+   ```
+4. Publish to npm:
+   ```bash
+   npm publish --access public
+   ```
+5. Push commit and tag:
+   ```bash
+   git push --follow-tags
+   ```
+
 ## Contributing
-Contributions are welcome! Please:
+
 1. Fork the repository.
-2. Create a descriptive branch for your feature or fix.
-3. Open a pull request explaining the change and how to test it.
+2. Create a branch for your feature/fix.
+3. Open a PR with a clear change summary and validation notes.
 
 ## License
-This project is licensed under the MIT License.
+
+MIT (see `LICENSE`).
