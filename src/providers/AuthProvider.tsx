@@ -27,11 +27,11 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     return (
       !!fromLocal(guestMode, "boolean") && account.token === undefined
     );
-  }, [account.token]);
+  }, [account.token, guestMode]);
 
   const setGuestMode = useCallback((value: boolean) => {
     toLocal(guestMode, value);
-  }, []);
+  }, [guestMode]);
 
   const logUser = useCallback((data: SessionDto) => {
     if (data) {
@@ -39,7 +39,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
       removeFromLocal(guestMode);
       toLocal(user, data.token);
     }
-  }, []);
+  }, [guestMode, user]);
 
   const logoutUser = useCallback(async () => {
     try {
@@ -49,7 +49,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     }
     setAccount({} as SessionDto);
     removeFromLocal(user);
-  }, [manager.Auth]);
+  }, [manager.Auth, user]);
 
   const logUserFromLocal = useCallback(async () => {
     try {
