@@ -74,6 +74,34 @@ describe("APIClient", () => {
     );
   });
 
+  it("uses custom tokenAcquirer when provided", async () => {
+    const customTokenAcquirer = vi.fn(() => ({
+      Authorization: "Bearer custom-token",
+    }));
+    makeRequestMock.mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient(
+      "https://api.test",
+      "user",
+      true,
+      customTokenAcquirer
+    );
+
+    await client.doQuery("/users");
+
+    expect(customTokenAcquirer).toHaveBeenCalledOnce();
+    expect(makeRequestMock).toHaveBeenCalledWith(
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer custom-token" }
+    );
+  });
+
   it("throws on doQuery when request returns error", async () => {
     makeRequestMock.mockResolvedValue({
       data: null,

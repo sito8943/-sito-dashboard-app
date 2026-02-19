@@ -18,7 +18,7 @@ import { parseQueries } from "./utils";
  * @description it has all base methods
  */
 export class APIClient {
-  baseUrl: string;
+  baseUrl: string;            
   userKey: string;
   secured: boolean;
   tokenAcquirer!: (useCookie?: boolean) => HeadersInit | undefined;
@@ -33,12 +33,12 @@ export class APIClient {
     baseUrl: string,
     userKey = "user",
     secured = true,
-    tokenAcquirer = null
+    tokenAcquirer?: (useCookie?: boolean) => HeadersInit | undefined
   ) {
     this.baseUrl = baseUrl;
     this.secured = secured;
     this.userKey = userKey;
-    if (!tokenAcquirer) this.tokenAcquirer = this.defaultTokenAcquirer;
+    this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer;
   }
 
   defaultTokenAcquirer(useCookie?: boolean) {
@@ -56,7 +56,7 @@ export class APIClient {
     body?: TBody,
     header?: HeadersInit
   ) {
-    const securedHeader = this.secured ? this.defaultTokenAcquirer() : {};
+    const securedHeader = this.secured ? this.tokenAcquirer() : {};
     const { data: result, status, error } = await makeRequest(
       `${this.baseUrl}${endpoint}`,
       method,
@@ -92,7 +92,7 @@ export class APIClient {
     const builtUrl = parseQueries<TDto, TFilter>(endpoint, query, filters);
 
     const securedHeader = this.secured
-      ? this.defaultTokenAcquirer()
+      ? this.tokenAcquirer()
       : undefined;
     const { data: result, error } = await makeRequest(
       `${this.baseUrl}${builtUrl}`,
@@ -116,7 +116,7 @@ export class APIClient {
     data: TUpdateDto
   ): Promise<TDto> {
     const securedHeader = this.secured
-      ? this.defaultTokenAcquirer()
+      ? this.tokenAcquirer()
       : undefined;
     const { error, data: result, status } = await makeRequest<TUpdateDto, TDto>(
       `${this.baseUrl}${endpoint}`,
@@ -143,7 +143,7 @@ export class APIClient {
    */
   async delete(endpoint: string, data: number[]) {
     const securedHeader = this.secured
-      ? this.defaultTokenAcquirer()
+      ? this.tokenAcquirer()
       : undefined;
     const { error, data: result, status } = await makeRequest<number[], number>(
       `${this.baseUrl}${endpoint}`,
@@ -171,7 +171,7 @@ export class APIClient {
    */
   async post<TDto, TAddDto>(endpoint: string, data: TAddDto): Promise<TDto> {
     const securedHeader = this.secured
-      ? this.defaultTokenAcquirer()
+      ? this.tokenAcquirer()
       : undefined;
     const { error, data: result, status } = await makeRequest<TAddDto, TDto>(
       `${this.baseUrl}${endpoint}`,
