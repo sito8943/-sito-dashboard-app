@@ -17,7 +17,9 @@ const queryClient = new QueryClient({
   },
 });
 
-const ManagerContext = createContext({} as ManagerProviderContextType);
+const ManagerContext = createContext<ManagerProviderContextType | undefined>(
+  undefined
+);
 
 /**
  * Manager Provider
@@ -41,7 +43,7 @@ const ManagerProvider = (props: ManagerProviderPropTypes) => {
 const useManager = () => {
   const context = useContext(ManagerContext);
 
-  if (context === undefined)
+  if (!context)
     throw new Error("managerContext must be used within a Provider");
   return context.client;
 };

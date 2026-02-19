@@ -9,7 +9,9 @@ import { useManager } from "./ManagerProvider";
 // lib
 import { toLocal, removeFromLocal, fromLocal, SessionDto } from "lib";
 
-const AuthContext = createContext({} as AuthProviderContextType);
+const AuthContext = createContext<AuthProviderContextType | undefined>(
+  undefined
+);
 
 /**
  * Auth Provider
@@ -80,7 +82,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
 const useAuth = () => {
   const context = useContext(AuthContext);
 
-  if (context === undefined)
+  if (!context)
     throw new Error("authContext must be used within a Provider");
   return context;
 };

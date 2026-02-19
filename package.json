@@ -46,7 +46,7 @@
     "components"
   ],
   "author": "sito8943",
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "@emotion/css": "11.13.5",
     "@fortawesome/fontawesome-svg-core": "7.0.0",
