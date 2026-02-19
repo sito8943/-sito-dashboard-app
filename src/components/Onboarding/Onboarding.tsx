@@ -23,11 +23,11 @@ export const Onboarding = (props: OnboardingPropsType) => {
         <Step
           translation={step}
           final={i === steps.length - 1}
-          onClickNext={() => setCurrentStep(currentStep + 1)}
+          onClickNext={() => setCurrentStep((prev) => prev + 1)}
         />
       ),
     }));
-  }, [currentStep]);
+  }, [steps]);
 
   return (
     <div className="onboarding-main">

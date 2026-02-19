@@ -1,8 +1,6 @@
 // types
 import { HttpResponse } from "./types";
 
-const isAnError = (status: number) => status < 200 || status > 299;
-
 export enum Methods {
   GET = "GET",
   POST = "POST",
