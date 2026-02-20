@@ -46,7 +46,7 @@ export function Navbar(props: NavbarPropsType) {
       openDrawer();
     },
     name: menuButtonProps?.name ?? t("_accessibility:buttons.openMenu"),
-    ariaLabel:
+    "aria-label":
       menuButtonProps?.["aria-label"] ??
       t("_accessibility:ariaLabels.openMenu"),
     className: `navbar-menu animated ${menuButtonProps?.className ?? ""}`,
