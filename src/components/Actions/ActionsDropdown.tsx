@@ -29,6 +29,7 @@ export const ActionsDropdown = <TRow extends BaseEntityDto>(
       <IconButton
         icon={faEllipsisV}
         onClick={() => setOpenMenu(true)}
+        className="actions-dropdown-trigger"
         data-tooltip-id="tooltip"
         data-tooltip-content={t("_accessibility:buttons.openActions")}
       />
