@@ -1,31 +1,16 @@
+import {
+  IconButton as IconButtonBase,
+  IconButtonPropsType,
+} from "@sito/dashboard";
+
+// icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
-// types
-import { IconButtonPropsType } from "./types";
+export type IconButtonPropsLocalType = Omit<IconButtonPropsType, "icon"> & {
+  icon: IconDefinition;
+};
 
-// styles
-import "./styles.css";
-
-export const IconButton = (props: IconButtonPropsType) => {
-  const {
-    children,
-    icon,
-    type = "button",
-    className = "",
-    variant = "text",
-    color = "default",
-    iconClassName = "",
-    ...rest
-  } = props;
-
-  return (
-    <button
-      type={type}
-      className={`icon-button ${className} ${variant} ${color}`}
-      {...rest}
-    >
-      <FontAwesomeIcon icon={icon} className={`!w-auto ${iconClassName}`} />
-      {children}
-    </button>
-  );
+export const AppIconButton = ({ icon, ...rest }: IconButtonPropsLocalType) => {
+  return <IconButtonBase icon={<FontAwesomeIcon icon={icon} />} {...rest} />;
 };

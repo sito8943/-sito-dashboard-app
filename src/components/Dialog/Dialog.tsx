@@ -12,7 +12,7 @@ import { css } from "@emotion/css";
 import { DialogPropsType } from "./types";
 
 // components
-import { IconButton } from "components";
+import { AppIconButton } from "components";
 
 // styles
 import "./styles.css";
@@ -101,7 +101,7 @@ export const Dialog = (props: DialogPropsType) => {
       >
         <div className="dialog-header">
           <h3 className="text-text text-xl">{title}</h3>
-          <IconButton
+          <AppIconButton
             icon={faClose}
             disabled={!open}
             aria-disabled={!open}

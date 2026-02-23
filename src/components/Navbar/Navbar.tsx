@@ -1,10 +1,5 @@
 import { useTranslation } from "@sito/dashboard";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  MouseEvent as ReactMouseEvent,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // icons
 import { faBars, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -19,7 +14,7 @@ import "./styles.css";
 import { Clock } from "./Clock";
 
 // components
-import { IconButton } from "components";
+import { AppIconButton } from "components";
 
 // utils
 import { isMac } from "lib";
@@ -36,21 +31,6 @@ export function Navbar(props: NavbarPropsType) {
     showSearch = true,
     menuButtonProps,
   } = props;
-
-  const defaultMenuProps = {
-    ...menuButtonProps,
-    type: menuButtonProps?.type ?? "button",
-    icon: menuButtonProps?.icon ?? faBars,
-    onClick: (e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => {
-      menuButtonProps?.onClick?.(e);
-      openDrawer();
-    },
-    name: menuButtonProps?.name ?? t("_accessibility:buttons.openMenu"),
-    "aria-label":
-      menuButtonProps?.["aria-label"] ??
-      t("_accessibility:ariaLabels.openMenu"),
-    className: `navbar-menu animated ${menuButtonProps?.className ?? ""}`,
-  };
 
   const { searchComponent } = useConfig();
 
@@ -80,12 +60,26 @@ export function Navbar(props: NavbarPropsType) {
       )}
       <header id="header" className="header">
         <div className="navbar-left">
-          <IconButton {...defaultMenuProps} />
+          <AppIconButton
+            {...menuButtonProps}
+            type={menuButtonProps?.type ?? "button"}
+            icon={menuButtonProps?.icon ?? faBars}
+            onClick={(e) => {
+              menuButtonProps?.onClick?.(e);
+              openDrawer();
+            }}
+            name={menuButtonProps?.name ?? t("_accessibility:buttons.openMenu")}
+            aria-label={
+              menuButtonProps?.["aria-label"] ??
+              t("_accessibility:ariaLabels.openMenu")
+            }
+            className={`navbar-menu animated ${menuButtonProps?.className ?? ""}`}
+          />
           <h1 className="poppins navbar-title">{t("_pages:home.appName")}</h1>
         </div>
         <div className="navbar-right">
           {showSearch && (
-            <IconButton
+            <AppIconButton
               icon={faSearch}
               className="min-md:!hidden"
               onClick={() => setShowDialog(true)}

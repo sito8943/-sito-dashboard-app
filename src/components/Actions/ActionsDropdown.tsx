@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, Dropdown } from "@sito/dashboard";
 
 // icons
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
@@ -11,9 +11,8 @@ import { BaseEntityDto } from "lib";
 import { ActionsContainerPropsType } from "./types";
 
 // components
-import { Dropdown } from "../Dropdown/Dropdown";
 import { Actions } from "./Actions";
-import { IconButton } from "../Buttons";
+import { AppIconButton } from "../Buttons";
 
 export const ActionsDropdown = <TRow extends BaseEntityDto>(
   props: ActionsContainerPropsType<TRow>
@@ -26,9 +25,10 @@ export const ActionsDropdown = <TRow extends BaseEntityDto>(
 
   return (
     <div className={`actions-dropdown ${className}`}>
-      <IconButton
+      <AppIconButton
         icon={faEllipsisV}
         onClick={() => setOpenMenu(true)}
+        className="actions-dropdown-trigger"
         data-tooltip-id="tooltip"
         data-tooltip-content={t("_accessibility:buttons.openActions")}
       />

@@ -4,11 +4,11 @@ import { scrollTo } from "some-javascript-utils/browser";
 // icons
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
-// components
-import { IconButton } from "./IconButton";
-
 // hook
 import { useScrollTrigger } from "hooks";
+
+// components
+import { AppIconButton } from "components";
 
 // styles
 import "./styles.css";
@@ -19,7 +19,7 @@ export const ToTop = () => {
   const isScrolled = useScrollTrigger(200);
 
   return (
-    <IconButton
+    <AppIconButton
       icon={faArrowUp}
       onClick={() => scrollTo(0, 0)}
       data-tooltip-id="tooltip"

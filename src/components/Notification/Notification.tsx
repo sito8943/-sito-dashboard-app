@@ -17,7 +17,7 @@ import {
 import { NotificationEnumType } from "lib";
 
 // components
-import { IconButton } from "../Buttons";
+import { AppIconButton } from "../Buttons";
 
 // styles
 import "./styles.css";
@@ -29,6 +29,13 @@ export function Notification() {
 
   // track items that are playing the closing animation
   const [closing, setClosing] = useState<Set<number>>(new Set());
+
+  // reset closing state when list changes externally (setState during render, not in effect)
+  const [prevNotification, setPrevNotification] = useState(notification);
+  if (prevNotification !== notification) {
+    setPrevNotification(notification);
+    setClosing(new Set());
+  }
 
   const closeWithAnimation = useCallback(
     (index?: number) => {
@@ -88,10 +95,16 @@ export function Notification() {
 
   useEffect(() => {
     if (!notification?.length) return;
-    const handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
-    window.addEventListener("click", handler);
+    // Defer attaching the handler with setTimeout(0) so the click that
+    // triggered the notification to appear never fires the close handler.
+    let handler: ((e: MouseEvent) => void) | undefined;
+    const timerId = window.setTimeout(() => {
+      handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
+      window.addEventListener("click", handler);
+    }, 0);
     return () => {
-      window.removeEventListener("click", handler);
+      window.clearTimeout(timerId);
+      if (handler) window.removeEventListener("click", handler);
     };
   }, [notification?.length]);
 
@@ -108,11 +121,6 @@ export function Notification() {
       window.removeEventListener("keydown", onKeyPress);
     };
   }, [onKeyPress]);
-
-  // reset closing state when list changes externally
-  useEffect(() => {
-    setClosing(new Set());
-  }, [notification]);
 
   return createPortal(
     <div
@@ -142,7 +150,7 @@ export function Notification() {
                   {message}
                 </p>
               </div>
-              <IconButton
+              <AppIconButton
                 type="button"
                 icon={faClose}
                 color="error"

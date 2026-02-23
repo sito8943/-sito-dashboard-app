@@ -5,7 +5,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 // components
 import { TextInput, TextInputPropsType } from "@sito/dashboard";
-import { IconButton } from "components";
+import { AppIconButton } from "components";
 
 export const PasswordInput = forwardRef(function (
   props: TextInputPropsType,
@@ -15,7 +15,7 @@ export const PasswordInput = forwardRef(function (
 
   return (
     <TextInput {...props} type={showPassword ? "text" : "password"} ref={ref}>
-      <IconButton
+      <AppIconButton
         type="button"
         tabIndex={-1}
         className="absolute right-2 password-icon"

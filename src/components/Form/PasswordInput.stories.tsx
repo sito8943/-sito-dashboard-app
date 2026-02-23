@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useRef } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 import { PasswordInput } from "./PasswordInput";
 
 const meta = {
@@ -21,7 +21,15 @@ export const Basic: Story = {
   },
   render: (args) => {
     const ref = useRef<HTMLInputElement | null>(null);
-    return <PasswordInput {...args} ref={ref} />;
+
+    const [value, setValue] = useState("");
+    return (
+      <PasswordInput
+        {...args}
+        ref={ref}
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+      />
+    );
   },
 };
-

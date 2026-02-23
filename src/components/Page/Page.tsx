@@ -10,7 +10,7 @@ import {
 } from "@sito/dashboard";
 
 // components
-import { IconButton } from "components";
+import { AppIconButton } from "components";
 
 // types
 import { PagePropsType } from "./types";
@@ -104,7 +104,7 @@ export const Page = <TEntity extends BaseEntityDto>(
         {isLoading ? <Loading className="page-loading" /> : children}
       </div>
       {addOptions && (
-        <IconButton
+        <AppIconButton
           icon={addOptions.icon ?? faAdd}
           color={addOptions.color ?? "primary"}
           variant={addOptions.variant ?? "submit"}

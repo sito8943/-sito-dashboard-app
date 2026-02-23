@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 // types
 import { TabsLayoutPropsType } from "./types";
@@ -16,15 +16,11 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
     className = "",
     tabsContainerClassName = "",
   } = props;
-  const [activeTab, setActiveTab] = useState(tabs[0]?.id);
+  const [activeTab, setActiveTab] = useState(defaultTab ?? tabs[0]?.id);
 
   const current = useMemo(() => {
     return tabs.find((item) => item.id === activeTab);
   }, [tabs, activeTab]);
-
-  useEffect(() => {
-    if (defaultTab) setActiveTab(defaultTab);
-  }, [defaultTab]);
 
   return (
     <div className={`tabs-layout-main ${className}`}>

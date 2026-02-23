@@ -26,7 +26,7 @@ export const Basic: Story = {
     return (
       <div>
         <button
-          className="button contained primary mb-4"
+          className="button submit primary mb-4"
           onClick={() => setOpen(true)}
         >
           Open Dialog
