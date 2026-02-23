@@ -78,7 +78,7 @@ const DynamicDrawerExample = () => {
   return (
     <div>
       <div className="flex gap-2 mb-4 flex-wrap">
-        <button className="button contained primary" onClick={() => setOpen(true)}>
+        <button className="button submit primary" onClick={() => setOpen(true)}>
           Open drawer
         </button>
         <button className="button outlined" onClick={handleAddItem}>

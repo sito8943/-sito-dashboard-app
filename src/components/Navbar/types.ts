@@ -1,4 +1,4 @@
-import { IconButtonPropsType } from "components/Buttons/types";
+import { IconButtonPropsType } from "@sito/dashboard";
 
 export type NavbarPropsType = {
   menuButtonProps?: IconButtonPropsType;

@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 import { ActionType } from "@sito/dashboard";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 // types
 import { BaseEntityDto } from "lib";
-import { IconButtonPropsType } from "components/Buttons/types";
+import { IconButtonPropsType } from "@sito/dashboard";
 
 export type PagePropsType<TRow extends BaseEntityDto> = {
   title?: string;
@@ -18,8 +19,10 @@ export type PagePropsType<TRow extends BaseEntityDto> = {
 };
 
 export interface PageAddOptions<TRow extends BaseEntityDto>
-  extends Partial<ActionType<TRow>>,
-    Partial<Omit<IconButtonPropsType, "icon" | "onClick">> {}
+  extends Partial<Omit<ActionType<TRow>, "icon">>,
+    Partial<Omit<IconButtonPropsType, "icon" | "onClick">> {
+  icon?: IconDefinition;
+}
 
 export type PageHeaderPropsType<TRow extends BaseEntityDto> = {
   title?: string;

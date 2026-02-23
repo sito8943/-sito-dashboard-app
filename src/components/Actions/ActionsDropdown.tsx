@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, Dropdown } from "@sito/dashboard";
 
 // icons
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +11,6 @@ import { BaseEntityDto } from "lib";
 import { ActionsContainerPropsType } from "./types";
 
 // components
-import { Dropdown } from "../Dropdown/Dropdown";
 import { Actions } from "./Actions";
 import { IconButton } from "../Buttons";
 

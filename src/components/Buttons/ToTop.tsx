@@ -1,11 +1,8 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, IconButton } from "@sito/dashboard";
 import { scrollTo } from "some-javascript-utils/browser";
 
 // icons
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
-
-// components
-import { IconButton } from "./IconButton";
 
 // hook
 import { useScrollTrigger } from "hooks";
