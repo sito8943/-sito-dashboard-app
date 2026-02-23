@@ -95,10 +95,16 @@ export function Notification() {
 
   useEffect(() => {
     if (!notification?.length) return;
-    const handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
-    window.addEventListener("click", handler);
+    // Defer attaching the handler with setTimeout(0) so the click that
+    // triggered the notification to appear never fires the close handler.
+    let handler: ((e: MouseEvent) => void) | undefined;
+    const timerId = window.setTimeout(() => {
+      handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
+      window.addEventListener("click", handler);
+    }, 0);
     return () => {
-      window.removeEventListener("click", handler);
+      window.clearTimeout(timerId);
+      if (handler) window.removeEventListener("click", handler);
     };
   }, [notification?.length]);
 
