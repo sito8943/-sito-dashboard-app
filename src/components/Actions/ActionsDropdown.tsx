@@ -12,7 +12,7 @@ import { ActionsContainerPropsType } from "./types";
 
 // components
 import { Actions } from "./Actions";
-import { IconButton } from "../Buttons";
+import { AppIconButton } from "../Buttons";
 
 export const ActionsDropdown = <TRow extends BaseEntityDto>(
   props: ActionsContainerPropsType<TRow>
@@ -25,7 +25,7 @@ export const ActionsDropdown = <TRow extends BaseEntityDto>(
 
   return (
     <div className={`actions-dropdown ${className}`}>
-      <IconButton
+      <AppIconButton
         icon={faEllipsisV}
         onClick={() => setOpenMenu(true)}
         className="actions-dropdown-trigger"

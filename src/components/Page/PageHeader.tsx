@@ -10,7 +10,7 @@ import { PageHeaderPropsType } from "./types";
 import { BaseEntityDto } from "lib";
 
 // components
-import { Actions, ActionsDropdown, IconButton } from "components";
+import { Actions, ActionsDropdown, AppIconButton } from "components";
 
 // providers
 import { useConfig } from "providers";
@@ -31,7 +31,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
     <div className="page-header">
       <div className="page-header-left">
         {showBackButton && (
-          <IconButton
+          <AppIconButton
             icon={faArrowLeft}
             onClick={() => navigate(-1)}
             name={t("_accessibility:buttons.back")}

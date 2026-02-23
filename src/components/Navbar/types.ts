@@ -1,7 +1,7 @@
-import { IconButtonPropsType } from "@sito/dashboard";
+import { IconButtonPropsLocalType } from "../Buttons/IconButton";
 
 export type NavbarPropsType = {
-  menuButtonProps?: IconButtonPropsType;
+  menuButtonProps?: IconButtonPropsLocalType;
   openDrawer: () => void;
   showClock?: boolean;
   showSearch?: boolean;

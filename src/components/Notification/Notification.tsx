@@ -17,7 +17,7 @@ import {
 import { NotificationEnumType } from "lib";
 
 // components
-import { IconButton } from "../Buttons";
+import { AppIconButton } from "../Buttons";
 
 // styles
 import "./styles.css";
@@ -29,6 +29,13 @@ export function Notification() {
 
   // track items that are playing the closing animation
   const [closing, setClosing] = useState<Set<number>>(new Set());
+
+  // reset closing state when list changes externally (setState during render, not in effect)
+  const [prevNotification, setPrevNotification] = useState(notification);
+  if (prevNotification !== notification) {
+    setPrevNotification(notification);
+    setClosing(new Set());
+  }
 
   const closeWithAnimation = useCallback(
     (index?: number) => {
@@ -109,11 +116,6 @@ export function Notification() {
     };
   }, [onKeyPress]);
 
-  // reset closing state when list changes externally
-  useEffect(() => {
-    setClosing(new Set());
-  }, [notification]);
-
   return createPortal(
     <div
       className={`notification-portal ${
@@ -142,7 +144,7 @@ export function Notification() {
                   {message}
                 </p>
               </div>
-              <IconButton
+              <AppIconButton
                 type="button"
                 icon={faClose}
                 color="error"

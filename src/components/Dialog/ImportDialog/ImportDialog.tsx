@@ -46,7 +46,10 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     fileProcessorRef.current = fileProcessor;
   }, [fileProcessor]);
 
-  useEffect(() => {
+  // reset state when dialog closes (setState during render, not in effect)
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
     if (!open) {
       setFile(null);
       setPreviewItems(null);
@@ -55,15 +58,14 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       setOverrideExisting(false);
       setInputKey((k) => k + 1);
     }
-  }, [open]);
+  }
 
-  const handleFileProcessed = useCallback(async () => {
-    if (fileProcessorRef.current && file) {
+  const processFile = useCallback(
+    async (targetFile: File, override: boolean) => {
+      if (!fileProcessorRef.current) return;
       setProcessing(true);
       try {
-        const items = await fileProcessorRef.current(file, {
-          override: overrideExisting,
-        });
+        const items = await fileProcessorRef.current(targetFile, { override });
         setPreviewItems(items ?? []);
         setParseError(null);
         processedCallbackRef.current?.(items ?? []);
@@ -75,12 +77,9 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         setParseError(message);
       }
       setProcessing(false);
-    }
-  }, [file, overrideExisting]);
-
-  useEffect(() => {
-    handleFileProcessed();
-  }, [handleFileProcessed]);
+    },
+    []
+  );
 
   return (
     <Dialog {...rest} open={open} handleClose={handleClose}>
@@ -94,8 +93,8 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
           processedCallbackRef.current?.([]);
         }}
         onChange={(e) => {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (!file) {
+          const selectedFile = (e.target as HTMLInputElement).files?.[0];
+          if (!selectedFile) {
             setFile(null);
             setPreviewItems(null);
             setParseError(null);
@@ -103,7 +102,8 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
             processedCallbackRef.current?.([]);
             return;
           }
-          setFile(file);
+          setFile(selectedFile);
+          processFile(selectedFile, overrideExisting);
         }}
         label={t("_accessibility:labels.file")}
       />
@@ -115,6 +115,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
             const value = e.target.checked;
             setOverrideExisting(value);
             onOverrideChange?.(value);
+            if (file) processFile(file, value);
           }}
         />
         <span>

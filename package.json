@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.38",
+  "version": "0.0.39",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -81,9 +81,9 @@
     "@types/react-dom": "18.2.14",
     "@vitejs/plugin-react-swc": "3.7.2",
     "autoprefixer": "10.4.16",
-    "eslint": "9.39.2",
-    "eslint-plugin-react-hooks": "5.0.0",
-    "eslint-plugin-react-refresh": "0.4.18",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.5.1",
     "husky": "9.1.7",
     "jsdom": "^26.1.0",
     "prettier": "3.3.3",
@@ -94,13 +94,16 @@
     "storybook": "8.6.15",
     "tailwindcss": "4.1.11",
     "typescript": "5.7.2",
-    "typescript-eslint": "8.22.0",
+    "typescript-eslint": "^8.56.0",
     "vite": "6.4.1",
-    "vite-plugin-dts": "4.0.2",
+    "vite-plugin-dts": "^4.5.4",
     "vite-plugin-lib-inject-css": "1.3.0",
     "vitest": "^3.2.1"
   },
   "dependencies": {
     "some-javascript-utils": "0.10.10"
+  },
+  "overrides": {
+    "minimatch": "^10.2.2"
   }
 }
