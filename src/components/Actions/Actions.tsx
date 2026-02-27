@@ -27,9 +27,7 @@ export function Actions<TRow extends BaseEntityDto>(
             showTooltips={showTooltips}
             showText={showActionTexts}
             {...action}
-          >
-            {action.children}
-          </Action>
+          />
         </li>
       ))}
     </ul>
