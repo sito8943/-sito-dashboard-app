@@ -20,8 +20,8 @@ export const Empty = <TRow extends BaseEntityDto>(
   } = props;
   return (
     <div className="flex flex-col items-center justify-center gap-5 pt-5">
-      {iconProps && <FontAwesomeIcon {...(iconProps ?? {})} />}
-      <p {...(messageProps ?? {})}>{message}</p>
+      {iconProps && <FontAwesomeIcon {...iconProps} />}
+      <p {...messageProps}>{message}</p>
       {action && <Action showTooltips={false} showText={true} {...action} />}
     </div>
   );
