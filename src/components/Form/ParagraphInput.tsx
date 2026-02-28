@@ -51,7 +51,7 @@ export const ParagraphInput = forwardRef(function (
         {...rest}
       ></textarea>
       <label
-        htmlFor={name}
+        htmlFor={id}
         className={`text-input-label ${labelStateClassName(state)} ${labelClassName}`}
       >
         {label}

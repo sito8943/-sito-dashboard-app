@@ -4,13 +4,14 @@ import { useState, forwardRef, ForwardedRef } from "react";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 // components
-import { TextInput, TextInputPropsType } from "@sito/dashboard";
+import { TextInput, TextInputPropsType, useTranslation } from "@sito/dashboard";
 import { AppIconButton } from "components";
 
 export const PasswordInput = forwardRef(function (
   props: TextInputPropsType,
   ref: ForwardedRef<HTMLInputElement>
 ) {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -18,6 +19,11 @@ export const PasswordInput = forwardRef(function (
       <AppIconButton
         type="button"
         tabIndex={-1}
+        aria-label={t(
+          showPassword
+            ? "_accessibility:ariaLabels.hidePassword"
+            : "_accessibility:ariaLabels.showPassword"
+        )}
         className="absolute right-2 password-icon"
         onClick={() => setShowPassword(!showPassword)}
         icon={showPassword ? faEyeSlash : faEye}
