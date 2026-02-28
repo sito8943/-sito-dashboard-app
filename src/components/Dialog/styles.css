@@ -5,11 +5,15 @@
 }
 
 .dialog-backdrop {
-  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-xs:z-36;
+  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-xs:z-36 w-full h-screen;
 }
 
 .dialog-backdrop.opened {
-  @apply backdrop-blur-xs;
+  @apply backdrop-blur-xl bg-base/20;
+}
+
+.dialog-backdrop.closed {
+  @apply pointer-events-none;
 }
 
 .dialog {
@@ -26,4 +30,16 @@
 
 .dialog-header {
   @apply flex items-center justify-between gap-2 mb-6 max-xs:mb-10;
+}
+
+.dialog-title {
+  @apply text-text text-xl;
+}
+
+.dialog-actions {
+  @apply flex gap-2 mt-2;
+}
+
+.dialog-actions.end {
+  @apply justify-end;
 }

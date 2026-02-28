@@ -1,7 +1,12 @@
 import { Loading } from "@sito/dashboard";
 
+// styles
+import "./styles.css";
+
 export function SplashScreen() {
-  return <div className="w-screen h-screen flex items-center justify-center overflow-hidden">
-    <Loading className="blur-appear" />
-  </div>;
+  return (
+    <div className="splash-screen">
+      <Loading className="blur-appear" />
+    </div>
+  );
 }

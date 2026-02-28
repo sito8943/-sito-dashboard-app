@@ -12,3 +12,27 @@
 .notification.closing {
   @apply opacity-0 translate-y-2;
 }
+
+.notification-portal.active {
+  @apply w-screen h-screen;
+}
+
+.notification-body {
+  @apply flex gap-1 items-center min-w-0;
+}
+
+.notification-icon {
+  @apply shrink-0 max-xs:!hidden;
+}
+
+.notification-text {
+  @apply break-words text-sm max-xs:text-xs max-xs:pl-1;
+}
+
+.notification-close {
+  @apply !min-w-6 !min-h-6 !h-6 !w-6;
+}
+
+.notification-close-icon {
+  @apply group-hover:!text-red-400 cursor-pointer text-xs;
+}

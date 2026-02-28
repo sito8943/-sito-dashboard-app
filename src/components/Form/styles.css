@@ -3,3 +3,11 @@
 .form-container {
   @apply flex flex-col gap-7 pt-1;
 }
+
+.form-actions {
+  @apply flex gap-2 mt-5;
+}
+
+.form-actions.end {
+  @apply justify-end;
+}

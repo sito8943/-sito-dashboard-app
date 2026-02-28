@@ -9,6 +9,9 @@ import { BaseEntityDto } from "lib";
 // components
 import { Action } from "components";
 
+// styles
+import "./styles.css";
+
 export const Empty = <TRow extends BaseEntityDto>(
   props: EmptyPropsType<TRow>
 ) => {
@@ -19,7 +22,7 @@ export const Empty = <TRow extends BaseEntityDto>(
     iconProps,
   } = props;
   return (
-    <div className="flex flex-col items-center justify-center gap-5 pt-5">
+    <div className="empty-container">
       {iconProps && <FontAwesomeIcon {...iconProps} />}
       <p {...messageProps}>{message}</p>
       {action && <Action showTooltips={false} showText={true} {...action} />}

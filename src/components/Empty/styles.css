@@ -1,0 +1,5 @@
+@reference "../../index.css";
+
+.empty-container {
+  @apply flex flex-col items-center justify-center gap-5 pt-5;
+}

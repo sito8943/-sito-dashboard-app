@@ -68,8 +68,6 @@ export const Dialog = (props: DialogPropsType) => {
       onClick={bigHandleClose}
       className={`dialog-backdrop animated ${
         open ? `opened ${animationClass}` : "closed"
-      } w-full h-screen ${
-        open ? "bg-base/20 backdrop-blur-xl" : "pointer-events-none"
       } ${containerClassName}`}
     >
       <div
@@ -78,7 +76,7 @@ export const Dialog = (props: DialogPropsType) => {
         } ${className}`}
       >
         <div className="dialog-header">
-          <h3 className="text-text text-xl">{title}</h3>
+          <h3 className="dialog-title">{title}</h3>
           <AppIconButton
             icon={faClose}
             disabled={!open}

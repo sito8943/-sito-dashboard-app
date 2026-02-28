@@ -81,7 +81,7 @@ export function Navbar(props: NavbarPropsType) {
           {showSearch && (
             <AppIconButton
               icon={faSearch}
-              className="min-md:!hidden"
+              className="navbar-search-btn"
               onClick={() => setShowDialog(true)}
             />
           )}

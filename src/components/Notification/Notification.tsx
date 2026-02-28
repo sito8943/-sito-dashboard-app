@@ -220,7 +220,7 @@ export function Notification() {
 
   return createPortal(
     <div
-      className={`notification-portal ${visible.length ? "w-screen h-screen" : ""}`}
+      className={`notification-portal ${visible.length ? "active" : ""}`}
     >
       {visible.map(({ id, type, message }) => {
         const resolvedT = resolvedType(type);
@@ -230,12 +230,12 @@ export function Notification() {
             className={`notification ${id !== undefined && closing.has(id) ? "closing" : ""} ${bgColor(resolvedT)}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex gap-3 items-center min-w-0">
+            <div className="notification-body">
               <FontAwesomeIcon
                 icon={renderIcon(resolvedT)}
-                className={`shrink-0 max-xs:!hidden ${textColor(resolvedT)}`}
+                className={`notification-icon ${textColor(resolvedT)}`}
               />
-              <p className={`break-words text-sm max-xs:text-xs max-xs:pl-1 ${textColor(resolvedT)}`}>
+              <p className={`notification-text ${textColor(resolvedT)}`}>
                 {message}
               </p>
             </div>
@@ -243,12 +243,12 @@ export function Notification() {
               type="button"
               icon={faClose}
               color="error"
-              className="group"
+              className="group notification-close"
               onClick={(e) => {
                 e.stopPropagation();
                 if (id !== undefined) closeWithAnimation(id);
               }}
-              iconClassName={`${textColor(resolvedT)} group-hover:!text-red-400 cursor-pointer`}
+              iconClassName={`${textColor(resolvedT)} notification-close-icon`}
               name={t("_accessibility:buttons.closeNotification")}
               aria-label={t("_accessibility:ariaLabels.closeNotification")}
             />

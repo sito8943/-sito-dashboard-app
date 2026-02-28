@@ -7,6 +7,9 @@ import { DialogActionsProps } from "./types";
 // components
 import { Button } from "components";
 
+// styles
+import "./styles.css";
+
 export const DialogActions = (props: DialogActionsProps) => {
   const {
     primaryText,
@@ -27,7 +30,7 @@ export const DialogActions = (props: DialogActionsProps) => {
 
   return (
     <div
-      className={`flex gap-2 mt-2 ${alignEnd ? "justify-end" : ""} ${containerClassName}`}
+      className={`dialog-actions ${alignEnd ? "end" : ""} ${containerClassName}`}
     >
       <Button
         type={primaryType}
