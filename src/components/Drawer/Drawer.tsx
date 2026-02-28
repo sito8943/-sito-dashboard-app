@@ -21,7 +21,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const { account } = useAuth();
   const { dynamicItems } = useDrawerMenu();
 
-  const { linkComponent } = useConfig();
+  const { linkComponent, location } = useConfig();
   const Link = linkComponent;
 
   const parsedMenu = useMemo(() => {
@@ -59,7 +59,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       isChild
         ? path === `${location.pathname}${location.search}`
         : path === location.pathname,
-    []
+    [location.pathname, location.search]
   );
 
   const renderChild = useCallback(
