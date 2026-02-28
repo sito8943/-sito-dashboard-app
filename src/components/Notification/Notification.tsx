@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "@sito/dashboard";
 import { createPortal } from "react-dom";
 
@@ -14,7 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { NotificationEnumType } from "lib";
+import { NotificationEnumType, NotificationType } from "lib";
 
 // components
 import { AppIconButton } from "../Buttons";
@@ -22,152 +28,225 @@ import { AppIconButton } from "../Buttons";
 // styles
 import "./styles.css";
 
+type Item = NotificationType & { closing: boolean };
+
+const ANIM_MS = 300;
+
+const resolvedType = (type?: NotificationEnumType) =>
+  type ?? NotificationEnumType.error;
+
+const renderIcon = (type: NotificationEnumType) => {
+  switch (type) {
+    case NotificationEnumType.error:
+      return faWarning;
+    default:
+      return faCircleCheck;
+  }
+};
+
+const textColor = (type: NotificationEnumType) => {
+  switch (type) {
+    case NotificationEnumType.success:
+      return "!text-success";
+    case NotificationEnumType.error:
+      return "!text-error";
+    case NotificationEnumType.warning:
+      return "!text-warning";
+    default:
+      return "!text-info";
+  }
+};
+
+const bgColor = (type: NotificationEnumType) => {
+  switch (type) {
+    case NotificationEnumType.success:
+      return "bg-bg-success";
+    case NotificationEnumType.error:
+      return "bg-bg-error";
+    case NotificationEnumType.warning:
+      return "bg-bg-warning";
+    default:
+      return "bg-bg-info";
+  }
+};
+
 export function Notification() {
   const { t } = useTranslation();
 
   const { notification, removeNotification } = useNotification();
 
-  // track items that are playing the closing animation
-  const [closing, setClosing] = useState<Set<number>>(new Set());
+  // Single state: each item carries its own closing flag.
+  // Eliminates the separate `visible` array + `closing` Set.
+  const [items, setItems] = useState<Item[]>([]);
 
-  // reset closing state when list changes externally (setState during render, not in effect)
-  const [prevNotification, setPrevNotification] = useState(notification);
-  if (prevNotification !== notification) {
-    setPrevNotification(notification);
-    setClosing(new Set());
-  }
+  // "Latest value" ref — kept in sync via useLayoutEffect (runs synchronously
+  // after each commit, before useEffect) so the notification sync effect always
+  // reads the current rendered items without adding them to its own dep array.
+  const itemsRef = useRef(items);
+  useLayoutEffect(() => {
+    itemsRef.current = items;
+  });
 
-  const closeWithAnimation = useCallback(
-    (index?: number) => {
-      if (index === undefined) {
-        // close all with animation
-        const all = new Set<number>(notification.map((_, i) => i));
-        setClosing(all);
-        window.setTimeout(() => removeNotification(), 300);
+  // Shared timer for provider-driven transitions (clear-all and replace).
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ── Close with animation ────────────────────────────────────────────────
+  // id=undefined → close all; id=number → close one.
+  const close = useCallback(
+    (id?: number) => {
+      setItems((prev) =>
+        id !== undefined
+          ? prev.map((i) => (i.id === id ? { ...i, closing: true } : i))
+          : prev.map((i) => ({ ...i, closing: true }))
+      );
+
+      if (id !== undefined) {
+        // Individual close — loose timer; stale-id no-ops are harmless.
+        setTimeout(() => {
+          removeNotification(id);
+          setItems((prev) => prev.filter((i) => i.id !== id));
+        }, ANIM_MS);
       } else {
-        setClosing((prev) => new Set(prev).add(index));
-        window.setTimeout(() => removeNotification(index), 300);
+        // Close all — use the shared timer so cleanup can cancel it.
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          removeNotification();
+          setItems([]);
+          timerRef.current = null;
+        }, ANIM_MS);
       }
     },
-    [notification, removeNotification]
+    [removeNotification]
   );
 
-  const renderIcon = useCallback((type: NotificationEnumType) => {
-    switch (type) {
-      case NotificationEnumType.error:
-        return faWarning;
-      default: // success
-        return faCircleCheck;
-    }
-  }, []);
-
-  const textColor = useCallback((type: NotificationEnumType) => {
-    switch (type) {
-      case NotificationEnumType.success:
-        return "!text-success";
-      case NotificationEnumType.error:
-        return "!text-error";
-      case NotificationEnumType.warning:
-        return "!text-warning";
-      default:
-        return "!text-info";
-    }
-  }, []);
-
-  const bgColor = useCallback((type: NotificationEnumType) => {
-    switch (type) {
-      case NotificationEnumType.success:
-        return "bg-bg-success";
-      case NotificationEnumType.error:
-        return "bg-bg-error";
-      case NotificationEnumType.warning:
-        return "bg-bg-warning";
-      default:
-        return "bg-bg-info";
-    }
-  }, []);
-
-  const windowClickHandlerRef = useRef<(e: MouseEvent) => void>();
-
+  // ── Sync provider → items (with animation) ─────────────────────────────
+  // All setItems calls live inside setTimeout callbacks to satisfy the
+  // react-hooks/set-state-in-effect rule.
   useEffect(() => {
-    windowClickHandlerRef.current = () => closeWithAnimation();
-  }, [closeWithAnimation]);
+    // Local timer for the "mark as closing" step (fires at ~0 ms).
+    // timerRef holds the "clear / replace" step (fires at ANIM_MS).
+    let markClosingTimer: ReturnType<typeof setTimeout> | null = null;
 
-  useEffect(() => {
-    if (!notification?.length) return;
-    // Defer attaching the handler with setTimeout(0) so the click that
-    // triggered the notification to appear never fires the close handler.
-    let handler: ((e: MouseEvent) => void) | undefined;
-    const timerId = window.setTimeout(() => {
-      handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
-      window.addEventListener("click", handler);
+    const cleanup = () => {
+      if (markClosingTimer) clearTimeout(markClosingTimer);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+
+    if (notification.length === 0) {
+      // Provider cleared all — play exit animation instead of instant wipe.
+      if (itemsRef.current.length === 0) return;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      // Step 1: mark all as closing so the CSS animation starts.
+      markClosingTimer = setTimeout(() => {
+        setItems((prev) => prev.map((i) => ({ ...i, closing: true })));
+        markClosingTimer = null;
+      }, 0);
+      // Step 2: clear items once the animation has finished.
+      timerRef.current = setTimeout(() => {
+        setItems([]);
+        timerRef.current = null;
+      }, ANIM_MS);
+      return cleanup;
+    }
+
+    const prevIds = new Set(itemsRef.current.map((i) => i.id));
+    const hasNew = notification.some(
+      (n) => n.id !== undefined && !prevIds.has(n.id)
+    );
+    if (!hasNew) return;
+
+    if (itemsRef.current.length === 0) {
+      // No visible items — show incoming on next tick.
+      const incoming = [...notification];
+      markClosingTimer = setTimeout(() => {
+        setItems(incoming.map((n) => ({ ...n, closing: false })));
+        markClosingTimer = null;
+      }, 0);
+      return () => {
+        if (markClosingTimer) clearTimeout(markClosingTimer);
+      };
+    }
+
+    // Existing items + new notifications: animate out old, then show new.
+    if (timerRef.current) clearTimeout(timerRef.current);
+    markClosingTimer = setTimeout(() => {
+      setItems((prev) =>
+        prev.every((i) => i.closing)
+          ? prev // already animating out, avoid spurious update
+          : prev.map((i) => ({ ...i, closing: true }))
+      );
+      markClosingTimer = null;
     }, 0);
-    return () => {
-      window.clearTimeout(timerId);
-      if (handler) window.removeEventListener("click", handler);
-    };
-  }, [notification?.length]);
+    const incoming = [...notification];
+    timerRef.current = setTimeout(() => {
+      setItems(incoming.map((n) => ({ ...n, closing: false })));
+      timerRef.current = null;
+    }, ANIM_MS);
+    return cleanup;
+  }, [notification]);
 
-  const onKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape" && notification.length) closeWithAnimation();
-    },
-    [notification, closeWithAnimation]
-  );
-
+  // ── Click outside + ESC to dismiss all ────────────────────────────────
   useEffect(() => {
-    window.addEventListener("keydown", onKeyPress);
-    return () => {
-      window.removeEventListener("keydown", onKeyPress);
+    if (!items.length) return;
+
+    let clickHandler: ((e: MouseEvent) => void) | undefined;
+    // Defer attaching the click handler so the click that triggered the
+    // notification to appear never immediately dismisses it.
+    const deferTimerId = window.setTimeout(() => {
+      clickHandler = () => close();
+      window.addEventListener("click", clickHandler);
+    }, 0);
+
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
     };
-  }, [onKeyPress]);
+    window.addEventListener("keydown", keyHandler);
+
+    return () => {
+      window.clearTimeout(deferTimerId);
+      if (clickHandler) window.removeEventListener("click", clickHandler);
+      window.removeEventListener("keydown", keyHandler);
+    };
+  }, [items.length, close]);
 
   return createPortal(
-    <div
-      className={`notification-portal ${
-        notification?.length ? "w-screen h-screen" : ""
-      }`}
-    >
-      {notification?.length
-        ? notification?.map(({ id, type, message }, i) => (
-            <div
-              key={id}
-              className={`notification ${closing.has(i) ? "closing" : ""} ${bgColor(
-                type ?? NotificationEnumType.error
-              )}`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex gap-3 items-center">
-                <FontAwesomeIcon
-                  icon={renderIcon(type ?? NotificationEnumType.error)}
-                  className={`${textColor(type ?? NotificationEnumType.error)}`}
-                />
-                <p
-                  className={`whitespace-nowrap ${textColor(
-                    type ?? NotificationEnumType.error
-                  )}`}
-                >
-                  {message}
-                </p>
-              </div>
-              <AppIconButton
-                type="button"
-                icon={faClose}
-                color="error"
-                className="group"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeWithAnimation(i);
-                }}
-                iconClassName={`${textColor(
-                  type ?? NotificationEnumType.error
-                )} group-hover:!text-red-400 cursor-pointer`}
-                name={t("_accessibility:buttons.closeNotification")}
-                aria-label={t("_accessibility:ariaLabels.closeNotification")}
+    <div className={`notification-portal ${items.length ? "active" : ""}`}>
+      {items.map(({ id, type, message, closing }) => {
+        const resolvedT = resolvedType(type);
+        return (
+          <div
+            key={id}
+            className={`notification ${closing ? "closing" : ""} ${bgColor(resolvedT)}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="notification-body">
+              <FontAwesomeIcon
+                icon={renderIcon(resolvedT)}
+                className={`notification-icon ${textColor(resolvedT)}`}
               />
+              <p className={`notification-text ${textColor(resolvedT)}`}>
+                {message}
+              </p>
             </div>
-          ))
-        : null}
+            <AppIconButton
+              type="button"
+              icon={faClose}
+              color="error"
+              className="notification-close group"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (id !== undefined) close(id);
+              }}
+              iconClassName={`${textColor(resolvedT)} notification-close-icon`}
+              name={t("_accessibility:buttons.closeNotification")}
+              aria-label={t("_accessibility:ariaLabels.closeNotification")}
+            />
+          </div>
+        );
+      })}
     </div>,
     document.body
   );

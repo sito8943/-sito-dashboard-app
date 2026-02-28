@@ -11,8 +11,8 @@ import { FormDialogPropsType } from "./types";
 // styles
 import "./styles.css";
 
-export const FormDialog = <TInput extends FieldValues, TError extends Error>(
-  props: FormDialogPropsType<TInput, TError>
+export const FormDialog = <TInput extends FieldValues>(
+  props: FormDialogPropsType<TInput>
 ) => {
   const { t } = useTranslation();
   const {
@@ -36,7 +36,7 @@ export const FormDialog = <TInput extends FieldValues, TError extends Error>(
           onCancel={handleClose}
           isLoading={isLoading}
           disabled={isLoading}
-          primaryClassName="!px-6"
+          primaryClassName="dialog-form-primary"
           alignEnd={buttonEnd}
           primaryName={t("_accessibility:buttons.submit")}
           primaryAriaLabel={t("_accessibility:ariaLabels.submit")}

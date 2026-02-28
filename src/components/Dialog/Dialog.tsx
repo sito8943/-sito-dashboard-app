@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useMemo, useState, MouseEvent } from "react";
+import { useCallback, useEffect, MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "@sito/dashboard";
 
 // icons
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-
-// @emotion/css
-import { css } from "@emotion/css";
 
 // types
 import { DialogPropsType } from "./types";
@@ -29,8 +26,6 @@ export const Dialog = (props: DialogPropsType) => {
     animationClass = "appear",
   } = props;
 
-  const [windowSize, setWindowSize] = useState(window.innerWidth);
-
   const onKeyPress = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) handleClose();
@@ -45,28 +40,11 @@ export const Dialog = (props: DialogPropsType) => {
     };
   }, [onKeyPress]);
 
-  const onWindowsResize = useCallback(() => {
-    setWindowSize(window.innerWidth);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("resize", onWindowsResize);
-    return () => {
-      window.removeEventListener("resize", onWindowsResize);
-    };
-  }, [onWindowsResize]);
-
-  const styles = useMemo(() => css({ width: `${windowSize}px` }), [windowSize]);
-
   const bigHandleClose = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
-      if (
-        e?.currentTarget?.getAttribute("name") ===
-        t("_accessibility:buttons.closeDialog")
-      )
-        handleClose();
+      if (e.target === e.currentTarget) handleClose();
     },
-    [t, handleClose]
+    [handleClose]
   );
 
   useEffect(() => {
@@ -79,19 +57,17 @@ export const Dialog = (props: DialogPropsType) => {
     };
     toggleBodyOverflow(open);
     return () => {
-      toggleBodyOverflow(open);
+      toggleBodyOverflow(false);
     };
   }, [open]);
 
   return createPortal(
     <div
       aria-label={t("_accessibility:ariaLabels.closeDialog")}
-      aria-disabled={!open}
+      aria-hidden={!open}
       onClick={bigHandleClose}
       className={`dialog-backdrop animated ${
         open ? `opened ${animationClass}` : "closed"
-      } ${styles} h-screen ${
-        open ? "bg-base/20 backdrop-blur-xl" : "pointer-events-none"
       } ${containerClassName}`}
     >
       <div
@@ -100,13 +76,13 @@ export const Dialog = (props: DialogPropsType) => {
         } ${className}`}
       >
         <div className="dialog-header">
-          <h3 className="text-text text-xl">{title}</h3>
+          <h3 className="dialog-title">{title}</h3>
           <AppIconButton
             icon={faClose}
             disabled={!open}
             aria-disabled={!open}
             onClick={handleClose}
-            className="icon-button text-red-400"
+            className="icon-button dialog-close-btn"
             name={t("_accessibility:buttons.closeDialog")}
             aria-label={t("_accessibility:ariaLabels.closeDialog")}
           />

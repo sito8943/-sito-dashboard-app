@@ -37,7 +37,7 @@ const baseProps = { openDrawer: vi.fn() };
 
 describe("Navbar", () => {
   beforeEach(() => {
-    useConfigMock.mockReturnValue({ searchComponent: null });
+    useConfigMock.mockReturnValue({ searchComponent: null, location: window.location });
   });
 
   it("renders the header element", () => {
@@ -72,7 +72,7 @@ describe("Navbar", () => {
     const SearchComponent = ({ open }: { open: boolean }) =>
       open ? <div data-testid="search-dialog" /> : null;
 
-    useConfigMock.mockReturnValue({ searchComponent: SearchComponent });
+    useConfigMock.mockReturnValue({ searchComponent: SearchComponent, location: window.location });
     window.history.pushState({}, "", "/dashboard");
 
     render(<Navbar {...baseProps} />);
@@ -98,7 +98,7 @@ describe("Navbar", () => {
     const SearchComponent = ({ open }: { open: boolean }) =>
       open ? <div data-testid="search-dialog" /> : null;
 
-    useConfigMock.mockReturnValue({ searchComponent: SearchComponent });
+    useConfigMock.mockReturnValue({ searchComponent: SearchComponent, location: window.location });
     window.history.pushState({}, "", "/");
 
     render(<Navbar {...baseProps} />);

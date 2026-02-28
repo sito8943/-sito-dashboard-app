@@ -1,6 +1,6 @@
 export type LoadingPropsType = {
   color?: string;
-  size?: string;
+  size?: number;
   className?: string;
   containerClassName?: string;
 };

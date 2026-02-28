@@ -23,3 +23,11 @@
 .text-action {
   @apply rounded-4xl px-4 py-2;
 }
+
+.actions-dropdown-list {
+  @apply flex-col;
+}
+
+.action-dropdown-item {
+  @apply w-full justify-start;
+}

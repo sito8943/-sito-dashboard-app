@@ -33,7 +33,7 @@ export const useFormDialog = <
     TMutationOutputDto,
     TFormType
   >
-): TriggerFormDialogPropsType<TFormType, ValidationError> => {
+): TriggerFormDialogPropsType<TFormType> => {
   const { t } = useTranslation();
   const {
     showErrorNotification,
@@ -173,8 +173,6 @@ export const useFormDialog = <
       ),
     reset,
     setError,
-    parseFormError,
-    releaseFormError,
     title,
     isLoading: isLoading || dialogFn.isPending,
   };

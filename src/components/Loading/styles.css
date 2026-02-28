@@ -1,0 +1,5 @@
+@reference "../../index.css";
+
+.splash-screen {
+  @apply w-screen h-screen flex items-center justify-center overflow-hidden;
+}

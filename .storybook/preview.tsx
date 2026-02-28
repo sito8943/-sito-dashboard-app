@@ -63,7 +63,17 @@ const translations: Record<string, string> = {
   "_accessibility:buttons.startAsGuest": "Start as guest",
   "_accessibility:buttons.signIn": "Sign in",
   "_accessibility:ariaLabels.start": "Start",
+  "_pages:common.actions.delete.text": "Delete",
+  "_pages:common.actions.edit.text": "Edit",
+  "_pages:common.actions.restore.text": "Restore",
+  "_pages:common.actions.export.text": "Export",
+  "_pages:common.actions.import.text": "Import",
   "_pages:common.actions.import.form.inputs.file.label": "Select a file",
+  "_accessibility:ariaLabels.showPassword": "Show password",
+  "_accessibility:ariaLabels.hidePassword": "Hide password",
+  "_accessibility:labels.file": "File",
+  "_pages:common.actions.import.override": "Override existing items",
+  "_messages:errors.parseFile": "Failed to process file",
 };
 
 const t = (key: string) => translations[key] ?? key;

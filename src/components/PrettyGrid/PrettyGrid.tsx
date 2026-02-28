@@ -29,7 +29,7 @@ export const PrettyGrid = <TDto extends BaseEntityDto>(
   } = props;
 
   if (loading) {
-    <Loading />;
+    return <Loading />;
   }
 
   return (

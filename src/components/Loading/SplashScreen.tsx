@@ -1,7 +1,16 @@
 import { Loading } from "@sito/dashboard";
 
-export function SplashScreen() {
-  return <div className="w-screen h-screen flex items-center justify-center overflow-hidden">
-    <Loading className="blur-appear" />
-  </div>;
+// styles
+import "./styles.css";
+
+// types
+import { LoadingPropsType } from "./types";
+
+export function SplashScreen(props: LoadingPropsType) {
+  const { className, ...rest } = props;
+  return (
+    <div className="splash-screen">
+      <Loading className={`blur-appear ${className ? ` ${className}` : ""}`} {...rest} />
+    </div>
+  );
 }

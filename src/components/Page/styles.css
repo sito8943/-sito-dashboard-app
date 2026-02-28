@@ -25,3 +25,11 @@
 .page-loading {
   @apply flex justify-center items-center h-50;
 }
+
+.page-header-actions-desktop {
+  @apply max-xs:!hidden;
+}
+
+.page-header-actions-mobile {
+  @apply min-xs:hidden;
+}

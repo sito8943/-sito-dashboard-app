@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 // lib
 import { getFormattedDateTime, getShortFormattedDateTime } from "lib";
 
+// styles
+import "./styles.css";
+
 export const Clock = () => {
   const [dateNow, setDateNow] = useState(getFormattedDateTime());
 
@@ -27,5 +30,5 @@ export const Clock = () => {
     };
   }, []);
 
-  return <p className="capitalize max-xs:hidden">{dateNow}</p>;
+  return <p className="clock">{dateNow}</p>;
 };

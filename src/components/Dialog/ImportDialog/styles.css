@@ -1,0 +1,29 @@
+@reference "../../../index.css";
+
+.import-override-label {
+  @apply mt-3 flex items-center gap-2 text-sm;
+}
+
+.import-dialog-actions {
+  @apply mt-5;
+}
+
+.import-preview {
+  @apply mt-4;
+}
+
+.import-preview-count {
+  @apply text-sm text-text-muted;
+}
+
+.import-preview-content {
+  @apply mt-2 max-h-56 overflow-auto rounded bg-base-dark p-3 text-xs;
+}
+
+.import-error-message {
+  @apply text-error text-sm mt-2;
+}
+
+.import-loading {
+  @apply my-4 mx-auto flex items-center gap-3 text-sm text-text-muted;
+}

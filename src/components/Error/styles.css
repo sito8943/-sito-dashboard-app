@@ -1,0 +1,13 @@
+@reference "../../index.css";
+
+.error-container {
+  @apply flex flex-col items-center justify-center pt-10 gap-5;
+}
+
+.error-icon {
+  @apply text-bg-error text-4xl;
+}
+
+.error-message {
+  @apply text-text text-center;
+}

@@ -17,14 +17,15 @@ export function Action<TEntity extends BaseEntityDto>(
     disabled = false,
     showText = false,
     showTooltips = true,
+    className = ""
   } = props;
 
   return !hidden ? (
     <button
       id={id}
-      className={`action ${showText ? "text-action" : "icon-action"}`}
+      className={`action ${showText ? "text-action" : "icon-action"} ${className}`}
       disabled={disabled}
-      onClick={() => onClick()}
+      onClick={() => onClick?.()}
       aria-disabled={disabled}
       data-tooltip-id="tooltip"
       data-tooltip-content={showTooltips ? tooltip : ""}

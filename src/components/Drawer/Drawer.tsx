@@ -21,7 +21,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const { account } = useAuth();
   const { dynamicItems } = useDrawerMenu();
 
-  const { linkComponent } = useConfig();
+  const { linkComponent, location } = useConfig();
   const Link = linkComponent;
 
   const parsedMenu = useMemo(() => {
@@ -59,7 +59,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       isChild
         ? path === `${location.pathname}${location.search}`
         : path === location.pathname,
-    []
+    [location.pathname, location.search]
   );
 
   const renderChild = useCallback(
@@ -72,9 +72,11 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       >
         {child.path ? (
           <Link
-            aria-disabled={!open}
+            tabIndex={open ? 0 : -1}
             to={child.path ?? "/"}
-            aria-label={t(`_accessibility:ariaLabels.${child.path}`)}
+            aria-label={t(`_accessibility:ariaLabels.${child.id}`, {
+              defaultValue: child.label,
+            })}
             className="drawer-link"
           >
             {child.label}
@@ -111,9 +113,11 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       return (
         <li key={key} className={liClass}>
           <Link
-            aria-disabled={!open}
+            tabIndex={open ? 0 : -1}
             to={link.path ?? "/"}
-            aria-label={t(`_accessibility:ariaLabels.${link.path}`)}
+            aria-label={t(`_accessibility:ariaLabels.${String(link.page)}`, {
+              defaultValue: t(`_pages:${String(link.page)}.title`),
+            })}
             className="drawer-link"
           >
             {link.icon}
@@ -141,7 +145,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
           {logo}
           <h2 className="drawer-header poppins">{t("_pages:home.appName")}</h2>
         </div>
-        <ul className="flex flex-col">{renderItems}</ul>
+        <ul className="drawer-menu-list">{renderItems}</ul>
       </aside>
     </div>
   );

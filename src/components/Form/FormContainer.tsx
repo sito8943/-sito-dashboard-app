@@ -10,8 +10,8 @@ import { FormContainerPropsType } from "./types";
 // styles
 import "./styles.css";
 
-export const FormContainer = <TInput extends FieldValues, TError extends Error>(
-  props: FormContainerPropsType<TInput, TError>
+export const FormContainer = <TInput extends FieldValues>(
+  props: FormContainerPropsType<TInput>
 ) => {
   const { t } = useTranslation();
   const {
@@ -26,7 +26,7 @@ export const FormContainer = <TInput extends FieldValues, TError extends Error>(
   return (
     <form className="form-container" onSubmit={handleSubmit(onSubmit)}>
       {children}
-      <div className={`flex gap-2 mt-5 ${buttonEnd ? "justify-end" : ""}`}>
+      <div className={`form-actions ${buttonEnd ? "end" : ""}`}>
         <Button
           type="submit"
           color="primary"

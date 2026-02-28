@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef } from "react";
+import { ChangeEvent, ForwardedRef, forwardRef, useState } from "react";
 
 // @sito/dashboard
 import {
@@ -11,6 +11,14 @@ import {
 // types
 import { ParagraphInputPropsType } from "./types";
 
+// styles
+import "./styles.css";
+
+const hasInputValue = (inputValue: string | number | readonly string[] | undefined) => {
+  if (inputValue === undefined || inputValue === null) return false;
+  return `${inputValue}`.length > 0;
+};
+
 /**
  * ParagraphInput
  * @param {object} props
@@ -22,6 +30,7 @@ export const ParagraphInput = forwardRef(function (
 ) {
   const {
     value,
+    defaultValue,
     onChange,
     state = State.default,
     name = "",
@@ -37,21 +46,36 @@ export const ParagraphInput = forwardRef(function (
     ...rest
   } = props;
 
+  const isControlled = value !== undefined;
+  const [uncontrolledHasValue, setUncontrolledHasValue] = useState(() =>
+    hasInputValue(defaultValue as string)
+  );
+
+  const hasValue = isControlled ? hasInputValue(value as string) : uncontrolledHasValue;
+
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    if (!isControlled) {
+      setUncontrolledHasValue(event.currentTarget.value.length > 0);
+    }
+    onChange?.(event);
+  };
+
   return (
-    <div className={`relative z-0 w-full mb-5 group ${containerClassName}`}>
+    <div className={`form-paragraph-container group ${containerClassName}`}>
       <textarea
         ref={ref}
         name={name}
         id={id}
-        className={`text-input text-area ${inputStateClassName(state)} ${inputClassName} peer`}
+        className={`text-input text-area form-paragraph-textarea peer ${inputStateClassName(state)} ${hasValue ? "has-value" : ""} ${rest.placeholder ? "has-placeholder" : ""} ${inputClassName}`}
         required={required}
-        value={value}
-        onChange={onChange}
+        defaultValue={defaultValue}
+        {...(isControlled ? { value } : {})}
+        onChange={handleChange}
         disabled={disabled}
         {...rest}
       ></textarea>
       <label
-        htmlFor={name}
+        htmlFor={id}
         className={`text-input-label ${labelStateClassName(state)} ${labelClassName}`}
       >
         {label}

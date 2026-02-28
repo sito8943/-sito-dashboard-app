@@ -16,3 +16,11 @@
 .navbar-right {
   @apply flex items-center justify-end gap-2;
 }
+
+.navbar-search-btn {
+  @apply min-md:!hidden;
+}
+
+.clock {
+  @apply capitalize max-xs:hidden;
+}

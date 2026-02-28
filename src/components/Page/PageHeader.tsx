@@ -42,8 +42,8 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
         <h2 className="page-header-title">{title}</h2>
       </div>
       <div>
-        <Actions className="max-xs:!hidden" actions={actions ?? []} />
-        <ActionsDropdown className="min-xs:hidden" actions={actions ?? []} />
+        <Actions className="page-header-actions-desktop" actions={actions ?? []} />
+        <ActionsDropdown className="page-header-actions-mobile" actions={actions ?? []} />
       </div>
     </div>
   );

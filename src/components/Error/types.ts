@@ -1,4 +1,4 @@
 export type ErrorPropsType = {
-  error: any;
-  resetErrorBoundary?: (...args: any[]) => void;
+  error: Error | null | undefined;
+  resetErrorBoundary?: () => void;
 };
