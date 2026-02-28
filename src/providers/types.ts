@@ -71,7 +71,7 @@ export type FileDataType = {
 
 export type NotificationContextType = {
   notification: NotificationType[];
-  removeNotification: (index?: number) => void;
+  removeNotification: (id?: number) => void;
   showErrorNotification: (options: Partial<NotificationType>) => void;
   showNotification: (options: NotificationType) => void;
   showSuccessNotification: (options: Partial<NotificationType>) => void;

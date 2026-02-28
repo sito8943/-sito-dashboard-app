@@ -9,24 +9,28 @@ import { BasicProviderPropTypes, NotificationContextType } from "./types";
 
 const NotificationContext = createContext({} as NotificationContextType);
 
+// Module-level counter so IDs are unique across the lifetime of the app,
+// preventing stale closing-set collisions when notifications are replaced.
+let _nextId = 0;
+
 export function NotificationProvider(props: BasicProviderPropTypes) {
   const { children } = props;
 
   const [notification, dispatch] = useReducer(
     (
       state: NotificationType[],
-      action: { type: string; items?: NotificationType[]; index?: number }
+      action: { type: string; items?: NotificationType[]; id?: number }
     ) => {
-      const { type, items, index } = action;
+      const { type, items, id } = action;
 
       switch (type) {
         case "set":
-          return items?.map((item: NotificationType, i: number) => ({
+          return items?.map((item: NotificationType) => ({
             ...item,
-            id: i,
+            id: _nextId++,
           })) ?? [];
         case "remove":
-          if (index !== undefined) return state.filter((_, i) => i !== index);
+          if (id !== undefined) return state.filter((n) => n.id !== id);
           return [];
       }
       return state;
@@ -56,8 +60,8 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
       items: [{ ...options, type: NotificationEnumType.success }],
     });
 
-  const removeNotification = (index?: number) =>
-    dispatch({ type: "remove", index });
+  const removeNotification = (id?: number) =>
+    dispatch({ type: "remove", id });
 
   return (
     <NotificationContext.Provider
