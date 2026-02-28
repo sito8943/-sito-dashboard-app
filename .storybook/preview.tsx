@@ -64,6 +64,9 @@ const translations: Record<string, string> = {
   "_accessibility:buttons.signIn": "Sign in",
   "_accessibility:ariaLabels.start": "Start",
   "_pages:common.actions.import.form.inputs.file.label": "Select a file",
+  "_accessibility:labels.file": "File",
+  "_pages:common.actions.import.override": "Override existing items",
+  "_messages:errors.parseFile": "Failed to process file",
 };
 
 const t = (key: string) => translations[key] ?? key;
