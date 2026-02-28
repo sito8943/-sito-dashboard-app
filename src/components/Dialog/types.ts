@@ -24,3 +24,20 @@ export interface FormDialogPropsType<
   TError extends Error = Error,
 > extends DialogPropsType,
     Omit<FormContainerPropsType<TFormType, TError>, "children"> {}
+
+export type DialogActionsProps = {
+  primaryText: string;
+  cancelText: string;
+  onPrimaryClick?: () => void;
+  onCancel: () => void;
+  isLoading?: boolean;
+  disabled?: boolean;
+  primaryType?: "button" | "submit";
+  containerClassName?: string;
+  primaryClassName?: string;
+  alignEnd?: boolean;
+  primaryName?: string;
+  primaryAriaLabel?: string;
+  cancelName?: string;
+  cancelAriaLabel?: string;
+};

@@ -1,25 +1,11 @@
 // @sito/dashboard
 import { Loading } from "@sito/dashboard";
 
+// types
+import { DialogActionsProps } from "./types";
+
 // components
 import { Button } from "components";
-
-type DialogActionsProps = {
-  primaryText: string;
-  cancelText: string;
-  onPrimaryClick?: () => void;
-  onCancel: () => void;
-  isLoading?: boolean;
-  disabled?: boolean;
-  primaryType?: "button" | "submit";
-  containerClassName?: string;
-  primaryClassName?: string;
-  alignEnd?: boolean;
-  primaryName?: string;
-  primaryAriaLabel?: string;
-  cancelName?: string;
-  cancelAriaLabel?: string;
-};
 
 export const DialogActions = (props: DialogActionsProps) => {
   const {
@@ -49,7 +35,7 @@ export const DialogActions = (props: DialogActionsProps) => {
         variant="submit"
         className={primaryClassName}
         disabled={disabled}
-        onClick={primaryType === "button" ? onPrimaryClick : undefined}
+        onClick={onPrimaryClick}
         name={primaryName}
         aria-label={primaryAriaLabel}
       >

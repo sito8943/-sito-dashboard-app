@@ -9,11 +9,11 @@ export function Error(props: ErrorProps) {
   const { message, className = "" } = props;
   const { t } = useTranslation();
 
-  if (!message) return null;
+  if (message === null) return null;
 
   return (
     <p className={`text-red-600 text-sm mt-2 ${className}`}>
-      {message || t("_messages:errors.parseFile", { defaultValue: "Failed to process file" })}
+      {message ?? t("_messages:errors.parseFile", { defaultValue: "Failed to process file" })}
     </p>
   );
 }

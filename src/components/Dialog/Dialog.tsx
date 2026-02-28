@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useMemo, useState, MouseEvent } from "react";
+import { useCallback, useEffect, MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "@sito/dashboard";
 
 // icons
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-
-// @emotion/css
-import { css } from "@emotion/css";
 
 // types
 import { DialogPropsType } from "./types";
@@ -29,8 +26,6 @@ export const Dialog = (props: DialogPropsType) => {
     animationClass = "appear",
   } = props;
 
-  const [windowSize, setWindowSize] = useState(window.innerWidth);
-
   const onKeyPress = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) handleClose();
@@ -45,28 +40,11 @@ export const Dialog = (props: DialogPropsType) => {
     };
   }, [onKeyPress]);
 
-  const onWindowsResize = useCallback(() => {
-    setWindowSize(window.innerWidth);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("resize", onWindowsResize);
-    return () => {
-      window.removeEventListener("resize", onWindowsResize);
-    };
-  }, [onWindowsResize]);
-
-  const styles = useMemo(() => css({ width: `${windowSize}px` }), [windowSize]);
-
   const bigHandleClose = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
-      if (
-        e?.currentTarget?.getAttribute("name") ===
-        t("_accessibility:buttons.closeDialog")
-      )
-        handleClose();
+      if (e.target === e.currentTarget) handleClose();
     },
-    [t, handleClose]
+    [handleClose]
   );
 
   useEffect(() => {
@@ -90,7 +68,7 @@ export const Dialog = (props: DialogPropsType) => {
       onClick={bigHandleClose}
       className={`dialog-backdrop animated ${
         open ? `opened ${animationClass}` : "closed"
-      } ${styles} h-screen ${
+      } w-full h-screen ${
         open ? "bg-base/20 backdrop-blur-xl" : "pointer-events-none"
       } ${containerClassName}`}
     >
