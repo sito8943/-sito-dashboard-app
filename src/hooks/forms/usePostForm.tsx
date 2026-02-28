@@ -124,10 +124,12 @@ export const usePostForm = <
     getValues,
     setValue,
     handleSubmit,
-    onSubmit: (data) =>
+    onSubmit: (data) => {
+      releaseFormError();
       formFn.mutate(
         formToDto ? formToDto(data) : (data as unknown as TMutationDto)
-      ),
+      );
+    },
     reset,
     setError,
     isLoading: formFn.isPending,
