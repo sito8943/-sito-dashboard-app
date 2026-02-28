@@ -27,10 +27,7 @@ export interface ParagraphInputPropsType
       HTMLTextAreaElement
     > {}
 
-export type FormContainerPropsType<
-  TFormType extends FieldValues,
-  TError extends Error = Error
-> = {
+export type FormContainerPropsType<TFormType extends FieldValues> = {
   children: ReactNode;
   control?: Control<TFormType>;
   getValues?: UseFormGetValues<TFormType>;
@@ -39,14 +36,12 @@ export type FormContainerPropsType<
   setError?: UseFormSetError<TFormType>;
   handleSubmit: UseFormHandleSubmit<TFormType>;
   onSubmit: SubmitHandler<TFormType>;
-  parseFormError?: (error: TError) => string[];
-  releaseFormError?: () => void;
   /* if the buttons are aligned to the end */
   buttonEnd?: boolean;
   isLoading?: boolean;
 };
 
-export type FormPropsType<
-  TFormType extends FieldValues,
-  TError extends Error = Error
-> = Omit<FormContainerPropsType<TFormType, TError>, "children">;
+export type FormPropsType<TFormType extends FieldValues> = Omit<
+  FormContainerPropsType<TFormType>,
+  "children"
+>;

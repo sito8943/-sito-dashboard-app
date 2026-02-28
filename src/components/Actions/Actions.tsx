@@ -23,7 +23,7 @@ export function Actions<TRow extends BaseEntityDto>(
   } = props;
   return (
     <ul className={`actions-container ${className}`}>
-      {actions?.map((action) => (
+      {actions.map((action) => (
         <li
           key={action.id}
           className={`actions-container-item ${itemClassName}`}

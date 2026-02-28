@@ -3,10 +3,14 @@ import { Loading } from "@sito/dashboard";
 // styles
 import "./styles.css";
 
-export function SplashScreen() {
+// types
+import { LoadingPropsType } from "./types";
+
+export function SplashScreen(props: LoadingPropsType) {
+  const { className, ...rest } = props;
   return (
     <div className="splash-screen">
-      <Loading className="blur-appear" />
+      <Loading className={`blur-appear${className ? ` ${className}` : ""}`} {...rest} />
     </div>
   );
 }

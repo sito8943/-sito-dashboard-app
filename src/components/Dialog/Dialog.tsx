@@ -57,14 +57,14 @@ export const Dialog = (props: DialogPropsType) => {
     };
     toggleBodyOverflow(open);
     return () => {
-      toggleBodyOverflow(open);
+      toggleBodyOverflow(false);
     };
   }, [open]);
 
   return createPortal(
     <div
       aria-label={t("_accessibility:ariaLabels.closeDialog")}
-      aria-disabled={!open}
+      aria-hidden={!open}
       onClick={bigHandleClose}
       className={`dialog-backdrop animated ${
         open ? `opened ${animationClass}` : "closed"

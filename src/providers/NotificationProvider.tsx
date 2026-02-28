@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useContext, createContext, useReducer } from "react";
+import { useContext, createContext, useReducer, useRef } from "react";
 
 // lib
 import { NotificationEnumType, NotificationType } from "lib";
@@ -9,12 +9,12 @@ import { BasicProviderPropTypes, NotificationContextType } from "./types";
 
 const NotificationContext = createContext({} as NotificationContextType);
 
-// Module-level counter so IDs are unique across the lifetime of the app,
-// preventing stale closing-set collisions when notifications are replaced.
-let _nextId = 0;
-
 export function NotificationProvider(props: BasicProviderPropTypes) {
   const { children } = props;
+
+  // Instance-scoped counter — avoids the module-level side effect while still
+  // guaranteeing unique IDs across all notifications shown in this session.
+  const nextIdRef = useRef(0);
 
   const [notification, dispatch] = useReducer(
     (
@@ -25,10 +25,8 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
 
       switch (type) {
         case "set":
-          return items?.map((item: NotificationType) => ({
-            ...item,
-            id: _nextId++,
-          })) ?? [];
+          // IDs are stamped by the action creators below; reducer stays pure.
+          return items ?? [];
         case "remove":
           if (id !== undefined) return state.filter((n) => n.id !== id);
           return [];
@@ -39,25 +37,25 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
     () => [] as NotificationType[]
   );
 
+  const withId = (items: NotificationType[]) =>
+    items.map((item) => ({ ...item, id: nextIdRef.current++ }));
+
   const showErrorNotification = (options: Partial<NotificationType>) =>
     dispatch({
       type: "set",
-      items: [{ ...options, type: NotificationEnumType.error }],
+      items: withId([{ ...options, type: NotificationEnumType.error }]),
     });
 
   const showNotification = (options: NotificationType) =>
-    dispatch({
-      type: "set",
-      items: [{ ...options }],
-    });
+    dispatch({ type: "set", items: withId([{ ...options }]) });
 
   const showStackNotifications = (notifications: NotificationType[]) =>
-    dispatch({ type: "set", items: notifications });
+    dispatch({ type: "set", items: withId(notifications) });
 
   const showSuccessNotification = (options: Partial<NotificationType>) =>
     dispatch({
       type: "set",
-      items: [{ ...options, type: NotificationEnumType.success }],
+      items: withId([{ ...options, type: NotificationEnumType.success }]),
     });
 
   const removeNotification = (id?: number) =>

@@ -12,11 +12,12 @@ export function Error(props: ErrorProps) {
   const { message, className = "" } = props;
   const { t } = useTranslation();
 
-  if (message === null) return null;
-
   return (
     <p className={`import-error-message ${className}`}>
-      {message ?? t("_messages:errors.parseFile", { defaultValue: "Failed to process file" })}
+      {message ??
+        t("_messages:errors.parseFile", {
+          defaultValue: "Failed to process file",
+        })}
     </p>
   );
 }

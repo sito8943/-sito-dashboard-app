@@ -20,11 +20,13 @@ export const ToTop = () => {
 
   return (
     <AppIconButton
+      variant="submit"
+      color="primary"
       icon={faArrowUp}
-      onClick={() => scrollTo(0, 0)}
       data-tooltip-id="tooltip"
+      onClick={() => scrollTo(0, 0)}
+      className={`to-top ${isScrolled ? "show" : "hide"}`}
       data-tooltip-content={t("_accessibility:buttons.toTop")}
-      className={`submit primary to-top ${isScrolled ? "show" : "hide"}`}
     />
   );
 };

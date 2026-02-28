@@ -26,7 +26,7 @@ export const usePostForm = <
   TFormType extends FieldValues,
 >(
   props: UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType>
-): FormPropsType<TFormType, ValidationError> => {
+): FormPropsType<TFormType> => {
   const { t } = useTranslation();
   const { showStackNotifications, showSuccessNotification } = useNotification();
 
@@ -130,8 +130,6 @@ export const usePostForm = <
       ),
     reset,
     setError,
-    parseFormError,
-    releaseFormError,
     isLoading: formFn.isPending,
   };
 };

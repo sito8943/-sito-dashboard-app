@@ -11,8 +11,8 @@ import { FormDialogPropsType } from "./types";
 // styles
 import "./styles.css";
 
-export const FormDialog = <TInput extends FieldValues, TError extends Error>(
-  props: FormDialogPropsType<TInput, TError>
+export const FormDialog = <TInput extends FieldValues>(
+  props: FormDialogPropsType<TInput>
 ) => {
   const { t } = useTranslation();
   const {

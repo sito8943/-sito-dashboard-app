@@ -11,7 +11,7 @@ import { ErrorPropsType } from "./types";
 import "./styles.css";
 
 export function Error(props: ErrorPropsType) {
-  const { error } = props;
+  const { error, resetErrorBoundary } = props;
   const { t } = useTranslation();
 
   return (
@@ -20,6 +20,11 @@ export function Error(props: ErrorPropsType) {
       <p className="error-message">
         {error?.message ?? t("_accessibility:errors.unknownError")}
       </p>
+      {resetErrorBoundary && (
+        <button className="error-retry" onClick={resetErrorBoundary}>
+          {t("_accessibility:actions.retry", { defaultValue: "Retry" })}
+        </button>
+      )}
     </div>
   );
 }

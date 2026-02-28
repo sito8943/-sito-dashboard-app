@@ -19,11 +19,9 @@ export interface ConfirmationDialogPropsType extends DialogPropsType {
   isLoading?: boolean;
 }
 
-export interface FormDialogPropsType<
-  TFormType extends FieldValues,
-  TError extends Error = Error,
-> extends DialogPropsType,
-    Omit<FormContainerPropsType<TFormType, TError>, "children"> {}
+export interface FormDialogPropsType<TFormType extends FieldValues>
+  extends DialogPropsType,
+    Omit<FormContainerPropsType<TFormType>, "children"> {}
 
 export type DialogActionsProps = {
   primaryText: string;

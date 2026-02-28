@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "@sito/dashboard";
 import { createPortal } from "react-dom";
 
@@ -22,6 +28,10 @@ import { AppIconButton } from "../Buttons";
 // styles
 import "./styles.css";
 
+type Item = NotificationType & { closing: boolean };
+
+const ANIM_MS = 300;
+
 const resolvedType = (type?: NotificationEnumType) =>
   type ?? NotificationEnumType.error;
 
@@ -29,7 +39,7 @@ const renderIcon = (type: NotificationEnumType) => {
   switch (type) {
     case NotificationEnumType.error:
       return faWarning;
-    default: // success
+    default:
       return faCircleCheck;
   }
 };
@@ -65,169 +75,151 @@ export function Notification() {
 
   const { notification, removeNotification } = useNotification();
 
-  // `visible` is what's actually rendered. It lags behind `notification` during
-  // close transitions so new notifications don't appear until old ones finish.
-  const [visible, setVisible] = useState<NotificationType[]>([]);
-  const visibleRef = useRef<NotificationType[]>(visible);
+  // Single state: each item carries its own closing flag.
+  // Eliminates the separate `visible` array + `closing` Set.
+  const [items, setItems] = useState<Item[]>([]);
 
-  // Latest notification ref so timer callbacks always read the freshest value.
-  const notificationRef = useRef(notification);
+  // "Latest value" ref — kept in sync via useLayoutEffect (runs synchronously
+  // after each commit, before useEffect) so the notification sync effect always
+  // reads the current rendered items without adding them to its own dep array.
+  const itemsRef = useRef(items);
+  useLayoutEffect(() => {
+    itemsRef.current = items;
+  });
 
-  useEffect(() => {
-    visibleRef.current = visible;
-  }, [visible]);
+  // Shared timer for provider-driven transitions (clear-all and replace).
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    notificationRef.current = notification;
-  }, [notification]);
-
-  const [closing, setClosing] = useState<Set<number>>(new Set());
-
-  // Single shared timer for close transitions (prevents overlapping timeouts).
-  const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // ── close-with-animation ──────────────────────────────────────────────────
-  // Operates on `visibleRef` so it always has the currently rendered items,
-  // regardless of what the provider has since pushed.
-  const closeWithAnimation = useCallback(
+  // ── Close with animation ────────────────────────────────────────────────
+  // id=undefined → close all; id=number → close one.
+  const close = useCallback(
     (id?: number) => {
-      const current = visibleRef.current;
+      setItems((prev) =>
+        id !== undefined
+          ? prev.map((i) => (i.id === id ? { ...i, closing: true } : i))
+          : prev.map((i) => ({ ...i, closing: true }))
+      );
 
-      if (id === undefined) {
-        // Close all currently visible items.
-        const idsToClose = current
-          .map((n) => n.id)
-          .filter((nId): nId is number => nId !== undefined);
-        setClosing(new Set(idsToClose));
-
-        if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
-
-        transitionTimerRef.current = setTimeout(() => {
-          idsToClose.forEach((nId) => removeNotification(nId));
-          setVisible([]);
-          transitionTimerRef.current = null;
-        }, 300);
-      } else {
-        setClosing((prev) => new Set(prev).add(id));
-        window.setTimeout(() => {
+      if (id !== undefined) {
+        // Individual close — loose timer; stale-id no-ops are harmless.
+        setTimeout(() => {
           removeNotification(id);
-          setVisible((prev) => prev.filter((n) => n.id !== id));
-        }, 300);
+          setItems((prev) => prev.filter((i) => i.id !== id));
+        }, ANIM_MS);
+      } else {
+        // Close all — use the shared timer so cleanup can cancel it.
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          removeNotification();
+          setItems([]);
+          timerRef.current = null;
+        }, ANIM_MS);
       }
     },
     [removeNotification]
   );
 
-  // ── sync provider → visible, with transitions ─────────────────────────────
-  // When new notifications arrive while items are already displayed, play the
-  // close animation on the current ones first, then show the incoming ones.
+  // ── Sync provider → items (with animation) ─────────────────────────────
+  // All setItems calls live inside setTimeout callbacks to satisfy the
+  // react-hooks/set-state-in-effect rule.
   useEffect(() => {
-    const current = visibleRef.current;
+    // Local timer for the "mark as closing" step (fires at ~0 ms).
+    // timerRef holds the "clear / replace" step (fires at ANIM_MS).
+    let markClosingTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const cleanup = () => {
+      if (markClosingTimer) clearTimeout(markClosingTimer);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
 
     if (notification.length === 0) {
-      if (current.length > 0) {
-        const clearTimerId = setTimeout(() => {
-          setVisible([]);
-          setClosing(new Set());
-        }, 0);
-        return () => clearTimeout(clearTimerId);
-      }
-      return;
-    }
-
-    if (current.length === 0) {
-      const showTimerId = setTimeout(() => {
-        setVisible(notification);
+      // Provider cleared all — play exit animation instead of instant wipe.
+      if (itemsRef.current.length === 0) return;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      // Step 1: mark all as closing so the CSS animation starts.
+      markClosingTimer = setTimeout(() => {
+        setItems((prev) => prev.map((i) => ({ ...i, closing: true })));
+        markClosingTimer = null;
       }, 0);
-      return () => clearTimeout(showTimerId);
+      // Step 2: clear items once the animation has finished.
+      timerRef.current = setTimeout(() => {
+        setItems([]);
+        timerRef.current = null;
+      }, ANIM_MS);
+      return cleanup;
     }
 
-    // Detect whether new (unseen) IDs appeared.
-    const currentIds = new Set(current.map((n) => n.id));
+    const prevIds = new Set(itemsRef.current.map((i) => i.id));
     const hasNew = notification.some(
-      (n) => n.id !== undefined && !currentIds.has(n.id)
+      (n) => n.id !== undefined && !prevIds.has(n.id)
     );
+    if (!hasNew) return;
 
-    if (!hasNew) {
-      // Same or fewer items — closeWithAnimation handles removals directly.
-      return;
+    if (itemsRef.current.length === 0) {
+      // No visible items — show incoming on next tick.
+      const incoming = [...notification];
+      markClosingTimer = setTimeout(() => {
+        setItems(incoming.map((n) => ({ ...n, closing: false })));
+        markClosingTimer = null;
+      }, 0);
+      return () => {
+        if (markClosingTimer) clearTimeout(markClosingTimer);
+      };
     }
 
-    // Replacement: animate current out, then show incoming.
-    const idsToClose = current
-      .map((n) => n.id)
-      .filter((id): id is number => id !== undefined);
-    const closingTimerId = setTimeout(() => {
-      setClosing(new Set(idsToClose));
+    // Existing items + new notifications: animate out old, then show new.
+    if (timerRef.current) clearTimeout(timerRef.current);
+    markClosingTimer = setTimeout(() => {
+      setItems((prev) =>
+        prev.every((i) => i.closing)
+          ? prev // already animating out, avoid spurious update
+          : prev.map((i) => ({ ...i, closing: true }))
+      );
+      markClosingTimer = null;
+    }, 0);
+    const incoming = [...notification];
+    timerRef.current = setTimeout(() => {
+      setItems(incoming.map((n) => ({ ...n, closing: false })));
+      timerRef.current = null;
+    }, ANIM_MS);
+    return cleanup;
+  }, [notification]);
+
+  // ── Click outside + ESC to dismiss all ────────────────────────────────
+  useEffect(() => {
+    if (!items.length) return;
+
+    let clickHandler: ((e: MouseEvent) => void) | undefined;
+    // Defer attaching the click handler so the click that triggered the
+    // notification to appear never immediately dismisses it.
+    const deferTimerId = window.setTimeout(() => {
+      clickHandler = () => close();
+      window.addEventListener("click", clickHandler);
     }, 0);
 
-    if (transitionTimerRef.current) {
-      clearTimeout(transitionTimerRef.current);
-      transitionTimerRef.current = null;
-    }
-
-    transitionTimerRef.current = setTimeout(() => {
-      idsToClose.forEach((id) => removeNotification(id));
-      setVisible([...notificationRef.current]);
-      setClosing(new Set());
-      transitionTimerRef.current = null;
-    }, 300);
-
-    return () => clearTimeout(closingTimerId);
-  }, [notification, removeNotification]);
-
-  // Cleanup on unmount.
-  useEffect(() => {
-    return () => {
-      if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
     };
-  }, []);
+    window.addEventListener("keydown", keyHandler);
 
-  // ── window click: dismiss by clicking outside ─────────────────────────────
-  const windowClickHandlerRef = useRef<(e: MouseEvent) => void>();
-
-  useEffect(() => {
-    windowClickHandlerRef.current = () => closeWithAnimation();
-  }, [closeWithAnimation]);
-
-  useEffect(() => {
-    if (!visible.length) return;
-    // Defer attaching the handler with setTimeout(0) so the click that
-    // triggered the notification to appear never fires the close handler.
-    let handler: ((e: MouseEvent) => void) | undefined;
-    const timerId = window.setTimeout(() => {
-      handler = (e: MouseEvent) => windowClickHandlerRef.current?.(e);
-      window.addEventListener("click", handler);
-    }, 0);
     return () => {
-      window.clearTimeout(timerId);
-      if (handler) window.removeEventListener("click", handler);
+      window.clearTimeout(deferTimerId);
+      if (clickHandler) window.removeEventListener("click", clickHandler);
+      window.removeEventListener("keydown", keyHandler);
     };
-  }, [visible.length]);
-
-  // ── keyboard: Escape to dismiss ───────────────────────────────────────────
-  const onKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape" && visible.length) closeWithAnimation();
-    },
-    [visible.length, closeWithAnimation]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", onKeyPress);
-    return () => window.removeEventListener("keydown", onKeyPress);
-  }, [onKeyPress]);
+  }, [items.length, close]);
 
   return createPortal(
-    <div
-      className={`notification-portal ${visible.length ? "active" : ""}`}
-    >
-      {visible.map(({ id, type, message }) => {
+    <div className={`notification-portal ${items.length ? "active" : ""}`}>
+      {items.map(({ id, type, message, closing }) => {
         const resolvedT = resolvedType(type);
         return (
           <div
             key={id}
-            className={`notification ${id !== undefined && closing.has(id) ? "closing" : ""} ${bgColor(resolvedT)}`}
+            className={`notification ${closing ? "closing" : ""} ${bgColor(resolvedT)}`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="notification-body">
@@ -246,7 +238,7 @@ export function Notification() {
               className="notification-close group"
               onClick={(e) => {
                 e.stopPropagation();
-                if (id !== undefined) closeWithAnimation(id);
+                if (id !== undefined) close(id);
               }}
               iconClassName={`${textColor(resolvedT)} notification-close-icon`}
               name={t("_accessibility:buttons.closeNotification")}

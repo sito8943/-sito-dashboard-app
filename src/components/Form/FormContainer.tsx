@@ -10,8 +10,8 @@ import { FormContainerPropsType } from "./types";
 // styles
 import "./styles.css";
 
-export const FormContainer = <TInput extends FieldValues, TError extends Error>(
-  props: FormContainerPropsType<TInput, TError>
+export const FormContainer = <TInput extends FieldValues>(
+  props: FormContainerPropsType<TInput>
 ) => {
   const { t } = useTranslation();
   const {

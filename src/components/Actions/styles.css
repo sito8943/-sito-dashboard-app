@@ -4,10 +4,6 @@
   @apply flex w-full items-center justify-end gap-1;
 }
 
-.actions-container-item {
-  @apply w-full;
-}
-
 .actions-dropdown .action {
   @apply w-full justify-start px-2;
 }
@@ -33,5 +29,5 @@
 }
 
 .action-dropdown-item {
-  @apply w-full justify-start
+  @apply w-full justify-start;
 }

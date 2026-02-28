@@ -1,7 +1,7 @@
 import { useTranslation } from "@sito/dashboard";
 
 // providers
-import { useAuth } from "providers";
+import { useAuth, useConfig } from "providers";
 
 // types
 import { StepPropsType } from "./types";
@@ -20,11 +20,12 @@ export const Step = (props: StepPropsType) => {
   } = props;
 
   const { setGuestMode } = useAuth();
+  const { navigate } = useConfig();
   const { t } = useTranslation();
 
   return (
     <div className="big-appear step-container">
-      <img src={image} alt={alt} />
+      {image && <img src={image} alt={alt} />}
       <h2 className="step-title">
         {t(`_pages:onboarding.${translation}.title`)}
       </h2>
@@ -38,7 +39,7 @@ export const Step = (props: StepPropsType) => {
               color="primary"
               className="step-button"
               variant="outlined"
-              onClick={() => (window.location.href = "/auth/sign-in")}
+              onClick={() => (navigate("/auth/sign-in"))}
               aria-label={t("_accessibility:ariaLabels.skip")}
             >
               {t("_accessibility:buttons.skip")}
@@ -61,7 +62,7 @@ export const Step = (props: StepPropsType) => {
               variant="outlined"
               onClick={() => {
                 setGuestMode(true);
-                window.location.href = "/";
+                navigate("/");
               }}
               aria-label={t("_accessibility:ariaLabels.start")}
             >
@@ -72,7 +73,7 @@ export const Step = (props: StepPropsType) => {
               variant="submit"
               className="step-button"
               aria-label={t("_accessibility:ariaLabels.start")}
-              onClick={() => (window.location.href = "/auth/sign-in")}
+              onClick={() => (navigate("/auth/sign-in"))}
             >
               {t("_accessibility:buttons.signIn")}
             </Button>

@@ -15,7 +15,7 @@ import { Actions } from "./Actions";
 import { AppIconButton } from "../Buttons";
 
 // styles
-import "./styles.css"
+import "./styles.css";
 
 export const ActionsDropdown = <TRow extends BaseEntityDto>(
   props: ActionsContainerPropsType<TRow>
@@ -39,10 +39,15 @@ export const ActionsDropdown = <TRow extends BaseEntityDto>(
         data-tooltip-id="tooltip"
         data-tooltip-content={t("_accessibility:buttons.openActions")}
       />
-      <Dropdown open={openMenu} onClose={() => setOpenMenu(false)} anchorEl={anchorEl}>
+      <Dropdown
+        open={openMenu}
+        onClose={() => setOpenMenu(false)}
+        anchorEl={anchorEl}
+      >
         <Actions
           showActionTexts
           actions={actions}
+          itemClassName="w-full"
           actionClassName="action-dropdown-item"
           className="actions-dropdown-list"
           showTooltips={false}
