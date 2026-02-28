@@ -32,7 +32,7 @@ export function Navbar(props: NavbarPropsType) {
     menuButtonProps,
   } = props;
 
-  const { searchComponent } = useConfig();
+  const { searchComponent, location } = useConfig();
 
   const [showDialog, setShowDialog] = useState(false);
 
