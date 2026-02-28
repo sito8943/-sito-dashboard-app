@@ -19,3 +19,23 @@
 .onboarding-main .tab.outlined {
   @apply !bg-primary;
 }
+
+.step-container {
+  @apply w-md flex flex-col gap-20;
+}
+
+.step-title {
+  @apply text-5xl text-center leading-16;
+}
+
+.step-body {
+  @apply text-center !text-lg;
+}
+
+.step-actions {
+  @apply flex gap-5 items-center justify-center;
+}
+
+.step-button {
+  @apply !px-8;
+}

@@ -11,6 +11,9 @@ import {
 // types
 import { ParagraphInputPropsType } from "./types";
 
+// styles
+import "./styles.css";
+
 /**
  * ParagraphInput
  * @param {object} props
@@ -38,12 +41,12 @@ export const ParagraphInput = forwardRef(function (
   } = props;
 
   return (
-    <div className={`relative z-0 w-full mb-5 group ${containerClassName}`}>
+    <div className={`form-paragraph-container ${containerClassName}`}>
       <textarea
         ref={ref}
         name={name}
         id={id}
-        className={`text-input text-area ${inputStateClassName(state)} ${inputClassName} peer`}
+        className={`text-input text-area form-paragraph-textarea ${inputStateClassName(state)} ${inputClassName}`}
         required={required}
         value={value}
         onChange={onChange}

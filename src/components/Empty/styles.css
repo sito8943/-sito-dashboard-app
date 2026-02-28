@@ -3,3 +3,7 @@
 .empty-container {
   @apply flex flex-col items-center justify-center gap-5 pt-5;
 }
+
+.empty-message {
+  @apply text-text-muted text-balance text-center;
+}

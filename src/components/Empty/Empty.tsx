@@ -17,7 +17,7 @@ export const Empty = <TRow extends BaseEntityDto>(
 ) => {
   const {
     message,
-    messageProps = { className: "text-gray-400 text-balance text-center" },
+    messageProps = { className: "empty-message" },
     action,
     iconProps,
   } = props;

@@ -3,6 +3,9 @@ import { useTranslation } from "@sito/dashboard";
 // lib
 import { ImportPreviewDto } from "lib";
 
+// styles
+import "./styles.css";
+
 type PreviewProps<EntityDto extends ImportPreviewDto> = {
   items: EntityDto[];
   max?: number;
@@ -20,14 +23,14 @@ export function Preview<EntityDto extends ImportPreviewDto>(
   const limited = items.slice(0, max);
 
   return (
-    <div className={`mt-4 ${className}`}>
-      <p className="text-sm text-gray-600">
+    <div className={`import-preview ${className}`}>
+      <p className="import-preview-count">
         {t("_pages:common.actions.import.previewCount", {
           count: items.length,
           defaultValue: `Preview: ${items.length} items`,
         })}
       </p>
-      <pre className="mt-2 max-h-56 overflow-auto rounded bg-gray-100 p-3 text-xs">
+      <pre className="import-preview-content">
         {JSON.stringify(limited, null, 2)}
       </pre>
     </div>

@@ -21,7 +21,7 @@ export const useRestoreAction = (props: UseMultipleActionPropTypes<number>) => {
       id: GlobalActions.Restore,
       hidden: !record.deletedAt || hidden,
       disabled: !record.deletedAt,
-      icon: <FontAwesomeIcon className="text-red-500" icon={faRotateLeft} />,
+      icon: <FontAwesomeIcon className="text-error" icon={faRotateLeft} />,
       tooltip: t("_pages:common.actions.restore.text"),
       onClick: () => onClick([record?.id]),
       onMultipleClick: (rows) => onClick(rows.map((row) => row.id)),

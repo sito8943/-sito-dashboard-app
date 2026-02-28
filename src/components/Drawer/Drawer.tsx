@@ -141,7 +141,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
           {logo}
           <h2 className="drawer-header poppins">{t("_pages:home.appName")}</h2>
         </div>
-        <ul className="flex flex-col">{renderItems}</ul>
+        <ul className="drawer-menu-list">{renderItems}</ul>
       </aside>
     </div>
   );

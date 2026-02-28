@@ -40,7 +40,7 @@ export const ActionsDropdown = <TRow extends BaseEntityDto>(
         <Actions
           showActionTexts
           actions={actions}
-          className="flex-col"
+          className="actions-dropdown-list"
           showTooltips={false}
         />
       </Dropdown>

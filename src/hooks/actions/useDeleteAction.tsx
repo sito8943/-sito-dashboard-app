@@ -21,7 +21,7 @@ export const useDeleteAction = (props: UseMultipleActionPropTypes<number>) => {
       id: GlobalActions.Delete,
       hidden: !!record.deletedAt || hidden,
       disabled: !!record.deletedAt || disabled,
-      icon: <FontAwesomeIcon className="text-red-500" icon={faTrash} />,
+      icon: <FontAwesomeIcon className="text-error" icon={faTrash} />,
       tooltip: t("_pages:common.actions.delete.text"),
       onClick: () => onClick([record?.id]),
       onMultipleClick: (rows) => onClick(rows.map((row) => row.id)),

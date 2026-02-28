@@ -24,7 +24,7 @@ export const PasswordInput = forwardRef(function (
             ? "_accessibility:ariaLabels.hidePassword"
             : "_accessibility:ariaLabels.showPassword"
         )}
-        className="absolute right-2 password-icon"
+        className="password-icon"
         onClick={() => setShowPassword(!showPassword)}
         icon={showPassword ? faEyeSlash : faEye}
       />

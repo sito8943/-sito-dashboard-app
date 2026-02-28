@@ -5,6 +5,9 @@ import { FileInput, useTranslation } from "@sito/dashboard";
 
 // components
 import { Dialog, DialogActions, ImportDialogPropsType } from "components";
+
+// styles
+import "./styles.css";
 import { Error as ErrorComponent } from "./Error";
 import { Loading } from "./Loading";
 import { Preview } from "./Preview";
@@ -123,7 +126,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         }}
         label={t("_accessibility:labels.file")}
       />
-      <label className="mt-3 flex items-center gap-2 text-sm">
+      <label className="import-override-label">
         <input
           type="checkbox"
           checked={overrideExisting}
@@ -156,7 +159,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         onCancel={handleClose}
         isLoading={isLoading}
         primaryType="button"
-        containerClassName="mt-5"
+        containerClassName="import-dialog-actions"
         primaryName={t("_accessibility:buttons.ok")}
         primaryAriaLabel={t("_accessibility:ariaLabels.ok")}
         cancelName={t("_accessibility:buttons.cancel")}

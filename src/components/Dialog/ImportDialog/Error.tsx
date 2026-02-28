@@ -1,5 +1,8 @@
 import { useTranslation } from "@sito/dashboard";
 
+// styles
+import "./styles.css";
+
 type ErrorProps = {
   message?: string | null;
   className?: string;
@@ -12,9 +15,8 @@ export function Error(props: ErrorProps) {
   if (message === null) return null;
 
   return (
-    <p className={`text-red-600 text-sm mt-2 ${className}`}>
+    <p className={`import-error-message ${className}`}>
       {message ?? t("_messages:errors.parseFile", { defaultValue: "Failed to process file" })}
     </p>
   );
 }
-

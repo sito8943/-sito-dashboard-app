@@ -7,6 +7,9 @@ import { useAuth } from "providers";
 import { StepPropsType } from "./types";
 import { Button } from "../Buttons";
 
+// styles
+import "./styles.css";
+
 export const Step = (props: StepPropsType) => {
   const {
     translation,
@@ -20,20 +23,20 @@ export const Step = (props: StepPropsType) => {
   const { t } = useTranslation();
 
   return (
-    <div className="big-appear w-md flex flex-col gap-20">
+    <div className="big-appear step-container">
       <img src={image} alt={alt} />
-      <h2 className="text-5xl text-center leading-16">
+      <h2 className="step-title">
         {t(`_pages:onboarding.${translation}.title`)}
       </h2>
-      <p className="text-center !text-lg">
+      <p className="step-body">
         {t(`_pages:onboarding.${translation}.body`)}
       </p>
-      <div className="flex gap-5 items-center justify-center">
+      <div className="step-actions">
         {!final ? (
           <>
             <Button
               color="primary"
-              className="!px-8"
+              className="step-button"
               variant="outlined"
               onClick={() => (window.location.href = "/auth/sign-in")}
               aria-label={t("_accessibility:ariaLabels.skip")}
@@ -42,7 +45,7 @@ export const Step = (props: StepPropsType) => {
             </Button>
             <Button
               color="primary"
-              className="!px-8"
+              className="step-button"
               variant="outlined"
               onClick={() => onClickNext()}
               aria-label={t("_accessibility:ariaLabels.next")}
@@ -54,7 +57,7 @@ export const Step = (props: StepPropsType) => {
           <>
             <Button
               color="primary"
-              className="!px-8"
+              className="step-button"
               variant="outlined"
               onClick={() => {
                 setGuestMode(true);
@@ -67,7 +70,7 @@ export const Step = (props: StepPropsType) => {
             <Button
               color="primary"
               variant="submit"
-              className="!px-8"
+              className="step-button"
               aria-label={t("_accessibility:ariaLabels.start")}
               onClick={() => (window.location.href = "/auth/sign-in")}
             >

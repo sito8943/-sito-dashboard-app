@@ -59,3 +59,7 @@
 .drawer-header {
   @apply text-xl text-text font-bold;
 }
+
+.drawer-menu-list {
+  @apply flex flex-col;
+}

@@ -5,7 +5,7 @@
 }
 
 .error-icon {
-  @apply text-red-300 text-4xl;
+  @apply text-error text-4xl;
 }
 
 .error-message {

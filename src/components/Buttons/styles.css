@@ -17,6 +17,7 @@
 }
 
 .password-icon {
+  @apply absolute right-2;
   top: 50%;
   transform: translateY(-50%);
 }
