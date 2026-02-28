@@ -30,7 +30,7 @@
 }
 
 .notification-close {
-  @apply group !min-w-6 !min-h-6 !h-6 !w-6;
+  @apply !min-w-6 !min-h-6 !h-6 !w-6;
 }
 
 .notification-close-icon {

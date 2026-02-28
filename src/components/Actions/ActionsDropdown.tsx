@@ -14,6 +14,9 @@ import { ActionsContainerPropsType } from "./types";
 import { Actions } from "./Actions";
 import { AppIconButton } from "../Buttons";
 
+// styles
+import "./styles.css"
+
 export const ActionsDropdown = <TRow extends BaseEntityDto>(
   props: ActionsContainerPropsType<TRow>
 ) => {
@@ -40,6 +43,7 @@ export const ActionsDropdown = <TRow extends BaseEntityDto>(
         <Actions
           showActionTexts
           actions={actions}
+          actionClassName="action-dropdown-item"
           className="actions-dropdown-list"
           showTooltips={false}
         />

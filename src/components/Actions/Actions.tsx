@@ -16,16 +16,22 @@ export function Actions<TRow extends BaseEntityDto>(
   const {
     actions = [],
     className = "",
+    itemClassName = "",
+    actionClassName = "",
     showTooltips = true,
     showActionTexts = false,
   } = props;
   return (
     <ul className={`actions-container ${className}`}>
       {actions?.map((action) => (
-        <li key={action.id}>
+        <li
+          key={action.id}
+          className={`actions-container-item ${itemClassName}`}
+        >
           <Action
             showTooltips={showTooltips}
             showText={showActionTexts}
+            className={actionClassName}
             {...action}
           />
         </li>

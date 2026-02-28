@@ -243,7 +243,7 @@ export function Notification() {
               type="button"
               icon={faClose}
               color="error"
-              className="notification-close"
+              className="notification-close group"
               onClick={(e) => {
                 e.stopPropagation();
                 if (id !== undefined) closeWithAnimation(id);

@@ -41,12 +41,12 @@ export const ParagraphInput = forwardRef(function (
   } = props;
 
   return (
-    <div className={`form-paragraph-container ${containerClassName}`}>
+    <div className={`form-paragraph-container group ${containerClassName}`}>
       <textarea
         ref={ref}
         name={name}
         id={id}
-        className={`text-input text-area form-paragraph-textarea ${inputStateClassName(state)} ${inputClassName}`}
+        className={`text-input text-area form-paragraph-textarea peer ${inputStateClassName(state)} ${inputClassName}`}
         required={required}
         value={value}
         onChange={onChange}

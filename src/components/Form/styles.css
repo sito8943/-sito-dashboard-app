@@ -13,9 +13,5 @@
 }
 
 .form-paragraph-container {
-  @apply relative z-0 w-full mb-5 group;
-}
-
-.form-paragraph-textarea {
-  @apply peer;
+  @apply relative z-0 w-full mb-5;
 }
