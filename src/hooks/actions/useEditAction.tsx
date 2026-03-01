@@ -15,22 +15,31 @@ import { GlobalActions, UseSingleActionPropTypes } from "hooks";
 import { BaseEntityDto } from "lib";
 
 export const useEditAction = <TRow extends BaseEntityDto>(
-  props: UseSingleActionPropTypes<number>
+  props: UseSingleActionPropTypes<number>,
 ) => {
   const { t } = useTranslation();
 
-  const { onClick, hidden = false } = props;
+  const {
+    onClick,
+    hidden = false,
+    sticky = true,
+    disabled = false,
+    id = GlobalActions.Edit,
+    icon = faPencil,
+    tooltip = t("_pages:common.actions.edit.text"),
+  } = props;
 
   const action = useCallback(
     (record: TRow): ActionType<TRow> => ({
-      id: GlobalActions.Edit,
-      hidden: !!record.deletedAt || hidden,
-      disabled: !!record.deletedAt,
-      icon: <FontAwesomeIcon className="primary" icon={faPencil} />,
-      tooltip: t("_pages:common.actions.edit.text"),
+      id,
+      sticky,
+      tooltip,
       onClick: () => onClick(record?.id),
+      hidden: !!record.deletedAt || hidden,
+      disabled: !!record.deletedAt || disabled,
+      icon: <FontAwesomeIcon className="primary" icon={icon} />,
     }),
-    [hidden, onClick, t]
+    [disabled, hidden, icon, id, onClick, sticky, tooltip],
   );
 
   return {

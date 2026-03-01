@@ -1,17 +1,22 @@
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+
 export interface UseActionPropTypes {
   hidden?: boolean;
   disabled?: boolean;
   isLoading?: boolean;
+  sticky?: boolean;
+  multiple?: boolean;
+  icon?: IconDefinition;
+  tooltip?: string;
+  id?: string;
 }
 
 export interface UseSingleActionPropTypes<TInDto> extends UseActionPropTypes {
   onClick: (record: TInDto) => void;
-  hidden?: boolean;
 }
 
 export interface UseMultipleActionPropTypes<TInDto> extends UseActionPropTypes {
   onClick: (record: TInDto[]) => void;
-  hidden?: boolean;
 }
 
 export interface UseExportAction extends UseActionPropTypes {
