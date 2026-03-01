@@ -197,7 +197,7 @@ if (isHttpError(error)) {
 
 ### Action hooks
 
-Action hooks return a single `action` object for use with `Actions` or `PrettyGrid`:
+Action hooks return a single `action` object for use with `Actions` or `PrettyGrid`. All optional props have sensible defaults so only `onClick` is required in common cases:
 
 ```tsx
 import {
@@ -219,6 +219,19 @@ function MyPage() {
 
   return <Actions actions={[editAction(record), deleteAction(record)]} />;
 }
+```
+
+#### Default values per hook
+
+| Hook | `sticky` | `multiple` | `id` | `icon` | `tooltip` |
+|------|----------|------------|------|--------|-----------|
+| `useDeleteAction` | `true` | `true` | `"delete"` | `faTrash` | auto-translated |
+| `useEditAction` | `true` | — | `"edit"` | `faPencil` | auto-translated |
+| `useRestoreAction` | `true` | `false` | `"restore"` | `faRotateLeft` | auto-translated |
+| `useExportAction` | — | — | `"export"` | `faCloudArrowDown` | auto-translated |
+| `useImportAction` | — | — | `"import"` | `faCloudUpload` | auto-translated |
+
+All hooks also default `hidden = false` and `disabled = false`. Override any prop to customize behavior.
 ```
 
 ### Dialog hooks

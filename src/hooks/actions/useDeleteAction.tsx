@@ -14,20 +14,30 @@ import { BaseEntityDto } from "lib";
 export const useDeleteAction = (props: UseMultipleActionPropTypes<number>) => {
   const { t } = useTranslation();
 
-  const { onClick, hidden = false, disabled = false } = props;
+  const {
+    onClick,
+    icon = faTrash,
+    sticky = true,
+    hidden = false,
+    multiple = true,
+    disabled = false,
+    id = GlobalActions.Delete,
+    tooltip = t("_pages:common.actions.delete.text"),
+  } = props;
 
   const action = useCallback(
     (record: BaseEntityDto): ActionType<BaseEntityDto> => ({
-      id: GlobalActions.Delete,
+      id,
+      sticky,
+      tooltip,
+      multiple,
+      onClick: () => onClick([record?.id]),
       hidden: !!record.deletedAt || hidden,
       disabled: !!record.deletedAt || disabled,
-      icon: <FontAwesomeIcon className="text-bg-error" icon={faTrash} />,
-      tooltip: t("_pages:common.actions.delete.text"),
-      onClick: () => onClick([record?.id]),
+      icon: <FontAwesomeIcon className="text-bg-error" icon={icon} />,
       onMultipleClick: (rows) => onClick(rows.map((row) => row.id)),
-      multiple: true,
     }),
-    [disabled, hidden, onClick, t]
+    [disabled, hidden, icon, id, multiple, onClick, sticky, tooltip],
   );
 
   return {

@@ -28,7 +28,7 @@ pnpm add @sito/dashboard-app
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
-- Hooks: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, and more
+- Hooks: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, DTOs, API clients
 
 ## Initial setup example
