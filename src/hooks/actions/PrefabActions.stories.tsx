@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 // components
-import { Actions } from "components/Actions";
+import { Actions } from "components";
 
 // hooks
 import { useDeleteAction } from "./useDeleteAction";

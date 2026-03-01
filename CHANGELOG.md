@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.42] - 2026-03-01
+
+### Changed
+
+- Removed local `Actions` component family (`Action`, `Actions`, `ActionsDropdown`) — now delegated entirely to `@sito/dashboard`.
+- Updated `@sito/dashboard` dependency to `^0.0.67`.
+- Added `.sito/dashboard.md` upstream reference documentation.
+
+## [0.0.41] - 2026-02-28
+
+### Fixed
+
+- Fixed prefab actions hook behavior.
+- Fixed label rendering issue on `ParagraphInput`.
+
+## [0.0.40] - 2026-02-28
+
+### Changed
+
+- Refactored component file structure for better organization.
+- Refactored styles and actions across multiple components.
+- Refactored `Drawer`, `Dialog`, `Inputs`, and `ErrorComponent`.
+
+### Fixed
+
+- Fixed `SplashScreen` loading types.
+- Fixed navbar tests and navbar rendering.
+- Fixed notification handling.
+- Fixed missing translations in stories.
+- Fixed children duplication caused by prop spread.
+- Fixed `onClick` handler on action items.
+
+## [0.0.39] - 2026-02-23
+
+### Added
+
+- New `ActionsDropdown` component with Storybook story.
+- Extended test suite:
+  - `Actions.test.tsx`
+  - `ConfirmationDialog.test.tsx`
+  - `Navbar.test.tsx`
+  - `useDeleteAction`, `useEditAction`, `useExportAction`, `useImportAction`, `useRestoreAction`
+  - `useDialog`, `useScrollTrigger`
+- Added `.nvmrc` pinned to Node 20.
+
+### Changed
+
+- `ActionsDropdown` now uses `IconButton`, `Button`, and `Dropdown` from `@sito/dashboard`.
+- Added `className` prop to `ActionsDropdown` trigger.
+
+### Fixed
+
+- Fixed stories and notification rendering.
+- Fixed `ActionsDropdown` Storybook story.
+
+## [0.0.38] - 2026-02-20
+
+### Changed
+
+- Updated `@sito/dashboard` dependency to `^0.0.63`.
+
+### Fixed
+
+- Fixed missing `aria-label` attribute on interactive elements.
+
 ## [0.0.37] - 2026-02-19
 
 ### Added

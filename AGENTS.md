@@ -15,7 +15,7 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 | Icons | FontAwesome | 7.0.0 |
 | Forms | React Hook Form | 7.61.1 |
 | Server State | TanStack React Query | 5.x |
-| Base Library | @sito/dashboard | ^0.0.66 |
+| Base Library | @sito/dashboard | ^0.0.67 |
 
 ---
 
@@ -30,7 +30,7 @@ All peer dependencies **must** be installed in the consumer project:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.66 \
+  @sito/dashboard@^0.0.67 \
   @emotion/css@11.13.5 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
@@ -114,7 +114,7 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 |-----------|-------------|
 | `Page` | Generic page layout with entity management (list, delete, restore, import/export) |
 | `PageHeader` | Page title + action bar |
-| `Actions` | Bulk/row action bar for tables |
+| `Action` / `Actions` / `ActionsDropdown` | Action primitives re-exported from `@sito/dashboard` |
 | `FormContainer` | Form wrapper that integrates react-hook-form submit/reset buttons |
 | `ParagraphInput` | Textarea input with label, state, and helper text |
 | `PasswordInput` | Password input with show/hide toggle |

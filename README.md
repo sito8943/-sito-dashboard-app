@@ -19,7 +19,7 @@ pnpm add @sito/dashboard-app
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.66`
+- `@sito/dashboard` `^0.0.67`
 - Font Awesome + Emotion peers defined in `package.json`
 
 ## Core exports
