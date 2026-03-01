@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.43] - 2026-03-01
+
+### Changed
+
+- Prefab action hooks now expose sensible default values for `sticky`, `multiple`, `id`, `icon`, and `tooltip`, so they work out of the box without extra configuration:
+  - `useDeleteAction`: `sticky = true`, `multiple = true`, `id = "delete"`, `icon = faTrash`, tooltip auto-translated.
+  - `useEditAction`: `sticky = true`, `id = "edit"`, `icon = faPencil`, tooltip auto-translated.
+  - `useRestoreAction`: `sticky = true`, `multiple = false`, `id = "restore"`, `icon = faRotateLeft`, tooltip auto-translated.
+  - `useExportAction` / `useImportAction`: `hidden = false`, `disabled = false`, `isLoading = false` (unchanged, already defaulted).
+
 ## [0.0.42] - 2026-03-01
 
 ### Changed
