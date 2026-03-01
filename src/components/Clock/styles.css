@@ -1,0 +1,4 @@
+
+.clock {
+  @apply capitalize max-xs:hidden;
+}
