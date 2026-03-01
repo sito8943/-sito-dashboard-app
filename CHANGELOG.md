@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.44] - 2026-03-01
+
+### Added
+
+- `NavbarProvider` — new context provider for controlling the `Navbar` dynamically:
+  - `title`: sets the navbar title per page
+  - `setTitle(value: string)`: setter function
+  - `rightContent`: injects a `ReactNode` into the navbar's right slot
+  - `setRightContent(value: ReactNode)`: setter function
+- `useNavbar` hook — consumes `NavbarContext` to read/set `title` and `rightContent`.
+
+### Changed
+
+- `Navbar` now reads `title` and `rightContent` from `NavbarProvider` context instead of props.
+- Removed `showClock` prop from `Navbar`.
+
+### Deprecated
+
+- `Clock` component — extracted to its own `Clock/` folder and marked `@deprecated`. Will be removed in a future release.
+
 ## [0.0.43] - 2026-03-01
 
 ### Changed

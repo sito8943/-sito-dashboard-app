@@ -91,6 +91,7 @@ function App() {
 | `ManagerProvider` | Injects the API manager (`IManager`) consumed by hooks and components |
 | `NotificationProvider` | Global toast notification system |
 | `DrawerMenuProvider` | Dynamic drawer menu state |
+| `NavbarProvider` | Provides dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent` |
 
 ---
 
@@ -128,6 +129,7 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Error` | Error display component |
 | `Loading` / `SplashScreen` | Loading indicators |
 | `IconButton` | FontAwesome-based icon button (overrides `@sito/dashboard`'s version) |
+| `Clock` | (**deprecated**) Displays a formatted clock in the navbar; will be removed in a future release |
 
 ---
 
@@ -233,6 +235,29 @@ function MyPage() {
 
 All hooks also default `hidden = false` and `disabled = false`. Override any prop to customize behavior.
 ```
+
+### Navbar hook
+
+Use `useNavbar` to set the page title or inject content into the navbar's right slot from any child component:
+
+```tsx
+import { useNavbar } from "@sito/dashboard-app";
+
+function ProductsPage() {
+  const { setTitle, setRightContent } = useNavbar();
+
+  useEffect(() => {
+    setTitle("Products");
+    setRightContent(<MyRightSlotContent />);
+    return () => {
+      setTitle("");
+      setRightContent(null);
+    };
+  }, [setTitle, setRightContent]);
+}
+```
+
+`NavbarProvider` must wrap `Navbar` in the component tree for this to work.
 
 ### Dialog hooks
 
