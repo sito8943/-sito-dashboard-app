@@ -4,3 +4,4 @@ export * from "./types";
 export * from "./APIClient"
 export * from "./AuthClient"
 export * from "./BaseClient"
+export * from "./IndexedDBClient"

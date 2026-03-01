@@ -350,6 +350,79 @@ class ProductsClient extends BaseClient<
 
 ---
 
+## Offline / IndexedDB Client
+
+`IndexedDBClient` is a drop-in offline alternative to `BaseClient`. It has the **exact same generic parameters and method signatures** but persists data in the browser's IndexedDB instead of calling a remote API.
+
+### When to use
+
+Use it when the app must remain functional without network access — offline-capable dashboards, PWAs, or field apps. The typical pattern is to swap clients based on connectivity:
+
+```ts
+import { BaseClient, IndexedDBClient } from "@sito/dashboard-app";
+
+const client = navigator.onLine
+  ? new ProductsClient(apiUrl)        // remote REST
+  : new ProductsIndexedDBClient();    // local IndexedDB
+```
+
+### Constructor
+
+```ts
+new IndexedDBClient(table: Tables, dbName: string, version?: number)
+```
+
+| Param | Description |
+|-------|-------------|
+| `table` | Object store name (equivalent to the table/route in `BaseClient`) |
+| `dbName` | IndexedDB database name — use one shared name per app |
+| `version` | Schema version — bump when adding new stores (default `1`) |
+
+The object store is created automatically with `keyPath: "id"` and `autoIncrement: true` on first open.
+
+### Extending for a specific entity
+
+```ts
+import { IndexedDBClient } from "@sito/dashboard-app";
+
+class ProductsIndexedDBClient extends IndexedDBClient<
+  "products",
+  ProductDto,
+  ProductCommonDto,
+  CreateProductDto,
+  UpdateProductDto,
+  ProductFilterDto,
+  ProductImportPreviewDto
+> {
+  constructor() {
+    super("products", "my-app-db");
+  }
+}
+```
+
+### Reacting to connectivity changes at runtime
+
+```ts
+useEffect(() => {
+  const goOnline  = () => setClient(new ProductsClient(apiUrl));
+  const goOffline = () => setClient(new ProductsIndexedDBClient());
+  window.addEventListener("online",  goOnline);
+  window.addEventListener("offline", goOffline);
+  return () => {
+    window.removeEventListener("online",  goOnline);
+    window.removeEventListener("offline", goOffline);
+  };
+}, []);
+```
+
+### Constraints
+
+- Browser-only: do not instantiate in SSR or Node environments.
+- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key — no range or partial-match queries.
+- `import` with `override: false` uses `store.add` (throws on duplicate key); `override: true` uses `store.put` (upsert).
+
+---
+
 ## Styling Rules
 
 ### Use Tailwind utilities from the consumer side
@@ -470,3 +543,4 @@ Consumer projects must provide translations for these namespaces.
 10. **Respect the styling system** — use `State` enum and `*StateClassName` utilities for stateful inputs; do not override with inline styles.
 11. **Do not add `any` types** — the library is fully typed; if types seem missing, check for the correct DTO or utility type.
 12. **`IconButton` is overridden** — the export from this library wraps FontAwesome and expects `icon: IconDefinition`, not a React node.
+13. **Use `IndexedDBClient` as offline fallback** — when building offline-capable features, extend `IndexedDBClient` instead of writing custom storage logic. It shares the same interface as `BaseClient`, so components and hooks that consume a client work without modification. Never instantiate `IndexedDBClient` in SSR/Node contexts.

@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.44",
+  "version": "0.0.45",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -84,6 +84,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-react-refresh": "0.5.1",
+    "fake-indexeddb": "^6.2.5",
     "husky": "9.1.7",
     "jsdom": "^26.1.0",
     "prettier": "3.3.3",
