@@ -112,6 +112,88 @@ export function App() {
 - `npm run storybook`: run Storybook locally
 - `npm run build-storybook`: generate static Storybook build
 
+## Offline-first / IndexedDB fallback
+
+`IndexedDBClient` is a drop-in offline alternative to `BaseClient`. It exposes the exact same method surface (`insert`, `insertMany`, `update`, `get`, `getById`, `export`, `import`, `commonGet`, `softDelete`, `restore`) but stores data locally in the browser's IndexedDB instead of calling a remote API.
+
+### When to use it
+
+Use `IndexedDBClient` when the remote API is unreachable — for example in offline-capable dashboards, field apps, or PWAs. The pattern is to detect connectivity and swap the client transparently:
+
+```ts
+import { BaseClient, IndexedDBClient } from "@sito/dashboard-app";
+
+// Online: hit the API. Offline: read/write from IndexedDB.
+const productsClient = navigator.onLine
+  ? new ProductsClient(import.meta.env.VITE_API_URL)
+  : new ProductsIndexedDBClient();
+```
+
+### Creating an offline client
+
+Extend `IndexedDBClient` the same way you would extend `BaseClient`:
+
+```ts
+import {
+  IndexedDBClient,
+  BaseEntityDto,
+  BaseCommonEntityDto,
+  BaseFilterDto,
+  DeleteDto,
+  ImportPreviewDto,
+} from "@sito/dashboard-app";
+
+interface ProductDto extends BaseEntityDto {
+  name: string;
+  price: number;
+}
+
+interface ProductFilterDto extends BaseFilterDto {
+  category?: string;
+}
+
+class ProductsIndexedDBClient extends IndexedDBClient<
+  "products",
+  ProductDto,
+  ProductDto,           // TCommonDto
+  Omit<ProductDto, "id" | "createdAt" | "updatedAt" | "deletedAt">,
+  ProductDto,           // TUpdateDto (extends DeleteDto via BaseEntityDto)
+  ProductFilterDto,
+  ImportPreviewDto
+> {
+  constructor() {
+    super("products", "my-app-db");
+  }
+}
+```
+
+### Reacting to connectivity changes at runtime
+
+```ts
+import { useState, useEffect } from "react";
+
+function useProductsClient() {
+  const [client, setClient] = useState(
+    () => navigator.onLine ? new ProductsClient(apiUrl) : new ProductsIndexedDBClient()
+  );
+
+  useEffect(() => {
+    const goOnline  = () => setClient(new ProductsClient(apiUrl));
+    const goOffline = () => setClient(new ProductsIndexedDBClient());
+    window.addEventListener("online",  goOnline);
+    window.addEventListener("offline", goOffline);
+    return () => {
+      window.removeEventListener("online",  goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
+
+  return client;
+}
+```
+
+> **Note:** `IndexedDBClient` requires a browser environment. It will not work in SSR/Node contexts.
+
 ## Tests
 
 Automated tests are configured with `Vitest` + `@testing-library/react`.

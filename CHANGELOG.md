@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- `IndexedDBClient<Tables, TDto, TCommonDto, TAddDto, TUpdateDto, TFilter, TImportPreviewDto>` — offline-capable browser storage client with the exact same method surface as `BaseClient`, backed by the browser's IndexedDB API. Intended as a drop-in offline fallback when the remote API is unreachable.
+  - Supports: `insert`, `insertMany`, `update`, `get` (with pagination + sorting), `getById`, `export`, `import`, `commonGet`, `softDelete`, `restore`.
+  - Constructor: `(table: Tables, dbName: string, version?: number)`. The object store is created automatically on first open.
+  - Exported from `@sito/dashboard-app` alongside `BaseClient`.
+- Full test suite for `IndexedDBClient` (`IndexedDBClient.test.ts`) covering `User`, `Account` (1 User → N Accounts), and `Transaction` (1 Account → N Transactions) entities — 29 tests across CRUD, pagination, sorting, filtering, soft-delete/restore, and full hierarchy scenarios.
+
 ## [0.0.44] - 2026-03-01
 
 ### Added
