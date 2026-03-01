@@ -6,6 +6,10 @@ import { getFormattedDateTime, getShortFormattedDateTime } from "lib";
 // styles
 import "./styles.css";
 
+/**
+ * @deprecated
+ * @returns
+ */
 export const Clock = () => {
   const [dateNow, setDateNow] = useState(getFormattedDateTime());
 
@@ -16,7 +20,7 @@ export const Clock = () => {
       setDateNow(
         !mediaQuery.matches
           ? getShortFormattedDateTime()
-          : getFormattedDateTime()
+          : getFormattedDateTime(),
       );
     };
 

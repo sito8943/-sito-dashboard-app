@@ -10,9 +10,6 @@ import { NavbarPropsType } from "./types.js";
 // styles
 import "./styles.css";
 
-// clock
-import { Clock } from "./Clock";
-
 // components
 import { AppIconButton } from "components";
 
@@ -21,18 +18,15 @@ import { isMac } from "lib";
 
 // providers
 import { useConfig } from "providers";
+import { useNavbar } from "./NavbarProvider.js";
 
 export function Navbar(props: NavbarPropsType) {
   const { t } = useTranslation();
 
-  const {
-    openDrawer,
-    showClock = true,
-    showSearch = true,
-    menuButtonProps,
-  } = props;
+  const { openDrawer, showSearch = true, menuButtonProps } = props;
 
   const { searchComponent, location } = useConfig();
+  const { title, rightContent } = useNavbar();
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -75,9 +69,12 @@ export function Navbar(props: NavbarPropsType) {
             }
             className={`navbar-menu animated ${menuButtonProps?.className ?? ""}`}
           />
-          <h1 className="poppins navbar-title">{t("_pages:home.appName")}</h1>
+          <h1 className="poppins navbar-title">
+            {title || t("_pages:home.appName")}
+          </h1>
         </div>
         <div className="navbar-right">
+          {rightContent}
           {showSearch && (
             <AppIconButton
               icon={faSearch}
@@ -85,7 +82,6 @@ export function Navbar(props: NavbarPropsType) {
               onClick={() => setShowDialog(true)}
             />
           )}
-          {showClock && <Clock />}
         </div>
       </header>
     </>
