@@ -4,6 +4,9 @@ import { useTranslation } from "@sito/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSadTear } from "@fortawesome/free-regular-svg-icons";
 
+// components
+import { Button } from "../Buttons";
+
 // types
 import { ErrorPropsType } from "./types";
 
@@ -36,8 +39,12 @@ export function Error(props: ErrorPropsType) {
   } = props;
 
   const retryAction = onRetry ?? resetErrorBoundary;
-  const { className: retryClassName, children: retryChildren, ...restRetryButtonProps } =
-    retryButtonProps ?? {};
+  const {
+    className: retryClassName,
+    children: retryChildren,
+    onClick: retryOnClick,
+    ...restRetryButtonProps
+  } = retryButtonProps ?? {};
   const { className: messageClassName, ...restMessageProps } = messageProps ?? {};
   const shouldRenderIcon = iconProps !== null;
 
@@ -57,19 +64,21 @@ export function Error(props: ErrorPropsType) {
         {message ?? error?.message ?? t("_accessibility:errors.unknownError")}
       </p>
       {retryAction && (
-        <button
+        <Button
           type="button"
+          variant="submit"
+          color="primary"
           {...restRetryButtonProps}
-          className={`error-retry${retryClassName ? ` ${retryClassName}` : ""}`}
+          className={`error-retry ${retryClassName ? ` ${retryClassName}` : ""}`}
           onClick={(e) => {
-            restRetryButtonProps.onClick?.(e);
+            retryOnClick?.(e);
             if (!e.defaultPrevented) retryAction();
           }}
         >
           {retryChildren ??
             retryLabel ??
             t("_accessibility:actions.retry", { defaultValue: "Retry" })}
-        </button>
+        </Button>
       )}
     </div>
   );

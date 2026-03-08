@@ -23,12 +23,12 @@ export const WithRetry: Story = {
   args: {
     onRetry: () => {},
   },
-  render: (args) => {
+  render: ({ onRetry }) => {
     const { t } = useTranslation();
 
     return (
       <ErrorComponent
-        {...args}
+        onRetry={onRetry}
         message={t("_accessibility:errors.unknownError")}
         retryLabel={t("_accessibility:actions.retry", { defaultValue: "Retry" })}
       />

@@ -15,7 +15,7 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 | Icons | FontAwesome | 7.0.0 |
 | Forms | React Hook Form | 7.61.1 |
 | Server State | TanStack React Query | 5.x |
-| Base Library | @sito/dashboard | ^0.0.67 |
+| Base Library | @sito/dashboard | ^0.0.68 |
 
 ---
 
@@ -30,7 +30,7 @@ All peer dependencies **must** be installed in the consumer project:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.67 \
+  @sito/dashboard@^0.0.68 \
   @emotion/css@11.13.5 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
@@ -125,13 +125,51 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Drawer` | Side drawer navigation |
 | `Notification` | Toast notification component |
 | `Onboarding` | Multi-step onboarding flow |
-| `TabsLayout` | Tabbed page layout |
+| `TabsLayout` | Tabbed page layout; uses links by default and can switch to buttons with `useLinks={false}` + `tabButtonProps` |
 | `PrettyGrid` | Data grid/table |
 | `Empty` | Empty state placeholder |
-| `Error` | Error display component |
+| `Error` | Error display with default icon/message/retry or fully custom content via `children` |
 | `Loading` / `SplashScreen` | Loading indicators |
 | `IconButton` | FontAwesome-based icon button (overrides `@sito/dashboard`'s version) |
 | `Clock` | (**deprecated**) Displays a formatted clock in the navbar; will be removed in a future release |
+
+---
+
+### `Error` component patterns
+
+Use default mode for common fallback UI:
+
+```tsx
+<Error
+  error={error}
+  onRetry={() => refetch()}
+/>
+```
+
+Use `children` only when you need fully custom content:
+
+```tsx
+<Error>
+  <CustomErrorPanel />
+</Error>
+```
+
+Do not mix default props (`error`, `message`, `onRetry`, etc.) with `children` in the same usage.
+
+### `TabsLayout` links vs buttons
+
+By default, tabs render with your router `linkComponent` (`useLinks = true`).
+For non-routing tab switches, disable links:
+
+```tsx
+<TabsLayout
+  useLinks={false}
+  tabButtonProps={{ variant: "outlined", color: "secondary" }}
+  tabs={tabs}
+/>
+```
+
+`tabButtonProps` customizes each tab button when `useLinks` is `false`. Its `onClick` and `children` are controlled internally by `TabsLayout`.
 
 ---
 
@@ -577,6 +615,8 @@ The library uses an internal i18n system (`useTranslation` from `@sito/dashboard
 Namespace keys used internally:
 
 - `_accessibility:buttons.submit` / `_accessibility:buttons.cancel`
+- `_accessibility:actions.retry`
+- `_accessibility:errors.unknownError`
 - `_accessibility:ariaLabels.*`
 - `_pages:common.actions.*`
 
@@ -602,3 +642,5 @@ Consumer projects must provide translations for these namespaces.
 14. **Sign-in should send `rememberMe` when the UI exposes a remember option.**
 15. **Do not implement ad-hoc token refresh in consumer apps** — rely on the centralized refresh/retry behavior in `APIClient`/`BaseClient`.
 16. **Keep auth storage key config aligned** — if custom keys are used in `AuthProvider`, configure the same keys in manager/client auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
+17. **Use `Error` in one mode at a time** — either default props (`error/message/icon/retry`) or `children` for custom content.
+18. **Use `TabsLayout` navigation mode intentionally** — keep default links for route-driven tabs; use `useLinks={false}` (+ `tabButtonProps`) for local state tabs.

@@ -1,5 +1,6 @@
-import { ButtonHTMLAttributes, DetailedHTMLProps, HTMLAttributes, ReactNode } from "react";
+import { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react";
 import { FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
+import { ButtonPropsType } from "@sito/dashboard";
 
 type ErrorIconPropsType = Omit<FontAwesomeIconProps, "icon"> & {
   icon?: FontAwesomeIconProps["icon"];
@@ -11,10 +12,7 @@ export type ErrorDefaultPropsType = {
   iconProps?: ErrorIconPropsType | null;
   onRetry?: () => void;
   retryLabel?: string;
-  retryButtonProps?: DetailedHTMLProps<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >;
+  retryButtonProps?: Omit<ButtonPropsType, "type">;
   messageProps?: DetailedHTMLProps<
     HTMLAttributes<HTMLParagraphElement>,
     HTMLParagraphElement

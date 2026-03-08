@@ -12,10 +12,6 @@
   @apply text-text text-center;
 }
 
-.error-retry {
-  @apply border-0 bg-transparent p-0 cursor-pointer text-primary font-medium;
-}
-
 .error-retry:hover {
   @apply text-hover-primary;
 }

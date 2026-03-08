@@ -15,6 +15,8 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
     defaultTab,
     className = "",
     tabsContainerClassName = "",
+    useLinks = true,
+    tabButtonProps,
   } = props;
   const [activeTab, setActiveTab] = useState(defaultTab ?? tabs[0]?.id);
 
@@ -35,6 +37,8 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
               to={to ?? ""}
               siblings={tabs.length > 1}
               active={activeTab === id}
+              useLinks={useLinks}
+              tabButtonProps={tabButtonProps}
             >
               {label}
             </Tab>
