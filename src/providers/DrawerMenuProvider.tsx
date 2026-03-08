@@ -12,8 +12,15 @@ import { DrawerMenuContextType, DrawerMenuProviderPropTypes } from "./types";
 // lib
 import { SubMenuItemType } from "lib";
 
-const DrawerMenuContext = createContext<DrawerMenuContextType<string> | undefined>(
-  undefined
+const defaultDrawerMenuContext: DrawerMenuContextType<string> = {
+  addChildItem: () => {},
+  removeChildItem: () => {},
+  clearDynamicItems: () => {},
+  dynamicItems: {},
+};
+
+const DrawerMenuContext = createContext<DrawerMenuContextType<string>>(
+  defaultDrawerMenuContext
 );
 
 /**
@@ -82,8 +89,6 @@ const DrawerMenuProvider = <MenuKeys extends string>(
  */
 const useDrawerMenu = <MenuKeys extends string>() => {
   const context = useContext(DrawerMenuContext);
-  if (!context)
-    throw new Error("DrawerMenuContext must be used within a Provider");
   return context as DrawerMenuContextType<MenuKeys>;
 };
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { DrawerMenuProvider, useDrawerMenu } from "./DrawerMenuProvider";
 
@@ -9,16 +9,15 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe("DrawerMenuProvider", () => {
-  it("throws when useDrawerMenu is called outside provider", () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => undefined);
+  it("returns safe defaults when useDrawerMenu is called outside provider", () => {
+    const { result } = renderHook(() => useDrawerMenu<"users">());
 
-    expect(() => renderHook(() => useDrawerMenu<"users">())).toThrow(
-      "DrawerMenuContext must be used within a Provider"
-    );
-
-    consoleErrorSpy.mockRestore();
+    expect(result.current.dynamicItems).toEqual({});
+    expect(() =>
+      result.current.addChildItem("users", { id: "1", label: "Item 1" })
+    ).not.toThrow();
+    expect(() => result.current.removeChildItem("users", 0)).not.toThrow();
+    expect(() => result.current.clearDynamicItems("users")).not.toThrow();
   });
 
   it("manages dynamic drawer items when wrapped with provider", () => {
