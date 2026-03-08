@@ -19,7 +19,7 @@ pnpm add @sito/dashboard-app
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.67`
+- `@sito/dashboard` `^0.0.68`
 - Font Awesome + Emotion peers defined in `package.json`
 
 ## Core exports
@@ -30,6 +30,48 @@ pnpm add @sito/dashboard-app
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
 - Hooks: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `NavbarProvider`, DTOs, API clients
+
+## Component usage patterns
+
+### Error component
+
+`Error` supports two modes:
+
+- Default mode: icon + message + retry (uses `Button` internally)
+- Custom mode: pass `children` for fully custom content
+
+```tsx
+import { Error } from "@sito/dashboard-app";
+
+<Error
+  error={error}
+  onRetry={() => refetch()}
+  retryLabel="Retry"
+/>
+
+<Error>
+  <CustomErrorPanel />
+</Error>
+```
+
+Do not combine default props (`error`, `message`, `onRetry`, etc.) with `children` in the same instance.
+
+### TabsLayout link mode
+
+`TabsLayout` renders route links by default (`useLinks = true`).
+If your tabs are local UI state and should not navigate, set `useLinks={false}`.
+
+```tsx
+import { TabsLayout } from "@sito/dashboard-app";
+
+<TabsLayout
+  useLinks={false}
+  tabButtonProps={{ variant: "outlined", color: "secondary" }}
+  tabs={tabs}
+/>
+```
+
+`tabButtonProps` lets you customize each tab button style/behavior (except `onClick` and `children`, which are controlled by `TabsLayout`).
 
 ## Initial setup example
 

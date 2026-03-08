@@ -11,3 +11,7 @@
 .error-message {
   @apply text-text text-center;
 }
+
+.error-retry:hover {
+  @apply text-hover-primary;
+}

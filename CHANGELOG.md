@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.46] - 2026-03-08
+
+### Added
+
+- `Empty` Storybook story: `CustomMessage` to showcase custom empty-state copy.
+- `TabsLayout` navigation mode props:
+  - `useLinks?: boolean` (default `true`) to toggle between router links and local buttons.
+  - `tabButtonProps` to customize tab button appearance/behavior when `useLinks={false}`.
+- New `TabsLayout` stories:
+  - `WithoutLinks`
+  - `WithCustomTabButton`
+- Expanded `Error` stories:
+  - `WithRetry`
+  - `WithCustomIcon`
+  - `CustomContent`
+
+### Changed
+
+- `Error` component API is now hybrid:
+  - Default mode supports icon/message/retry options (`error`, `message`, `iconProps`, `onRetry`, `retryLabel`, `retryButtonProps`, `messageProps`).
+  - Custom mode supports fully custom content via `children`.
+  - Modes are enforced with TypeScript union types to prevent mixing default props and `children`.
+- `Error` retry action now renders with `Button` (from `@sito/dashboard`) instead of a native `<button>`.
+- Updated Storybook translation mocks to include:
+  - `_accessibility:actions.retry`
+  - `_accessibility:errors.unknownError`
+- Updated documentation (`README.md`, `AGENTS.md`) for:
+  - `Error` usage modes
+  - `TabsLayout` link-vs-button behavior
+  - Peer dependency alignment to `@sito/dashboard@^0.0.68`
+
 ## [0.0.45] - 2026-03-01
 
 ### Added

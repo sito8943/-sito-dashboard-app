@@ -3,4 +3,6 @@ export type SessionDto = {
   username: string;
   email: string;
   token: string;
+  refreshToken?: string | null;
+  accessTokenExpiresAt?: string | null;
 };

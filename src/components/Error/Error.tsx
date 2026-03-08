@@ -4,6 +4,9 @@ import { useTranslation } from "@sito/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSadTear } from "@fortawesome/free-regular-svg-icons";
 
+// components
+import { Button } from "../Buttons";
+
 // types
 import { ErrorPropsType } from "./types";
 
@@ -11,19 +14,71 @@ import { ErrorPropsType } from "./types";
 import "./styles.css";
 
 export function Error(props: ErrorPropsType) {
-  const { error, resetErrorBoundary } = props;
   const { t } = useTranslation();
+  const hasCustomContent = "children" in props;
+
+  if (hasCustomContent) {
+    const { children, className } = props;
+    return (
+      <div className={`error-container${className ? ` ${className}` : ""}`}>
+        {children}
+      </div>
+    );
+  }
+
+  const {
+    error,
+    message,
+    iconProps,
+    onRetry,
+    retryLabel,
+    retryButtonProps,
+    messageProps,
+    className,
+    resetErrorBoundary,
+  } = props;
+
+  const retryAction = onRetry ?? resetErrorBoundary;
+  const {
+    className: retryClassName,
+    children: retryChildren,
+    onClick: retryOnClick,
+    ...restRetryButtonProps
+  } = retryButtonProps ?? {};
+  const { className: messageClassName, ...restMessageProps } = messageProps ?? {};
+  const shouldRenderIcon = iconProps !== null;
 
   return (
-    <div className="error-container">
-      <FontAwesomeIcon icon={faSadTear} className="error-icon" />
-      <p className="error-message">
-        {error?.message ?? t("_accessibility:errors.unknownError")}
+    <div className={`error-container${className ? ` ${className}` : ""}`}>
+      {shouldRenderIcon && (
+        <FontAwesomeIcon
+          {...iconProps}
+          icon={iconProps?.icon ?? faSadTear}
+          className={`error-icon${iconProps?.className ? ` ${iconProps.className}` : ""}`}
+        />
+      )}
+      <p
+        {...restMessageProps}
+        className={`error-message${messageClassName ? ` ${messageClassName}` : ""}`}
+      >
+        {message ?? error?.message ?? t("_accessibility:errors.unknownError")}
       </p>
-      {resetErrorBoundary && (
-        <button className="error-retry" onClick={resetErrorBoundary}>
-          {t("_accessibility:actions.retry", { defaultValue: "Retry" })}
-        </button>
+      {retryAction && (
+        <Button
+          type="button"
+          variant="submit"
+          color="primary"
+          {...restRetryButtonProps}
+          className={`error-retry ${retryClassName ? ` ${retryClassName}` : ""}`}
+          onClick={(e) => {
+            retryOnClick?.(e);
+            if (!e.defaultPrevented) retryAction();
+          }}
+        >
+          {retryChildren ??
+            retryLabel ??
+            t("_accessibility:actions.retry", { defaultValue: "Retry" })}
+        </Button>
       )}
     </div>
   );

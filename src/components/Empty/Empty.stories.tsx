@@ -18,3 +18,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};
+
+export const CustomMessage: Story = {
+  args: {
+    message: "No records match the selected filters.",
+  },
+};

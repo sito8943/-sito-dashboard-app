@@ -20,12 +20,10 @@ export const parseQueries = <TDto, TFilter extends BaseFilterDto>(
   // Build pagination and sorting params
   if (query) {
     const { sortingBy, sortingOrder, currentPage, pageSize } = query;
-    queryParts.push(
-      `sort=${String(sortingBy)}`,
-      `order=${sortingOrder}`,
-      `page=${currentPage}`,
-      `pageSize=${pageSize}`
-    );
+    if (sortingBy !== undefined) queryParts.push(`sort=${String(sortingBy)}`);
+    if (sortingOrder !== undefined) queryParts.push(`order=${sortingOrder}`);
+    if (currentPage !== undefined) queryParts.push(`page=${currentPage}`);
+    if (pageSize !== undefined) queryParts.push(`pageSize=${pageSize}`);
   }
 
   // Build filters
