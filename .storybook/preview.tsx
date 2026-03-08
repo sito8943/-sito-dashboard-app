@@ -63,6 +63,8 @@ const translations: Record<string, string> = {
   "_accessibility:buttons.startAsGuest": "Start as guest",
   "_accessibility:buttons.signIn": "Sign in",
   "_accessibility:ariaLabels.start": "Start",
+  "_accessibility:actions.retry": "Retry",
+  "_accessibility:errors.unknownError": "Something went wrong",
   "_pages:common.actions.delete.text": "Delete",
   "_pages:common.actions.edit.text": "Edit",
   "_pages:common.actions.restore.text": "Restore",

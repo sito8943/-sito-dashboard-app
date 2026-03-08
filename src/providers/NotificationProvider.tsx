@@ -7,7 +7,9 @@ import { NotificationEnumType, NotificationType } from "lib";
 // types
 import { BasicProviderPropTypes, NotificationContextType } from "./types";
 
-const NotificationContext = createContext({} as NotificationContextType);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined
+);
 
 export function NotificationProvider(props: BasicProviderPropTypes) {
   const { children } = props;
@@ -84,7 +86,7 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
 export const useNotification = () => {
   const context = useContext(NotificationContext);
 
-  if (context === undefined)
+  if (!context)
     throw new Error("NotificationContext must be used within a Provider");
   return context;
 };

@@ -58,12 +58,11 @@ export class IndexedDBClient<
     });
   }
 
-  private transaction(
+  private async transaction(
     mode: IDBTransactionMode
   ): Promise<IDBObjectStore> {
-    return this.open().then((db) =>
-      db.transaction(this.table, mode).objectStore(this.table)
-    );
+    const db = await this.open();
+    return db.transaction(this.table, mode).objectStore(this.table);
   }
 
   private request<T>(req: IDBRequest<T>): Promise<T> {

@@ -20,6 +20,9 @@ export type BasicProviderPropTypes = {
 export interface AuthProviderPropTypes extends BasicProviderPropTypes {
   guestMode?: string;
   user?: string;
+  remember?: string;
+  refreshTokenKey?: string;
+  accessTokenExpiresAtKey?: string;
 }
 
 export interface ManagerProviderPropTypes extends BasicProviderPropTypes {
@@ -46,8 +49,8 @@ export type ConfigProviderContextType = {
 
 export type AuthProviderContextType = {
   account: SessionDto;
-  logUser: (data: SessionDto) => void;
-  logoutUser: () => void;
+  logUser: (data: SessionDto, rememberMe?: boolean) => void;
+  logoutUser: () => Promise<void>;
   logUserFromLocal: () => Promise<void>;
   isInGuestMode: () => boolean;
   setGuestMode: (value: boolean) => void;
