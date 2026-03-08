@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { APIClient } from "./APIClient";
 import { makeRequest, Methods } from "./utils/services";
 import type { BaseEntityDto, BaseFilterDto } from "lib";
+import type { HttpResponse } from "./utils/types";
 
 vi.mock("./utils/services", async () => {
   const actual = await vi.importActual<typeof import("./utils/services")>(
@@ -27,6 +28,7 @@ describe("APIClient", () => {
 
   afterEach(() => {
     makeRequestMock.mockReset();
+    APIClient.refreshInFlight.clear();
   });
 
   it("creates auth header from local storage token", () => {
@@ -115,6 +117,187 @@ describe("APIClient", () => {
       status: 500,
       message: "Boom",
     });
+  });
+
+  it("refreshes access token before secured request when expired", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("remember", "true");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "new-access-token",
+          refreshToken: "refresh-token-2",
+          accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test");
+    const result = await client.doQuery<{ ok: boolean }>("/users");
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      1,
+      "https://api.test/auth/refresh",
+      Methods.POST,
+      { refreshToken: "refresh-token-1" }
+    );
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      2,
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer new-access-token" }
+    );
+    expect(localStorage.getItem("user")).toBe("new-access-token");
+    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-2");
+    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+      "2035-01-01T00:00:00.000Z"
+    );
+  });
+
+  it("retries once after 401 by refreshing token", async () => {
+    localStorage.setItem("user", "stale-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2035-01-01T00:00:00.000Z");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: null,
+        status: 401,
+        error: { status: 401, message: "Unauthorized" },
+      })
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "fresh-access-token",
+          refreshToken: "refresh-token-2",
+          accessTokenExpiresAt: "2036-01-01T00:00:00.000Z",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test");
+    const result = await client.doQuery<{ ok: boolean }>("/users");
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      1,
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer stale-access-token" }
+    );
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      2,
+      "https://api.test/auth/refresh",
+      Methods.POST,
+      { refreshToken: "refresh-token-1" }
+    );
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      3,
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer fresh-access-token" }
+    );
+  });
+
+  it("uses a single refresh request for concurrent calls", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+
+    let releaseRefresh!: (value: HttpResponse) => void;
+    const refreshPromise = new Promise<HttpResponse>((resolve) => {
+      releaseRefresh = resolve;
+    });
+
+    makeRequestMock.mockImplementation(async (url) => {
+      if (url.includes("auth/refresh"))
+        return await refreshPromise;
+      return {
+        data: { ok: true },
+        status: 200,
+        error: null,
+      };
+    });
+
+    const client = new APIClient("https://api.test");
+    const first = client.doQuery<{ ok: boolean }>("/users");
+    const second = client.doQuery<{ ok: boolean }>("/projects");
+
+    await Promise.resolve();
+    const refreshCallsWhilePending = makeRequestMock.mock.calls.filter(
+      ([url]) => url.includes("auth/refresh")
+    );
+    expect(refreshCallsWhilePending).toHaveLength(1);
+
+    releaseRefresh({
+      data: {
+        id: 1,
+        username: "sito",
+        email: "sito@mail.com",
+        token: "fresh-access-token",
+        refreshToken: "refresh-token-2",
+        accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+      },
+      status: 200,
+      error: null,
+    });
+
+    const [firstResult, secondResult] = await Promise.all([first, second]);
+    expect(firstResult).toEqual({ ok: true });
+    expect(secondResult).toEqual({ ok: true });
+
+    const refreshCalls = makeRequestMock.mock.calls.filter(
+      ([url]) => url.includes("auth/refresh")
+    );
+    expect(refreshCalls).toHaveLength(1);
+  });
+
+  it("clears local session when refresh fails", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("remember", "true");
+
+    makeRequestMock.mockResolvedValue({
+      data: null,
+      status: 401,
+      error: { status: 401, message: "Invalid refresh token" },
+    });
+
+    const client = new APIClient("https://api.test");
+
+    await expect(client.doQuery("/users")).rejects.toEqual({
+      status: 401,
+      message: "Invalid refresh token",
+    });
+    expect(localStorage.getItem("user")).toBeNull();
+    expect(localStorage.getItem("refreshToken")).toBeNull();
+    expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
+    expect(localStorage.getItem("remember")).toBeNull();
   });
 
   it("builds query URL in get and returns query result", async () => {

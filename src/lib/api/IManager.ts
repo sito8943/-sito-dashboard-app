@@ -1,10 +1,15 @@
 import { AuthClient } from "./AuthClient";
+import type { APIClientAuthConfig } from "./APIClient";
 
 export class IManager {
   auth: AuthClient;
 
-  constructor(baseUrl: string, userKey?: string) {
-    this.auth = new AuthClient(baseUrl, userKey);
+  constructor(
+    baseUrl: string,
+    userKey?: string,
+    authConfig: APIClientAuthConfig = {}
+  ) {
+    this.auth = new AuthClient(baseUrl, userKey, authConfig);
   }
 
   /**

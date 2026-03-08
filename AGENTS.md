@@ -50,14 +50,16 @@ Wrap the application root with the required providers **in this order**:
 ```tsx
 import {
   ConfigProvider,
-  AuthProvider,
   ManagerProvider,
+  AuthProvider,
   NotificationProvider,
   DrawerMenuProvider,
+  IManager,
 } from "@sito/dashboard-app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
+const manager = new IManager(import.meta.env.VITE_API_URL);
 
 function App() {
   return (
@@ -67,15 +69,15 @@ function App() {
         navigate={(route) => { /* router navigate */ }}
         linkComponent={MyLinkComponent}
       >
-        <AuthProvider>
-          <ManagerProvider manager={myApiManagerInstance}>
+        <ManagerProvider manager={manager}>
+          <AuthProvider>
             <NotificationProvider>
               <DrawerMenuProvider>
                 {/* app routes */}
               </DrawerMenuProvider>
             </NotificationProvider>
-          </ManagerProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </ManagerProvider>
       </ConfigProvider>
     </QueryClientProvider>
   );
@@ -87,8 +89,8 @@ function App() {
 | Provider | Purpose |
 |----------|---------|
 | `ConfigProvider` | Injects router `location`, `navigate`, `linkComponent`, and optional `searchComponent` |
-| `AuthProvider` | Manages session state: `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
 | `ManagerProvider` | Injects the API manager (`IManager`) consumed by hooks and components |
+| `AuthProvider` | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
 | `NotificationProvider` | Global toast notification system |
 | `DrawerMenuProvider` | Dynamic drawer menu state |
 | `NavbarProvider` | Provides dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent` |
@@ -328,8 +330,8 @@ class ProductsClient extends BaseClient<
   ProductFilterDto,
   ProductImportPreviewDto
 > {
-  constructor(api: APIClient) {
-    super(api, "products");
+  constructor(baseUrl: string) {
+    super("products", baseUrl);
   }
 }
 ```
@@ -347,6 +349,28 @@ class ProductsClient extends BaseClient<
 | `restore` | `(ids: number[]) => Promise<number>` |
 | `export` | `(filters?) => Promise<TDto[]>` |
 | `import` | `(data: ImportDto<TImportPreviewDto>) => Promise<number>` |
+
+### Built-in auth refresh behavior (secured clients)
+
+`APIClient` and `BaseClient` now include centralized refresh behavior for protected requests:
+
+- Before a secured request, if `accessTokenExpiresAt` is expired (or about to expire), it refreshes once before sending the request.
+- If a secured request returns `401`, it tries one refresh attempt and retries the request exactly once.
+- Concurrent requests share a single in-flight refresh operation (mutex), preventing parallel refresh calls.
+- If refresh fails, local auth storage is cleared (`user`, `remember`, `refreshToken`, `accessTokenExpiresAt`).
+- Legacy fallback is preserved: if `refreshToken` or `accessTokenExpiresAt` is missing, requests behave as before.
+
+You can customize auth storage keys centrally through `IManager`/`BaseClient` via `APIClientAuthConfig`.
+
+```ts
+import { IManager } from "@sito/dashboard-app";
+
+const manager = new IManager(import.meta.env.VITE_API_URL, "user", {
+  rememberKey: "remember",
+  refreshTokenKey: "refreshToken",
+  accessTokenExpiresAtKey: "accessTokenExpiresAt",
+});
+```
 
 ---
 
@@ -487,11 +511,42 @@ function MyComponent() {
 }
 ```
 
-The `SessionDto` shape:
+Sign-in payload supports `rememberMe`:
+
+```ts
+import type { AuthDto } from "@sito/dashboard-app";
+
+const credentials: AuthDto = {
+  email: "user@mail.com",
+  password: "secret",
+  rememberMe: true,
+};
+```
+
+`SessionDto` now includes refresh metadata:
 
 ```ts
 import type { SessionDto } from "@sito/dashboard-app";
-// contains: id, username, photo, token, roles, etc.
+// includes: id, username, email, token, refreshToken?, accessTokenExpiresAt?
+```
+
+`AuthProvider` supports configurable storage keys (defaults shown):
+
+```tsx
+<AuthProvider
+  user="user"
+  remember="remember"
+  refreshTokenKey="refreshToken"
+  accessTokenExpiresAtKey="accessTokenExpiresAt"
+>
+  {children}
+</AuthProvider>
+```
+
+When calling `logUser`, pass `rememberMe` from sign-in form when available:
+
+```tsx
+logUser(sessionDto, formValues.rememberMe);
 ```
 
 ---
@@ -544,3 +599,6 @@ Consumer projects must provide translations for these namespaces.
 11. **Do not add `any` types** — the library is fully typed; if types seem missing, check for the correct DTO or utility type.
 12. **`IconButton` is overridden** — the export from this library wraps FontAwesome and expects `icon: IconDefinition`, not a React node.
 13. **Use `IndexedDBClient` as offline fallback** — when building offline-capable features, extend `IndexedDBClient` instead of writing custom storage logic. It shares the same interface as `BaseClient`, so components and hooks that consume a client work without modification. Never instantiate `IndexedDBClient` in SSR/Node contexts.
+14. **Sign-in should send `rememberMe` when the UI exposes a remember option.**
+15. **Do not implement ad-hoc token refresh in consumer apps** — rely on the centralized refresh/retry behavior in `APIClient`/`BaseClient`.
+16. **Keep auth storage key config aligned** — if custom keys are used in `AuthProvider`, configure the same keys in manager/client auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).

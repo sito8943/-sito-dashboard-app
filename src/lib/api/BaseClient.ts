@@ -1,5 +1,6 @@
 // api client
 import { APIClient } from "./APIClient";
+import type { APIClientAuthConfig } from "./APIClient";
 
 // types
 import { QueryParam } from "./types";
@@ -39,11 +40,12 @@ export class BaseClient<
     table: Tables,
     baseUrl: string,
     userKey: string = "user",
-    secured: boolean = true
+    secured: boolean = true,
+    authConfig: APIClientAuthConfig = {}
   ) {
     this.table = table;
     this.secured = secured;
-    this.api = new APIClient(baseUrl, userKey, secured);
+    this.api = new APIClient(baseUrl, userKey, secured, undefined, authConfig);
   }
 
   /**
