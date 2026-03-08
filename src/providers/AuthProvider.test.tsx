@@ -92,6 +92,25 @@ describe("AuthProvider", () => {
     expect(result.current.account.token).toBeUndefined();
   });
 
+  it("prioritizes localStorage access token during logout", async () => {
+    logoutMock.mockResolvedValue(undefined);
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    act(() => {
+      result.current.logUser({ ...session, token: "stale-in-memory-token" }, true);
+    });
+    localStorage.setItem("user", "fresh-local-token");
+
+    await act(async () => {
+      await result.current.logoutUser();
+    });
+
+    expect(logoutMock).toHaveBeenCalledWith({
+      accessToken: "fresh-local-token",
+      refreshToken: "refresh-token",
+    });
+  });
+
   it("loads session from manager and logs user", async () => {
     getSessionMock.mockResolvedValue(session);
     const { result } = renderHook(() => useAuth(), { wrapper });

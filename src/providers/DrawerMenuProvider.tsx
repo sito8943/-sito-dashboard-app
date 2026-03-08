@@ -12,7 +12,9 @@ import { DrawerMenuContextType, DrawerMenuProviderPropTypes } from "./types";
 // lib
 import { SubMenuItemType } from "lib";
 
-const DrawerMenuContext = createContext({});
+const DrawerMenuContext = createContext<DrawerMenuContextType<string> | undefined>(
+  undefined
+);
 
 /**
  * Drawer Menu Provider
@@ -66,7 +68,9 @@ const DrawerMenuProvider = <MenuKeys extends string>(
   );
 
   return (
-    <DrawerMenuContext.Provider value={value}>
+    <DrawerMenuContext.Provider
+      value={value as unknown as DrawerMenuContextType<string>}
+    >
       {children}
     </DrawerMenuContext.Provider>
   );
@@ -77,9 +81,10 @@ const DrawerMenuProvider = <MenuKeys extends string>(
  * @returns Provider
  */
 const useDrawerMenu = <MenuKeys extends string>() => {
-  return useContext(
-    DrawerMenuContext
-  ) as unknown as DrawerMenuContextType<MenuKeys>;
+  const context = useContext(DrawerMenuContext);
+  if (!context)
+    throw new Error("DrawerMenuContext must be used within a Provider");
+  return context as DrawerMenuContextType<MenuKeys>;
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

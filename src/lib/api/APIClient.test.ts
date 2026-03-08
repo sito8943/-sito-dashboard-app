@@ -364,4 +364,40 @@ describe("APIClient", () => {
       message: "Unknown error",
     });
   });
+
+  it("does not throw delete when backend returns 0", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: 0,
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+    await expect(client.delete("/users", [1])).resolves.toBe(0);
+  });
+
+  it("does not throw patch when backend returns false", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: false,
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+    await expect(
+      client.patch<boolean, { active: boolean }>("/users/1", { active: false })
+    ).resolves.toBe(false);
+  });
+
+  it("does not throw post when backend returns empty string", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: "",
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+    await expect(client.post<string, { name: string }>("/users", { name: "Sito" }))
+      .resolves.toBe("");
+  });
 });

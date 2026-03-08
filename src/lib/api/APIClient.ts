@@ -298,7 +298,7 @@ export class APIClient {
         data
       );
 
-    if (error || !result)
+    if (error || result === null || result === undefined)
       throw (
         error ?? {
           status,
@@ -322,7 +322,7 @@ export class APIClient {
         data
       );
 
-    if (error || !result)
+    if (error || result === null || result === undefined)
       throw (
         error ?? {
           status,
@@ -347,7 +347,7 @@ export class APIClient {
         data
       );
 
-    if (error || !result)
+    if (error || result === null || result === undefined)
       throw (
         error ?? {
           status,
