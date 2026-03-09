@@ -6,6 +6,8 @@ export type TabButtonPropsType = Omit<ButtonPropsType, "children" | "onClick" | 
 export type TabsLayoutPropsType = {
   tabs: TabsType[];
   defaultTab?: number;
+  currentTab?: number;
+  onTabChange?: (id: number | string) => void;
   className?: string;
   tabsContainerClassName?: string;
   useLinks?: boolean;

@@ -12,7 +12,9 @@ import "./styles.css";
 
 export const Step = (props: StepPropsType) => {
   const {
-    translation,
+    title,
+    body,
+    content,
     onClickNext,
     image = "",
     alt = "",
@@ -26,12 +28,9 @@ export const Step = (props: StepPropsType) => {
   return (
     <div className="big-appear step-container">
       {image && <img src={image} alt={alt} />}
-      <h2 className="step-title">
-        {t(`_pages:onboarding.${translation}.title`)}
-      </h2>
-      <p className="step-body">
-        {t(`_pages:onboarding.${translation}.body`)}
-      </p>
+      {title != null && <h2 className="step-title">{title}</h2>}
+      {body != null && <div className="step-body">{body}</div>}
+      {content != null && <div className="step-content">{content}</div>}
       <div className="step-actions">
         {!final ? (
           <>

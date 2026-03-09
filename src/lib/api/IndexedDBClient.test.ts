@@ -33,7 +33,11 @@ type TransactionDto = BaseEntityDto & {
   description: string;
 };
 type TransactionCommonDto = BaseCommonEntityDto & { amount: number };
-type TransactionAddDto = { accountId: number; amount: number; description: string };
+type TransactionAddDto = {
+  accountId: number;
+  amount: number;
+  description: string;
+};
 type TransactionUpdateDto = DeleteDto & {
   accountId: number;
   amount: number;
@@ -91,7 +95,10 @@ describe("User", () => {
   });
 
   it("insert returns dto with auto-incremented id", async () => {
-    const user = await client.insert({ name: "Alice", email: "alice@test.com" });
+    const user = await client.insert({
+      name: "Alice",
+      email: "alice@test.com",
+    });
 
     expect(user.id).toBe(1);
     expect(user.name).toBe("Alice");
@@ -114,7 +121,11 @@ describe("User", () => {
   it("update persists new values and returns updated dto", async () => {
     await client.insert({ name: "Charlie", email: "charlie@test.com" });
 
-    const updated = await client.update({ id: 1, name: "Charles", email: "charles@test.com" });
+    const updated = await client.update(1, {
+      id: 1,
+      name: "Charles",
+      email: "charles@test.com",
+    });
 
     const stored = await client.getById(1);
     expect(updated.name).toBe("Charles");
@@ -164,8 +175,14 @@ describe("User", () => {
     await client.insert({ name: "Ana", email: "a@test.com" });
     await client.insert({ name: "Mike", email: "m@test.com" });
 
-    const asc = await client.get({ sortingBy: "name", sortingOrder: "asc" as any });
-    const desc = await client.get({ sortingBy: "name", sortingOrder: "desc" as any });
+    const asc = await client.get({
+      sortingBy: "name",
+      sortingOrder: "asc" as any,
+    });
+    const desc = await client.get({
+      sortingBy: "name",
+      sortingOrder: "desc" as any,
+    });
 
     expect(asc.items.map((u) => u.name)).toEqual(["Ana", "Mike", "Zara"]);
     expect(desc.items.map((u) => u.name)).toEqual(["Zara", "Mike", "Ana"]);
@@ -291,7 +308,8 @@ describe("Account (1 User → N Accounts)", () => {
 
   it("export filtered by userId returns all user accounts without pagination", async () => {
     const userId = 3;
-    for (let i = 0; i < 12; i++) await accounts.insert({ userId, balance: i * 100 });
+    for (let i = 0; i < 12; i++)
+      await accounts.insert({ userId, balance: i * 100 });
     await accounts.insert({ userId: 99, balance: 0 });
 
     const userAccounts = await accounts.export({ userId });
@@ -303,7 +321,7 @@ describe("Account (1 User → N Accounts)", () => {
   it("update changes account balance", async () => {
     await accounts.insert({ userId: 1, balance: 1000 });
 
-    await accounts.update({ id: 1, userId: 1, balance: 1500 });
+    await accounts.update(1, { id: 1, userId: 1, balance: 1500 });
 
     const stored = await accounts.getById(1);
     expect(stored.balance).toBe(1500);
@@ -374,7 +392,7 @@ describe("Transaction (1 Account → N Transactions)", () => {
 
     const result = await txs.get(
       { sortingBy: "amount", sortingOrder: "desc" as any },
-      { accountId }
+      { accountId },
     );
 
     expect(result.items.map((t) => t.amount)).toEqual([300, 150, 50]);
@@ -383,7 +401,12 @@ describe("Transaction (1 Account → N Transactions)", () => {
   it("update changes transaction amount and description", async () => {
     await txs.insert({ accountId: 1, amount: 50, description: "Coffee" });
 
-    await txs.update({ id: 1, accountId: 1, amount: 75, description: "Brunch" });
+    await txs.update(1, {
+      id: 1,
+      accountId: 1,
+      amount: 75,
+      description: "Brunch",
+    });
 
     const stored = await txs.getById(1);
     expect(stored.amount).toBe(75);
@@ -436,10 +459,26 @@ describe("Full hierarchy: User → Accounts → Transactions", () => {
     const acc2 = await accounts.insert({ userId: user.id, balance: 1500 });
 
     // Create 3 transactions for acc1, 2 for acc2
-    await txs.insert({ accountId: acc1.id, amount: 100, description: "Salary" });
-    await txs.insert({ accountId: acc1.id, amount: -50, description: "Coffee" });
-    await txs.insert({ accountId: acc1.id, amount: -200, description: "Groceries" });
-    await txs.insert({ accountId: acc2.id, amount: 500, description: "Freelance" });
+    await txs.insert({
+      accountId: acc1.id,
+      amount: 100,
+      description: "Salary",
+    });
+    await txs.insert({
+      accountId: acc1.id,
+      amount: -50,
+      description: "Coffee",
+    });
+    await txs.insert({
+      accountId: acc1.id,
+      amount: -200,
+      description: "Groceries",
+    });
+    await txs.insert({
+      accountId: acc2.id,
+      amount: 500,
+      description: "Freelance",
+    });
     await txs.insert({ accountId: acc2.id, amount: -30, description: "Bus" });
 
     // Alice has 2 accounts

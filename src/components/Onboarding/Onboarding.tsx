@@ -21,7 +21,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
       label: "",
       content: (
         <Step
-          translation={step}
+          {...step}
           final={i === steps.length - 1}
           onClickNext={() => setCurrentStep((prev) => prev + 1)}
         />
@@ -31,7 +31,12 @@ export const Onboarding = (props: OnboardingPropsType) => {
 
   return (
     <div className="onboarding-main">
-      <TabsLayout defaultTab={currentStep} tabs={onboardingSteps} />
+      <TabsLayout
+        currentTab={currentStep}
+        onTabChange={(id) => setCurrentStep(Number(id))}
+        tabs={onboardingSteps}
+        useLinks={false}
+      />
     </div>
   );
 };

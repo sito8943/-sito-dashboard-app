@@ -73,6 +73,33 @@ import { TabsLayout } from "@sito/dashboard-app";
 
 `tabButtonProps` lets you customize each tab button style/behavior (except `onClick` and `children`, which are controlled by `TabsLayout`).
 
+### Onboarding
+
+`Onboarding` accepts structured steps instead of translation keys. Each step provides required `title` and `body`, plus optional `content`, `image`, and `alt`.
+Step copy is provided by the consumer app, so any i18n for the step itself should be resolved before rendering `Onboarding`.
+
+```tsx
+import { Onboarding } from "@sito/dashboard-app";
+
+<Onboarding
+  steps={[
+    {
+      title: "Welcome",
+      body: "This flow explains the main features.",
+    },
+    {
+      title: "Almost done",
+      body: "Add custom content when a step needs extra UI.",
+      content: <MyStepContent />,
+      image: "/images/setup.png",
+      alt: "Setup preview",
+    },
+  ]}
+/>
+```
+
+The action buttons still use the package's internal accessibility/button translation keys.
+
 ## Initial setup example
 
 Wrap your app with the providers to enable navigation, React Query integration, auth context, and notifications.

@@ -32,6 +32,10 @@
   @apply text-center !text-lg;
 }
 
+.step-content {
+  @apply flex flex-col gap-5;
+}
+
 .step-actions {
   @apply flex gap-5 items-center justify-center;
 }
