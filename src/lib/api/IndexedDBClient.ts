@@ -58,9 +58,7 @@ export class IndexedDBClient<
     });
   }
 
-  private async transaction(
-    mode: IDBTransactionMode
-  ): Promise<IDBObjectStore> {
+  private async transaction(mode: IDBTransactionMode): Promise<IDBObjectStore> {
     const db = await this.open();
     return db.transaction(this.table, mode).objectStore(this.table);
   }
@@ -87,7 +85,7 @@ export class IndexedDBClient<
     return { ...(data[data.length - 1] as object), id: lastId } as TDto;
   }
 
-  async update(value: TUpdateDto): Promise<TDto> {
+  async update(_: number, value: TUpdateDto): Promise<TDto> {
     const store = await this.transaction("readwrite");
     await this.request(store.put(value as object));
     return value as unknown as TDto;
@@ -95,7 +93,7 @@ export class IndexedDBClient<
 
   async get(
     query?: QueryParam<TDto>,
-    filters?: TFilter
+    filters?: TFilter,
   ): Promise<QueryResult<TDto>> {
     const store = await this.transaction("readonly");
     const all: TDto[] = await this.request(store.getAll());
@@ -103,7 +101,9 @@ export class IndexedDBClient<
     const filtered = this.applyFilter(all, filters as Record<string, unknown>);
 
     const sortBy = (query?.sortingBy ?? "id") as keyof TDto;
-    const order = (query?.sortingOrder?.toLowerCase() ?? "asc") as "asc" | "desc";
+    const order = (query?.sortingOrder?.toLowerCase() ?? "asc") as
+      | "asc"
+      | "desc";
     filtered.sort((a, b) => {
       const av = a[sortBy];
       const bv = b[sortBy];
@@ -118,7 +118,7 @@ export class IndexedDBClient<
     const totalPages = Math.ceil(totalElements / pageSize);
     const items = filtered.slice(
       currentPage * pageSize,
-      currentPage * pageSize + pageSize
+      currentPage * pageSize + pageSize,
     );
 
     return {
@@ -197,8 +197,8 @@ export class IndexedDBClient<
       Object.keys(filters).every(
         (key) =>
           filters[key] === undefined ||
-          (item as Record<string, unknown>)[key] === filters[key]
-      )
+          (item as Record<string, unknown>)[key] === filters[key],
+      ),
     );
   }
 }
