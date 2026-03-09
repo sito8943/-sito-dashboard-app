@@ -143,7 +143,7 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Navbar` | Application navigation bar |
 | `Drawer` | Side drawer navigation |
 | `Notification` | Toast notification component |
-| `Onboarding` | Multi-step onboarding flow built on top of a controlled `TabsLayout` |
+| `Onboarding` | Multi-step onboarding flow built on top of a controlled `TabsLayout`; each step accepts `title`, `body`, and optional `content` |
 | `TabsLayout` | Tabbed page layout; supports uncontrolled (`defaultTab`) and controlled (`currentTab` + `onTabChange`) usage, uses links by default, and can switch to buttons with `useLinks={false}` + `tabButtonProps` |
 | `PrettyGrid` | Data grid/table |
 | `Empty` | Empty state placeholder |
