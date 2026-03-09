@@ -13,12 +13,17 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
   const {
     tabs = [],
     defaultTab,
+    currentTab,
+    onTabChange,
     className = "",
     tabsContainerClassName = "",
     useLinks = true,
     tabButtonProps,
   } = props;
-  const [activeTab, setActiveTab] = useState(defaultTab ?? tabs[0]?.id);
+
+  const [internalTab, setInternalTab] = useState(defaultTab ?? tabs[0]?.id);
+
+  const activeTab = currentTab ?? internalTab;
 
   const current = useMemo(() => {
     return tabs.find((item) => item.id === activeTab);
@@ -32,7 +37,10 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
         {tabs.map(({ id, to, label }) => (
           <li key={id}>
             <Tab
-              onClick={() => setActiveTab(id)}
+              onClick={() => {
+                setInternalTab(id);
+                onTabChange?.(id);
+              }}
               id={id}
               to={to ?? ""}
               siblings={tabs.length > 1}

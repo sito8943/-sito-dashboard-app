@@ -31,7 +31,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
 
   return (
     <div className="onboarding-main">
-      <TabsLayout defaultTab={currentStep} tabs={onboardingSteps} />
+      <TabsLayout currentTab={currentStep} tabs={onboardingSteps} />
     </div>
   );
 };
