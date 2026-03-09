@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.47] - 2026-03-09
+
+### Added
+
+- `CLAUDE.md` as a lightweight entrypoint for Claude-style agents, pointing them to the repository's canonical guidance files.
+
+### Changed
+
+- `TabsLayout` now supports controlled usage via `currentTab` and `onTabChange`, in addition to uncontrolled initialization with `defaultTab`.
+- Updated agent documentation (`AGENTS.md`, `CLAUDE.md`) to describe controlled tab flows and the intended offline `IndexedDBClient` usage pattern more clearly.
+
+### Fixed
+
+- `Onboarding` now drives `TabsLayout` with `currentTab`, so step progression stays in sync after the initial render.
+- Adjusted the `IndexedDBClient` type definition to match the current offline client contract used by the package.
+
 ## [0.0.46] - 2026-03-08
 
 ### Added
