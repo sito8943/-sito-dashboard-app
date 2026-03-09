@@ -75,7 +75,8 @@ import { TabsLayout } from "@sito/dashboard-app";
 
 ### Onboarding
 
-`Onboarding` accepts structured steps instead of translation keys. Each step provides `title`, `body`, and optional `content` for custom UI below the body.
+`Onboarding` accepts structured steps instead of translation keys. Each step provides required `title` and `body`, plus optional `content`, `image`, and `alt`.
+Step copy is provided by the consumer app, so any i18n for the step itself should be resolved before rendering `Onboarding`.
 
 ```tsx
 import { Onboarding } from "@sito/dashboard-app";
@@ -90,10 +91,14 @@ import { Onboarding } from "@sito/dashboard-app";
       title: "Almost done",
       body: "Add custom content when a step needs extra UI.",
       content: <MyStepContent />,
+      image: "/images/setup.png",
+      alt: "Setup preview",
     },
   ]}
 />
 ```
+
+The action buttons still use the package's internal accessibility/button translation keys.
 
 ## Initial setup example
 

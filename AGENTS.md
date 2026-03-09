@@ -143,7 +143,7 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Navbar` | Application navigation bar |
 | `Drawer` | Side drawer navigation |
 | `Notification` | Toast notification component |
-| `Onboarding` | Multi-step onboarding flow built on top of a controlled `TabsLayout`; each step accepts `title`, `body`, and optional `content` |
+| `Onboarding` | Multi-step onboarding flow built on top of a controlled `TabsLayout`; each step accepts `title`, `body`, optional `content`, and optional `image`/`alt` |
 | `TabsLayout` | Tabbed page layout; supports uncontrolled (`defaultTab`) and controlled (`currentTab` + `onTabChange`) usage, uses links by default, and can switch to buttons with `useLinks={false}` + `tabButtonProps` |
 | `PrettyGrid` | Data grid/table |
 | `Empty` | Empty state placeholder |
@@ -207,6 +207,32 @@ const [step, setStep] = useState(1);
 ```
 
 `Onboarding` already uses the controlled pattern internally so its next-step transitions remain in sync with the rendered tab content.
+
+### `Onboarding` step content
+
+`Onboarding` no longer reads step copy from internal translation keys.
+Pass each step as structured content from the consumer:
+
+```tsx
+<Onboarding
+  steps={[
+    {
+      title: "Welcome",
+      body: "This flow explains the main features.",
+    },
+    {
+      title: "Set up your workspace",
+      body: "You can inject extra UI below the body when needed.",
+      content: <WorkspaceChecklist />,
+      image: "/images/onboarding-workspace.png",
+      alt: "Workspace setup preview",
+    },
+  ]}
+/>
+```
+
+Use `content` for extra custom UI below the body.
+Handle any step-level i18n in the consumer app before passing `title`, `body`, or `content`.
 
 ---
 
@@ -676,6 +702,7 @@ Namespace keys used internally:
 - `_pages:common.actions.*`
 
 Consumer projects must provide translations for these namespaces.
+`Onboarding` step copy (`title`, `body`, `content`) is consumer-provided and is not read from `_pages:onboarding.*`.
 
 ---
 
@@ -700,3 +727,4 @@ Consumer projects must provide translations for these namespaces.
 17. **Use `Error` in one mode at a time** — either default props (`error/message/icon/retry`) or `children` for custom content.
 18. **Use `TabsLayout` navigation mode intentionally** — keep default links for route-driven tabs; use `useLinks={false}` (+ `tabButtonProps`) for local state tabs.
 19. **Use `TabsLayout` as a controlled component when the parent owns step state** — prefer `currentTab` + `onTabChange` for onboarding, wizard, or programmatic flows; reserve `defaultTab` for uncontrolled initial selection.
+20. **Use structured `Onboarding` steps** — pass `title`, `body`, and optional `content`/`image`/`alt`; do not rely on internal `_pages:onboarding.*` translation keys.

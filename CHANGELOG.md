@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 - `TabsLayout` now supports controlled usage via `currentTab` and `onTabChange`, in addition to uncontrolled initialization with `defaultTab`.
 - `Onboarding` steps now accept structured content (`title`, `body`, optional `content`, `image`, `alt`) instead of translation keys, and render as local button-driven tabs.
+- `Onboarding` step copy is now consumer-provided rather than resolved from internal `_pages:onboarding.*` translations.
 - Updated agent documentation (`AGENTS.md`, `CLAUDE.md`) to describe controlled tab flows and the intended offline `IndexedDBClient` usage pattern more clearly.
 
 ### Fixed
