@@ -69,6 +69,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     isLoading = false,
     fileProcessor,
     onFileProcessed,
+    renderCustomPreview,
     onOverrideChange,
     open,
     ...rest
@@ -145,9 +146,10 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       </label>
       <ErrorComponent message={parseError} />
       {processing && <Loading />}
-      {!!previewItems && previewItems.length > 0 && (
-        <Preview items={previewItems} />
-      )}
+      {renderCustomPreview
+        ? renderCustomPreview(previewItems)
+        : !!previewItems &&
+          previewItems.length > 0 && <Preview items={previewItems} />}
       {children}
       <DialogActions
         primaryText={t("_accessibility:buttons.ok")}

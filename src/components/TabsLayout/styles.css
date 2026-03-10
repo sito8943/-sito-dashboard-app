@@ -1,11 +1,11 @@
 @reference "../../index.css";
 
 .tabs-layout-main {
-  @apply rounded-b-xl rounded-r-xl;
+  @apply rounded-b-xl rounded-r-xl xs:h-[60vh];
 }
 
 .tabs-container {
-  @apply flex w-full items-center justify-start mb-5;
+  @apply flex w-full items-center justify-start mb-5 xs:mb-0;
 }
 
 .tab {

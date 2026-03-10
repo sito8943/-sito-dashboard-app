@@ -13,7 +13,7 @@
 }
 
 .drawer {
-  @apply pt-5 w-64 fixed top-0 left-0 z-1 border-r-2 rounded-r-lg bg-base border-border h-screen;
+  @apply pt-5 w-64 fixed top-0 left-0 z-1 border-r-2 rounded-none bg-base border-border h-screen;
 }
 
 .drawer.opened {

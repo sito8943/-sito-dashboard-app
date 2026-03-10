@@ -3,7 +3,7 @@
 .page-header {
   transition: all 300ms ease-in-out;
   @apply flex items-center justify-between
-    pr-3 pl-4 py-2 bg-base w-full;
+    pr-3 pl-4 py-2 bg-primary text-base-light w-full;
 }
 
 .page-header-left {
@@ -19,7 +19,7 @@
 }
 
 .page-main-content {
-  @apply px-5 py-3 h-full;
+  @apply px-5 py-3 h-full max-[28rem]:px-3;
 }
 
 .page-loading {
@@ -27,9 +27,17 @@
 }
 
 .page-header-actions-desktop {
-  @apply max-xs:!hidden;
+  @apply max-[28rem]:!hidden;
 }
 
 .page-header-actions-mobile {
-  @apply min-xs:hidden;
+  @apply xs:hidden;
+}
+
+.page-header .action {
+  @apply bg-base/30 text-base-light hover:bg-secondary;
+}
+
+.page-header-actions-mobile .actions-dropdown-trigger {
+  @apply text-base-light hover:!bg-secondary;
 }

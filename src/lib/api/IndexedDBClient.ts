@@ -31,6 +31,13 @@ export class IndexedDBClient<
     this.version = version;
   }
 
+  close() {
+    if (!this.db) return;
+    this.db.onversionchange = null;
+    this.db.close();
+    this.db = null;
+  }
+
   private open(): Promise<IDBDatabase> {
     if (this.db) return Promise.resolve(this.db);
 
@@ -49,6 +56,9 @@ export class IndexedDBClient<
 
       request.onsuccess = (event) => {
         this.db = (event.target as IDBOpenDBRequest).result;
+        this.db.onversionchange = () => {
+          this.close();
+        };
         resolve(this.db);
       };
 
@@ -85,10 +95,26 @@ export class IndexedDBClient<
     return { ...(data[data.length - 1] as object), id: lastId } as TDto;
   }
 
-  async update(_: number, value: TUpdateDto): Promise<TDto> {
+  async update(value: TUpdateDto): Promise<TDto>;
+  async update(id: number, value: TUpdateDto): Promise<TDto>;
+  async update(
+    valueOrId: number | TUpdateDto,
+    maybeValue?: TUpdateDto
+  ): Promise<TDto> {
+    const value =
+      typeof valueOrId === "number" ? maybeValue : valueOrId;
+    if (!value) {
+      throw new Error("IndexedDBClient.update requires a value payload");
+    }
+
+    const parsedValue =
+      typeof valueOrId === "number"
+        ? ({ ...value, id: value.id ?? valueOrId } as TUpdateDto)
+        : value;
+
     const store = await this.transaction("readwrite");
-    await this.request(store.put(value as object));
-    return value as unknown as TDto;
+    await this.request(store.put(parsedValue as object));
+    return parsedValue as unknown as TDto;
   }
 
   async get(
@@ -193,12 +219,30 @@ export class IndexedDBClient<
 
   private applyFilter<T>(items: T[], filters?: Record<string, unknown>): T[] {
     if (!filters) return items;
+
     return items.filter((item) =>
-      Object.keys(filters).every(
-        (key) =>
-          filters[key] === undefined ||
-          (item as Record<string, unknown>)[key] === filters[key],
+      Object.entries(filters).every(([key, filterValue]) =>
+        this.matchesFilterValue(
+          key,
+          filterValue,
+          (item as Record<string, unknown>)[key]
+        ),
       ),
     );
+  }
+
+  private matchesFilterValue(
+    key: string,
+    filterValue: unknown,
+    itemValue: unknown,
+  ) {
+    if (filterValue === undefined) return true;
+
+    if (key === "deletedAt" && typeof filterValue === "boolean") {
+      const isDeleted = itemValue !== null && itemValue !== undefined;
+      return filterValue ? isDeleted : !isDeleted;
+    }
+
+    return itemValue === filterValue;
   }
 }

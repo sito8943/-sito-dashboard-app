@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
+import { faRocket } from "@fortawesome/free-solid-svg-icons";
 import { ToTop } from "./ToTop";
 
 const meta = {
@@ -12,12 +13,59 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-  render: () => (
+  render: (args) => (
     <div style={{ height: "1500px", padding: "1rem" }}>
       <p>Scroll down to see the ToTop button appear.</p>
       <div style={{ height: "1200px" }} />
-      <ToTop />
+      <ToTop {...args} />
     </div>
   ),
 };
 
+export const Customized: Story = {
+  args: {
+    threshold: 100,
+    tooltip: "Back to top",
+    scrollTop: 0,
+    scrollLeft: 0,
+    variant: "outlined",
+    color: "secondary",
+    className: "right-8 bottom-8",
+  },
+  render: (args) => (
+    <div style={{ height: "1500px", padding: "1rem" }}>
+      <p>Customized ToTop button.</p>
+      <div style={{ height: "1200px" }} />
+      <ToTop {...args} />
+    </div>
+  ),
+};
+
+export const CustomIcon: Story = {
+  args: {
+    icon: faRocket,
+    tooltip: "Launch to top",
+  },
+  render: (args) => (
+    <div style={{ height: "1500px", padding: "1rem" }}>
+      <p>Custom icon.</p>
+      <div style={{ height: "1200px" }} />
+      <ToTop {...args} />
+    </div>
+  ),
+};
+
+export const WithoutAutoScroll: Story = {
+  args: {
+    scrollOnClick: false,
+    onClick: () => {},
+    tooltip: "Custom click behavior",
+  },
+  render: (args) => (
+    <div style={{ height: "1500px", padding: "1rem" }}>
+      <p>Clicking runs onClick without scrolling.</p>
+      <div style={{ height: "1200px" }} />
+      <ToTop {...args} />
+    </div>
+  ),
+};

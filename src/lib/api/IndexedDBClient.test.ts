@@ -118,10 +118,10 @@ describe("User", () => {
     await expect(client.getById(99)).rejects.toThrow("Record 99 not found");
   });
 
-  it("update persists new values and returns updated dto", async () => {
+  it("update(value) persists new values and returns updated dto", async () => {
     await client.insert({ name: "Charlie", email: "charlie@test.com" });
 
-    const updated = await client.update(1, {
+    const updated = await client.update({
       id: 1,
       name: "Charles",
       email: "charles@test.com",
@@ -130,6 +130,20 @@ describe("User", () => {
     const stored = await client.getById(1);
     expect(updated.name).toBe("Charles");
     expect(stored.name).toBe("Charles");
+  });
+
+  it("update(id, value) remains backward compatible", async () => {
+    await client.insert({ name: "Diana", email: "diana@test.com" });
+
+    const updated = await client.update(1, {
+      id: 1,
+      name: "Di",
+      email: "di@test.com",
+    });
+
+    const stored = await client.getById(1);
+    expect(updated.name).toBe("Di");
+    expect(stored.name).toBe("Di");
   });
 
   it("insertMany stores all items and returns the last one", async () => {
@@ -208,6 +222,16 @@ describe("User", () => {
     expect(alices.every((u) => u.name === "Alice")).toBe(true);
   });
 
+  it("get uses strict equality for non-deletedAt filters", async () => {
+    await client.insert({ name: "Alice", email: "alice@test.com" });
+    await client.insert({ name: "alice", email: "alice-lower@test.com" });
+
+    const result = await client.get(undefined, { name: "Alice" });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]?.email).toBe("alice@test.com");
+  });
+
   it("import with override=false adds all items", async () => {
     const count = await client.import({
       override: false,
@@ -260,6 +284,25 @@ describe("User", () => {
     const deleted = await client.softDelete([1, 99]);
 
     expect(deleted).toBe(1);
+  });
+
+  it("filters deletedAt boolean values as deleted/not deleted", async () => {
+    await client.insert({ name: "Alice", email: "alice@test.com" });
+    await client.insert({ name: "Bob", email: "bob@test.com" });
+    await client.insert({ name: "Carl", email: "carl@test.com" });
+
+    await client.softDelete([2]);
+    const deleted = await client.get(
+      undefined,
+      { deletedAt: true } as unknown as UserFilterDto
+    );
+    const active = await client.get(
+      undefined,
+      { deletedAt: false } as unknown as UserFilterDto
+    );
+
+    expect(deleted.items.map((u) => u.id)).toEqual([2]);
+    expect(active.items.map((u) => u.id)).toEqual([1, 3]);
   });
 
   it("restore clears deletedAt on matching ids", async () => {

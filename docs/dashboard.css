@@ -1,0 +1,261 @@
+@reference "./variables.css";
+
+.onboarding-main .tabs-layout-main {
+  @apply h-auto;
+}
+
+.table-headers-cell {
+  @apply rounded-4xl;
+}
+
+.table-row-cell {
+  @apply whitespace-nowrap;
+}
+
+.page-header {
+  @apply bg-base-dark max-sm:hidden;
+}
+
+.chip-main {
+  @apply py-1;
+}
+
+.text-input,
+.text-input-label,
+.select-input-label {
+  @apply !text-text disabled:!text-gray-500;
+}
+
+.select-input {
+  @apply !text-text disabled:!text-gray-500;
+}
+
+select > option {
+  color: black !important;
+}
+
+.autocomplete-suggestions-container {
+  @apply border-2 border-border/40 rounded-lg;
+}
+
+.text-input,
+.select-input {
+  @apply border-2 border-border/40 !pl-2 rounded-lg;
+}
+
+.text-input-label,
+.select-input-label {
+  @apply left-2 peer-focus:!left-2;
+}
+
+.autocomplete-input-container,
+.select-input-container,
+.options-widget-container,
+.text-input-container {
+  @apply mb-0 pb-0;
+}
+
+.text-input-label,
+.select-input-label,
+.peer:focus ~ .text-input-label,
+.peer:focus ~ .select-input-label {
+  font-weight: 400;
+}
+
+.text-input.has-value ~ .text-input-label,
+.text-input.has-placeholder ~ .text-input-label {
+  font-weight: 400;
+}
+
+.text-input-helper-text {
+  @apply text-sm;
+}
+
+.table-empty {
+  border-top: 0;
+}
+
+.filter-dropdown-submit {
+  @apply bg-bg-primary hover:bg-hover-primary text-base;
+}
+
+.filter-container {
+  @apply mb-4 grid grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 max-xs:grid-cols-1 gap-x-6 gap-y-8 p-3;
+}
+
+.filter-dropdown-button {
+  @apply rounded-4xl !px-4 !py-1 cursor-pointer flex items-center gap-2 justify-center;
+}
+
+.filter-dropdown-cancel {
+  @apply border-border text-text border-2 hover:bg-border;
+}
+
+.button {
+  @apply text-sm font-medium text-text transition duration-300 flex items-center gap-2 justify-center rounded-4xl px-4 py-2 cursor-pointer;
+}
+
+.button.close {
+  @apply hover:bg-red-500;
+}
+
+.fab {
+  @apply w-12 h-12 fixed right-4 bottom-4 text-lg;
+}
+
+.button.submit {
+  @apply bg-base;
+}
+
+.button.submit:enabled:hover {
+  @apply bg-base-light;
+}
+
+.button.text:enabled:hover {
+  @apply bg-base;
+}
+
+.button.outlined {
+  @apply bg-base border-border text-text border-2;
+}
+
+.button.outlined:enabled:hover {
+  @apply bg-border;
+}
+
+.button.outlined.primary {
+  @apply border-bg-primary;
+}
+
+.button.outlined.primary:enabled:hover {
+  @apply bg-primary border-primary text-base;
+}
+
+.button.submit.primary {
+  @apply bg-bg-primary text-base;
+}
+
+.button.submit.primary:enabled:hover {
+  @apply bg-primary text-base;
+}
+
+.button.outlined.secondary {
+  @apply border-bg-secondary;
+}
+
+.button.outlined.secondary:enabled:hover {
+  @apply bg-secondary border-secondary text-base;
+}
+
+.button.submit.secondary {
+  @apply bg-bg-secondary text-base;
+}
+
+.button.submit.secondary:enabled:hover {
+  @apply bg-secondary text-base;
+}
+
+.button.submit.tertiary {
+  @apply bg-bg-tertiary text-base;
+}
+
+.button.submit.tertiary:enabled:hover {
+  @apply bg-tertiary text-base;
+}
+
+.button.outlined.tertiary {
+  @apply border-bg-tertiary;
+}
+
+.button.outlined.tertiary:enabled:hover {
+  @apply bg-tertiary border-tertiary text-base;
+}
+
+.button.submit.quaternary {
+  @apply bg-bg-quaternary text-base;
+}
+
+.button.submit.quaternary:enabled:hover {
+  @apply bg-quaternary text-base;
+}
+
+.button.outlined.quaternary {
+  @apply border-bg-quaternary;
+}
+
+.button.outlined.quaternary:enabled:hover {
+  @apply bg-quaternary border-quaternary text-base;
+}
+
+.password-icon {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tabs-container {
+  @apply xs:mb-0;
+}
+
+.tabs-layout-main {
+  @apply xs:h-[60vh];
+}
+
+.pretty-grid-item {
+  min-height: auto;
+}
+
+.page-header,
+.header {
+  @apply bg-primary text-white;
+}
+
+.page-main-content {
+  @apply max-xs:px-3;
+}
+
+.header h1 {
+  @apply text-white;
+}
+
+.drawer {
+  @apply rounded-none;
+}
+
+.navbar-right .actions-container .actions-container-item .action,
+.page-header .action {
+  @apply bg-base/30 text-white hover:bg-secondary;
+}
+
+.page-header-actions-mobile .actions-dropdown-trigger,
+.header .icon-button,
+.navbar-menu {
+  @apply text-white hover:!bg-secondary;
+}
+
+.filter-dropdown-backdrop.opened {
+  @apply border-hover-primary/20 border-1 rounded-xl;
+}
+
+.dropdown-main {
+  @apply p-0 bg-base;
+}
+
+.action-dropdown-item {
+  @apply rounded-lg;
+}
+
+.active-filters-main {
+  @apply mb-4;
+}
+
+.table-content {
+  height: auto;
+}
+
+.navbar-right .actions-container .actions-container-item .action {
+  @apply w-7.5 h-7.5;
+}
+
+.fab {
+  @apply z-1 bottom-12;
+}

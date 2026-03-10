@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { ImportPreviewDto } from "lib";
 import { DialogPropsType } from "components";
 
@@ -10,5 +11,6 @@ export interface ImportDialogPropsType<EntityDto extends ImportPreviewDto>
     options?: { override?: boolean }
   ) => Promise<EntityDto[]>;
   onFileProcessed?: (items: EntityDto[]) => void;
+  renderCustomPreview?: (items?: EntityDto[] | null) => ReactNode;
   onOverrideChange?: (override: boolean) => void;
 }

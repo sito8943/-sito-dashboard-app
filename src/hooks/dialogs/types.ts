@@ -55,6 +55,7 @@ export interface UseImportDialogPropsType<
     file: File,
     options?: { override?: boolean }
   ) => Promise<PreviewEntityDto[]>;
+  renderCustomPreview?: ImportDialogPropsType<PreviewEntityDto>["renderCustomPreview"];
 }
 
 export type UseImportDialogReturnType<

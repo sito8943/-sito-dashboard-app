@@ -16,7 +16,7 @@ const meta = {
   argTypes: {
     state: {
       control: { type: "select" },
-      options: [State.default, "error", "good"],
+      options: [State.default, State.error, State.good],
     },
   },
 } satisfies Meta<typeof ParagraphInput>;
@@ -53,4 +53,39 @@ export const ErrorState: Story = {
       </div>
     );
   },
+};
+
+export const GoodState: Story = {
+  args: { state: State.good, helperText: "Looks good" },
+  render: (args) => {
+    const [value, setValue] = useState("Valid description");
+    return (
+      <div className="max-w-xl">
+        <ParagraphInput
+          {...args}
+          value={value}
+          onChange={(e) => setValue(e.currentTarget.value)}
+        />
+      </div>
+    );
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    value: "Disabled text",
+  },
+};
+
+export const Uncontrolled: Story = {
+  args: {
+    defaultValue: "Initial uncontrolled value",
+    value: undefined,
+  },
+  render: (args) => (
+    <div className="max-w-xl">
+      <ParagraphInput {...args} />
+    </div>
+  ),
 };

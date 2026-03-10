@@ -5,7 +5,7 @@
 }
 
 .onboarding-main .tabs-layout-main {
-  @apply flex gap-40 flex-col-reverse;
+  @apply flex gap-40 flex-col-reverse h-auto;
 }
 
 .onboarding-main .tabs-container {

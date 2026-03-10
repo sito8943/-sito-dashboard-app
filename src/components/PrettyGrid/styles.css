@@ -1,9 +1,14 @@
 @reference "../../index.css";
 
 .pretty-grid-main {
-  @apply flex flex-wrap max-xs:flex-col gap-3;
+  @apply flex flex-wrap max-[28rem]:flex-col gap-3;
 }
 
 .pretty-grid-item {
-  @apply min-h-50 flex;
+  @apply flex;
+  min-height: auto;
+}
+
+.pretty-grid-load-more {
+  @apply w-full flex items-center justify-center py-2;
 }
