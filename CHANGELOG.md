@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- `ToTop` customization props:
+  - `threshold`, `scrollTop`, `scrollLeft`, `tooltip`, `scrollOnClick`, `onClick`, and optional `icon`
+  - continues supporting `IconButton` visual props (`variant`, `color`, `className`, etc.)
+- `ImportDialog` optional `renderCustomPreview?: (items?: EntityDto[] | null) => ReactNode`.
+- `useImportDialog` support for `renderCustomPreview`, forwarded to `ImportDialog`.
+- `PrettyGrid` optional infinite-scroll API:
+  - `hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, `observerRootMargin`, `observerThreshold`
+  - sentinel class `pretty-grid-load-more`
+
+### Changed
+
+- `IndexedDBClient` update contract now aligns with `BaseClient`:
+  - preferred `update(value)`
+  - temporary backward compatibility for `update(id, value)`
+- `IndexedDBClient` filtering now supports `deletedAt` boolean semantics:
+  - `true` => deleted rows
+  - `false` => active rows
+  - strict equality remains for other keys
+- `IndexedDBClient` connection lifecycle improvements:
+  - added safe `close()`
+  - `open()` now registers `db.onversionchange` to close stale connections
+- Style alignment for overlapping class names defined in local reference CSS:
+  - updated `Page`, `Navbar`, `Drawer`, `TabsLayout`, `Onboarding`, `PrettyGrid`, and `Buttons` CSS where selectors already existed in this package.
+
+### Documentation
+
+- Updated `AGENTS.md`, `CLAUDE.md`, and `README.md` for:
+  - `ImportDialog`/`useImportDialog` custom preview support
+  - `PrettyGrid` infinite-scroll usage
+  - `IndexedDBClient` update/filter behavior
+  - `ToTop` customization API
+
 ## [0.0.47] - 2026-03-09
 
 ### Added

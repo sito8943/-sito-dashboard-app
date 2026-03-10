@@ -24,7 +24,7 @@ pnpm add @sito/dashboard-app
 
 ## Core exports
 
-- Layout and navigation: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`
+- Layout and navigation: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
@@ -99,6 +99,93 @@ import { Onboarding } from "@sito/dashboard-app";
 ```
 
 The action buttons still use the package's internal accessibility/button translation keys.
+
+### ImportDialog custom preview
+
+`ImportDialog` supports optional custom preview rendering via `renderCustomPreview`.
+If provided, it receives current parsed `previewItems` and replaces the default JSON preview.
+If omitted, the default preview remains unchanged.
+
+```tsx
+import { ImportDialog } from "@sito/dashboard-app";
+
+<ImportDialog<ProductImportPreviewDto>
+  open={open}
+  title="Import products"
+  handleClose={close}
+  handleSubmit={submit}
+  fileProcessor={parseFile}
+  renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
+/>
+```
+
+`useImportDialog` also accepts and forwards `renderCustomPreview`:
+
+```tsx
+import { useImportDialog } from "@sito/dashboard-app";
+
+const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
+  queryKey: ["products"],
+  entity: "products",
+  mutationFn: api.products.import,
+  fileProcessor: parseFile,
+  renderCustomPreview: (items) => <ProductsPreviewTable items={items ?? []} />,
+});
+```
+
+### PrettyGrid infinite scroll
+
+`PrettyGrid` supports optional infinite loading with `IntersectionObserver`.
+Current usage without infinite props keeps the same behavior.
+
+```tsx
+import { PrettyGrid, Loading } from "@sito/dashboard-app";
+
+<PrettyGrid<ProductDto>
+  data={products}
+  loading={isLoading}
+  renderComponent={(item) => <ProductCard item={item} />}
+  hasMore={hasMore}
+  loadingMore={isFetchingNextPage}
+  onLoadMore={fetchNextPage}
+  loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
+/>
+```
+
+Defaults:
+
+- `hasMore = false`
+- `loadingMore = false`
+- `loadMoreComponent = null`
+- `observerRootMargin = "0px 0px 200px 0px"`
+- `observerThreshold = 0`
+
+### ToTop customization
+
+`ToTop` is now customizable while preserving current defaults.
+
+```tsx
+import { ToTop } from "@sito/dashboard-app";
+
+<ToTop
+  threshold={120}
+  tooltip="Back to top"
+  variant="outlined"
+  color="secondary"
+  className="right-8 bottom-8"
+  scrollTop={0}
+  scrollLeft={0}
+/>
+```
+
+Main optional props:
+
+- `threshold?: number` (default `200`)
+- `scrollTop?: number` / `scrollLeft?: number` (default `0` / `0`)
+- `icon?: IconDefinition`
+- `tooltip?: string`
+- `scrollOnClick?: boolean` (default `true`)
+- `onClick?: () => void`
 
 ## Initial setup example
 
@@ -183,7 +270,7 @@ export function App() {
 
 ## Offline-first / IndexedDB fallback
 
-`IndexedDBClient` is a drop-in offline alternative to `BaseClient`. It exposes the exact same method surface (`insert`, `insertMany`, `update`, `get`, `getById`, `export`, `import`, `commonGet`, `softDelete`, `restore`) but stores data locally in the browser's IndexedDB instead of calling a remote API.
+`IndexedDBClient` is a drop-in offline alternative to `BaseClient`. It exposes the same method surface (`insert`, `insertMany`, `update`, `get`, `getById`, `export`, `import`, `commonGet`, `softDelete`, `restore`) but stores data locally in the browser's IndexedDB instead of calling a remote API.
 
 ### When to use it
 
@@ -262,6 +349,15 @@ function useProductsClient() {
 ```
 
 > **Note:** `IndexedDBClient` requires a browser environment. It will not work in SSR/Node contexts.
+
+Contract and filtering notes:
+
+- Preferred update contract is `update(value)` (aligned with `BaseClient.update(value)`).
+- Legacy `update(id, value)` remains temporarily supported for backward compatibility.
+- Filtering uses strict equality for regular keys.
+- `deletedAt` also supports boolean filtering:
+  - `deletedAt: true` => deleted rows (`deletedAt` not null/undefined)
+  - `deletedAt: false` => active rows (`deletedAt` null/undefined)
 
 ## Tests
 
