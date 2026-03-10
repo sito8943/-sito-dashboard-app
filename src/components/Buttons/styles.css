@@ -13,7 +13,7 @@
 }
 
 .fab {
-  @apply w-12 h-12 fixed right-4 bottom-12 text-lg z-1 min-xs:!hidden;
+  @apply w-12 h-12 fixed right-4 bottom-4 text-lg z-1 xs:!hidden;
 }
 
 .password-icon {

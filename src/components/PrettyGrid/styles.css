@@ -1,7 +1,7 @@
 @reference "../../index.css";
 
 .pretty-grid-main {
-  @apply flex flex-wrap max-xs:flex-col gap-3;
+  @apply flex flex-wrap max-[28rem]:flex-col gap-3;
 }
 
 .pretty-grid-item {

@@ -35,3 +35,24 @@ export const Basic: Story = {
   },
 };
 
+export const Loading: Story = {
+  args: {
+    open: true,
+    isLoading: true,
+    handleClose: () => {},
+    handleSubmit: () => {},
+  },
+  render: (args) => {
+    const [open, setOpen] = useState(true);
+    return (
+      <ConfirmationDialog
+        {...args}
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleSubmit={() => setOpen(false)}
+      >
+        <p>Please wait while we process your request.</p>
+      </ConfirmationDialog>
+    );
+  },
+};

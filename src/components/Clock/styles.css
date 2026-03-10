@@ -1,4 +1,4 @@
 
 .clock {
-  @apply capitalize max-xs:hidden;
+  @apply capitalize max-[28rem]:hidden;
 }

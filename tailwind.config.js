@@ -7,6 +7,9 @@ export default {
   },
   theme: {
     extend: {
+      screens: {
+        xs: "28rem",
+      },
       minWidth: {
         144: "576px",
       },

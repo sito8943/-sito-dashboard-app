@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import { TabsLayout } from "./TabsLayout";
 
 const meta = {
@@ -41,5 +42,35 @@ export const WithCustomTabButton: Story = {
       { id: 1, label: "Users", content: <div className="p-4">Users tab content</div> },
       { id: 2, label: "Roles", content: <div className="p-4">Roles tab content</div> },
     ],
+  },
+};
+
+export const Controlled: Story = {
+  args: {
+    useLinks: false,
+    tabs: [
+      { id: 1, label: "Step 1", content: <div className="p-4">Step 1 content</div> },
+      { id: 2, label: "Step 2", content: <div className="p-4">Step 2 content</div> },
+      { id: 3, label: "Step 3", content: <div className="p-4">Step 3 content</div> },
+    ],
+  },
+  render: (args) => {
+    const [currentTab, setCurrentTab] = useState(1);
+
+    return (
+      <div className="grid gap-3">
+        <TabsLayout
+          {...args}
+          currentTab={currentTab}
+          onTabChange={(id) => setCurrentTab(Number(id))}
+        />
+        <button
+          className="button outlined w-fit"
+          onClick={() => setCurrentTab((prev) => (prev >= 3 ? 3 : prev + 1))}
+        >
+          Next Step
+        </button>
+      </div>
+    );
   },
 };

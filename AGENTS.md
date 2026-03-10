@@ -150,6 +150,7 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Error` | Error display with default icon/message/retry or fully custom content via `children` |
 | `Loading` / `SplashScreen` | Loading indicators |
 | `IconButton` | FontAwesome-based icon button (overrides `@sito/dashboard`'s version) |
+| `ToTop` | Floating scroll-to-top button; customizable threshold, target coordinates, icon, tooltip, and click behavior |
 | `Clock` | (**deprecated**) Displays a formatted clock in the navbar; will be removed in a future release |
 
 ---
@@ -233,6 +234,80 @@ Pass each step as structured content from the consumer:
 
 Use `content` for extra custom UI below the body.
 Handle any step-level i18n in the consumer app before passing `title`, `body`, or `content`.
+
+### `ImportDialog` custom preview
+
+`ImportDialog` supports optional custom preview rendering through `renderCustomPreview`.
+When provided, it receives current `previewItems` (`items?: EntityDto[] | null`) and replaces the default JSON preview.
+When omitted, default preview behavior stays unchanged.
+
+```tsx
+<ImportDialog<ProductImportPreviewDto>
+  open={open}
+  title="Import products"
+  handleClose={close}
+  handleSubmit={submit}
+  fileProcessor={parseFile}
+  renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
+/>
+```
+
+`useImportDialog` also accepts and forwards `renderCustomPreview`:
+
+```tsx
+const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
+  queryKey: ["products"],
+  entity: "products",
+  mutationFn: api.products.import,
+  fileProcessor: parseFile,
+  renderCustomPreview: (items) => <ProductsPreviewTable items={items ?? []} />,
+});
+```
+
+### `PrettyGrid` infinite scroll
+
+`PrettyGrid` now supports optional infinite-scroll loading with `IntersectionObserver`.
+Existing usage without these props remains unchanged.
+
+```tsx
+<PrettyGrid<ProductDto>
+  data={products}
+  loading={isLoading}
+  renderComponent={(item) => <ProductCard item={item} />}
+  hasMore={hasMore}
+  loadingMore={isFetchingNextPage}
+  onLoadMore={fetchNextPage}
+  loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
+/>
+```
+
+Defaults:
+- `hasMore = false`
+- `loadingMore = false`
+- `loadMoreComponent = null`
+- `observerRootMargin = "0px 0px 200px 0px"`
+- `observerThreshold = 0`
+
+### `ToTop` customization
+
+`ToTop` keeps current defaults and now supports optional customization:
+- `threshold?: number` (default `200`)
+- `scrollTop?: number` / `scrollLeft?: number` (defaults `0`, `0`)
+- `icon?: IconDefinition`
+- `tooltip?: string`
+- `scrollOnClick?: boolean` (default `true`)
+- `onClick?: () => void`
+- plus regular `IconButton` visual props (`variant`, `color`, `className`, etc.)
+
+```tsx
+<ToTop
+  threshold={120}
+  tooltip="Back to top"
+  variant="outlined"
+  color="secondary"
+  className="right-8 bottom-8"
+/>
+```
 
 ---
 
@@ -552,7 +627,11 @@ useEffect(() => {
 ### Constraints
 
 - Browser-only: do not instantiate in SSR or Node environments.
-- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key — no range or partial-match queries.
+- `update(value)` is the primary contract (aligned with `BaseClient.update(value)`).
+- Backward compatibility is preserved temporarily for legacy `update(id, value)` calls.
+- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key, except `deletedAt` boolean filters:
+  - `deletedAt: true` => only deleted rows (`deletedAt` not null/undefined)
+  - `deletedAt: false` => only active rows (`deletedAt` null/undefined)
 - `import` with `override: false` uses `store.add` (throws on duplicate key); `override: true` uses `store.put` (upsert).
 - Keep consumer-facing behavior aligned with your `BaseClient` implementation; do not couple UI code to raw IndexedDB details.
 
@@ -728,3 +807,7 @@ Consumer projects must provide translations for these namespaces.
 18. **Use `TabsLayout` navigation mode intentionally** — keep default links for route-driven tabs; use `useLinks={false}` (+ `tabButtonProps`) for local state tabs.
 19. **Use `TabsLayout` as a controlled component when the parent owns step state** — prefer `currentTab` + `onTabChange` for onboarding, wizard, or programmatic flows; reserve `defaultTab` for uncontrolled initial selection.
 20. **Use structured `Onboarding` steps** — pass `title`, `body`, and optional `content`/`image`/`alt`; do not rely on internal `_pages:onboarding.*` translation keys.
+21. **Use `ImportDialog`/`useImportDialog` custom preview extension when needed** — prefer `renderCustomPreview` instead of local dialog forks.
+22. **Use `PrettyGrid` infinite scroll props instead of local grid forks** — `hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, and observer options are the official extension points.
+23. **Use `ToTop` customization props for positioning/behavior** — avoid ad-hoc wrappers when `threshold`, target coordinates, tooltip, icon, and click control are sufficient.
+24. **Prefer `IndexedDBClient.update(value)` in new code** — keep `(id, value)` only for temporary backward compatibility.

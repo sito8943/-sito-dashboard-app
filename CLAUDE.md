@@ -13,3 +13,7 @@ When a change affects the public API or documented behavior:
 - keep `AGENTS.md` and `CLAUDE.md` aligned
 - prefer examples that use the public package entrypoint (`@sito/dashboard-app`)
 - keep `Onboarding` docs aligned with the current public API: `steps` are structured objects with `title`, `body`, optional `content`, `image`, and `alt`, not internal translation keys
+- keep `ImportDialog` docs aligned with `renderCustomPreview` support (component + `useImportDialog` passthrough)
+- keep `PrettyGrid` docs aligned with optional infinite-scroll props (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options)
+- keep `IndexedDBClient` docs aligned with `update(value)` as primary contract, temporary `(id, value)` compatibility, and `deletedAt` boolean filter semantics
+- keep `ToTop` docs aligned with customization props (`threshold`, target coordinates, icon, tooltip, and click behavior)
