@@ -5,7 +5,7 @@
 }
 
 .dialog-backdrop {
-  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-xs:z-36 w-full h-screen;
+  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-[28rem]:z-36 w-full h-screen;
 }
 
 .dialog-backdrop.opened {
@@ -17,7 +17,7 @@
 }
 
 .dialog {
-  @apply flex flex-col relative min-xs:min-w-90 bg-base p-5 min-xs:rounded-2xl min-xs:border-border border-2 max-xs:w-screen max-xs:h-screen;
+  @apply flex flex-col relative xs:min-w-90 bg-base p-5 xs:rounded-2xl xs:border-border border-2 max-[28rem]:w-screen max-[28rem]:h-screen;
 }
 
 .dialog.opened {
@@ -29,7 +29,7 @@
 }
 
 .dialog-header {
-  @apply flex items-center justify-between gap-2 mb-6 max-xs:mb-10;
+  @apply flex items-center justify-between gap-2 mb-6 max-[28rem]:mb-10;
 }
 
 .dialog-title {

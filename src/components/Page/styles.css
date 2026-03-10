@@ -19,7 +19,7 @@
 }
 
 .page-main-content {
-  @apply px-5 py-3 h-full max-xs:px-3;
+  @apply px-5 py-3 h-full max-[28rem]:px-3;
 }
 
 .page-loading {
@@ -27,11 +27,11 @@
 }
 
 .page-header-actions-desktop {
-  @apply max-xs:!hidden;
+  @apply max-[28rem]:!hidden;
 }
 
 .page-header-actions-mobile {
-  @apply min-xs:hidden;
+  @apply xs:hidden;
 }
 
 .page-header .action {

@@ -2,11 +2,19 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Page } from "./Page";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { TableOptionsProvider } from "@sito/dashboard";
 
 const meta = {
   title: "Components/Page/Page",
   component: Page,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <TableOptionsProvider>
+        <Story />
+      </TableOptionsProvider>
+    ),
+  ],
   args: {
     title: "Users",
     showBackButton: true,
