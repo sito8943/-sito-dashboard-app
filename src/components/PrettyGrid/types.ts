@@ -11,4 +11,10 @@ export type PrettyGridPropsType<TDto extends BaseEntityDto> = {
   loading?: boolean;
   className?: string;
   itemClassName?: string;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  onLoadMore?: () => void | Promise<void>;
+  loadMoreComponent?: ReactNode;
+  observerRootMargin?: string;
+  observerThreshold?: number;
 };
