@@ -5,7 +5,8 @@
 }
 
 .pretty-grid-item {
-  @apply min-h-50 flex;
+  @apply flex;
+  min-height: auto;
 }
 
 .pretty-grid-load-more {
