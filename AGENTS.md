@@ -122,7 +122,7 @@ If your app wraps providers in custom components, keep the same effective order:
 | `AuthProvider`         | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
 | `NotificationProvider` | Global toast notification system                                                                                                                      |
 | `DrawerMenuProvider`   | Dynamic drawer menu state                                                                                                                             |
-| `NavbarProvider`       | Optional provider for dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent`; required only when using `Navbar` or `useNavbar` |
+| `NavbarProvider`       | Optional provider for dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent`; required only when using `Navbar` or `useNavbar`  |
 
 ---
 
@@ -422,7 +422,7 @@ function MyPage() {
 
 All hooks also default `hidden = false` and `disabled = false`. Override any prop to customize behavior.
 
-```
+````
 
 ### Navbar hook
 
@@ -443,7 +443,7 @@ function ProductsPage() {
     };
   }, [setTitle, setRightContent]);
 }
-```
+````
 
 `NavbarProvider` must wrap `Navbar` in the component tree for this to work.
 
