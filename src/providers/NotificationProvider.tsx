@@ -1,5 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useContext, createContext, useReducer, useRef } from "react";
+import {
+  useContext,
+  createContext,
+  useReducer,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 
 // lib
 import { NotificationEnumType, NotificationType } from "lib";
@@ -42,37 +49,57 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
   const withId = (items: NotificationType[]) =>
     items.map((item) => ({ ...item, id: nextIdRef.current++ }));
 
-  const showErrorNotification = (options: Partial<NotificationType>) =>
-    dispatch({
-      type: "set",
-      items: withId([{ ...options, type: NotificationEnumType.error }]),
-    });
+  const showErrorNotification = useCallback(
+    (options: Partial<NotificationType>) =>
+      dispatch({
+        type: "set",
+        items: withId([{ ...options, type: NotificationEnumType.error }]),
+      }),
+    [],
+  );
 
-  const showNotification = (options: NotificationType) =>
-    dispatch({ type: "set", items: withId([{ ...options }]) });
+  const showNotification = useCallback(
+    (options: NotificationType) =>
+      dispatch({ type: "set", items: withId([{ ...options }]) }),
+    [],
+  );
 
-  const showStackNotifications = (notifications: NotificationType[]) =>
-    dispatch({ type: "set", items: withId(notifications) });
+  const showStackNotifications = useCallback(
+    (notifications: NotificationType[]) =>
+      dispatch({ type: "set", items: withId(notifications) }),
+    [],
+  );
 
-  const showSuccessNotification = (options: Partial<NotificationType>) =>
-    dispatch({
-      type: "set",
-      items: withId([{ ...options, type: NotificationEnumType.success }]),
-    });
+  const showSuccessNotification = useCallback(
+    (options: Partial<NotificationType>) =>
+      dispatch({
+        type: "set",
+        items: withId([{ ...options, type: NotificationEnumType.success }]),
+      }),
+    [],
+  );
 
   const removeNotification = (id?: number) => dispatch({ type: "remove", id });
 
+  const value = useMemo(() => {
+    return {
+      notification,
+      removeNotification,
+      showErrorNotification,
+      showNotification,
+      showSuccessNotification,
+      showStackNotifications,
+    };
+  }, [
+    notification,
+    showErrorNotification,
+    showNotification,
+    showStackNotifications,
+    showSuccessNotification,
+  ]);
+
   return (
-    <NotificationContext.Provider
-      value={{
-        notification,
-        removeNotification,
-        showErrorNotification,
-        showNotification,
-        showSuccessNotification,
-        showStackNotifications,
-      }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );

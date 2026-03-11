@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 // type
 import { AuthProviderContextType, AuthProviderPropTypes } from "./types";
@@ -116,14 +122,23 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     }
   }, [logUser, logoutUser, manager.Auth]);
 
-  const value = {
+  const value = useMemo(() => {
+    return {
+      account,
+      logUser,
+      logoutUser,
+      logUserFromLocal,
+      isInGuestMode,
+      setGuestMode,
+    };
+  }, [
     account,
     logUser,
     logoutUser,
     logUserFromLocal,
     isInGuestMode,
     setGuestMode,
-  };
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
