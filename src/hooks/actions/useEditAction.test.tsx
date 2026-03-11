@@ -9,7 +9,12 @@ vi.mock("@sito/dashboard", () => ({
   ActionType: {},
 }));
 
-const record = { id: 5, createdAt: new Date(), updatedAt: new Date(), deletedAt: null };
+const record = {
+  id: 5,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+};
 const deletedRecord = { ...record, deletedAt: new Date() };
 
 describe("useEditAction", () => {
@@ -30,7 +35,7 @@ describe("useEditAction", () => {
 
   it("is hidden when hidden prop is true", () => {
     const { result } = renderHook(() =>
-      useEditAction({ onClick: vi.fn(), hidden: true })
+      useEditAction({ onClick: vi.fn(), hidden: true }),
     );
     expect(result.current.action(record).hidden).toBe(true);
   });

@@ -8,7 +8,7 @@ export interface ImportDialogPropsType<EntityDto extends ImportPreviewDto>
   isLoading?: boolean;
   fileProcessor?: (
     file: File,
-    options?: { override?: boolean }
+    options?: { override?: boolean },
   ) => Promise<EntityDto[]>;
   onFileProcessed?: (items: EntityDto[]) => void;
   renderCustomPreview?: (items?: EntityDto[] | null) => ReactNode;

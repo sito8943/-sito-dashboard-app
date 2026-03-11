@@ -5,7 +5,12 @@ import type { BaseEntityDto } from "lib";
 import { faBoxOpen, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-type Entity = BaseEntityDto & { id: string; createdAt: Date; updatedAt: Date; deletedAt?: Date | null };
+type Entity = BaseEntityDto & {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date | null;
+};
 
 const meta = {
   title: "Components/Empty/Empty",

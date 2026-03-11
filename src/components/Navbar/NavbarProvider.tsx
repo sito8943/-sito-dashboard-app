@@ -43,7 +43,7 @@ const NavbarProvider = (props: NavbarProviderPropTypes) => {
       rightContent,
       setRightContent,
     }),
-    [title, setTitle, rightContent, setRightContent]
+    [title, setTitle, rightContent, setRightContent],
   );
 
   return (

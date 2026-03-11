@@ -37,7 +37,9 @@ const NotificationControls = () => {
       </button>
       <button
         className="button outlined"
-        onClick={() => showErrorNotification({ message: "Something went wrong" })}
+        onClick={() =>
+          showErrorNotification({ message: "Something went wrong" })
+        }
       >
         Error
       </button>
@@ -67,7 +69,10 @@ const NotificationControls = () => {
         className="button outlined"
         onClick={() =>
           showStackNotifications([
-            { message: "First stacked message", type: NotificationEnumType.info },
+            {
+              message: "First stacked message",
+              type: NotificationEnumType.info,
+            },
             {
               message: "Second stacked message",
               type: NotificationEnumType.warning,
@@ -101,8 +106,8 @@ export const StackAndDismiss: Story = {
   render: () => (
     <div className="p-4">
       <p className="mb-3 text-sm opacity-70">
-        Use Stack to render multiple notifications. You can close with ESC, click
-        outside or use Clear all.
+        Use Stack to render multiple notifications. You can close with ESC,
+        click outside or use Clear all.
       </p>
       <NotificationControls />
       <Notification />

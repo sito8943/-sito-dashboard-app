@@ -25,7 +25,7 @@ export const usePostForm = <
   TMutationOutputDto,
   TFormType extends FieldValues,
 >(
-  props: UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType>
+  props: UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType>,
 ): FormPropsType<TFormType> => {
   const { t } = useTranslation();
   const { showStackNotifications, showSuccessNotification } = useNotification();
@@ -65,7 +65,7 @@ export const usePostForm = <
       }
       return messages;
     },
-    [t, queryKey]
+    [t, queryKey],
   );
 
   const releaseFormError = useCallback(() => {
@@ -92,8 +92,8 @@ export const usePostForm = <
                   ({
                     message,
                     type: NotificationEnumType.error,
-                  }) as NotificationType
-              )
+                  }) as NotificationType,
+              ),
             );
           } else if (isHttpError(unknownErr)) {
             const fallback =
@@ -116,7 +116,7 @@ export const usePostForm = <
             message: onSuccessMessage,
           } as NotificationType);
       },
-    }
+    },
   );
 
   return {
@@ -127,7 +127,7 @@ export const usePostForm = <
     onSubmit: (data) => {
       releaseFormError();
       formFn.mutate(
-        formToDto ? formToDto(data) : (data as unknown as TMutationDto)
+        formToDto ? formToDto(data) : (data as unknown as TMutationDto),
       );
     },
     reset,

@@ -7,7 +7,7 @@ export class IManager {
   constructor(
     baseUrl: string,
     userKey?: string,
-    authConfig: APIClientAuthConfig = {}
+    authConfig: APIClientAuthConfig = {},
   ) {
     this.auth = new AuthClient(baseUrl, userKey, authConfig);
   }

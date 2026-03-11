@@ -59,10 +59,12 @@ describe("useImportDialog", () => {
         return [] as ProductImportPreviewDto[];
       },
     );
-    const renderCustomPreview = vi.fn((items?: ProductImportPreviewDto[] | null) => {
-      void items;
-      return null;
-    });
+    const renderCustomPreview = vi.fn(
+      (items?: ProductImportPreviewDto[] | null) => {
+        void items;
+        return null;
+      },
+    );
 
     const { result } = renderHook(() =>
       useImportDialog<ProductDto, ProductImportPreviewDto>({

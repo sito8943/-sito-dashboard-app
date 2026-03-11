@@ -42,7 +42,13 @@ export const DialogActions = (props: DialogActionsProps) => {
         name={primaryName}
         aria-label={primaryAriaLabel}
       >
-        {isLoading ? <Loading color="stroke-base" loaderClass="!w-6 mt-1"  strokeWidth="6" /> : null}
+        {isLoading ? (
+          <Loading
+            color="stroke-base"
+            loaderClass="!w-6 mt-1"
+            strokeWidth="6"
+          />
+        ) : null}
         {primaryText}
       </Button>
       <Button

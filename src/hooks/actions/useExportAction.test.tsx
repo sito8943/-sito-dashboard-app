@@ -21,7 +21,7 @@ describe("useExportAction", () => {
 
   it("is hidden when hidden prop is true", () => {
     const { result } = renderHook(() =>
-      useExportAction({ onClick: vi.fn(), hidden: true })
+      useExportAction({ onClick: vi.fn(), hidden: true }),
     );
     expect(result.current.action().hidden).toBe(true);
   });
@@ -33,7 +33,7 @@ describe("useExportAction", () => {
 
   it("is disabled when disabled prop is true", () => {
     const { result } = renderHook(() =>
-      useExportAction({ onClick: vi.fn(), disabled: true })
+      useExportAction({ onClick: vi.fn(), disabled: true }),
     );
     expect(result.current.action().disabled).toBe(true);
   });

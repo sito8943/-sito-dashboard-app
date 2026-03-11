@@ -32,7 +32,7 @@ export const useFormDialog = <
     TMutationDto,
     TMutationOutputDto,
     TFormType
-  >
+  >,
 ): TriggerFormDialogPropsType<TFormType> => {
   const { t } = useTranslation();
   const {
@@ -94,7 +94,7 @@ export const useFormDialog = <
       }
       return messages;
     },
-    [t, queryKey]
+    [t, queryKey],
   );
 
   const releaseFormError = useCallback(() => {
@@ -109,7 +109,7 @@ export const useFormDialog = <
       setId(id ?? 0);
       handleOpen();
     },
-    [handleOpen]
+    [handleOpen],
   );
 
   const close = useCallback(() => {
@@ -137,8 +137,8 @@ export const useFormDialog = <
                 ({
                   message,
                   type: NotificationEnumType.error,
-                }) as NotificationType
-            )
+                }) as NotificationType,
+            ),
           );
         } else if (isHttpError(unknownErr)) {
           const fallback = unknownErr.message || t("_accessibility:errors.500");
@@ -169,7 +169,7 @@ export const useFormDialog = <
     handleSubmit,
     onSubmit: (data) =>
       dialogFn.mutate(
-        formToDto ? formToDto(data) : (data as unknown as TMutationDto)
+        formToDto ? formToDto(data) : (data as unknown as TMutationDto),
       ),
     reset,
     setError,

@@ -22,7 +22,7 @@ export class AuthClient {
   constructor(
     baseUrl: string,
     userKey: string = "user",
-    authConfig: APIClientAuthConfig = {}
+    authConfig: APIClientAuthConfig = {},
   ) {
     this.api = new APIClient(baseUrl, userKey, false, undefined, authConfig);
   }
@@ -33,7 +33,7 @@ export class AuthClient {
     return await this.api.doQuery<SessionDto, AuthDto>(
       endpoint,
       Methods.POST,
-      body
+      body,
     );
   }
 
@@ -42,7 +42,7 @@ export class AuthClient {
     return await this.api.doQuery<SessionDto, RefreshDto>(
       endpoint,
       Methods.POST,
-      data
+      data,
     );
   }
 
@@ -61,7 +61,7 @@ export class AuthClient {
       endpoint,
       Methods.POST,
       body,
-      header
+      header,
     );
   }
 
@@ -70,7 +70,7 @@ export class AuthClient {
     return await this.api.doQuery<SessionDto, RegisterDto>(
       endpoint,
       Methods.POST,
-      userData
+      userData,
     );
   }
 
@@ -81,7 +81,7 @@ export class AuthClient {
       endpoint,
       Methods.GET,
       undefined,
-      this.api.defaultTokenAcquirer()
+      this.api.defaultTokenAcquirer(),
     );
   }
 }

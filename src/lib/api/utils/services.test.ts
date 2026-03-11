@@ -11,18 +11,18 @@ describe("makeRequest", () => {
 
   it("returns parsed data for successful JSON responses", async () => {
     fetchSpy.mockResolvedValue(
-      new Response(JSON.stringify({ id: 7, name: "Sito" }), { status: 200 })
+      new Response(JSON.stringify({ id: 7, name: "Sito" }), { status: 200 }),
     );
 
     const result = await makeRequest<undefined, { id: number; name: string }>(
-      "https://api.test/users"
+      "https://api.test/users",
     );
 
     expect(fetchSpy).toHaveBeenCalledWith(
       "https://api.test/users",
       expect.objectContaining({
         method: Methods.GET,
-      })
+      }),
     );
     expect(result).toEqual({
       data: { id: 7, name: "Sito" },
@@ -44,7 +44,9 @@ describe("makeRequest", () => {
   });
 
   it("includes body and content-type when body is provided", async () => {
-    fetchSpy.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    fetchSpy.mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), { status: 200 }),
+    );
 
     await makeRequest("https://api.test/users", Methods.POST, { name: "Sito" });
 
@@ -56,7 +58,7 @@ describe("makeRequest", () => {
           "Content-Type": "application/json",
         }),
         body: JSON.stringify({ name: "Sito" }),
-      })
+      }),
     );
   });
 
@@ -65,7 +67,7 @@ describe("makeRequest", () => {
       new Response(JSON.stringify({ message: "Invalid payload" }), {
         status: 400,
         statusText: "Bad Request",
-      })
+      }),
     );
 
     const result = await makeRequest("https://api.test/users", Methods.POST, {

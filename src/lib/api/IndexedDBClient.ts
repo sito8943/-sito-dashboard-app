@@ -99,10 +99,9 @@ export class IndexedDBClient<
   async update(id: number, value: TUpdateDto): Promise<TDto>;
   async update(
     valueOrId: number | TUpdateDto,
-    maybeValue?: TUpdateDto
+    maybeValue?: TUpdateDto,
   ): Promise<TDto> {
-    const value =
-      typeof valueOrId === "number" ? maybeValue : valueOrId;
+    const value = typeof valueOrId === "number" ? maybeValue : valueOrId;
     if (!value) {
       throw new Error("IndexedDBClient.update requires a value payload");
     }
@@ -225,7 +224,7 @@ export class IndexedDBClient<
         this.matchesFilterValue(
           key,
           filterValue,
-          (item as Record<string, unknown>)[key]
+          (item as Record<string, unknown>)[key],
         ),
       ),
     );

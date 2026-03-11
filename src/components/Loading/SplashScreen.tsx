@@ -10,7 +10,10 @@ export function SplashScreen(props: LoadingPropsType) {
   const { className, ...rest } = props;
   return (
     <div className="splash-screen">
-      <Loading className={`blur-appear ${className ? ` ${className}` : ""}`} {...rest} />
+      <Loading
+        className={`blur-appear ${className ? ` ${className}` : ""}`}
+        {...rest}
+      />
     </div>
   );
 }

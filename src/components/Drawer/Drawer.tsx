@@ -44,7 +44,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         onClose();
       }
     },
-    [onClose, open]
+    [onClose, open],
   );
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
       isChild
         ? path === `${location.pathname}${location.search}`
         : path === location.pathname,
-    [location.pathname, location.search]
+    [location.pathname, location.search],
   );
 
   const renderChild = useCallback(
@@ -86,7 +86,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         )}
       </li>
     ),
-    [Link, open, t, isActive]
+    [Link, open, t, isActive],
   );
 
   const renderItems = useMemo(() => {

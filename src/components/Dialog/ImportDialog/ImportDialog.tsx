@@ -44,13 +44,29 @@ const initialState = <T,>(): State<T> => ({
 function reducer<T>(state: State<T>, action: Action<T>): State<T> {
   switch (action.type) {
     case "SET_FILE":
-      return { ...state, file: action.file, previewItems: null, parseError: null, processing: false };
+      return {
+        ...state,
+        file: action.file,
+        previewItems: null,
+        parseError: null,
+        processing: false,
+      };
     case "START_PROCESSING":
       return { ...state, processing: true };
     case "SET_PREVIEW":
-      return { ...state, previewItems: action.items, parseError: null, processing: false };
+      return {
+        ...state,
+        previewItems: action.items,
+        parseError: null,
+        processing: false,
+      };
     case "SET_ERROR":
-      return { ...state, previewItems: null, parseError: action.message, processing: false };
+      return {
+        ...state,
+        previewItems: null,
+        parseError: action.message,
+        processing: false,
+      };
     case "SET_OVERRIDE":
       return { ...state, overrideExisting: action.value };
     case "RESET":
@@ -59,7 +75,7 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
 }
 
 export const ImportDialog = <EntityDto extends ImportPreviewDto>(
-  props: ImportDialogPropsType<EntityDto>
+  props: ImportDialogPropsType<EntityDto>,
 ) => {
   const { t } = useTranslation();
   const {
@@ -75,8 +91,18 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     ...rest
   } = props;
 
-  const [state, dispatch] = useReducer(reducer<EntityDto>, initialState<EntityDto>());
-  const { file, previewItems, parseError, processing, overrideExisting, inputKey } = state;
+  const [state, dispatch] = useReducer(
+    reducer<EntityDto>,
+    initialState<EntityDto>(),
+  );
+  const {
+    file,
+    previewItems,
+    parseError,
+    processing,
+    overrideExisting,
+    inputKey,
+  } = state;
 
   const processedCallbackRef = useRef(onFileProcessed);
   const fileProcessorRef = useRef(fileProcessor);
@@ -93,19 +119,23 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     if (!open) dispatch({ type: "RESET" });
   }, [open]);
 
-  const processFile = useCallback(async (targetFile: File, override: boolean) => {
-    if (!fileProcessorRef.current) return;
-    dispatch({ type: "START_PROCESSING" });
-    try {
-      const items = await fileProcessorRef.current(targetFile, { override });
-      dispatch({ type: "SET_PREVIEW", items: items ?? [] });
-      processedCallbackRef.current?.(items ?? []);
-    } catch (err) {
-      console.error(err);
-      const message = err instanceof Error ? err.message : "Failed to parse file";
-      dispatch({ type: "SET_ERROR", message });
-    }
-  }, []);
+  const processFile = useCallback(
+    async (targetFile: File, override: boolean) => {
+      if (!fileProcessorRef.current) return;
+      dispatch({ type: "START_PROCESSING" });
+      try {
+        const items = await fileProcessorRef.current(targetFile, { override });
+        dispatch({ type: "SET_PREVIEW", items: items ?? [] });
+        processedCallbackRef.current?.(items ?? []);
+      } catch (err) {
+        console.error(err);
+        const message =
+          err instanceof Error ? err.message : "Failed to parse file";
+        dispatch({ type: "SET_ERROR", message });
+      }
+    },
+    [],
+  );
 
   return (
     <Dialog {...rest} open={open} handleClose={handleClose}>
@@ -155,7 +185,8 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         primaryText={t("_accessibility:buttons.ok")}
         cancelText={t("_accessibility:buttons.cancel")}
         onPrimaryClick={() => {
-          const canSubmit = !fileProcessor || (!!previewItems && previewItems.length > 0);
+          const canSubmit =
+            !fileProcessor || (!!previewItems && previewItems.length > 0);
           if (canSubmit) handleSubmit();
         }}
         onCancel={handleClose}

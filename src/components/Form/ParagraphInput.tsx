@@ -14,7 +14,9 @@ import { ParagraphInputPropsType } from "./types";
 // styles
 import "./styles.css";
 
-const hasInputValue = (inputValue: string | number | readonly string[] | undefined) => {
+const hasInputValue = (
+  inputValue: string | number | readonly string[] | undefined,
+) => {
   if (inputValue === undefined || inputValue === null) return false;
   return `${inputValue}`.length > 0;
 };
@@ -26,7 +28,7 @@ const hasInputValue = (inputValue: string | number | readonly string[] | undefin
  */
 export const ParagraphInput = forwardRef(function (
   props: ParagraphInputPropsType,
-  ref: ForwardedRef<HTMLTextAreaElement>
+  ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
   const {
     value,
@@ -48,10 +50,12 @@ export const ParagraphInput = forwardRef(function (
 
   const isControlled = value !== undefined;
   const [uncontrolledHasValue, setUncontrolledHasValue] = useState(() =>
-    hasInputValue(defaultValue as string)
+    hasInputValue(defaultValue as string),
   );
 
-  const hasValue = isControlled ? hasInputValue(value as string) : uncontrolledHasValue;
+  const hasValue = isControlled
+    ? hasInputValue(value as string)
+    : uncontrolledHasValue;
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     if (!isControlled) {

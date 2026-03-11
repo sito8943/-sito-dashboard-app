@@ -141,7 +141,9 @@ describe("NavbarProvider", () => {
 
   it("provides default empty title — navbar falls back to app name key", () => {
     renderWithProvider(<Navbar {...baseProps} />);
-    expect(screen.getByRole("heading", { name: "_pages:home.appName" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "_pages:home.appName" }),
+    ).toBeInTheDocument();
   });
 
   it("allows setting the title", () => {
@@ -185,13 +187,17 @@ describe("NavbarProvider", () => {
       return null;
     }
     render(<App />);
-    expect(screen.getByRole("heading", { name: "Custom Title" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Custom Title" }),
+    ).toBeInTheDocument();
   });
 
   it("falls back to t(appName) when title is empty", () => {
     renderWithProvider(<Navbar {...baseProps} />);
     // t() returns the key itself in mock
-    expect(screen.getByRole("heading", { name: "_pages:home.appName" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "_pages:home.appName" }),
+    ).toBeInTheDocument();
   });
 
   it("renders rightContent before the search button", () => {

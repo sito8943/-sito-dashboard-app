@@ -68,7 +68,7 @@ import { TabsLayout } from "@sito/dashboard-app";
   useLinks={false}
   tabButtonProps={{ variant: "outlined", color: "secondary" }}
   tabs={tabs}
-/>
+/>;
 ```
 
 `tabButtonProps` lets you customize each tab button style/behavior (except `onClick` and `children`, which are controlled by `TabsLayout`).
@@ -95,7 +95,7 @@ import { Onboarding } from "@sito/dashboard-app";
       alt: "Setup preview",
     },
   ]}
-/>
+/>;
 ```
 
 The action buttons still use the package's internal accessibility/button translation keys.
@@ -116,7 +116,7 @@ import { ImportDialog } from "@sito/dashboard-app";
   handleSubmit={submit}
   fileProcessor={parseFile}
   renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
-/>
+/>;
 ```
 
 `useImportDialog` also accepts and forwards `renderCustomPreview`:
@@ -149,7 +149,7 @@ import { PrettyGrid, Loading } from "@sito/dashboard-app";
   loadingMore={isFetchingNextPage}
   onLoadMore={fetchNextPage}
   loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
-/>
+/>;
 ```
 
 Defaults:
@@ -175,7 +175,7 @@ import { ToTop } from "@sito/dashboard-app";
   className="right-8 bottom-8"
   scrollTop={0}
   scrollLeft={0}
-/>
+/>;
 ```
 
 Main optional props:
@@ -193,7 +193,12 @@ Wrap your app with the providers to enable navigation, React Query integration, 
 
 ```tsx
 import type { ReactNode } from "react";
-import { BrowserRouter, Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import {
   AuthProvider,
   ConfigProvider,
@@ -311,9 +316,9 @@ interface ProductFilterDto extends BaseFilterDto {
 class ProductsIndexedDBClient extends IndexedDBClient<
   "products",
   ProductDto,
-  ProductDto,           // TCommonDto
+  ProductDto, // TCommonDto
   Omit<ProductDto, "id" | "createdAt" | "updatedAt" | "deletedAt">,
-  ProductDto,           // TUpdateDto (extends DeleteDto via BaseEntityDto)
+  ProductDto, // TUpdateDto (extends DeleteDto via BaseEntityDto)
   ProductFilterDto,
   ImportPreviewDto
 > {
@@ -329,17 +334,19 @@ class ProductsIndexedDBClient extends IndexedDBClient<
 import { useState, useEffect } from "react";
 
 function useProductsClient() {
-  const [client, setClient] = useState(
-    () => navigator.onLine ? new ProductsClient(apiUrl) : new ProductsIndexedDBClient()
+  const [client, setClient] = useState(() =>
+    navigator.onLine
+      ? new ProductsClient(apiUrl)
+      : new ProductsIndexedDBClient(),
   );
 
   useEffect(() => {
-    const goOnline  = () => setClient(new ProductsClient(apiUrl));
+    const goOnline = () => setClient(new ProductsClient(apiUrl));
     const goOffline = () => setClient(new ProductsIndexedDBClient());
-    window.addEventListener("online",  goOnline);
+    window.addEventListener("online", goOnline);
     window.addEventListener("offline", goOffline);
     return () => {
-      window.removeEventListener("online",  goOnline);
+      window.removeEventListener("online", goOnline);
       window.removeEventListener("offline", goOffline);
     };
   }, []);

@@ -13,7 +13,7 @@ type PreviewProps<EntityDto extends ImportPreviewDto> = {
 };
 
 export function Preview<EntityDto extends ImportPreviewDto>(
-  props: PreviewProps<EntityDto>
+  props: PreviewProps<EntityDto>,
 ) {
   const { items, max = 5, className = "" } = props;
   const { t } = useTranslation();

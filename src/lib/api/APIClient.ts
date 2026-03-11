@@ -52,7 +52,7 @@ export class APIClient {
     userKey = "user",
     secured = true,
     tokenAcquirer?: (useCookie?: boolean) => HeadersInit | undefined,
-    authConfig: APIClientAuthConfig = {}
+    authConfig: APIClientAuthConfig = {},
   ) {
     this.baseUrl = baseUrl;
     this.secured = secured;
@@ -98,10 +98,7 @@ export class APIClient {
 
   private getAccessTokenExpiresAt() {
     const accessTokenExpiresAt = fromLocal(this.accessTokenExpiresAtKey);
-    if (
-      typeof accessTokenExpiresAt === "string" &&
-      accessTokenExpiresAt.length
-    )
+    if (typeof accessTokenExpiresAt === "string" && accessTokenExpiresAt.length)
       return accessTokenExpiresAt;
     return undefined;
   }
@@ -163,7 +160,7 @@ export class APIClient {
       const { data, status, error } = await makeRequest<RefreshDto, SessionDto>(
         this.buildUrl(this.refreshEndpoint),
         Methods.POST,
-        { refreshToken }
+        { refreshToken },
       );
 
       if (
@@ -204,7 +201,7 @@ export class APIClient {
     endpoint: string,
     method: Methods,
     body?: TBody,
-    header?: HeadersInit
+    header?: HeadersInit,
   ) {
     if (this.secured && this.shouldRefreshBeforeRequest())
       await this.refreshAccessTokenWithMutex();
@@ -213,20 +210,16 @@ export class APIClient {
       this.buildUrl(endpoint),
       method,
       body,
-      this.mergeHeaders(header)
+      this.mergeHeaders(header),
     );
 
-    if (
-      this.secured &&
-      response.status === 401 &&
-      this.canRefresh()
-    ) {
+    if (this.secured && response.status === 401 && this.canRefresh()) {
       await this.refreshAccessTokenWithMutex();
       response = await makeRequest<TBody, TResponse>(
         this.buildUrl(endpoint),
         method,
         body,
-        this.mergeHeaders(header)
+        this.mergeHeaders(header),
       );
     }
 
@@ -237,15 +230,18 @@ export class APIClient {
     endpoint: string,
     method = Methods.GET,
     body?: TBody,
-    header?: HeadersInit
+    header?: HeadersInit,
   ) {
-    const { data: result, status, error } =
-      await this.makeRequestWithRefresh<TResponse, TBody>(
-        endpoint,
-        method,
-        body,
-        header
-      );
+    const {
+      data: result,
+      status,
+      error,
+    } = await this.makeRequestWithRefresh<TResponse, TBody>(
+      endpoint,
+      method,
+      body,
+      header,
+    );
 
     if (error || status < 200 || status >= 300)
       throw (
@@ -267,15 +263,13 @@ export class APIClient {
   async get<TDto extends BaseEntityDto, TFilter extends BaseFilterDto>(
     endpoint: string,
     query?: QueryParam<TDto>,
-    filters?: TFilter
+    filters?: TFilter,
   ) {
     const builtUrl = parseQueries<TDto, TFilter>(endpoint, query, filters);
 
-    const { data: result, error } =
-      await this.makeRequestWithRefresh<QueryResult<TDto>>(
-        builtUrl,
-        Methods.GET
-      );
+    const { data: result, error } = await this.makeRequestWithRefresh<
+      QueryResult<TDto>
+    >(builtUrl, Methods.GET);
     if (error) throw error;
 
     return result as QueryResult<TDto>;
@@ -289,14 +283,17 @@ export class APIClient {
    */
   async patch<TDto, TUpdateDto>(
     endpoint: string,
-    data: TUpdateDto
+    data: TUpdateDto,
   ): Promise<TDto> {
-    const { error, data: result, status } =
-      await this.makeRequestWithRefresh<TDto, TUpdateDto>(
-        endpoint,
-        Methods.PATCH,
-        data
-      );
+    const {
+      error,
+      data: result,
+      status,
+    } = await this.makeRequestWithRefresh<TDto, TUpdateDto>(
+      endpoint,
+      Methods.PATCH,
+      data,
+    );
 
     if (error || result === null || result === undefined)
       throw (
@@ -315,12 +312,15 @@ export class APIClient {
    * @returns delete result
    */
   async delete(endpoint: string, data: number[]) {
-    const { error, data: result, status } =
-      await this.makeRequestWithRefresh<number, number[]>(
-        endpoint,
-        Methods.DELETE,
-        data
-      );
+    const {
+      error,
+      data: result,
+      status,
+    } = await this.makeRequestWithRefresh<number, number[]>(
+      endpoint,
+      Methods.DELETE,
+      data,
+    );
 
     if (error || result === null || result === undefined)
       throw (
@@ -340,12 +340,15 @@ export class APIClient {
    * @returns inserted item
    */
   async post<TDto, TAddDto>(endpoint: string, data: TAddDto): Promise<TDto> {
-    const { error, data: result, status } =
-      await this.makeRequestWithRefresh<TDto, TAddDto>(
-        endpoint,
-        Methods.POST,
-        data
-      );
+    const {
+      error,
+      data: result,
+      status,
+    } = await this.makeRequestWithRefresh<TDto, TAddDto>(
+      endpoint,
+      Methods.POST,
+      data,
+    );
 
     if (error || result === null || result === undefined)
       throw (

@@ -31,7 +31,7 @@ const useConfig = () => {
   const context = useContext(ConfigContext);
   if (context === undefined || Object.keys(context).length === 0)
     throw new Error(
-      "Config provider has not been set. This step is required and cannot be skipped."
+      "Config provider has not been set. This step is required and cannot be skipped.",
     );
   return context;
 };

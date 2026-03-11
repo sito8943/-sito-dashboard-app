@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
 });
 
 const ManagerContext = createContext<ManagerProviderContextType | undefined>(
-  undefined
+  undefined,
 );
 
 /**

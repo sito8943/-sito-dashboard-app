@@ -9,7 +9,7 @@ import { AppIconButton } from "components";
 
 export const PasswordInput = forwardRef(function (
   props: TextInputPropsType,
-  ref: ForwardedRef<HTMLInputElement>
+  ref: ForwardedRef<HTMLInputElement>,
 ) {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +22,7 @@ export const PasswordInput = forwardRef(function (
         aria-label={t(
           showPassword
             ? "_accessibility:ariaLabels.hidePassword"
-            : "_accessibility:ariaLabels.showPassword"
+            : "_accessibility:ariaLabels.showPassword",
         )}
         className="password-icon"
         onClick={() => setShowPassword(!showPassword)}

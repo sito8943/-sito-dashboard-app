@@ -20,7 +20,7 @@ export function useImportDialog<
   EntityDto extends BaseEntityDto,
   PreviewEntityDto extends ImportPreviewDto,
 >(
-  props: UseImportDialogPropsType<PreviewEntityDto>
+  props: UseImportDialogPropsType<PreviewEntityDto>,
 ): UseImportDialogReturnType<EntityDto, PreviewEntityDto> {
   const { t } = useTranslation();
 

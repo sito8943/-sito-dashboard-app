@@ -4,11 +4,13 @@ import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 import { ToTop } from "./ToTop";
 
-const { useScrollTriggerMock, scrollToMock, capturedProps } = vi.hoisted(() => ({
-  useScrollTriggerMock: vi.fn(),
-  scrollToMock: vi.fn(),
-  capturedProps: { current: {} as Record<string, unknown> },
-}));
+const { useScrollTriggerMock, scrollToMock, capturedProps } = vi.hoisted(
+  () => ({
+    useScrollTriggerMock: vi.fn(),
+    scrollToMock: vi.fn(),
+    capturedProps: { current: {} as Record<string, unknown> },
+  }),
+);
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({

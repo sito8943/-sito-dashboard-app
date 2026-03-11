@@ -19,7 +19,7 @@ import { useConfig } from "providers";
 import "./styles.css";
 
 export const PageHeader = <TEntity extends BaseEntityDto>(
-  props: PageHeaderPropsType<TEntity>
+  props: PageHeaderPropsType<TEntity>,
 ) => {
   const { showBackButton, title, actions } = props;
 
@@ -42,8 +42,14 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
         <h2 className="page-header-title">{title}</h2>
       </div>
       <div>
-        <Actions className="page-header-actions-desktop" actions={actions ?? []} />
-        <ActionsDropdown className="page-header-actions-mobile" actions={actions ?? []} />
+        <Actions
+          className="page-header-actions-desktop"
+          actions={actions ?? []}
+        />
+        <ActionsDropdown
+          className="page-header-actions-mobile"
+          actions={actions ?? []}
+        />
       </div>
     </div>
   );

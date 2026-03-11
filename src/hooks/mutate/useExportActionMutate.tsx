@@ -15,7 +15,7 @@ import { UseExportActionMutatePropsType } from "./types";
 import { useExportAction } from "../actions";
 
 export const useExportActionMutate = <TInOutDto, Tables, TError extends Error>(
-  props: UseExportActionMutatePropsType<TInOutDto, Tables, TError>
+  props: UseExportActionMutatePropsType<TInOutDto, Tables, TError>,
 ) => {
   const { showSuccessNotification } = useNotification();
   const { t } = useTranslation();

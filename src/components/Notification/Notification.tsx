@@ -97,7 +97,7 @@ export function Notification() {
       setItems((prev) =>
         id !== undefined
           ? prev.map((i) => (i.id === id ? { ...i, closing: true } : i))
-          : prev.map((i) => ({ ...i, closing: true }))
+          : prev.map((i) => ({ ...i, closing: true })),
       );
 
       if (id !== undefined) {
@@ -116,7 +116,7 @@ export function Notification() {
         }, ANIM_MS);
       }
     },
-    [removeNotification]
+    [removeNotification],
   );
 
   // ── Sync provider → items (with animation) ─────────────────────────────
@@ -154,7 +154,7 @@ export function Notification() {
 
     const prevIds = new Set(itemsRef.current.map((i) => i.id));
     const hasNew = notification.some(
-      (n) => n.id !== undefined && !prevIds.has(n.id)
+      (n) => n.id !== undefined && !prevIds.has(n.id),
     );
     if (!hasNew) return;
 
@@ -176,7 +176,7 @@ export function Notification() {
       setItems((prev) =>
         prev.every((i) => i.closing)
           ? prev // already animating out, avoid spurious update
-          : prev.map((i) => ({ ...i, closing: true }))
+          : prev.map((i) => ({ ...i, closing: true })),
       );
       markClosingTimer = null;
     }, 0);
@@ -248,6 +248,6 @@ export function Notification() {
         );
       })}
     </div>,
-    document.body
+    document.body,
   );
 }

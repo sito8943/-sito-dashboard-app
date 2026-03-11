@@ -8,7 +8,7 @@ import { NotificationEnumType, NotificationType } from "lib";
 import { BasicProviderPropTypes, NotificationContextType } from "./types";
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function NotificationProvider(props: BasicProviderPropTypes) {
@@ -21,7 +21,7 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
   const [notification, dispatch] = useReducer(
     (
       state: NotificationType[],
-      action: { type: string; items?: NotificationType[]; id?: number }
+      action: { type: string; items?: NotificationType[]; id?: number },
     ) => {
       const { type, items, id } = action;
 
@@ -36,7 +36,7 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
       return state;
     },
     [] as NotificationType[],
-    () => [] as NotificationType[]
+    () => [] as NotificationType[],
   );
 
   const withId = (items: NotificationType[]) =>
@@ -60,8 +60,7 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
       items: withId([{ ...options, type: NotificationEnumType.success }]),
     });
 
-  const removeNotification = (id?: number) =>
-    dispatch({ type: "remove", id });
+  const removeNotification = (id?: number) => dispatch({ type: "remove", id });
 
   return (
     <NotificationContext.Provider

@@ -64,7 +64,7 @@ describe("AuthProvider", () => {
     expect(localStorage.getItem("remember")).toBe("true");
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token");
     expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
-      "2030-01-01T00:00:00.000Z"
+      "2030-01-01T00:00:00.000Z",
     );
     expect(localStorage.getItem("guest_mode")).toBeNull();
   });
@@ -97,7 +97,10 @@ describe("AuthProvider", () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
 
     act(() => {
-      result.current.logUser({ ...session, token: "stale-in-memory-token" }, true);
+      result.current.logUser(
+        { ...session, token: "stale-in-memory-token" },
+        true,
+      );
     });
     localStorage.setItem("user", "fresh-local-token");
 
@@ -124,7 +127,7 @@ describe("AuthProvider", () => {
     expect(localStorage.getItem("user")).toBe("jwt-token");
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token");
     expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
-      "2030-01-01T00:00:00.000Z"
+      "2030-01-01T00:00:00.000Z",
     );
   });
 
@@ -175,7 +178,7 @@ describe("AuthProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => renderHook(() => useAuth())).toThrow(
-      "authContext must be used within a Provider"
+      "authContext must be used within a Provider",
     );
 
     consoleErrorSpy.mockRestore();
@@ -194,7 +197,7 @@ describe("AuthProvider", () => {
     expect(localStorage.getItem("custom_remember")).toBe("true");
     expect(localStorage.getItem("custom_refresh")).toBe("refresh-token");
     expect(localStorage.getItem("custom_access_expiry")).toBe(
-      "2030-01-01T00:00:00.000Z"
+      "2030-01-01T00:00:00.000Z",
     );
     expect(localStorage.getItem("user")).toBeNull();
     expect(localStorage.getItem("remember")).toBeNull();

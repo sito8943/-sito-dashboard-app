@@ -30,7 +30,9 @@ export const WithRetry: Story = {
       <ErrorComponent
         onRetry={onRetry}
         message={t("_accessibility:errors.unknownError")}
-        retryLabel={t("_accessibility:actions.retry", { defaultValue: "Retry" })}
+        retryLabel={t("_accessibility:actions.retry", {
+          defaultValue: "Retry",
+        })}
       />
     );
   },

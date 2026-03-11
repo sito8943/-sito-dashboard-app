@@ -6,8 +6,15 @@ import { useConfig } from "providers/ConfigProvider";
 import { Button } from "../Buttons";
 
 export const Tab = (props: TabPropsType) => {
-  const { id, active, onClick, children, to, useLinks = true, tabButtonProps } =
-    props;
+  const {
+    id,
+    active,
+    onClick,
+    children,
+    to,
+    useLinks = true,
+    tabButtonProps,
+  } = props;
 
   const { linkComponent } = useConfig();
 

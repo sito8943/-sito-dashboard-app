@@ -16,7 +16,7 @@ import { Empty } from "components";
 import "./styles.css";
 
 export const PrettyGrid = <TDto extends BaseEntityDto>(
-  props: PrettyGridPropsType<TDto>
+  props: PrettyGridPropsType<TDto>,
 ) => {
   const { t } = useTranslation();
 

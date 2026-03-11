@@ -46,7 +46,7 @@ describe("ConfigProvider", () => {
         linkComponent={LinkComponent}
       >
         <Consumer />
-      </ConfigProvider>
+      </ConfigProvider>,
     );
 
     expect(screen.getByTestId("pathname")).toHaveTextContent("/dashboard");
@@ -61,7 +61,7 @@ describe("ConfigProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => render(<Consumer />)).toThrow(
-      "Config provider has not been set."
+      "Config provider has not been set.",
     );
 
     consoleErrorSpy.mockRestore();

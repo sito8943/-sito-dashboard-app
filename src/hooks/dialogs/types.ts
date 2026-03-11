@@ -53,7 +53,7 @@ export interface UseImportDialogPropsType<
   mutationFn: MutationFunction<number, ImportDto<PreviewEntityDto>>;
   fileProcessor?: (
     file: File,
-    options?: { override?: boolean }
+    options?: { override?: boolean },
   ) => Promise<PreviewEntityDto[]>;
   renderCustomPreview?: ImportDialogPropsType<PreviewEntityDto>["renderCustomPreview"];
 }

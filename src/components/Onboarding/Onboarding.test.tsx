@@ -69,7 +69,9 @@ describe("Onboarding", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { name: "Welcome" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Welcome" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Intro copy")).toBeInTheDocument();
     expect(screen.getByText("Extra step content")).toBeInTheDocument();
   });
@@ -96,7 +98,11 @@ describe("Onboarding", () => {
 
     expect(screen.getByRole("heading", { name: "Finish" })).toBeInTheDocument();
     expect(screen.getByText("Done copy")).toBeInTheDocument();
-    expect(screen.getByText("_accessibility:buttons.startAsGuest")).toBeInTheDocument();
-    expect(screen.getByText("_accessibility:buttons.signIn")).toBeInTheDocument();
+    expect(
+      screen.getByText("_accessibility:buttons.startAsGuest"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("_accessibility:buttons.signIn"),
+    ).toBeInTheDocument();
   });
 });

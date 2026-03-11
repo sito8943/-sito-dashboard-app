@@ -1,11 +1,16 @@
-import type { Preview, Decorator } from "@@storybook/react";
+import type { Preview, Decorator } from "@storybook/react";
 import React from "react";
 
 // Global styles (Tailwind via src/index.css)
 import "../src/index.css";
 
 // Providers used by components
-import { ConfigProvider, NotificationProvider, ManagerProvider, AuthProvider } from "providers";
+import {
+  ConfigProvider,
+  NotificationProvider,
+  ManagerProvider,
+  AuthProvider,
+} from "providers";
 import { TranslationProvider } from "@sito/dashboard";
 import { IManager } from "lib";
 import type { Location } from "lib";

@@ -7,15 +7,15 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| UI Framework | React | 18.3.1 |
-| Language | TypeScript | 5.7.2 |
-| Styling | Tailwind CSS + Emotion | 4.x / 11.x |
-| Icons | FontAwesome | 7.0.0 |
-| Forms | React Hook Form | 7.61.1 |
-| Server State | TanStack React Query | 5.x |
-| Base Library | @sito/dashboard | ^0.0.68 |
+| Layer        | Technology             | Version    |
+| ------------ | ---------------------- | ---------- |
+| UI Framework | React                  | 18.3.1     |
+| Language     | TypeScript             | 5.7.2      |
+| Styling      | Tailwind CSS + Emotion | 4.x / 11.x |
+| Icons        | FontAwesome            | 7.0.0      |
+| Forms        | React Hook Form        | 7.61.1     |
+| Server State | TanStack React Query   | 5.x        |
+| Base Library | @sito/dashboard        | ^0.0.68    |
 
 ---
 
@@ -66,18 +66,24 @@ const authStorageKeys = {
   accessTokenExpiresAtKey: "accessTokenExpiresAt",
 };
 
-const manager = new IManager(import.meta.env.VITE_API_URL, authStorageKeys.user, {
-  rememberKey: authStorageKeys.remember,
-  refreshTokenKey: authStorageKeys.refreshTokenKey,
-  accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
-});
+const manager = new IManager(
+  import.meta.env.VITE_API_URL,
+  authStorageKeys.user,
+  {
+    rememberKey: authStorageKeys.remember,
+    refreshTokenKey: authStorageKeys.refreshTokenKey,
+    accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
+  },
+);
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider
         location={window.location}
-        navigate={(route) => { /* router navigate */ }}
+        navigate={(route) => {
+          /* router navigate */
+        }}
         linkComponent={MyLinkComponent}
       >
         <ManagerProvider manager={manager}>
@@ -88,9 +94,7 @@ function App() {
             accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
           >
             <NotificationProvider>
-              <DrawerMenuProvider>
-                {/* app routes */}
-              </DrawerMenuProvider>
+              <DrawerMenuProvider>{/* app routes */}</DrawerMenuProvider>
             </NotificationProvider>
           </AuthProvider>
         </ManagerProvider>
@@ -105,14 +109,14 @@ If your app wraps providers in custom components, keep the same effective order:
 
 ### Provider responsibilities
 
-| Provider | Purpose |
-|----------|---------|
-| `ConfigProvider` | Injects router `location`, `navigate`, `linkComponent`, and optional `searchComponent` |
-| `ManagerProvider` | Injects the API manager (`IManager`) consumed by hooks and components |
-| `AuthProvider` | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
-| `NotificationProvider` | Global toast notification system |
-| `DrawerMenuProvider` | Dynamic drawer menu state |
-| `NavbarProvider` | Provides dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent` |
+| Provider               | Purpose                                                                                                                                               |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ConfigProvider`       | Injects router `location`, `navigate`, `linkComponent`, and optional `searchComponent`                                                                |
+| `ManagerProvider`      | Injects the API manager (`IManager`) consumed by hooks and components                                                                                 |
+| `AuthProvider`         | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
+| `NotificationProvider` | Global toast notification system                                                                                                                      |
+| `DrawerMenuProvider`   | Dynamic drawer menu state                                                                                                                             |
+| `NavbarProvider`       | Provides dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent`                                                                 |
 
 ---
 
@@ -132,26 +136,26 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 
 ### Available components
 
-| Component | Description |
-|-----------|-------------|
-| `Page` | Generic page layout with entity management (list, delete, restore, import/export) |
-| `PageHeader` | Page title + action bar |
-| `Action` / `Actions` / `ActionsDropdown` | Action primitives re-exported from `@sito/dashboard` |
-| `FormContainer` | Form wrapper that integrates react-hook-form submit/reset buttons |
-| `ParagraphInput` | Textarea input with label, state, and helper text |
-| `PasswordInput` | Password input with show/hide toggle |
-| `Navbar` | Application navigation bar |
-| `Drawer` | Side drawer navigation |
-| `Notification` | Toast notification component |
-| `Onboarding` | Multi-step onboarding flow built on top of a controlled `TabsLayout`; each step accepts `title`, `body`, optional `content`, and optional `image`/`alt` |
-| `TabsLayout` | Tabbed page layout; supports uncontrolled (`defaultTab`) and controlled (`currentTab` + `onTabChange`) usage, uses links by default, and can switch to buttons with `useLinks={false}` + `tabButtonProps` |
-| `PrettyGrid` | Data grid/table |
-| `Empty` | Empty state placeholder |
-| `Error` | Error display with default icon/message/retry or fully custom content via `children` |
-| `Loading` / `SplashScreen` | Loading indicators |
-| `IconButton` | FontAwesome-based icon button (overrides `@sito/dashboard`'s version) |
-| `ToTop` | Floating scroll-to-top button; customizable threshold, target coordinates, icon, tooltip, and click behavior |
-| `Clock` | (**deprecated**) Displays a formatted clock in the navbar; will be removed in a future release |
+| Component                                | Description                                                                                                                                                                                               |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Page`                                   | Generic page layout with entity management (list, delete, restore, import/export)                                                                                                                         |
+| `PageHeader`                             | Page title + action bar                                                                                                                                                                                   |
+| `Action` / `Actions` / `ActionsDropdown` | Action primitives re-exported from `@sito/dashboard`                                                                                                                                                      |
+| `FormContainer`                          | Form wrapper that integrates react-hook-form submit/reset buttons                                                                                                                                         |
+| `ParagraphInput`                         | Textarea input with label, state, and helper text                                                                                                                                                         |
+| `PasswordInput`                          | Password input with show/hide toggle                                                                                                                                                                      |
+| `Navbar`                                 | Application navigation bar                                                                                                                                                                                |
+| `Drawer`                                 | Side drawer navigation                                                                                                                                                                                    |
+| `Notification`                           | Toast notification component                                                                                                                                                                              |
+| `Onboarding`                             | Multi-step onboarding flow built on top of a controlled `TabsLayout`; each step accepts `title`, `body`, optional `content`, and optional `image`/`alt`                                                   |
+| `TabsLayout`                             | Tabbed page layout; supports uncontrolled (`defaultTab`) and controlled (`currentTab` + `onTabChange`) usage, uses links by default, and can switch to buttons with `useLinks={false}` + `tabButtonProps` |
+| `PrettyGrid`                             | Data grid/table                                                                                                                                                                                           |
+| `Empty`                                  | Empty state placeholder                                                                                                                                                                                   |
+| `Error`                                  | Error display with default icon/message/retry or fully custom content via `children`                                                                                                                      |
+| `Loading` / `SplashScreen`               | Loading indicators                                                                                                                                                                                        |
+| `IconButton`                             | FontAwesome-based icon button (overrides `@sito/dashboard`'s version)                                                                                                                                     |
+| `ToTop`                                  | Floating scroll-to-top button; customizable threshold, target coordinates, icon, tooltip, and click behavior                                                                                              |
+| `Clock`                                  | (**deprecated**) Displays a formatted clock in the navbar; will be removed in a future release                                                                                                            |
 
 ---
 
@@ -160,10 +164,7 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 Use default mode for common fallback UI:
 
 ```tsx
-<Error
-  error={error}
-  onRetry={() => refetch()}
-/>
+<Error error={error} onRetry={() => refetch()} />
 ```
 
 Use `children` only when you need fully custom content:
@@ -204,7 +205,7 @@ const [step, setStep] = useState(1);
   onTabChange={(id) => setStep(Number(id))}
   useLinks={false}
   tabs={tabs}
-/>
+/>;
 ```
 
 `Onboarding` already uses the controlled pattern internally so its next-step transitions remain in sync with the rendered tab content.
@@ -282,6 +283,7 @@ Existing usage without these props remains unchanged.
 ```
 
 Defaults:
+
 - `hasMore = false`
 - `loadingMore = false`
 - `loadMoreComponent = null`
@@ -291,6 +293,7 @@ Defaults:
 ### `ToTop` customization
 
 `ToTop` keeps current defaults and now supports optional customization:
+
 - `threshold?: number` (default `200`)
 - `scrollTop?: number` / `scrollLeft?: number` (defaults `0`, `0`)
 - `icon?: IconDefinition`
@@ -403,16 +406,17 @@ function MyPage() {
 
 #### Default values per hook
 
-| Hook | `sticky` | `multiple` | `id` | `icon` | `tooltip` |
-|------|----------|------------|------|--------|-----------|
-| `useDeleteAction` | `true` | `true` | `"delete"` | `faTrash` | auto-translated |
-| `useEditAction` | `true` | — | `"edit"` | `faPencil` | auto-translated |
-| `useRestoreAction` | `true` | `false` | `"restore"` | `faRotateLeft` | auto-translated |
-| `useExportAction` | — | — | `"export"` | `faCloudArrowDown` | auto-translated |
-| `useImportAction` | — | — | `"import"` | `faCloudUpload` | auto-translated |
+| Hook               | `sticky` | `multiple` | `id`        | `icon`             | `tooltip`       |
+| ------------------ | -------- | ---------- | ----------- | ------------------ | --------------- |
+| `useDeleteAction`  | `true`   | `true`     | `"delete"`  | `faTrash`          | auto-translated |
+| `useEditAction`    | `true`   | —          | `"edit"`    | `faPencil`         | auto-translated |
+| `useRestoreAction` | `true`   | `false`    | `"restore"` | `faRotateLeft`     | auto-translated |
+| `useExportAction`  | —        | —          | `"export"`  | `faCloudArrowDown` | auto-translated |
+| `useImportAction`  | —        | —          | `"import"`  | `faCloudUpload`    | auto-translated |
 
 All hooks also default `hidden = false` and `disabled = false`. Override any prop to customize behavior.
-```
+
+````
 
 ### Navbar hook
 
@@ -433,7 +437,7 @@ function ProductsPage() {
     };
   }, [setTitle, setRightContent]);
 }
-```
+````
 
 `NavbarProvider` must wrap `Navbar` in the component tree for this to work.
 
@@ -458,7 +462,12 @@ const { open: openDeleteDialog, dialog: deleteDialog } = useDeleteDialog({
 import { usePostForm } from "@sito/dashboard-app";
 import { useQueryClient } from "@tanstack/react-query";
 
-const formProps = usePostForm<ProductDto, CreateProductDto, ProductDto, ProductFormValues>({
+const formProps = usePostForm<
+  ProductDto,
+  CreateProductDto,
+  ProductDto,
+  ProductFormValues
+>({
   defaultValues: { name: "", price: 0 },
   mutationFn: (data) => api.products.insert(data),
   queryKey: ["products"],
@@ -498,7 +507,7 @@ import {
 } from "@sito/dashboard-app";
 
 class ProductsClient extends BaseClient<
-  "products",       // table name
+  "products", // table name
   ProductDto,
   ProductCommonDto,
   CreateProductDto,
@@ -514,17 +523,17 @@ class ProductsClient extends BaseClient<
 
 ### `BaseClient` provides these methods out of the box
 
-| Method | Signature |
-|--------|-----------|
-| `get` | `(query?, filters?) => Promise<QueryResult<TDto>>` |
-| `getById` | `(id: number) => Promise<TDto>` |
-| `insert` | `(value: TAddDto) => Promise<TDto>` |
-| `insertMany` | `(data: TAddDto[]) => Promise<TDto>` |
-| `update` | `(value: TUpdateDto) => Promise<TDto>` |
-| `softDelete` | `(ids: number[]) => Promise<number>` |
-| `restore` | `(ids: number[]) => Promise<number>` |
-| `export` | `(filters?) => Promise<TDto[]>` |
-| `import` | `(data: ImportDto<TImportPreviewDto>) => Promise<number>` |
+| Method       | Signature                                                 |
+| ------------ | --------------------------------------------------------- |
+| `get`        | `(query?, filters?) => Promise<QueryResult<TDto>>`        |
+| `getById`    | `(id: number) => Promise<TDto>`                           |
+| `insert`     | `(value: TAddDto) => Promise<TDto>`                       |
+| `insertMany` | `(data: TAddDto[]) => Promise<TDto>`                      |
+| `update`     | `(value: TUpdateDto) => Promise<TDto>`                    |
+| `softDelete` | `(ids: number[]) => Promise<number>`                      |
+| `restore`    | `(ids: number[]) => Promise<number>`                      |
+| `export`     | `(filters?) => Promise<TDto[]>`                           |
+| `import`     | `(data: ImportDto<TImportPreviewDto>) => Promise<number>` |
 
 ### Built-in auth refresh behavior (secured clients)
 
@@ -550,11 +559,15 @@ const authStorageKeys = {
   accessTokenExpiresAtKey: "accessTokenExpiresAt",
 };
 
-const manager = new IManager(import.meta.env.VITE_API_URL, authStorageKeys.user, {
-  rememberKey: authStorageKeys.remember,
-  refreshTokenKey: authStorageKeys.refreshTokenKey,
-  accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
-});
+const manager = new IManager(
+  import.meta.env.VITE_API_URL,
+  authStorageKeys.user,
+  {
+    rememberKey: authStorageKeys.remember,
+    refreshTokenKey: authStorageKeys.refreshTokenKey,
+    accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
+  },
+);
 ```
 
 ---
@@ -571,8 +584,8 @@ Use it when the app must remain functional without network access — offline-ca
 import { BaseClient, IndexedDBClient } from "@sito/dashboard-app";
 
 const client = navigator.onLine
-  ? new ProductsClient(apiUrl)        // remote REST
-  : new ProductsIndexedDBClient();    // local IndexedDB
+  ? new ProductsClient(apiUrl) // remote REST
+  : new ProductsIndexedDBClient(); // local IndexedDB
 ```
 
 ### Constructor
@@ -581,11 +594,11 @@ const client = navigator.onLine
 new IndexedDBClient(table: Tables, dbName: string, version?: number)
 ```
 
-| Param | Description |
-|-------|-------------|
-| `table` | Object store name (equivalent to the table/route in `BaseClient`) |
-| `dbName` | IndexedDB database name — use one shared name per app |
-| `version` | Schema version — bump when adding new stores (default `1`) |
+| Param     | Description                                                       |
+| --------- | ----------------------------------------------------------------- |
+| `table`   | Object store name (equivalent to the table/route in `BaseClient`) |
+| `dbName`  | IndexedDB database name — use one shared name per app             |
+| `version` | Schema version — bump when adding new stores (default `1`)        |
 
 The object store is created automatically with `keyPath: "id"` and `autoIncrement: true` on first open.
 
@@ -613,12 +626,12 @@ class ProductsIndexedDBClient extends IndexedDBClient<
 
 ```ts
 useEffect(() => {
-  const goOnline  = () => setClient(new ProductsClient(apiUrl));
+  const goOnline = () => setClient(new ProductsClient(apiUrl));
   const goOffline = () => setClient(new ProductsIndexedDBClient());
-  window.addEventListener("online",  goOnline);
+  window.addEventListener("online", goOnline);
   window.addEventListener("offline", goOffline);
   return () => {
-    window.removeEventListener("online",  goOnline);
+    window.removeEventListener("online", goOnline);
     window.removeEventListener("offline", goOffline);
   };
 }, []);
@@ -672,8 +685,11 @@ import { State, inputStateClassName, labelStateClassName } from "@sito/dashboard
 import { useNotification } from "@sito/dashboard-app";
 
 function MyComponent() {
-  const { showSuccessNotification, showErrorNotification, showStackNotifications } =
-    useNotification();
+  const {
+    showSuccessNotification,
+    showErrorNotification,
+    showStackNotifications,
+  } = useNotification();
 
   const handleAction = async () => {
     try {
@@ -738,7 +754,7 @@ const authStorageKeys = {
   accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
 >
   {children}
-</AuthProvider>
+</AuthProvider>;
 ```
 
 When calling `logUser`, pass `rememberMe` from sign-in form when available:
@@ -764,7 +780,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
     else navigate(route);
   }}
   linkComponent={Link}
-/>
+/>;
 ```
 
 ---

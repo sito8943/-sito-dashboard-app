@@ -21,7 +21,7 @@ export function isValidationError(error: unknown): error is ValidationError {
   return (
     Array.isArray(maybe.errors) &&
     maybe.errors.every(
-      (e) => Array.isArray(e) && e.length === 2 && typeof e[0] === "string"
+      (e) => Array.isArray(e) && e.length === 2 && typeof e[0] === "string",
     )
   );
 }
@@ -36,7 +36,7 @@ export function isHttpError(error: unknown): error is HttpError {
 
 export function mapValidationErrors(
   error: ValidationError,
-  map: (field: string, code: string) => string
+  map: (field: string, code: string) => string,
 ): string[] {
   if (!error?.errors) return [];
   return error.errors.map(([field, code]) => map(field, code));

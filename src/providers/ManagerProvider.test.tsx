@@ -30,7 +30,7 @@ describe("ManagerProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => renderHook(() => useManager())).toThrow(
-      "managerContext must be used within a Provider"
+      "managerContext must be used within a Provider",
     );
 
     consoleErrorSpy.mockRestore();

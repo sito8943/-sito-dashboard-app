@@ -12,7 +12,7 @@ import { FormDialogPropsType } from "./types";
 import "./styles.css";
 
 export const FormDialog = <TInput extends FieldValues>(
-  props: FormDialogPropsType<TInput>
+  props: FormDialogPropsType<TInput>,
 ) => {
   const { t } = useTranslation();
   const {

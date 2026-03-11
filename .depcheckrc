@@ -1,0 +1,16 @@
+{
+  "ignores": [
+    "lib",
+    "components",
+    "providers",
+    "hooks",
+    "@storybook/addon-a11y",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "tailwindcss"
+  ],
+  "ignoreDirs": [
+    "dist",
+    "node_modules"
+  ]
+}

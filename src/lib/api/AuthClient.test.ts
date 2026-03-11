@@ -27,15 +27,11 @@ describe("AuthClient", () => {
     });
 
     expect(result).toEqual(session);
-    expect(doQuerySpy).toHaveBeenCalledWith(
-      "auth/sign-in",
-      Methods.POST,
-      {
-        email: "sito@mail.com",
-        password: "123456",
-        rememberMe: true,
-      }
-    );
+    expect(doQuerySpy).toHaveBeenCalledWith("auth/sign-in", Methods.POST, {
+      email: "sito@mail.com",
+      password: "123456",
+      rememberMe: true,
+    });
   });
 
   it("refresh calls auth/refresh endpoint", async () => {
@@ -49,13 +45,9 @@ describe("AuthClient", () => {
     });
 
     expect(result).toEqual(session);
-    expect(doQuerySpy).toHaveBeenCalledWith(
-      "auth/refresh",
-      Methods.POST,
-      {
-        refreshToken: "refresh-token",
-      }
-    );
+    expect(doQuerySpy).toHaveBeenCalledWith("auth/refresh", Methods.POST, {
+      refreshToken: "refresh-token",
+    });
   });
 
   it("logout sends authorization and optional refresh token", async () => {
@@ -77,7 +69,7 @@ describe("AuthClient", () => {
       },
       {
         Authorization: "Bearer jwt-token",
-      }
+      },
     );
   });
 
@@ -102,7 +94,7 @@ describe("AuthClient", () => {
       undefined,
       {
         Authorization: "Bearer jwt-token",
-      }
+      },
     );
   });
 });

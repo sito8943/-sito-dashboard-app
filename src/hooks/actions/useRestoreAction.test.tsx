@@ -8,7 +8,12 @@ vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-const record = { id: 1, createdAt: new Date(), updatedAt: new Date(), deletedAt: null };
+const record = {
+  id: 1,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+};
 const deletedRecord = { ...record, deletedAt: new Date() };
 
 describe("useRestoreAction", () => {
@@ -29,7 +34,7 @@ describe("useRestoreAction", () => {
 
   it("is hidden when hidden prop is true regardless of deletedAt", () => {
     const { result } = renderHook(() =>
-      useRestoreAction({ onClick: vi.fn(), hidden: true })
+      useRestoreAction({ onClick: vi.fn(), hidden: true }),
     );
     expect(result.current.action(deletedRecord).hidden).toBe(true);
   });
@@ -44,8 +49,18 @@ describe("useRestoreAction", () => {
   it("calls onClick with ids from all rows on multiple click", () => {
     const onClick = vi.fn();
     const rows = [
-      { id: 1, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
-      { id: 3, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+      {
+        id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+      },
+      {
+        id: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+      },
     ];
     const { result } = renderHook(() => useRestoreAction({ onClick }));
     result.current.action(deletedRecord).onMultipleClick!(rows);

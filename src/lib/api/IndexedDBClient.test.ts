@@ -292,14 +292,12 @@ describe("User", () => {
     await client.insert({ name: "Carl", email: "carl@test.com" });
 
     await client.softDelete([2]);
-    const deleted = await client.get(
-      undefined,
-      { deletedAt: true } as unknown as UserFilterDto
-    );
-    const active = await client.get(
-      undefined,
-      { deletedAt: false } as unknown as UserFilterDto
-    );
+    const deleted = await client.get(undefined, {
+      deletedAt: true,
+    } as unknown as UserFilterDto);
+    const active = await client.get(undefined, {
+      deletedAt: false,
+    } as unknown as UserFilterDto);
 
     expect(deleted.items.map((u) => u.id)).toEqual([2]);
     expect(active.items.map((u) => u.id)).toEqual([1, 3]);
