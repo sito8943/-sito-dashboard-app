@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect } from "react";
-import { faChevronLeft, faBell, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faBell,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Navbar } from "./Navbar";
 import { NavbarProvider, useNavbar } from "./NavbarProvider";
@@ -53,7 +57,13 @@ export const WithCustomMenuButtonProps: Story = {
 };
 
 // Helper component to inject title via context
-function WithTitleHelper({ title, children }: { title: string; children: React.ReactNode }) {
+function WithTitleHelper({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   const { setTitle } = useNavbar();
   useEffect(() => {
     setTitle(title);
@@ -86,7 +96,7 @@ function WithRightContentHelper({ children }: { children: React.ReactNode }) {
         <button aria-label="profile">
           <FontAwesomeIcon icon={faUser} />
         </button>
-      </div>
+      </div>,
     );
     return () => setRightContent(null);
   }, [setRightContent]);

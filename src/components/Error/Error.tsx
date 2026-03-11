@@ -45,7 +45,8 @@ export function Error(props: ErrorPropsType) {
     onClick: retryOnClick,
     ...restRetryButtonProps
   } = retryButtonProps ?? {};
-  const { className: messageClassName, ...restMessageProps } = messageProps ?? {};
+  const { className: messageClassName, ...restMessageProps } =
+    messageProps ?? {};
   const shouldRenderIcon = iconProps !== null;
 
   return (

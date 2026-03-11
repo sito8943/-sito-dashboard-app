@@ -54,7 +54,7 @@ describe("Drawer", () => {
 
   it("renders without DrawerMenuProvider", () => {
     expect(() =>
-      render(<Drawer<Keys> open={true} onClose={() => {}} menuMap={menuMap} />)
+      render(<Drawer<Keys> open={true} onClose={() => {}} menuMap={menuMap} />),
     ).not.toThrow();
 
     expect(screen.getByText("_pages:home.title")).toBeInTheDocument();

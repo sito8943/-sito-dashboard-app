@@ -38,8 +38,8 @@ export const useRestoreDialog = (props: UseDeleteDialogPropsType) => {
               ({
                 message: t(`_pages:${key}.errors.${message}`),
                 type: NotificationEnumType.error,
-              }) as NotificationType
-          )
+              }) as NotificationType,
+          ),
         );
       } else if (isHttpError(unknownErr)) {
         const fallback = unknownErr.message || t("_accessibility:errors.500");

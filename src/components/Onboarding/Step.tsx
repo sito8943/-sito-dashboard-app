@@ -38,7 +38,7 @@ export const Step = (props: StepPropsType) => {
               color="primary"
               className="step-button"
               variant="outlined"
-              onClick={() => (navigate("/auth/sign-in"))}
+              onClick={() => navigate("/auth/sign-in")}
               aria-label={t("_accessibility:ariaLabels.skip")}
             >
               {t("_accessibility:buttons.skip")}
@@ -72,7 +72,7 @@ export const Step = (props: StepPropsType) => {
               variant="submit"
               className="step-button"
               aria-label={t("_accessibility:ariaLabels.start")}
-              onClick={() => (navigate("/auth/sign-in"))}
+              onClick={() => navigate("/auth/sign-in")}
             >
               {t("_accessibility:buttons.signIn")}
             </Button>

@@ -8,8 +8,16 @@ const meta = {
   tags: ["autodocs"],
   args: {
     tabs: [
-      { id: 1, label: "First", content: <div className="p-4">First tab content</div> },
-      { id: 2, label: "Second", content: <div className="p-4">Second tab content</div> },
+      {
+        id: 1,
+        label: "First",
+        content: <div className="p-4">First tab content</div>,
+      },
+      {
+        id: 2,
+        label: "Second",
+        content: <div className="p-4">Second tab content</div>,
+      },
     ],
   },
 } satisfies Meta<typeof TabsLayout>;
@@ -23,9 +31,21 @@ export const WithoutLinks: Story = {
   args: {
     useLinks: false,
     tabs: [
-      { id: 1, label: "Overview", content: <div className="p-4">Overview content</div> },
-      { id: 2, label: "Activity", content: <div className="p-4">Activity content</div> },
-      { id: 3, label: "Settings", content: <div className="p-4">Settings content</div> },
+      {
+        id: 1,
+        label: "Overview",
+        content: <div className="p-4">Overview content</div>,
+      },
+      {
+        id: 2,
+        label: "Activity",
+        content: <div className="p-4">Activity content</div>,
+      },
+      {
+        id: 3,
+        label: "Settings",
+        content: <div className="p-4">Settings content</div>,
+      },
     ],
   },
 };
@@ -39,8 +59,16 @@ export const WithCustomTabButton: Story = {
       className: "min-w-[120px]",
     },
     tabs: [
-      { id: 1, label: "Users", content: <div className="p-4">Users tab content</div> },
-      { id: 2, label: "Roles", content: <div className="p-4">Roles tab content</div> },
+      {
+        id: 1,
+        label: "Users",
+        content: <div className="p-4">Users tab content</div>,
+      },
+      {
+        id: 2,
+        label: "Roles",
+        content: <div className="p-4">Roles tab content</div>,
+      },
     ],
   },
 };
@@ -49,9 +77,21 @@ export const Controlled: Story = {
   args: {
     useLinks: false,
     tabs: [
-      { id: 1, label: "Step 1", content: <div className="p-4">Step 1 content</div> },
-      { id: 2, label: "Step 2", content: <div className="p-4">Step 2 content</div> },
-      { id: 3, label: "Step 3", content: <div className="p-4">Step 3 content</div> },
+      {
+        id: 1,
+        label: "Step 1",
+        content: <div className="p-4">Step 1 content</div>,
+      },
+      {
+        id: 2,
+        label: "Step 2",
+        content: <div className="p-4">Step 2 content</div>,
+      },
+      {
+        id: 3,
+        label: "Step 3",
+        content: <div className="p-4">Step 3 content</div>,
+      },
     ],
   },
   render: (args) => {

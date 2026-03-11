@@ -14,13 +14,29 @@ pnpm add @sito/dashboard-app
 
 ## Requirements
 
-- Node.js `18.18.0` (see `.nvmrc`)
+- Node.js `20.x` (see `.nvmrc`)
 - React `18.3.1`
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
 - `react-hook-form` `7.61.1`
 - `@sito/dashboard` `^0.0.68`
 - Font Awesome + Emotion peers defined in `package.json`
+
+Install all peers in consumer apps:
+
+```bash
+npm install \
+  react@18.3.1 react-dom@18.3.1 \
+  @sito/dashboard@^0.0.68 \
+  @emotion/css@11.13.5 \
+  @tanstack/react-query@5.83.0 \
+  react-hook-form@7.61.1 \
+  @fortawesome/fontawesome-svg-core@7.0.0 \
+  @fortawesome/free-solid-svg-icons@7.0.0 \
+  @fortawesome/free-regular-svg-icons@7.0.0 \
+  @fortawesome/free-brands-svg-icons@7.0.0 \
+  @fortawesome/react-fontawesome@0.2.3
+```
 
 ## Core exports
 
@@ -29,7 +45,7 @@ pnpm add @sito/dashboard-app
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
 - Hooks: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `NavbarProvider`, DTOs, API clients
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients
 
 ## Component usage patterns
 
@@ -68,7 +84,7 @@ import { TabsLayout } from "@sito/dashboard-app";
   useLinks={false}
   tabButtonProps={{ variant: "outlined", color: "secondary" }}
   tabs={tabs}
-/>
+/>;
 ```
 
 `tabButtonProps` lets you customize each tab button style/behavior (except `onClick` and `children`, which are controlled by `TabsLayout`).
@@ -95,7 +111,7 @@ import { Onboarding } from "@sito/dashboard-app";
       alt: "Setup preview",
     },
   ]}
-/>
+/>;
 ```
 
 The action buttons still use the package's internal accessibility/button translation keys.
@@ -116,7 +132,7 @@ import { ImportDialog } from "@sito/dashboard-app";
   handleSubmit={submit}
   fileProcessor={parseFile}
   renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
-/>
+/>;
 ```
 
 `useImportDialog` also accepts and forwards `renderCustomPreview`:
@@ -149,7 +165,7 @@ import { PrettyGrid, Loading } from "@sito/dashboard-app";
   loadingMore={isFetchingNextPage}
   onLoadMore={fetchNextPage}
   loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
-/>
+/>;
 ```
 
 Defaults:
@@ -175,7 +191,7 @@ import { ToTop } from "@sito/dashboard-app";
   className="right-8 bottom-8"
   scrollTop={0}
   scrollLeft={0}
-/>
+/>;
 ```
 
 Main optional props:
@@ -189,37 +205,76 @@ Main optional props:
 
 ## Initial setup example
 
-Wrap your app with the providers to enable navigation, React Query integration, auth context, and notifications.
+Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.
 
 ```tsx
 import type { ReactNode } from "react";
-import { BrowserRouter, Link, useLocation, useNavigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  BrowserRouter,
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import {
   AuthProvider,
   ConfigProvider,
+  DrawerMenuProvider,
   IManager,
   ManagerProvider,
+  NavbarProvider,
   NotificationProvider,
 } from "@sito/dashboard-app";
 
-const manager = new IManager(import.meta.env.VITE_API_URL);
+const queryClient = new QueryClient();
+
+const authStorageKeys = {
+  user: "user",
+  remember: "remember",
+  refreshTokenKey: "refreshToken",
+  accessTokenExpiresAtKey: "accessTokenExpiresAt",
+};
+
+const manager = new IManager(
+  import.meta.env.VITE_API_URL,
+  authStorageKeys.user,
+  {
+    rememberKey: authStorageKeys.remember,
+    refreshTokenKey: authStorageKeys.refreshTokenKey,
+    accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
+  },
+);
 
 function AppProviders({ children }: { children: ReactNode }) {
   const go = useNavigate();
   const location = useLocation();
 
   return (
-    <ConfigProvider
-      location={location}
-      navigate={(route) => go(route)}
-      linkComponent={Link}
-    >
-      <ManagerProvider manager={manager}>
-        <AuthProvider>
-          <NotificationProvider>{children}</NotificationProvider>
-        </AuthProvider>
-      </ManagerProvider>
-    </ConfigProvider>
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider
+        location={location}
+        navigate={(route) => {
+          if (typeof route === "number") go(route);
+          else go(route);
+        }}
+        linkComponent={Link}
+      >
+        <ManagerProvider manager={manager}>
+          <AuthProvider
+            user={authStorageKeys.user}
+            remember={authStorageKeys.remember}
+            refreshTokenKey={authStorageKeys.refreshTokenKey}
+            accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
+          >
+            <NotificationProvider>
+              <DrawerMenuProvider>
+                <NavbarProvider>{children}</NavbarProvider>
+              </DrawerMenuProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        </ManagerProvider>
+      </ConfigProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -231,6 +286,21 @@ export function App() {
   );
 }
 ```
+
+Notes:
+
+- Keep `ManagerProvider` above `AuthProvider`.
+- `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
+- If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
+
+## Built-in auth refresh behavior
+
+`APIClient` and `BaseClient` already include refresh/retry behavior for secured requests:
+
+- If `accessTokenExpiresAt` is close to expiry, a refresh runs before sending the request.
+- If a secured request returns `401`, the client attempts one refresh and retries once.
+- Concurrent refresh calls are deduplicated with a shared in-flight promise.
+- If refresh fails, local session keys are cleared (`user`, `remember`, `refreshToken`, `accessTokenExpiresAt`).
 
 ## Local development (step-by-step)
 
@@ -311,9 +381,9 @@ interface ProductFilterDto extends BaseFilterDto {
 class ProductsIndexedDBClient extends IndexedDBClient<
   "products",
   ProductDto,
-  ProductDto,           // TCommonDto
+  ProductDto, // TCommonDto
   Omit<ProductDto, "id" | "createdAt" | "updatedAt" | "deletedAt">,
-  ProductDto,           // TUpdateDto (extends DeleteDto via BaseEntityDto)
+  ProductDto, // TUpdateDto (extends DeleteDto via BaseEntityDto)
   ProductFilterDto,
   ImportPreviewDto
 > {
@@ -329,17 +399,19 @@ class ProductsIndexedDBClient extends IndexedDBClient<
 import { useState, useEffect } from "react";
 
 function useProductsClient() {
-  const [client, setClient] = useState(
-    () => navigator.onLine ? new ProductsClient(apiUrl) : new ProductsIndexedDBClient()
+  const [client, setClient] = useState(() =>
+    navigator.onLine
+      ? new ProductsClient(apiUrl)
+      : new ProductsIndexedDBClient(),
   );
 
   useEffect(() => {
-    const goOnline  = () => setClient(new ProductsClient(apiUrl));
+    const goOnline = () => setClient(new ProductsClient(apiUrl));
     const goOffline = () => setClient(new ProductsIndexedDBClient());
-    window.addEventListener("online",  goOnline);
+    window.addEventListener("online", goOnline);
     window.addEventListener("offline", goOffline);
     return () => {
-      window.removeEventListener("online",  goOnline);
+      window.removeEventListener("online", goOnline);
       window.removeEventListener("offline", goOffline);
     };
   }, []);

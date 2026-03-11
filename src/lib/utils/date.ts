@@ -17,7 +17,7 @@ export function getFormattedDateTime(date?: string) {
 
   return now.toLocaleString(
     navigator.language || "es-ES",
-    options as Intl.DateTimeFormatOptions
+    options as Intl.DateTimeFormatOptions,
   );
 }
 

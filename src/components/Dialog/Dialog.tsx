@@ -30,7 +30,7 @@ export const Dialog = (props: DialogPropsType) => {
     (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) handleClose();
     },
-    [open, handleClose]
+    [open, handleClose],
   );
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export const Dialog = (props: DialogPropsType) => {
     (e: MouseEvent<HTMLDivElement>) => {
       if (e.target === e.currentTarget) handleClose();
     },
-    [handleClose]
+    [handleClose],
   );
 
   useEffect(() => {
@@ -90,6 +90,6 @@ export const Dialog = (props: DialogPropsType) => {
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };

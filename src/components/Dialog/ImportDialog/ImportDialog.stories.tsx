@@ -70,7 +70,8 @@ export const Basic: Story = {};
 export const WithAsyncPreview: Story = {
   args: {
     fileProcessor: successFileProcessor,
-    helperText: "Upload any file to see loading, preview and override behavior.",
+    helperText:
+      "Upload any file to see loading, preview and override behavior.",
   },
 };
 
@@ -91,7 +92,9 @@ export const WithCustomPreview: Story = {
         </p>
         <ul className="grid gap-1 text-sm">
           {(items ?? []).map((item, index) => (
-            <li key={index}>Row {index + 1}: {item.existing ? "existing" : "new"}</li>
+            <li key={index}>
+              Row {index + 1}: {item.existing ? "existing" : "new"}
+            </li>
           ))}
         </ul>
       </div>

@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.49] - 2026-03-11
+
+### Changed
+
+- Bumped package version to `0.0.49`.
+- Documentation-only release (no runtime/API behavior changes).
+
+### Documentation
+
+- Updated `README.md` to:
+  - align runtime requirement with `.nvmrc` (Node 20)
+  - include explicit peer dependency installation command
+  - align provider setup example with `QueryClientProvider`, `DrawerMenuProvider`, optional `NavbarProvider`, and shared auth storage key config
+  - document built-in auth refresh/retry behavior in `APIClient`/`BaseClient`
+- Updated `AGENTS.md` to:
+  - include Node runtime in the stack matrix
+  - clarify optional `NavbarProvider` usage in provider setup guidance
+  - fix malformed markdown code fences in hook examples
+- Updated `CLAUDE.md` with explicit alignment rules for:
+  - provider order and optional `NavbarProvider`
+  - auth storage key consistency between `AuthProvider` and manager/client config
+  - runtime version consistency with `.nvmrc`
+
 ## [0.0.48] - 2026-03-10
 
 ### Added

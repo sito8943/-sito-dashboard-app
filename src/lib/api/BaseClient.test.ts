@@ -73,7 +73,10 @@ describe("BaseClient", () => {
 
     await client.update({ id: 7, name: "Updated" });
 
-    expect(patchSpy).toHaveBeenCalledWith("users/7", { id: 7, name: "Updated" });
+    expect(patchSpy).toHaveBeenCalledWith("users/7", {
+      id: 7,
+      name: "Updated",
+    });
   });
 
   it("delegates get to api.get with query and filters", async () => {
@@ -95,7 +98,7 @@ describe("BaseClient", () => {
         currentPage: 1,
         pageSize: 10,
       },
-      { status: "active" }
+      { status: "active" },
     );
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -106,7 +109,7 @@ describe("BaseClient", () => {
         currentPage: 1,
         pageSize: 10,
       },
-      { status: "active" }
+      { status: "active" },
     );
   });
 
@@ -142,7 +145,7 @@ describe("BaseClient", () => {
     expect(doQuerySpy).toHaveBeenCalledWith(
       "users/import",
       Methods.POST,
-      payload
+      payload,
     );
   });
 

@@ -10,7 +10,13 @@ vi.mock("@sito/dashboard", () => ({
 
 // Mock Dialog and DialogActions to avoid portal + deep dependency chain
 vi.mock("./Dialog", () => ({
-  Dialog: ({ children, title }: { children: React.ReactNode; title: string }) => (
+  Dialog: ({
+    children,
+    title,
+  }: {
+    children: React.ReactNode;
+    title: string;
+  }) => (
     <div role="dialog">
       <h2>{title}</h2>
       {children}
@@ -47,7 +53,11 @@ vi.mock("./DialogActions", () => ({
         {isLoading && <span data-testid="loading" />}
         {primaryText}
       </button>
-      <button onClick={onCancel} disabled={disabled} aria-label={cancelAriaLabel}>
+      <button
+        onClick={onCancel}
+        disabled={disabled}
+        aria-label={cancelAriaLabel}
+      >
         {cancelText}
       </button>
     </div>
@@ -71,7 +81,7 @@ describe("ConfirmationDialog", () => {
     render(
       <ConfirmationDialog {...baseProps}>
         <p>Are you sure?</p>
-      </ConfirmationDialog>
+      </ConfirmationDialog>,
     );
     expect(screen.getByText("Are you sure?")).toBeInTheDocument();
   });
@@ -80,7 +90,7 @@ describe("ConfirmationDialog", () => {
     const handleSubmit = vi.fn();
     render(<ConfirmationDialog {...baseProps} handleSubmit={handleSubmit} />);
     fireEvent.click(
-      screen.getByRole("button", { name: "_accessibility:ariaLabels.ok" })
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.ok" }),
     );
     expect(handleSubmit).toHaveBeenCalledOnce();
   });
@@ -89,7 +99,7 @@ describe("ConfirmationDialog", () => {
     const handleClose = vi.fn();
     render(<ConfirmationDialog {...baseProps} handleClose={handleClose} />);
     fireEvent.click(
-      screen.getByRole("button", { name: "_accessibility:ariaLabels.cancel" })
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.cancel" }),
     );
     expect(handleClose).toHaveBeenCalledOnce();
   });

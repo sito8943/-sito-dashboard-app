@@ -21,7 +21,12 @@ vi.mock("@sito/dashboard", () => ({
   }) => (
     <div>
       <label htmlFor="import-file">{label}</label>
-      <input id="import-file" data-testid="file-input" type="file" onChange={onChange} />
+      <input
+        id="import-file"
+        data-testid="file-input"
+        type="file"
+        onChange={onChange}
+      />
       <button type="button" onClick={onClear}>
         clear
       </button>
@@ -31,13 +36,8 @@ vi.mock("@sito/dashboard", () => ({
 }));
 
 vi.mock("components", () => ({
-  Dialog: ({
-    children,
-    open,
-  }: {
-    children: ReactNode;
-    open?: boolean;
-  }) => (open ? <div role="dialog">{children}</div> : null),
+  Dialog: ({ children, open }: { children: ReactNode; open?: boolean }) =>
+    open ? <div role="dialog">{children}</div> : null,
   DialogActions: ({
     onPrimaryClick,
     onCancel,
@@ -63,7 +63,9 @@ type PreviewRow = ImportPreviewDto & {
 describe("ImportDialog", () => {
   it("renders custom preview with non-empty previewItems", async () => {
     const fileProcessor = vi
-      .fn<(_: File, options?: { override?: boolean }) => Promise<PreviewRow[]>>()
+      .fn<
+        (_: File, options?: { override?: boolean }) => Promise<PreviewRow[]>
+      >()
       .mockResolvedValue([{ row: 1, existing: false }]);
     const renderCustomPreview = vi.fn((items?: PreviewRow[] | null) => (
       <div data-testid="custom-preview">{items?.length ?? "null"}</div>
@@ -97,7 +99,9 @@ describe("ImportDialog", () => {
 
   it("renders custom preview for null and empty previewItems", async () => {
     const fileProcessor = vi
-      .fn<(_: File, options?: { override?: boolean }) => Promise<PreviewRow[]>>()
+      .fn<
+        (_: File, options?: { override?: boolean }) => Promise<PreviewRow[]>
+      >()
       .mockResolvedValue([]);
     const renderCustomPreview = vi.fn((items?: PreviewRow[] | null) => (
       <div data-testid="custom-preview">{items ? items.length : "null"}</div>

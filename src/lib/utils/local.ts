@@ -31,7 +31,7 @@ export const fromLocal = (key: string, as = "") => {
 export const toLocal = (key: string, value: any) =>
   localStorage.setItem(
     key,
-    typeof value === "object" ? JSON.stringify(value) : value
+    typeof value === "object" ? JSON.stringify(value) : value,
   );
 
 /**

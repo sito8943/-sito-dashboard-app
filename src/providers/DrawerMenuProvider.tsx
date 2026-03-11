@@ -20,7 +20,7 @@ const defaultDrawerMenuContext: DrawerMenuContextType<string> = {
 };
 
 const DrawerMenuContext = createContext<DrawerMenuContextType<string>>(
-  defaultDrawerMenuContext
+  defaultDrawerMenuContext,
 );
 
 /**
@@ -29,7 +29,7 @@ const DrawerMenuContext = createContext<DrawerMenuContextType<string>>(
  * @returns  React component
  */
 const DrawerMenuProvider = <MenuKeys extends string>(
-  props: DrawerMenuProviderPropTypes
+  props: DrawerMenuProviderPropTypes,
 ) => {
   const { children } = props;
 
@@ -43,7 +43,7 @@ const DrawerMenuProvider = <MenuKeys extends string>(
         ...prev,
         [parentId]: [...(prev[parentId] ?? []), item],
       })),
-    []
+    [],
   );
 
   const removeChildItem = useCallback(
@@ -52,7 +52,7 @@ const DrawerMenuProvider = <MenuKeys extends string>(
         ...prev,
         [parentId]: (prev[parentId] ?? []).filter((_, i) => i !== index),
       })),
-    []
+    [],
   );
 
   const clearDynamicItems = useCallback((parentId?: string) => {
@@ -71,7 +71,7 @@ const DrawerMenuProvider = <MenuKeys extends string>(
       removeChildItem,
       clearDynamicItems,
     }),
-    [dynamicItems, clearDynamicItems, removeChildItem, addChildItem]
+    [dynamicItems, clearDynamicItems, removeChildItem, addChildItem],
   );
 
   return (

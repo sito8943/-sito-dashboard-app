@@ -37,7 +37,7 @@ export const useExportAction = (props: UseExportAction) => {
       tooltip: t("_pages:common.actions.export.text"),
       onClick: onClick,
     }),
-    [disabled, hidden, isLoading, onClick, t]
+    [disabled, hidden, isLoading, onClick, t],
   );
 
   return {

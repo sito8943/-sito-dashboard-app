@@ -21,14 +21,14 @@ describe("useImportAction", () => {
 
   it("is hidden when hidden prop is true", () => {
     const { result } = renderHook(() =>
-      useImportAction({ onClick: vi.fn(), hidden: true })
+      useImportAction({ onClick: vi.fn(), hidden: true }),
     );
     expect(result.current.action().hidden).toBe(true);
   });
 
   it("is disabled when disabled prop is true", () => {
     const { result } = renderHook(() =>
-      useImportAction({ onClick: vi.fn(), disabled: true })
+      useImportAction({ onClick: vi.fn(), disabled: true }),
     );
     expect(result.current.action().disabled).toBe(true);
   });

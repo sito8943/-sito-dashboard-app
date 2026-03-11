@@ -15,7 +15,10 @@ import { AppIconButton } from "components";
 // styles
 import "./styles.css";
 
-export type ToTopPropsType = Omit<IconButtonPropsLocalType, "icon" | "onClick"> & {
+export type ToTopPropsType = Omit<
+  IconButtonPropsLocalType,
+  "icon" | "onClick"
+> & {
   icon?: IconDefinition;
   threshold?: number;
   scrollTop?: number;

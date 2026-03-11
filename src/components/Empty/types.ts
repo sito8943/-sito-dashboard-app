@@ -9,7 +9,10 @@ import { BaseEntityDto } from "lib";
 
 export type EmptyPropsType<TRow extends BaseEntityDto> = {
   message?: string;
-  messageProps?: DetailedHTMLProps<HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>;
+  messageProps?: DetailedHTMLProps<
+    HTMLAttributes<HTMLParagraphElement>,
+    HTMLParagraphElement
+  >;
   action?: ActionType<TRow>;
   iconProps?: FontAwesomeIconProps;
 };

@@ -6,9 +6,10 @@ import type { BaseEntityDto, BaseFilterDto } from "lib";
 import type { HttpResponse } from "./utils/types";
 
 vi.mock("./utils/services", async () => {
-  const actual = await vi.importActual<typeof import("./utils/services")>(
-    "./utils/services"
-  );
+  const actual =
+    await vi.importActual<typeof import("./utils/services")>(
+      "./utils/services",
+    );
 
   return {
     ...actual,
@@ -61,7 +62,7 @@ describe("APIClient", () => {
       "/users",
       Methods.POST,
       { active: true },
-      { "X-App": "dashboard" }
+      { "X-App": "dashboard" },
     );
 
     expect(result).toEqual({ ok: true });
@@ -72,7 +73,7 @@ describe("APIClient", () => {
       {
         Authorization: "Bearer token-abc",
         "X-App": "dashboard",
-      }
+      },
     );
   });
 
@@ -90,7 +91,7 @@ describe("APIClient", () => {
       "https://api.test",
       "user",
       true,
-      customTokenAcquirer
+      customTokenAcquirer,
     );
 
     await client.doQuery("/users");
@@ -100,7 +101,7 @@ describe("APIClient", () => {
       "https://api.test/users",
       Methods.GET,
       undefined,
-      { Authorization: "Bearer custom-token" }
+      { Authorization: "Bearer custom-token" },
     );
   });
 
@@ -152,19 +153,19 @@ describe("APIClient", () => {
       1,
       "https://api.test/auth/refresh",
       Methods.POST,
-      { refreshToken: "refresh-token-1" }
+      { refreshToken: "refresh-token-1" },
     );
     expect(makeRequestMock).toHaveBeenNthCalledWith(
       2,
       "https://api.test/users",
       Methods.GET,
       undefined,
-      { Authorization: "Bearer new-access-token" }
+      { Authorization: "Bearer new-access-token" },
     );
     expect(localStorage.getItem("user")).toBe("new-access-token");
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token-2");
     expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
-      "2035-01-01T00:00:00.000Z"
+      "2035-01-01T00:00:00.000Z",
     );
   });
 
@@ -206,20 +207,20 @@ describe("APIClient", () => {
       "https://api.test/users",
       Methods.GET,
       undefined,
-      { Authorization: "Bearer stale-access-token" }
+      { Authorization: "Bearer stale-access-token" },
     );
     expect(makeRequestMock).toHaveBeenNthCalledWith(
       2,
       "https://api.test/auth/refresh",
       Methods.POST,
-      { refreshToken: "refresh-token-1" }
+      { refreshToken: "refresh-token-1" },
     );
     expect(makeRequestMock).toHaveBeenNthCalledWith(
       3,
       "https://api.test/users",
       Methods.GET,
       undefined,
-      { Authorization: "Bearer fresh-access-token" }
+      { Authorization: "Bearer fresh-access-token" },
     );
   });
 
@@ -234,8 +235,7 @@ describe("APIClient", () => {
     });
 
     makeRequestMock.mockImplementation(async (url) => {
-      if (url.includes("auth/refresh"))
-        return await refreshPromise;
+      if (url.includes("auth/refresh")) return await refreshPromise;
       return {
         data: { ok: true },
         status: 200,
@@ -249,7 +249,7 @@ describe("APIClient", () => {
 
     await Promise.resolve();
     const refreshCallsWhilePending = makeRequestMock.mock.calls.filter(
-      ([url]) => url.includes("auth/refresh")
+      ([url]) => url.includes("auth/refresh"),
     );
     expect(refreshCallsWhilePending).toHaveLength(1);
 
@@ -270,8 +270,8 @@ describe("APIClient", () => {
     expect(firstResult).toEqual({ ok: true });
     expect(secondResult).toEqual({ ok: true });
 
-    const refreshCalls = makeRequestMock.mock.calls.filter(
-      ([url]) => url.includes("auth/refresh")
+    const refreshCalls = makeRequestMock.mock.calls.filter(([url]) =>
+      url.includes("auth/refresh"),
     );
     expect(refreshCalls).toHaveLength(1);
   });
@@ -332,13 +332,10 @@ describe("APIClient", () => {
         currentPage: 1,
         pageSize: 10,
       },
-      { status: "active" }
+      { status: "active" },
     );
 
-    const [url, method] = makeRequestMock.mock.calls[0] as [
-      string,
-      Methods,
-    ];
+    const [url, method] = makeRequestMock.mock.calls[0] as [string, Methods];
     expect(url).toContain("/users?");
     expect(url).toContain("sort=id");
     expect(url).toContain("order=ASC");
@@ -385,7 +382,7 @@ describe("APIClient", () => {
 
     const client = new APIClient("https://api.test");
     await expect(
-      client.patch<boolean, { active: boolean }>("/users/1", { active: false })
+      client.patch<boolean, { active: boolean }>("/users/1", { active: false }),
     ).resolves.toBe(false);
   });
 
@@ -397,7 +394,8 @@ describe("APIClient", () => {
     });
 
     const client = new APIClient("https://api.test");
-    await expect(client.post<string, { name: string }>("/users", { name: "Sito" }))
-      .resolves.toBe("");
+    await expect(
+      client.post<string, { name: string }>("/users", { name: "Sito" }),
+    ).resolves.toBe("");
   });
 });

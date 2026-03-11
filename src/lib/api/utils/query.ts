@@ -13,7 +13,7 @@ import { BaseFilterDto } from "../../entities";
 export const parseQueries = <TDto, TFilter extends BaseFilterDto>(
   endpoint: string,
   query?: QueryParam<TDto>,
-  filters?: TFilter
+  filters?: TFilter,
 ) => {
   const queryParts: string[] = [];
 
@@ -30,7 +30,7 @@ export const parseQueries = <TDto, TFilter extends BaseFilterDto>(
   if (filters) {
     const filterParts = Object.entries(filters)
       .filter(
-        ([, value]) => value !== null && value !== undefined && value !== ""
+        ([, value]) => value !== null && value !== undefined && value !== "",
       )
       .flatMap(([key, value]) => {
         // Multiple values (array)

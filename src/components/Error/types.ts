@@ -35,4 +35,6 @@ export type ErrorCustomContentPropsType = {
   resetErrorBoundary?: never;
 };
 
-export type ErrorPropsType = ErrorDefaultPropsType | ErrorCustomContentPropsType;
+export type ErrorPropsType =
+  | ErrorDefaultPropsType
+  | ErrorCustomContentPropsType;

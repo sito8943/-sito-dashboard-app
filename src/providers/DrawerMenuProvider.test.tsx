@@ -14,7 +14,7 @@ describe("DrawerMenuProvider", () => {
 
     expect(result.current.dynamicItems).toEqual({});
     expect(() =>
-      result.current.addChildItem("users", { id: "1", label: "Item 1" })
+      result.current.addChildItem("users", { id: "1", label: "Item 1" }),
     ).not.toThrow();
     expect(() => result.current.removeChildItem("users", 0)).not.toThrow();
     expect(() => result.current.clearDynamicItems("users")).not.toThrow();

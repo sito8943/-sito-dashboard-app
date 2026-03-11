@@ -12,7 +12,7 @@ describe("parseQueries", () => {
     const result = parseQueries<UserDto, UserFilterDto>(
       "/users",
       { sortingBy: "name" },
-      { status: "active" }
+      { status: "active" },
     );
 
     expect(result).toContain("sort=name");

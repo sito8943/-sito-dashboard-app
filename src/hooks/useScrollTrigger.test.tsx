@@ -24,7 +24,10 @@ describe("useScrollTrigger", () => {
   it("returns true when scrolled past the offset", () => {
     const { result } = renderHook(() => useScrollTrigger(200));
     act(() => {
-      Object.defineProperty(window, "scrollY", { value: 201, configurable: true });
+      Object.defineProperty(window, "scrollY", {
+        value: 201,
+        configurable: true,
+      });
       window.dispatchEvent(new Event("scroll"));
     });
     expect(result.current).toBe(true);
@@ -33,7 +36,10 @@ describe("useScrollTrigger", () => {
   it("returns false when scrolled exactly to the offset", () => {
     const { result } = renderHook(() => useScrollTrigger(200));
     act(() => {
-      Object.defineProperty(window, "scrollY", { value: 200, configurable: true });
+      Object.defineProperty(window, "scrollY", {
+        value: 200,
+        configurable: true,
+      });
       window.dispatchEvent(new Event("scroll"));
     });
     expect(result.current).toBe(false);
@@ -42,11 +48,17 @@ describe("useScrollTrigger", () => {
   it("returns false when scrolled back above the offset", () => {
     const { result } = renderHook(() => useScrollTrigger(200));
     act(() => {
-      Object.defineProperty(window, "scrollY", { value: 300, configurable: true });
+      Object.defineProperty(window, "scrollY", {
+        value: 300,
+        configurable: true,
+      });
       window.dispatchEvent(new Event("scroll"));
     });
     act(() => {
-      Object.defineProperty(window, "scrollY", { value: 50, configurable: true });
+      Object.defineProperty(window, "scrollY", {
+        value: 50,
+        configurable: true,
+      });
       window.dispatchEvent(new Event("scroll"));
     });
     expect(result.current).toBe(false);

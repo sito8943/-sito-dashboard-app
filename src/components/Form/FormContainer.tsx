@@ -11,7 +11,7 @@ import { FormContainerPropsType } from "./types";
 import "./styles.css";
 
 export const FormContainer = <TInput extends FieldValues>(
-  props: FormContainerPropsType<TInput>
+  props: FormContainerPropsType<TInput>,
 ) => {
   const { t } = useTranslation();
   const {
@@ -35,7 +35,13 @@ export const FormContainer = <TInput extends FieldValues>(
           name={t("_accessibility:buttons.submit")}
           aria-label={t("_accessibility:ariaLabels.submit")}
         >
-          {isLoading ? <Loading color="stroke-base" loaderClass="!w-6 mt-1"  strokeWidth="6" /> : null}
+          {isLoading ? (
+            <Loading
+              color="stroke-base"
+              loaderClass="!w-6 mt-1"
+              strokeWidth="6"
+            />
+          ) : null}
           {t("_accessibility:buttons.submit")}
         </Button>
         <Button

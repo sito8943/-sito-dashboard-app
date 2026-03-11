@@ -37,7 +37,7 @@ export const useImportAction = (props: UseImportAction) => {
       tooltip: t("_pages:common.actions.import.text"),
       onClick: onClick,
     }),
-    [disabled, hidden, isLoading, onClick, t]
+    [disabled, hidden, isLoading, onClick, t],
   );
 
   return {

@@ -41,7 +41,7 @@ export class BaseClient<
     baseUrl: string,
     userKey: string = "user",
     secured: boolean = true,
-    authConfig: APIClientAuthConfig = {}
+    authConfig: APIClientAuthConfig = {},
   ) {
     this.table = table;
     this.secured = secured;
@@ -66,7 +66,7 @@ export class BaseClient<
     return await this.api.doQuery<TDto, TAddDto[]>(
       `${this.table}/batch`,
       Methods.POST,
-      data
+      data,
     );
   }
 
@@ -78,7 +78,7 @@ export class BaseClient<
   async update(value: TUpdateDto): Promise<TDto> {
     return await this.api.patch<TDto, TUpdateDto>(
       `${this.table}/${value.id}`,
-      value
+      value,
     );
   }
 
@@ -90,7 +90,7 @@ export class BaseClient<
    */
   async get(
     query?: QueryParam<TDto>,
-    filters?: TFilter
+    filters?: TFilter,
   ): Promise<QueryResult<TDto>> {
     return await this.api.get<TDto, TFilter>(`${this.table}`, query, filters);
   }
@@ -104,7 +104,7 @@ export class BaseClient<
     const builtUrl = parseQueries<TDto, TFilter>(
       `${this.table}/export`,
       undefined,
-      filters
+      filters,
     );
 
     return await this.api.doQuery<TDto[]>(builtUrl, Methods.GET, undefined);
@@ -119,7 +119,7 @@ export class BaseClient<
     return await this.api.doQuery<number>(
       `${this.table}/import`,
       Methods.POST,
-      data
+      data,
     );
   }
 
@@ -131,7 +131,7 @@ export class BaseClient<
   async commonGet(query: TFilter): Promise<TCommonDto[]> {
     return await this.api.doQuery<TCommonDto[], TFilter>(
       buildQueryUrl<TFilter>(`${this.table}/common`, query),
-      Methods.GET
+      Methods.GET,
     );
   }
 

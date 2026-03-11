@@ -39,7 +39,7 @@ import { PageHeader } from "./PageHeader";
 import "./styles.css";
 
 export const Page = <TEntity extends BaseEntityDto>(
-  props: PagePropsType<TEntity>
+  props: PagePropsType<TEntity>,
 ) => {
   const {
     title,

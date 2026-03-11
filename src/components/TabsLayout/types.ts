@@ -1,7 +1,10 @@
 import { ReactNode } from "react";
 import { ButtonPropsType } from "@sito/dashboard";
 
-export type TabButtonPropsType = Omit<ButtonPropsType, "children" | "onClick" | "type">;
+export type TabButtonPropsType = Omit<
+  ButtonPropsType,
+  "children" | "onClick" | "type"
+>;
 
 export type TabsLayoutPropsType = {
   tabs: TabsType[];

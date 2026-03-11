@@ -34,7 +34,10 @@ class IntersectionObserverMock implements IntersectionObserver {
   private target: Element | null = null;
   private readonly callback: IntersectionObserverCallback;
 
-  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+  constructor(
+    callback: IntersectionObserverCallback,
+    options?: IntersectionObserverInit,
+  ) {
     this.callback = callback;
     this.rootMargin = options?.rootMargin ?? "";
     this.thresholds = Array.isArray(options?.threshold)

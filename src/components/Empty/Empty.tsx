@@ -13,7 +13,7 @@ import { Action } from "components";
 import "./styles.css";
 
 export const Empty = <TRow extends BaseEntityDto>(
-  props: EmptyPropsType<TRow>
+  props: EmptyPropsType<TRow>,
 ) => {
   const {
     message,

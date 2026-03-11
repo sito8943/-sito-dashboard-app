@@ -1,5 +1,8 @@
 export { Action, Actions, ActionsDropdown } from "@sito/dashboard";
-export type { ActionPropsType, ActionsContainerPropsType } from "@sito/dashboard";
+export type {
+  ActionPropsType,
+  ActionsContainerPropsType,
+} from "@sito/dashboard";
 export * from "./Form";
 export * from "./Dialog";
 export * from "./Drawer";
