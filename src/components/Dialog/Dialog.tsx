@@ -82,6 +82,8 @@ export const Dialog = (props: DialogPropsType) => {
             disabled={!open}
             aria-disabled={!open}
             onClick={handleClose}
+            variant="text"
+            color="error"
             className="icon-button dialog-close-btn"
             name={t("_accessibility:buttons.closeDialog")}
             aria-label={t("_accessibility:ariaLabels.closeDialog")}
