@@ -11,6 +11,7 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 | ------------ | ---------------------- | ---------- |
 | UI Framework | React                  | 18.3.1     |
 | Language     | TypeScript             | 5.7.2      |
+| Runtime      | Node.js                | 20.x       |
 | Styling      | Tailwind CSS + Emotion | 4.x / 11.x |
 | Icons        | FontAwesome            | 7.0.0      |
 | Forms        | React Hook Form        | 7.61.1     |
@@ -45,7 +46,8 @@ npm install \
 
 ## Provider Setup
 
-Wrap the application root with the required providers **in this order**:
+Wrap the application root with the required providers **in this order**.
+Include `NavbarProvider` when your app renders `Navbar` or uses `useNavbar`.
 
 ```tsx
 import {
@@ -54,6 +56,7 @@ import {
   AuthProvider,
   NotificationProvider,
   DrawerMenuProvider,
+  NavbarProvider,
   IManager,
 } from "@sito/dashboard-app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -94,7 +97,9 @@ function App() {
             accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
           >
             <NotificationProvider>
-              <DrawerMenuProvider>{/* app routes */}</DrawerMenuProvider>
+              <DrawerMenuProvider>
+                <NavbarProvider>{/* app routes */}</NavbarProvider>
+              </DrawerMenuProvider>
             </NotificationProvider>
           </AuthProvider>
         </ManagerProvider>
@@ -106,6 +111,7 @@ function App() {
 
 If your app wraps providers in custom components, keep the same effective order:
 `ManagerProvider` must stay above `AuthProvider`.
+`NavbarProvider` is optional unless you use `Navbar` or `useNavbar`.
 
 ### Provider responsibilities
 
@@ -116,7 +122,7 @@ If your app wraps providers in custom components, keep the same effective order:
 | `AuthProvider`         | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
 | `NotificationProvider` | Global toast notification system                                                                                                                      |
 | `DrawerMenuProvider`   | Dynamic drawer menu state                                                                                                                             |
-| `NavbarProvider`       | Provides dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent`                                                                 |
+| `NavbarProvider`       | Optional provider for dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent`; required only when using `Navbar` or `useNavbar` |
 
 ---
 
@@ -416,7 +422,7 @@ function MyPage() {
 
 All hooks also default `hidden = false` and `disabled = false`. Override any prop to customize behavior.
 
-````
+```
 
 ### Navbar hook
 
@@ -437,7 +443,7 @@ function ProductsPage() {
     };
   }, [setTitle, setRightContent]);
 }
-````
+```
 
 `NavbarProvider` must wrap `Navbar` in the component tree for this to work.
 
@@ -827,3 +833,4 @@ Consumer projects must provide translations for these namespaces.
 22. **Use `PrettyGrid` infinite scroll props instead of local grid forks** — `hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, and observer options are the official extension points.
 23. **Use `ToTop` customization props for positioning/behavior** — avoid ad-hoc wrappers when `threshold`, target coordinates, tooltip, icon, and click control are sufficient.
 24. **Prefer `IndexedDBClient.update(value)` in new code** — keep `(id, value)` only for temporary backward compatibility.
+25. **Keep documented runtime version aligned with `.nvmrc`** when writing setup instructions for this repository.

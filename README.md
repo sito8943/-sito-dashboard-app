@@ -14,13 +14,29 @@ pnpm add @sito/dashboard-app
 
 ## Requirements
 
-- Node.js `18.18.0` (see `.nvmrc`)
+- Node.js `20.x` (see `.nvmrc`)
 - React `18.3.1`
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
 - `react-hook-form` `7.61.1`
 - `@sito/dashboard` `^0.0.68`
 - Font Awesome + Emotion peers defined in `package.json`
+
+Install all peers in consumer apps:
+
+```bash
+npm install \
+  react@18.3.1 react-dom@18.3.1 \
+  @sito/dashboard@^0.0.68 \
+  @emotion/css@11.13.5 \
+  @tanstack/react-query@5.83.0 \
+  react-hook-form@7.61.1 \
+  @fortawesome/fontawesome-svg-core@7.0.0 \
+  @fortawesome/free-solid-svg-icons@7.0.0 \
+  @fortawesome/free-regular-svg-icons@7.0.0 \
+  @fortawesome/free-brands-svg-icons@7.0.0 \
+  @fortawesome/react-fontawesome@0.2.3
+```
 
 ## Core exports
 
@@ -29,7 +45,7 @@ pnpm add @sito/dashboard-app
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
 - Hooks: `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `NavbarProvider`, DTOs, API clients
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients
 
 ## Component usage patterns
 
@@ -189,10 +205,11 @@ Main optional props:
 
 ## Initial setup example
 
-Wrap your app with the providers to enable navigation, React Query integration, auth context, and notifications.
+Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.
 
 ```tsx
 import type { ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   BrowserRouter,
   Link,
@@ -202,29 +219,62 @@ import {
 import {
   AuthProvider,
   ConfigProvider,
+  DrawerMenuProvider,
   IManager,
   ManagerProvider,
+  NavbarProvider,
   NotificationProvider,
 } from "@sito/dashboard-app";
 
-const manager = new IManager(import.meta.env.VITE_API_URL);
+const queryClient = new QueryClient();
+
+const authStorageKeys = {
+  user: "user",
+  remember: "remember",
+  refreshTokenKey: "refreshToken",
+  accessTokenExpiresAtKey: "accessTokenExpiresAt",
+};
+
+const manager = new IManager(
+  import.meta.env.VITE_API_URL,
+  authStorageKeys.user,
+  {
+    rememberKey: authStorageKeys.remember,
+    refreshTokenKey: authStorageKeys.refreshTokenKey,
+    accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
+  },
+);
 
 function AppProviders({ children }: { children: ReactNode }) {
   const go = useNavigate();
   const location = useLocation();
 
   return (
-    <ConfigProvider
-      location={location}
-      navigate={(route) => go(route)}
-      linkComponent={Link}
-    >
-      <ManagerProvider manager={manager}>
-        <AuthProvider>
-          <NotificationProvider>{children}</NotificationProvider>
-        </AuthProvider>
-      </ManagerProvider>
-    </ConfigProvider>
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider
+        location={location}
+        navigate={(route) => {
+          if (typeof route === "number") go(route);
+          else go(route);
+        }}
+        linkComponent={Link}
+      >
+        <ManagerProvider manager={manager}>
+          <AuthProvider
+            user={authStorageKeys.user}
+            remember={authStorageKeys.remember}
+            refreshTokenKey={authStorageKeys.refreshTokenKey}
+            accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
+          >
+            <NotificationProvider>
+              <DrawerMenuProvider>
+                <NavbarProvider>{children}</NavbarProvider>
+              </DrawerMenuProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        </ManagerProvider>
+      </ConfigProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -236,6 +286,21 @@ export function App() {
   );
 }
 ```
+
+Notes:
+
+- Keep `ManagerProvider` above `AuthProvider`.
+- `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
+- If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
+
+## Built-in auth refresh behavior
+
+`APIClient` and `BaseClient` already include refresh/retry behavior for secured requests:
+
+- If `accessTokenExpiresAt` is close to expiry, a refresh runs before sending the request.
+- If a secured request returns `401`, the client attempts one refresh and retries once.
+- Concurrent refresh calls are deduplicated with a shared in-flight promise.
+- If refresh fails, local session keys are cleared (`user`, `remember`, `refreshToken`, `accessTokenExpiresAt`).
 
 ## Local development (step-by-step)
 
