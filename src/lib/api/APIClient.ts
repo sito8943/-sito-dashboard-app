@@ -134,12 +134,11 @@ export class APIClient {
     toLocal(this.userKey, data.token);
 
     const resolvedRefreshToken =
-      data.refreshToken === undefined ? fallbackRefreshToken : data.refreshToken;
+      data.refreshToken === undefined
+        ? fallbackRefreshToken
+        : data.refreshToken;
 
-    if (
-      typeof resolvedRefreshToken === "string" &&
-      resolvedRefreshToken.length
-    )
+    if (typeof resolvedRefreshToken === "string" && resolvedRefreshToken.length)
       toLocal(this.refreshTokenKey, resolvedRefreshToken);
     else removeFromLocal(this.refreshTokenKey);
 
