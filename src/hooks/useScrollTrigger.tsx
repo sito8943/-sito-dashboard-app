@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 
+const getWindowScrollY = () =>
+  typeof window !== "undefined" ? window.scrollY : 0;
+
 export function useScrollTrigger(offset: number) {
-  const [triggered, setTriggered] = useState(false);
+  const [scrollY, setScrollY] = useState(getWindowScrollY);
 
   const onScroll = useCallback(() => {
-    const scrolled = window.scrollY > offset;
-    setTriggered(scrolled);
-  }, [offset]);
+    setScrollY(getWindowScrollY());
+  }, []);
 
   useEffect(() => {
     window.addEventListener("scroll", onScroll);
@@ -15,5 +17,5 @@ export function useScrollTrigger(offset: number) {
     };
   }, [onScroll]);
 
-  return triggered;
+  return scrollY > offset;
 }

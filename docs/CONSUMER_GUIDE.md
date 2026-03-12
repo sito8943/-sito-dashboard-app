@@ -36,6 +36,7 @@ Recommended order:
 6. `NavbarProvider` (if you use dynamic navbar state)
 
 `ManagerProvider` already mounts an internal `QueryClientProvider`.
+If you need custom React Query defaults, pass your own client with `queryClient={queryClient}`.
 
 ```tsx
 import type { ReactNode } from "react";

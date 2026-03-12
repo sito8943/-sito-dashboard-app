@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useTranslation } from "@sito/dashboard";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // providers
-import { queryClient, useNotification } from "providers";
+import { useNotification } from "providers";
 
 // lib
 import {
@@ -35,6 +35,7 @@ export const useFormDialog = <
   >,
 ): TriggerFormDialogPropsType<TFormType> => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const {
     showErrorNotification,
     showStackNotifications,

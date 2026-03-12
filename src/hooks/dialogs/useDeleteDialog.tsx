@@ -1,7 +1,8 @@
 import { useTranslation } from "@sito/dashboard";
+import { useQueryClient } from "@tanstack/react-query";
 
 // providers
-import { queryClient, useNotification } from "providers";
+import { useNotification } from "providers";
 
 // lib
 import {
@@ -20,6 +21,7 @@ import { UseDeleteDialogPropsType } from "hooks";
 
 export const useDeleteDialog = (props: UseDeleteDialogPropsType) => {
   const { queryKey, onSuccess, ...rest } = props;
+  const queryClient = useQueryClient();
 
   const { showStackNotifications } = useNotification();
   const { t } = useTranslation();

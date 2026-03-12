@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useTranslation } from "@sito/dashboard";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // providers
-import { queryClient, useNotification } from "providers";
+import { useNotification } from "providers";
 
 // lib
 import {
@@ -29,6 +29,7 @@ export const usePostForm = <
 ): FormPropsType<TFormType> => {
   const { t } = useTranslation();
   const { showStackNotifications, showSuccessNotification } = useNotification();
+  const queryClient = useQueryClient();
 
   const {
     defaultValues,
@@ -109,7 +110,7 @@ export const usePostForm = <
         }
       },
       onSuccess: async (result) => {
-        if (queryClient) await queryClient.invalidateQueries({ queryKey });
+        await queryClient.invalidateQueries({ queryKey });
         if (onSuccess) onSuccess(result);
         if (onSuccessMessage)
           showSuccessNotification({

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 import { ManagerProvider, useManager } from "./ManagerProvider";
 
@@ -34,5 +35,20 @@ describe("ManagerProvider", () => {
     );
 
     consoleErrorSpy.mockRestore();
+  });
+
+  it("uses a provided query client when queryClient prop is passed", () => {
+    const customQueryClient = new QueryClient();
+    const customWrapper = ({ children }: { children: ReactNode }) => (
+      <ManagerProvider manager={manager} queryClient={customQueryClient}>
+        {children}
+      </ManagerProvider>
+    );
+
+    const { result } = renderHook(() => useQueryClient(), {
+      wrapper: customWrapper,
+    });
+
+    expect(result.current).toBe(customQueryClient);
   });
 });

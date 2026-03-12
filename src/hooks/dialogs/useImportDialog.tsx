@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // @sito-dashboard
 import { useTranslation } from "@sito/dashboard";
@@ -9,9 +9,6 @@ import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "lib";
 
 // types
 import { UseImportDialogPropsType, UseImportDialogReturnType } from "./types";
-
-// providers
-import { queryClient } from "providers";
 
 // hooks
 import { useImportAction } from "hooks";
@@ -23,6 +20,7 @@ export function useImportDialog<
   props: UseImportDialogPropsType<PreviewEntityDto>,
 ): UseImportDialogReturnType<EntityDto, PreviewEntityDto> {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const {
     queryKey,
@@ -48,7 +46,7 @@ export function useImportDialog<
       onError?.(error);
     },
     onSuccess: async () => {
-      if (queryClient) await queryClient.invalidateQueries({ queryKey });
+      await queryClient.invalidateQueries({ queryKey });
     },
   });
 
@@ -83,6 +81,7 @@ export function useImportDialog<
     handleClose: () => {
       setShowDialog(false);
       setItems(null);
+      setOverride(false);
     },
     action,
   };

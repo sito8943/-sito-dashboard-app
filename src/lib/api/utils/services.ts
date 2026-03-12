@@ -24,7 +24,7 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
   customHeaders?: HeadersInit,
 ): Promise<HttpResponse<TResponse>> {
   const headers: HeadersInit = {
-    ...(body ? { "Content-Type": "application/json" } : {}),
+    ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
     ...customHeaders,
   };
 
@@ -32,7 +32,7 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
     const response = await fetch(url, {
       method,
       headers,
-      ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
 
     const rawText = await response.text();

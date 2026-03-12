@@ -34,6 +34,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
           <AppIconButton
             icon={faArrowLeft}
             onClick={() => navigate(-1)}
+            className="page-header-back"
             name={t("_accessibility:buttons.back")}
             data-tooltip-id="tooltip"
             data-tooltip-content={t("_accessibility:buttons.back")}

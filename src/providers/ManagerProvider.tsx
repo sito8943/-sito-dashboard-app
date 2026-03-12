@@ -27,11 +27,12 @@ const ManagerContext = createContext<ManagerProviderContextType | undefined>(
  * @returns  React component
  */
 const ManagerProvider = (props: ManagerProviderPropTypes) => {
-  const { children, manager } = props;
+  const { children, manager, queryClient: providedQueryClient } = props;
+  const client = providedQueryClient ?? queryClient;
 
   return (
     <ManagerContext.Provider value={{ client: manager }}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
     </ManagerContext.Provider>
   );
 };

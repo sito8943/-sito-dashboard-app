@@ -20,12 +20,9 @@ vi.mock("@tanstack/react-query", () => ({
     mutateAsync: mutateAsyncMock,
     isPending: false,
   }),
-}));
-
-vi.mock("providers", () => ({
-  queryClient: {
+  useQueryClient: () => ({
     invalidateQueries: invalidateQueriesMock,
-  },
+  }),
 }));
 
 vi.mock("hooks", () => ({

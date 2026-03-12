@@ -20,7 +20,26 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    dts({ insertTypesEntry: true }),
+    dts({
+      insertTypesEntry: true,
+      exclude: [
+        "src/**/*.stories.ts",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.stories.tsx",
+        "src/test/**",
+      ],
+      beforeWriteFile: (filePath, content) => {
+        const normalizedPath = filePath.replaceAll("\\", "/");
+        if (
+          normalizedPath.endsWith(".test.d.ts") ||
+          normalizedPath.endsWith(".stories.d.ts") ||
+          normalizedPath.includes("/test/")
+        )
+          return false;
+        return { filePath, content };
+      },
+    }),
     libInjectCss(),
     tailwindcss(),
   ],
