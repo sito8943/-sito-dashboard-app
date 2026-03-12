@@ -1,5 +1,10 @@
 // services
-import { makeRequest, Methods } from "./utils/services";
+import {
+  makeRequest,
+  Methods,
+  RequestConfig,
+  RequestOptions,
+} from "./utils/services";
 
 // types
 import {
@@ -38,7 +43,7 @@ export class APIClient {
   refreshEndpoint: string;
   refreshExpirySkewMs: number;
   secured: boolean;
-  tokenAcquirer!: (useCookie?: boolean) => HeadersInit | undefined;
+  tokenAcquirer!: (useCookie?: boolean) => RequestConfig | undefined;
   static refreshInFlight: Map<string, Promise<void>> = new Map();
 
   /**
@@ -51,7 +56,7 @@ export class APIClient {
     baseUrl: string,
     userKey = "user",
     secured = true,
-    tokenAcquirer?: (useCookie?: boolean) => HeadersInit | undefined,
+    tokenAcquirer?: (useCookie?: boolean) => RequestConfig | undefined,
     authConfig: APIClientAuthConfig = {},
   ) {
     this.baseUrl = baseUrl;
@@ -66,11 +71,10 @@ export class APIClient {
     this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer;
   }
 
-  defaultTokenAcquirer(useCookie?: boolean) {
-    if (useCookie) return { credentials: "include" } as HeadersInit;
+  defaultTokenAcquirer(useCookie?: boolean): RequestConfig | undefined {
+    if (useCookie) return { credentials: "include" };
     const token = fromLocal(this.userKey) as string;
-    if (token && token.length)
-      return { Authorization: `Bearer ${token}` } as HeadersInit;
+    if (token && token.length) return { Authorization: `Bearer ${token}` };
 
     return undefined;
   }
@@ -189,19 +193,59 @@ export class APIClient {
     }
   }
 
-  private mergeHeaders(header?: HeadersInit) {
-    const securedHeader = this.secured ? this.tokenAcquirer() : {};
-    return {
-      ...(securedHeader ?? {}),
-      ...(header ?? {}),
+  private isRequestOptions(config: RequestConfig): config is RequestOptions {
+    if (Array.isArray(config)) return false;
+    if (config instanceof Headers) return false;
+    return (
+      typeof config === "object" &&
+      config !== null &&
+      ("headers" in config || "credentials" in config)
+    );
+  }
+
+  private toRequestOptions(config?: RequestConfig): RequestOptions {
+    if (!config) return {};
+    if (this.isRequestOptions(config)) return config;
+    return { headers: config };
+  }
+
+  private toHeaderRecord(headers?: HeadersInit): Record<string, string> {
+    if (!headers) return {};
+    if (headers instanceof Headers)
+      return Object.fromEntries(headers.entries());
+    if (Array.isArray(headers)) return Object.fromEntries(headers);
+    return headers;
+  }
+
+  private mergeRequestConfig(
+    config?: RequestConfig,
+  ): RequestConfig | undefined {
+    const securedConfig = this.secured ? this.tokenAcquirer() : undefined;
+    const securedOptions = this.toRequestOptions(securedConfig);
+    const customOptions = this.toRequestOptions(config);
+
+    const mergedHeaders = {
+      ...this.toHeaderRecord(securedOptions.headers),
+      ...this.toHeaderRecord(customOptions.headers),
     };
+
+    const credentials = customOptions.credentials ?? securedOptions.credentials;
+    const hasHeaders = Object.keys(mergedHeaders).length > 0;
+
+    if (credentials)
+      return hasHeaders
+        ? { headers: mergedHeaders, credentials }
+        : { credentials };
+
+    if (hasHeaders) return mergedHeaders;
+    return undefined;
   }
 
   private async makeRequestWithRefresh<TResponse, TBody = unknown>(
     endpoint: string,
     method: Methods,
     body?: TBody,
-    header?: HeadersInit,
+    requestConfig?: RequestConfig,
   ) {
     if (this.secured && this.shouldRefreshBeforeRequest())
       await this.refreshAccessTokenWithMutex();
@@ -210,7 +254,7 @@ export class APIClient {
       this.buildUrl(endpoint),
       method,
       body,
-      this.mergeHeaders(header),
+      this.mergeRequestConfig(requestConfig),
     );
 
     if (this.secured && response.status === 401 && this.canRefresh()) {
@@ -219,7 +263,7 @@ export class APIClient {
         this.buildUrl(endpoint),
         method,
         body,
-        this.mergeHeaders(header),
+        this.mergeRequestConfig(requestConfig),
       );
     }
 
@@ -230,7 +274,7 @@ export class APIClient {
     endpoint: string,
     method = Methods.GET,
     body?: TBody,
-    header?: HeadersInit,
+    requestConfig?: RequestConfig,
   ) {
     const {
       data: result,
@@ -240,7 +284,7 @@ export class APIClient {
       endpoint,
       method,
       body,
-      header,
+      requestConfig,
     );
 
     if (error || status < 200 || status >= 300)

@@ -28,7 +28,11 @@ export const usePostForm = <
   props: UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType>,
 ): FormPropsType<TFormType> => {
   const { t } = useTranslation();
-  const { showStackNotifications, showSuccessNotification } = useNotification();
+  const {
+    showStackNotifications,
+    showSuccessNotification,
+    showErrorNotification,
+  } = useNotification();
   const queryClient = useQueryClient();
 
   const {
@@ -100,13 +104,9 @@ export const usePostForm = <
             const fallback =
               unknownErr.message || t("_accessibility:errors.500");
             const translated = t(`_accessibility:errors.${unknownErr.status}`);
-            showStackNotifications([
-              {
-                message: translated || fallback,
-                type: NotificationEnumType.error,
-              } as NotificationType,
-            ]);
-          }
+            showErrorNotification({ message: translated || fallback });
+          } else
+            showErrorNotification({ message: t("_accessibility:errors.500") });
         }
       },
       onSuccess: async (result) => {

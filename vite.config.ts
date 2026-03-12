@@ -59,6 +59,7 @@ export default defineConfig({
         "@emotion/css",
         "@sito/dashboard",
         "@tanstack/react-query",
+        "react-hook-form",
         "@fortawesome/fontawesome-svg-core",
         "@fortawesome/free-brands-svg-icons",
         "@fortawesome/free-regular-svg-icons",

@@ -41,12 +41,35 @@ describe("APIClient", () => {
     });
   });
 
-  it("returns cookie credentials header when requested", () => {
+  it("returns cookie credentials request config when requested", () => {
     const client = new APIClient("https://api.test");
 
     expect(client.defaultTokenAcquirer(true)).toEqual({
       credentials: "include",
     });
+  });
+
+  it("passes cookie credentials as fetch options", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test", "user", false);
+    await client.doQuery(
+      "/session",
+      Methods.GET,
+      undefined,
+      client.defaultTokenAcquirer(true),
+    );
+
+    expect(makeRequestMock).toHaveBeenCalledWith(
+      "https://api.test/session",
+      Methods.GET,
+      undefined,
+      { credentials: "include" },
+    );
   });
 
   it("merges secured header and custom header in doQuery", async () => {
