@@ -56,7 +56,6 @@ export default defineConfig({
         "react",
         "react/jsx-runtime",
         "react-dom",
-        "@emotion/css",
         "@sito/dashboard",
         "@tanstack/react-query",
         "react-hook-form",

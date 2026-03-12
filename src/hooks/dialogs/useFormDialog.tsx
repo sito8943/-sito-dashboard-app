@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useTranslation } from "@sito/dashboard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -63,6 +63,16 @@ export const useFormDialog = <
     useForm<TFormType>({
       defaultValues,
     });
+  const formScopeRef = useRef<HTMLFormElement | null>(null);
+
+  const captureFormScope = useCallback(() => {
+    const activeElement = document.activeElement;
+    if (!(activeElement instanceof HTMLElement)) {
+      formScopeRef.current = null;
+      return;
+    }
+    formScopeRef.current = activeElement.closest("form");
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryFn: () => getFunction?.(id),
@@ -79,15 +89,22 @@ export const useFormDialog = <
     (error: ValidationError) => {
       const valError = error?.errors;
       const messages: string[] = [];
+      const formScope = formScopeRef.current;
+      if (!formScope) return messages;
+
+      let hasFocused = false;
       if (valError) {
         valError.forEach(([key, message]) => {
-          const input = document.querySelector(`[name="${key}"]`);
+          const input = formScope.querySelector(`[name="${key}"]`);
           if (
             input instanceof HTMLInputElement ||
             input instanceof HTMLTextAreaElement ||
             input instanceof HTMLSelectElement
           ) {
-            input.focus();
+            if (!hasFocused) {
+              input.focus();
+              hasFocused = true;
+            }
             input.classList.add("error");
             messages.push(t(`_entities:${queryKey}.${key}.${message}`));
           }
@@ -99,7 +116,10 @@ export const useFormDialog = <
   );
 
   const releaseFormError = useCallback(() => {
-    const inputs = document.querySelectorAll("input, textarea, select");
+    const formScope = formScopeRef.current;
+    if (!formScope) return;
+
+    const inputs = formScope.querySelectorAll("input, textarea, select");
     inputs.forEach((input) => {
       input.classList.remove("error");
     });
@@ -115,6 +135,7 @@ export const useFormDialog = <
 
   const close = useCallback(() => {
     releaseFormError();
+    formScopeRef.current = null;
     handleClose();
     reset();
   }, [reset, releaseFormError, handleClose]);
@@ -168,10 +189,12 @@ export const useFormDialog = <
     getValues,
     setValue,
     handleSubmit,
-    onSubmit: (data) =>
+    onSubmit: (data) => {
+      captureFormScope();
       dialogFn.mutate(
         formToDto ? formToDto(data) : (data as unknown as TMutationDto),
-      ),
+      );
+    },
     reset,
     setError,
     title,

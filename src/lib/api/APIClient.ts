@@ -130,11 +130,17 @@ export class APIClient {
     removeFromLocal(this.accessTokenExpiresAtKey);
   }
 
-  private storeSession(data: SessionDto) {
+  private storeSession(data: SessionDto, fallbackRefreshToken?: string) {
     toLocal(this.userKey, data.token);
 
-    if (typeof data.refreshToken === "string" && data.refreshToken.length)
-      toLocal(this.refreshTokenKey, data.refreshToken);
+    const resolvedRefreshToken =
+      data.refreshToken === undefined ? fallbackRefreshToken : data.refreshToken;
+
+    if (
+      typeof resolvedRefreshToken === "string" &&
+      resolvedRefreshToken.length
+    )
+      toLocal(this.refreshTokenKey, resolvedRefreshToken);
     else removeFromLocal(this.refreshTokenKey);
 
     if (
@@ -167,12 +173,7 @@ export class APIClient {
         { refreshToken },
       );
 
-      if (
-        error ||
-        !data?.token ||
-        typeof data.refreshToken !== "string" ||
-        !data.refreshToken.length
-      ) {
+      if (error || !data?.token) {
         this.clearStoredSession();
         throw (
           error ?? {
@@ -182,7 +183,7 @@ export class APIClient {
         );
       }
 
-      this.storeSession(data);
+      this.storeSession(data, refreshToken);
     })();
 
     APIClient.refreshInFlight.set(lockKey, refreshPromise);

@@ -28,7 +28,6 @@ Install all peers in consumer apps:
 npm install \
   react@18.3.1 react-dom@18.3.1 \
   @sito/dashboard@^0.0.68 \
-  @emotion/css@11.13.5 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \

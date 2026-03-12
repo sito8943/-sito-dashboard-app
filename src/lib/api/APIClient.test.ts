@@ -192,6 +192,40 @@ describe("APIClient", () => {
     );
   });
 
+  it("keeps existing refresh token when refresh response omits it", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "new-access-token",
+          accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test");
+    const result = await client.doQuery<{ ok: boolean }>("/users");
+
+    expect(result).toEqual({ ok: true });
+    expect(localStorage.getItem("user")).toBe("new-access-token");
+    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-1");
+    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+      "2035-01-01T00:00:00.000Z",
+    );
+  });
+
   it("retries once after 401 by refreshing token", async () => {
     localStorage.setItem("user", "stale-access-token");
     localStorage.setItem("refreshToken", "refresh-token-1");
