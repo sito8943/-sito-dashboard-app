@@ -1,6 +1,6 @@
 import { BaseRegisterDto } from "./BaseRegisterDto";
 
 export type RegisterDto<
-  TExtra = Record<string, never>,
-  TAuthExtra = Record<string, never>,
+  TExtra extends object = object,
+  TAuthExtra extends object = object,
 > = BaseRegisterDto<TExtra, TAuthExtra>;
