@@ -62,6 +62,24 @@ describe("makeRequest", () => {
     );
   });
 
+  it("passes fetch credentials when request options include them", async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), { status: 200 }),
+    );
+
+    await makeRequest("https://api.test/session", Methods.GET, undefined, {
+      credentials: "include",
+    });
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      "https://api.test/session",
+      expect.objectContaining({
+        method: Methods.GET,
+        credentials: "include",
+      }),
+    );
+  });
+
   it("maps HTTP errors using JSON message payload", async () => {
     fetchSpy.mockResolvedValue(
       new Response(JSON.stringify({ message: "Invalid payload" }), {

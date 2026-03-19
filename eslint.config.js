@@ -7,6 +7,7 @@ export default tseslint.config(
     ignores: [
       "dist/**",
       "dist-ssr/**",
+      "storybook-static/**",
       "node_modules/**",
       ".storybook/**",
       "*.local",

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // @sito/dashboard
 import {
@@ -29,9 +30,6 @@ import { BaseEntityDto } from "lib";
 // hooks
 import { GlobalActions } from "hooks";
 
-// providers
-import { queryClient } from "providers";
-
 // components
 import { PageHeader } from "./PageHeader";
 
@@ -54,6 +52,7 @@ export const Page = <TEntity extends BaseEntityDto>(
   } = props;
 
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const { countOfFilters } = useTableOptions();
 
@@ -91,7 +90,15 @@ export const Page = <TEntity extends BaseEntityDto>(
       pActions.push(filterAction);
     }
     return pActions;
-  }, [actions, addOptions, countOfFilters, filterOptions, queryKey, t]);
+  }, [
+    actions,
+    addOptions,
+    countOfFilters,
+    filterOptions,
+    queryClient,
+    queryKey,
+    t,
+  ]);
 
   return (
     <main className="page-main">

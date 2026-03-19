@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Onboarding } from "./Onboarding";
 
@@ -52,6 +52,11 @@ vi.mock("providers/ConfigProvider", () => ({
 }));
 
 describe("Onboarding", () => {
+  beforeEach(() => {
+    navigateMock.mockReset();
+    setGuestModeMock.mockReset();
+  });
+
   it("renders the current step with optional custom content", () => {
     render(
       <Onboarding
@@ -104,5 +109,79 @@ describe("Onboarding", () => {
     expect(
       screen.getByText("_accessibility:buttons.signIn"),
     ).toBeInTheDocument();
+  });
+
+  it("uses default onboarding navigation paths when no callbacks are provided", () => {
+    render(
+      <Onboarding
+        steps={[
+          {
+            title: "Welcome",
+            body: "Intro copy",
+          },
+          {
+            title: "Finish",
+            body: "Done copy",
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.skip" }),
+    );
+    expect(navigateMock).toHaveBeenCalledWith("/auth/sign-in");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.next" }),
+    );
+
+    fireEvent.click(screen.getByText("_accessibility:buttons.startAsGuest"));
+    expect(setGuestModeMock).toHaveBeenCalledWith(true);
+    expect(navigateMock).toHaveBeenCalledWith("/");
+
+    fireEvent.click(screen.getByText("_accessibility:buttons.signIn"));
+    expect(navigateMock).toHaveBeenCalledWith("/auth/sign-in");
+  });
+
+  it("uses custom onboarding callbacks when provided", () => {
+    const onSkip = vi.fn();
+    const onSignIn = vi.fn();
+    const onStartAsGuest = vi.fn();
+
+    render(
+      <Onboarding
+        steps={[
+          {
+            title: "Welcome",
+            body: "Intro copy",
+          },
+          {
+            title: "Finish",
+            body: "Done copy",
+          },
+        ]}
+        onSkip={onSkip}
+        onSignIn={onSignIn}
+        onStartAsGuest={onStartAsGuest}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.skip" }),
+    );
+    expect(onSkip).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.next" }),
+    );
+
+    fireEvent.click(screen.getByText("_accessibility:buttons.startAsGuest"));
+    fireEvent.click(screen.getByText("_accessibility:buttons.signIn"));
+
+    expect(onStartAsGuest).toHaveBeenCalledTimes(1);
+    expect(onSignIn).toHaveBeenCalledTimes(1);
+    expect(navigateMock).not.toHaveBeenCalled();
+    expect(setGuestModeMock).not.toHaveBeenCalled();
   });
 });

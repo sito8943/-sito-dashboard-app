@@ -1,8 +1,8 @@
 import { BaseAuthDto } from "./BaseAuthDto";
 
 export type BaseRegisterDto<
-  TExtra = Record<string, never>,
-  TAuthExtra = Record<string, never>,
+  TExtra extends object = object,
+  TAuthExtra extends object = object,
 > = BaseAuthDto<TAuthExtra> & {
   rPassword: string;
 } & TExtra;

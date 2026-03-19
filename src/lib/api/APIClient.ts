@@ -1,5 +1,10 @@
 // services
-import { makeRequest, Methods } from "./utils/services";
+import {
+  makeRequest,
+  Methods,
+  RequestConfig,
+  RequestOptions,
+} from "./utils/services";
 
 // types
 import {
@@ -38,7 +43,7 @@ export class APIClient {
   refreshEndpoint: string;
   refreshExpirySkewMs: number;
   secured: boolean;
-  tokenAcquirer!: (useCookie?: boolean) => HeadersInit | undefined;
+  tokenAcquirer!: (useCookie?: boolean) => RequestConfig | undefined;
   static refreshInFlight: Map<string, Promise<void>> = new Map();
 
   /**
@@ -51,7 +56,7 @@ export class APIClient {
     baseUrl: string,
     userKey = "user",
     secured = true,
-    tokenAcquirer?: (useCookie?: boolean) => HeadersInit | undefined,
+    tokenAcquirer?: (useCookie?: boolean) => RequestConfig | undefined,
     authConfig: APIClientAuthConfig = {},
   ) {
     this.baseUrl = baseUrl;
@@ -66,11 +71,10 @@ export class APIClient {
     this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer;
   }
 
-  defaultTokenAcquirer(useCookie?: boolean) {
-    if (useCookie) return { credentials: "include" } as HeadersInit;
+  defaultTokenAcquirer(useCookie?: boolean): RequestConfig | undefined {
+    if (useCookie) return { credentials: "include" };
     const token = fromLocal(this.userKey) as string;
-    if (token && token.length)
-      return { Authorization: `Bearer ${token}` } as HeadersInit;
+    if (token && token.length) return { Authorization: `Bearer ${token}` };
 
     return undefined;
   }
@@ -126,11 +130,16 @@ export class APIClient {
     removeFromLocal(this.accessTokenExpiresAtKey);
   }
 
-  private storeSession(data: SessionDto) {
+  private storeSession(data: SessionDto, fallbackRefreshToken?: string) {
     toLocal(this.userKey, data.token);
 
-    if (typeof data.refreshToken === "string" && data.refreshToken.length)
-      toLocal(this.refreshTokenKey, data.refreshToken);
+    const resolvedRefreshToken =
+      data.refreshToken === undefined
+        ? fallbackRefreshToken
+        : data.refreshToken;
+
+    if (typeof resolvedRefreshToken === "string" && resolvedRefreshToken.length)
+      toLocal(this.refreshTokenKey, resolvedRefreshToken);
     else removeFromLocal(this.refreshTokenKey);
 
     if (
@@ -163,12 +172,7 @@ export class APIClient {
         { refreshToken },
       );
 
-      if (
-        error ||
-        !data?.token ||
-        typeof data.refreshToken !== "string" ||
-        !data.refreshToken.length
-      ) {
+      if (error || !data?.token) {
         this.clearStoredSession();
         throw (
           error ?? {
@@ -178,7 +182,7 @@ export class APIClient {
         );
       }
 
-      this.storeSession(data);
+      this.storeSession(data, refreshToken);
     })();
 
     APIClient.refreshInFlight.set(lockKey, refreshPromise);
@@ -189,19 +193,59 @@ export class APIClient {
     }
   }
 
-  private mergeHeaders(header?: HeadersInit) {
-    const securedHeader = this.secured ? this.tokenAcquirer() : {};
-    return {
-      ...(securedHeader ?? {}),
-      ...(header ?? {}),
+  private isRequestOptions(config: RequestConfig): config is RequestOptions {
+    if (Array.isArray(config)) return false;
+    if (config instanceof Headers) return false;
+    return (
+      typeof config === "object" &&
+      config !== null &&
+      ("headers" in config || "credentials" in config)
+    );
+  }
+
+  private toRequestOptions(config?: RequestConfig): RequestOptions {
+    if (!config) return {};
+    if (this.isRequestOptions(config)) return config;
+    return { headers: config };
+  }
+
+  private toHeaderRecord(headers?: HeadersInit): Record<string, string> {
+    if (!headers) return {};
+    if (headers instanceof Headers)
+      return Object.fromEntries(headers.entries());
+    if (Array.isArray(headers)) return Object.fromEntries(headers);
+    return headers;
+  }
+
+  private mergeRequestConfig(
+    config?: RequestConfig,
+  ): RequestConfig | undefined {
+    const securedConfig = this.secured ? this.tokenAcquirer() : undefined;
+    const securedOptions = this.toRequestOptions(securedConfig);
+    const customOptions = this.toRequestOptions(config);
+
+    const mergedHeaders = {
+      ...this.toHeaderRecord(securedOptions.headers),
+      ...this.toHeaderRecord(customOptions.headers),
     };
+
+    const credentials = customOptions.credentials ?? securedOptions.credentials;
+    const hasHeaders = Object.keys(mergedHeaders).length > 0;
+
+    if (credentials)
+      return hasHeaders
+        ? { headers: mergedHeaders, credentials }
+        : { credentials };
+
+    if (hasHeaders) return mergedHeaders;
+    return undefined;
   }
 
   private async makeRequestWithRefresh<TResponse, TBody = unknown>(
     endpoint: string,
     method: Methods,
     body?: TBody,
-    header?: HeadersInit,
+    requestConfig?: RequestConfig,
   ) {
     if (this.secured && this.shouldRefreshBeforeRequest())
       await this.refreshAccessTokenWithMutex();
@@ -210,7 +254,7 @@ export class APIClient {
       this.buildUrl(endpoint),
       method,
       body,
-      this.mergeHeaders(header),
+      this.mergeRequestConfig(requestConfig),
     );
 
     if (this.secured && response.status === 401 && this.canRefresh()) {
@@ -219,7 +263,7 @@ export class APIClient {
         this.buildUrl(endpoint),
         method,
         body,
-        this.mergeHeaders(header),
+        this.mergeRequestConfig(requestConfig),
       );
     }
 
@@ -230,7 +274,7 @@ export class APIClient {
     endpoint: string,
     method = Methods.GET,
     body?: TBody,
-    header?: HeadersInit,
+    requestConfig?: RequestConfig,
   ) {
     const {
       data: result,
@@ -240,7 +284,7 @@ export class APIClient {
       endpoint,
       method,
       body,
-      header,
+      requestConfig,
     );
 
     if (error || status < 200 || status >= 300)
@@ -267,12 +311,23 @@ export class APIClient {
   ) {
     const builtUrl = parseQueries<TDto, TFilter>(endpoint, query, filters);
 
-    const { data: result, error } = await this.makeRequestWithRefresh<
-      QueryResult<TDto>
-    >(builtUrl, Methods.GET);
-    if (error) throw error;
+    const {
+      data: result,
+      error,
+      status,
+    } = await this.makeRequestWithRefresh<QueryResult<TDto>>(
+      builtUrl,
+      Methods.GET,
+    );
+    if (error || status < 200 || status >= 300 || !result)
+      throw (
+        error ?? {
+          status,
+          message: String(status),
+        }
+      );
 
-    return result as QueryResult<TDto>;
+    return result;
   }
 
   /**

@@ -46,6 +46,7 @@
   @apply bg-base/30 text-base-light hover:bg-secondary;
 }
 
+.page-header-back,
 .page-header-actions-mobile .actions-dropdown-trigger {
   @apply text-base-light hover:!bg-secondary;
 }

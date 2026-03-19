@@ -15,6 +15,9 @@ const meta = {
     title: "Welcome",
     body: "This is the first onboarding step.",
     onClickNext: () => {},
+    onSkip: () => {},
+    onStartAsGuest: () => {},
+    onSignIn: () => {},
     final: false,
   },
 } satisfies Meta<typeof Step>;

@@ -1,4 +1,5 @@
 import { ComponentType, ReactNode } from "react";
+import { QueryClient } from "@tanstack/react-query";
 
 // lib
 import {
@@ -27,6 +28,7 @@ export interface AuthProviderPropTypes extends BasicProviderPropTypes {
 
 export interface ManagerProviderPropTypes extends BasicProviderPropTypes {
   manager: IManager;
+  queryClient?: QueryClient;
 }
 
 export type ManagerProviderContextType = {

@@ -44,10 +44,6 @@
   @apply justify-end;
 }
 
-.dialog-close-btn {
-  @apply text-error;
-}
-
 .dialog-form-primary {
   @apply !px-6;
 }

@@ -28,7 +28,6 @@ Install all peers in consumer apps:
 npm install \
   react@18.3.1 react-dom@18.3.1 \
   @sito/dashboard@^0.0.68 \
-  @emotion/css@11.13.5 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -206,10 +205,11 @@ Main optional props:
 ## Initial setup example
 
 Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.
+`ManagerProvider` mounts `QueryClientProvider` internally and creates an isolated default `QueryClient` per provider instance.
+If you need custom React Query defaults or want to share a client intentionally, pass your own client with `queryClient={queryClient}`.
 
 ```tsx
 import type { ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   BrowserRouter,
   Link,
@@ -225,8 +225,6 @@ import {
   NavbarProvider,
   NotificationProvider,
 } from "@sito/dashboard-app";
-
-const queryClient = new QueryClient();
 
 const authStorageKeys = {
   user: "user",
@@ -250,31 +248,29 @@ function AppProviders({ children }: { children: ReactNode }) {
   const location = useLocation();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ConfigProvider
-        location={location}
-        navigate={(route) => {
-          if (typeof route === "number") go(route);
-          else go(route);
-        }}
-        linkComponent={Link}
-      >
-        <ManagerProvider manager={manager}>
-          <AuthProvider
-            user={authStorageKeys.user}
-            remember={authStorageKeys.remember}
-            refreshTokenKey={authStorageKeys.refreshTokenKey}
-            accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
-          >
-            <NotificationProvider>
-              <DrawerMenuProvider>
-                <NavbarProvider>{children}</NavbarProvider>
-              </DrawerMenuProvider>
-            </NotificationProvider>
-          </AuthProvider>
-        </ManagerProvider>
-      </ConfigProvider>
-    </QueryClientProvider>
+    <ConfigProvider
+      location={location}
+      navigate={(route) => {
+        if (typeof route === "number") go(route);
+        else go(route);
+      }}
+      linkComponent={Link}
+    >
+      <ManagerProvider manager={manager}>
+        <AuthProvider
+          user={authStorageKeys.user}
+          remember={authStorageKeys.remember}
+          refreshTokenKey={authStorageKeys.refreshTokenKey}
+          accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
+        >
+          <NotificationProvider>
+            <DrawerMenuProvider>
+              <NavbarProvider>{children}</NavbarProvider>
+            </DrawerMenuProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ManagerProvider>
+    </ConfigProvider>
   );
 }
 

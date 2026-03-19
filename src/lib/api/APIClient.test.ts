@@ -41,12 +41,35 @@ describe("APIClient", () => {
     });
   });
 
-  it("returns cookie credentials header when requested", () => {
+  it("returns cookie credentials request config when requested", () => {
     const client = new APIClient("https://api.test");
 
     expect(client.defaultTokenAcquirer(true)).toEqual({
       credentials: "include",
     });
+  });
+
+  it("passes cookie credentials as fetch options", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test", "user", false);
+    await client.doQuery(
+      "/session",
+      Methods.GET,
+      undefined,
+      client.defaultTokenAcquirer(true),
+    );
+
+    expect(makeRequestMock).toHaveBeenCalledWith(
+      "https://api.test/session",
+      Methods.GET,
+      undefined,
+      { credentials: "include" },
+    );
   });
 
   it("merges secured header and custom header in doQuery", async () => {
@@ -164,6 +187,40 @@ describe("APIClient", () => {
     );
     expect(localStorage.getItem("user")).toBe("new-access-token");
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token-2");
+    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+      "2035-01-01T00:00:00.000Z",
+    );
+  });
+
+  it("keeps existing refresh token when refresh response omits it", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "new-access-token",
+          accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test");
+    const result = await client.doQuery<{ ok: boolean }>("/users");
+
+    expect(result).toEqual({ ok: true });
+    expect(localStorage.getItem("user")).toBe("new-access-token");
+    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-1");
     expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
       "2035-01-01T00:00:00.000Z",
     );
@@ -345,6 +402,21 @@ describe("APIClient", () => {
     expect(method).toBe(Methods.GET);
     expect(result.items).toHaveLength(1);
     expect(result.items[0]?.id).toBe(1);
+  });
+
+  it("throws fallback error in get when response status is not successful", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: null,
+      status: 500,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+
+    await expect(client.get<UserDto, UserFilterDto>("/users")).rejects.toEqual({
+      status: 500,
+      message: "500",
+    });
   });
 
   it("throws post fallback error when response data is missing", async () => {

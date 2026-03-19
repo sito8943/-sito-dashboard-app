@@ -1,8 +1,5 @@
 import { useTranslation } from "@sito/dashboard";
 
-// providers
-import { useAuth, useConfig } from "providers";
-
 // types
 import { StepPropsType } from "./types";
 import { Button } from "../Buttons";
@@ -16,13 +13,14 @@ export const Step = (props: StepPropsType) => {
     body,
     content,
     onClickNext,
+    onSkip,
+    onStartAsGuest,
+    onSignIn,
     image = "",
     alt = "",
     final = false,
   } = props;
 
-  const { setGuestMode } = useAuth();
-  const { navigate } = useConfig();
   const { t } = useTranslation();
 
   return (
@@ -38,7 +36,7 @@ export const Step = (props: StepPropsType) => {
               color="primary"
               className="step-button"
               variant="outlined"
-              onClick={() => navigate("/auth/sign-in")}
+              onClick={onSkip}
               aria-label={t("_accessibility:ariaLabels.skip")}
             >
               {t("_accessibility:buttons.skip")}
@@ -59,10 +57,7 @@ export const Step = (props: StepPropsType) => {
               color="primary"
               className="step-button"
               variant="outlined"
-              onClick={() => {
-                setGuestMode(true);
-                navigate("/");
-              }}
+              onClick={onStartAsGuest}
               aria-label={t("_accessibility:ariaLabels.start")}
             >
               {t("_accessibility:buttons.startAsGuest")}
@@ -72,7 +67,7 @@ export const Step = (props: StepPropsType) => {
               variant="submit"
               className="step-button"
               aria-label={t("_accessibility:ariaLabels.start")}
-              onClick={() => navigate("/auth/sign-in")}
+              onClick={onSignIn}
             >
               {t("_accessibility:buttons.signIn")}
             </Button>

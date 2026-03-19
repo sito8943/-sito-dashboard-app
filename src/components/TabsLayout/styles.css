@@ -1,7 +1,7 @@
 @reference "../../index.css";
 
 .tabs-layout-main {
-  @apply rounded-b-xl rounded-r-xl xs:h-[60vh];
+  @apply rounded-b-xl rounded-r-xl;
 }
 
 .tabs-container {

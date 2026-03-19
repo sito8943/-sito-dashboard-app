@@ -46,6 +46,7 @@ export function Navbar(props: NavbarPropsType) {
   }, [openOnKeyCombination]);
 
   const Search = searchComponent;
+  const canShowSearch = showSearch && !!Search;
 
   return (
     <>
@@ -75,7 +76,7 @@ export function Navbar(props: NavbarPropsType) {
         </div>
         <div className="navbar-right">
           {rightContent}
-          {showSearch && (
+          {canShowSearch && (
             <AppIconButton
               icon={faSearch}
               className="navbar-search-btn"

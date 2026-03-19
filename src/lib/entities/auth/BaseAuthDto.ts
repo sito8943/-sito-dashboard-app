@@ -1,4 +1,4 @@
-export type BaseAuthDto<TExtra = Record<string, never>> = {
+export type BaseAuthDto<TExtra extends object = object> = {
   email: string;
   password: string;
 } & TExtra;

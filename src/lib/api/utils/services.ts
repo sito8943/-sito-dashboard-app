@@ -9,30 +9,64 @@ export enum Methods {
   DELETE = "DELETE",
 }
 
+export type RequestOptions = {
+  headers?: HeadersInit;
+  credentials?: RequestCredentials;
+};
+
+export type RequestConfig = HeadersInit | RequestOptions;
+
+const isRequestOptions = (config: RequestConfig): config is RequestOptions => {
+  if (Array.isArray(config)) return false;
+  if (config instanceof Headers) return false;
+  return (
+    typeof config === "object" &&
+    config !== null &&
+    ("headers" in config || "credentials" in config)
+  );
+};
+
+const toRequestOptions = (config?: RequestConfig): RequestOptions => {
+  if (!config) return {};
+  if (isRequestOptions(config)) return config;
+  return { headers: config };
+};
+
+const toHeaderRecord = (headers?: HeadersInit): Record<string, string> => {
+  if (!headers) return {};
+  if (headers instanceof Headers) return Object.fromEntries(headers.entries());
+  if (Array.isArray(headers)) return Object.fromEntries(headers);
+  return headers;
+};
+
 /**
  * @description Make a request to the API
  * @param url - URL to make the request
  * @param method - Request method
  * @param body - Request body
- * @param h - Request headers
+ * @param requestConfig - Request headers and fetch options
  * @returns Request response
  */
 export async function makeRequest<TBody = undefined, TResponse = unknown>(
   url: string,
   method: Methods = Methods.GET,
   body?: TBody,
-  customHeaders?: HeadersInit,
+  requestConfig?: RequestConfig,
 ): Promise<HttpResponse<TResponse>> {
+  const normalizedConfig = toRequestOptions(requestConfig);
   const headers: HeadersInit = {
-    ...(body ? { "Content-Type": "application/json" } : {}),
-    ...customHeaders,
+    ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+    ...toHeaderRecord(normalizedConfig.headers),
   };
 
   try {
     const response = await fetch(url, {
       method,
       headers,
-      ...(body ? { body: JSON.stringify(body) } : {}),
+      ...(normalizedConfig.credentials
+        ? { credentials: normalizedConfig.credentials }
+        : {}),
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     });
 
     const rawText = await response.text();
