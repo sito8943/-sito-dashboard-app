@@ -311,12 +311,23 @@ export class APIClient {
   ) {
     const builtUrl = parseQueries<TDto, TFilter>(endpoint, query, filters);
 
-    const { data: result, error } = await this.makeRequestWithRefresh<
-      QueryResult<TDto>
-    >(builtUrl, Methods.GET);
-    if (error) throw error;
+    const {
+      data: result,
+      error,
+      status,
+    } = await this.makeRequestWithRefresh<QueryResult<TDto>>(
+      builtUrl,
+      Methods.GET,
+    );
+    if (error || status < 200 || status >= 300 || !result)
+      throw (
+        error ?? {
+          status,
+          message: String(status),
+        }
+      );
 
-    return result as QueryResult<TDto>;
+    return result;
   }
 
   /**

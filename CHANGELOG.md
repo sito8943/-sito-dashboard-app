@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.50] - 2026-03-19
+
+### Changed
+
+- Bumped package version to `0.0.50`.
+- Updated auth DTO generic defaults to avoid over-constraining base fields:
+  - `BaseAuthDto<TExtra extends object = object>`
+  - `BaseRegisterDto<TExtra extends object = object, TAuthExtra extends object = object>`
+  - `RegisterDto<TExtra extends object = object, TAuthExtra extends object = object>`
+
+### Fixed
+
+- Fixed a consumer-facing TypeScript compatibility issue where default auth/register DTO generics could collapse base fields like `email`, `password`, and `rPassword` to `never`.
+- Added a type-focused regression test for default `AuthDto`, `BaseAuthDto`, `RegisterDto`, and `BaseRegisterDto` assignability.
+- Fixed `APIClient.get()` error handling to reject non-2xx responses consistently with `doQuery`, `post`, `patch`, and `delete`, instead of potentially returning an invalid query result.
+- Added a regression test covering failed `get()` responses without a populated `error` payload.
+- Fixed `TabsLayout` link-mode fallback navigation for tabs without an explicit `to`, so the underlying `Tab` component can correctly fall back to `#id` instead of receiving an empty route.
+- Added a regression test covering the default `#id` fallback for route-less tabs.
+- Fixed `TabsLayout` controlled-mode tab clicks so internal state is only updated in uncontrolled usage; controlled usage now relies solely on `currentTab` from the parent.
+- Added a regression test covering controlled `TabsLayout` behavior, ensuring tab clicks emit `onTabChange` without switching content until the parent updates state.
+- Fixed `ManagerProvider` default React Query setup so each provider instance creates its own `QueryClient` instead of reusing a shared singleton across trees.
+- Added a regression test covering `ManagerProvider` isolation between separate provider instances while preserving support for an injected `queryClient`.
+- Updated ESLint ignores to exclude generated `storybook-static/**` output so `npm run lint` only checks source files.
+
+### Documentation
+
+- Updated `README.md` and `docs/CONSUMER_GUIDE.md` to clarify that `ManagerProvider` creates an isolated default `QueryClient` per provider instance, and that consumers can still inject a custom `queryClient` when they need shared cache state or custom React Query defaults.
+
 ## [0.0.49] - 2026-03-11
 
 ### Changed

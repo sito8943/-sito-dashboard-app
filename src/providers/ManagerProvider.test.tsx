@@ -51,4 +51,22 @@ describe("ManagerProvider", () => {
 
     expect(result.current).toBe(customQueryClient);
   });
+
+  it("creates an isolated default query client per provider instance", () => {
+    const wrapperOne = ({ children }: { children: ReactNode }) => (
+      <ManagerProvider manager={manager}>{children}</ManagerProvider>
+    );
+    const wrapperTwo = ({ children }: { children: ReactNode }) => (
+      <ManagerProvider manager={manager}>{children}</ManagerProvider>
+    );
+
+    const first = renderHook(() => useQueryClient(), {
+      wrapper: wrapperOne,
+    });
+    const second = renderHook(() => useQueryClient(), {
+      wrapper: wrapperTwo,
+    });
+
+    expect(first.result.current).not.toBe(second.result.current);
+  });
 });

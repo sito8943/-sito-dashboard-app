@@ -205,7 +205,8 @@ Main optional props:
 ## Initial setup example
 
 Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.
-`ManagerProvider` mounts `QueryClientProvider` internally and accepts an optional `queryClient` prop when you want custom React Query defaults.
+`ManagerProvider` mounts `QueryClientProvider` internally and creates an isolated default `QueryClient` per provider instance.
+If you need custom React Query defaults or want to share a client intentionally, pass your own client with `queryClient={queryClient}`.
 
 ```tsx
 import type { ReactNode } from "react";

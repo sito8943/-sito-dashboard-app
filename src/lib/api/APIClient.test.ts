@@ -404,6 +404,21 @@ describe("APIClient", () => {
     expect(result.items[0]?.id).toBe(1);
   });
 
+  it("throws fallback error in get when response status is not successful", async () => {
+    makeRequestMock.mockResolvedValue({
+      data: null,
+      status: 500,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+
+    await expect(client.get<UserDto, UserFilterDto>("/users")).rejects.toEqual({
+      status: 500,
+      message: "500",
+    });
+  });
+
   it("throws post fallback error when response data is missing", async () => {
     makeRequestMock.mockResolvedValue({
       data: null,

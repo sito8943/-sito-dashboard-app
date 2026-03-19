@@ -38,11 +38,13 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
           <li key={id}>
             <Tab
               onClick={() => {
-                setInternalTab(id);
+                if (currentTab === undefined) {
+                  setInternalTab(id);
+                }
                 onTabChange?.(id);
               }}
               id={id}
-              to={to ?? ""}
+              to={to}
               siblings={tabs.length > 1}
               active={activeTab === id}
               useLinks={useLinks}
