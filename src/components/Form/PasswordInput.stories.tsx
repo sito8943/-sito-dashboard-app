@@ -38,6 +38,9 @@ export const Basic: Story = {
 };
 
 export const CustomLabel: Story = {
+  args: {
+    value: "",
+  },
   render: (args) => {
     const ref = useRef<HTMLInputElement | null>(null);
     const [value, setValue] = useState("");
@@ -62,6 +65,9 @@ export const CustomLabel: Story = {
 };
 
 export const CustomLabelWithState: Story = {
+  args: {
+    value: "",
+  },
   render: (args) => {
     const ref = useRef<HTMLInputElement | null>(null);
     const [value, setValue] = useState("");

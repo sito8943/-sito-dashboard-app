@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import { TabsLayout } from "./TabsLayout";
 import { ConfigProvider } from "providers/ConfigProvider";
+import type { BaseLinkPropsType } from "components/types";
+import type { Location } from "lib";
 
 vi.mock("../Buttons", () => ({
   Button: ({
@@ -16,16 +18,15 @@ vi.mock("../Buttons", () => ({
   }) => <button {...props}>{children}</button>,
 }));
 
-const Link = ({
-  to,
-  children,
-  ...rest
-}: {
-  to: string;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) => (
+const mockLocation: Location = {
+  pathname: "/",
+  search: "",
+  hash: "",
+  state: null,
+  key: "default",
+};
+
+const Link = ({ to, children, ...rest }: BaseLinkPropsType) => (
   <a href={to} {...rest}>
     {children}
   </a>
@@ -35,7 +36,7 @@ describe("TabsLayout", () => {
   it("falls back to #id when a tab does not provide a route", () => {
     render(
       <ConfigProvider
-        location={{ pathname: "/", search: "", hash: "" }}
+        location={mockLocation}
         navigate={() => {}}
         linkComponent={Link}
       >
@@ -62,7 +63,7 @@ describe("TabsLayout", () => {
 
     render(
       <ConfigProvider
-        location={{ pathname: "/", search: "", hash: "" }}
+        location={mockLocation}
         navigate={() => {}}
         linkComponent={Link}
       >
