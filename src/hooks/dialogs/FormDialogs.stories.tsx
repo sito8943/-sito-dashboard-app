@@ -154,7 +154,7 @@ const PutDialogDemo = () => {
     title: "Edit Product",
     defaultValues: { name: "" },
     getFunction: async (id) => ({ id, name: `Product ${id}` }),
-    dtoToForm: (dto) => (dto),
+    dtoToForm: (dto) => dto,
     mutationFn: async (payload) => payload,
     mapOut: (values, dto) => ({ id: dto?.id ?? 0, name: values.name }),
     onSuccess: (result) => setUpdated(result),
