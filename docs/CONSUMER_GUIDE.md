@@ -250,6 +250,56 @@ const deleteDialog = useDeleteDialog({
 });
 ```
 
+`useFormDialog` is now the generic dialog-form lifecycle hook and also supports local/state-only forms (filters, settings, feature flags).
+For CRUD persistence, prefer wrappers:
+- `usePostDialog`: create flow (no `get` by id).
+- `usePutDialog`: edit flow (`getFunction` + mutate).
+
+```tsx
+import {
+  FormDialog,
+  useFormDialog,
+  usePostDialog,
+  usePutDialog,
+} from "@sito/dashboard-app";
+
+// 1) Local/state-only dialog (filters)
+const filtersDialog = useFormDialog<never, never, never, ProductFilters>({
+  mode: "state",
+  title: "Filters",
+  defaultValues: { search: "", minPrice: 0 },
+  reinitializeOnOpen: true,
+  mapIn: () => tableFilters,
+  onSubmit: (values) => setTableFilters(values),
+});
+
+// 2) Create dialog (POST)
+const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
+  title: "Create product",
+  defaultValues: { name: "", price: 0 },
+  mutationFn: (dto) => api.products.insert(dto),
+  mapOut: (values) => ({ name: values.name, price: values.price }),
+  queryKey: ["products"],
+});
+
+// 3) Edit dialog (PUT)
+const editDialog = usePutDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+  title: "Edit product",
+  defaultValues: { name: "", price: 0 },
+  getFunction: (id) => api.products.getById(id),
+  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
+  mutationFn: (dto) => api.products.update(dto),
+  mapOut: (values, dto) => ({ id: dto?.id ?? 0, ...values }),
+  queryKey: ["products"],
+});
+
+<FormDialog<ProductForm> {...createDialog}>{/* fields */}</FormDialog>;
+```
+
+Compatibility note:
+- The previous entity-coupled `useFormDialog` signature still works for transition.
+- New code should use `usePostDialog` and `usePutDialog` for remote CRUD.
+
 ### 6.3 Form hooks
 
 ```tsx
