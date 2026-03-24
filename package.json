@@ -33,7 +33,7 @@
     "build": "tsc && vite build",
     "lint": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write . && npm run depcheck",
     "depcheck": "node ./scripts/depcheck.cjs .",
-    "test": "vitest run",
+    "test": "NODE_OPTIONS=--max-old-space-size=6144 vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
