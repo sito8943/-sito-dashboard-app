@@ -116,7 +116,7 @@ export const Page = <TEntity extends BaseEntityDto>(
           color={addOptions.color ?? "primary"}
           variant={addOptions.variant ?? "submit"}
           onClick={() => addOptions.onClick?.()}
-          className={`button fab ${addOptions.className ?? ""}`}
+          className={`button page-fab ${addOptions.className ?? ""}`}
         />
       )}
     </main>
