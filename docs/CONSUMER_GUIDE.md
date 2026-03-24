@@ -252,6 +252,7 @@ const deleteDialog = useDeleteDialog({
 
 `useFormDialog` is now the generic dialog-form lifecycle hook and also supports local/state-only forms (filters, settings, feature flags).
 For CRUD persistence, prefer wrappers:
+
 - `usePostDialog`: create flow (no `get` by id).
 - `usePutDialog`: edit flow (`getFunction` + mutate).
 
@@ -283,7 +284,12 @@ const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
 });
 
 // 3) Edit dialog (PUT)
-const editDialog = usePutDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+const editDialog = usePutDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Edit product",
   defaultValues: { name: "", price: 0 },
   getFunction: (id) => api.products.getById(id),
@@ -297,6 +303,7 @@ const editDialog = usePutDialog<ProductDto, UpdateProductDto, ProductDto, Produc
 ```
 
 Compatibility note:
+
 - The previous entity-coupled `useFormDialog` signature still works for transition.
 - New code should use `usePostDialog` and `usePutDialog` for remote CRUD.
 
