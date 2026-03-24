@@ -111,6 +111,13 @@ describe("useFormDialog", () => {
 
     act(() => {
       result.current.handleClose();
+    });
+
+    await waitFor(() => {
+      expect(result.current.open).toBe(false);
+    });
+
+    act(() => {
       currentFilters = { term: "second" };
       result.current.openDialog();
     });

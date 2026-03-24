@@ -465,6 +465,7 @@ const { open: openDeleteDialog, dialog: deleteDialog } = useDeleteDialog({
 
 Use `useFormDialog` for local/state-only dialogs (filters, settings).
 For CRUD persistence flows, prefer:
+
 - `usePostDialog` for create
 - `usePutDialog` for edit
 
