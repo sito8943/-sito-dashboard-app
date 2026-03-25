@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.51] - 2026-03-24
+
+### Added
+
+- Added a new generic form-dialog core mode (`mode: "state" | "entity"`) in `useFormDialog` so it can also drive local/state-only dialog workflows (filters, settings, feature flags), not only mutation-driven CRUD flows.
+- Added `usePostDialog` as the recommended create (POST) wrapper on top of `useFormDialog`.
+- Added `usePutDialog` as the recommended edit (PUT) wrapper on top of `useFormDialog`, including `getFunction` hydration and optional `dtoToForm`/`mapOut` mapping support.
+- Added `useFormDialog` return helpers for state/entity workflows:
+  - `mode`, `id`, `isSubmitting`, `onApply`, `onClear`
+- Added a full test suite for the new dialog patterns:
+  - `useFormDialog.test.tsx`
+  - `usePostDialog.test.tsx`
+  - `usePutDialog.test.tsx`
+- Added Storybook examples for state/create/edit dialog flows in `FormDialogs.stories.tsx`.
+
+### Changed
+
+- Bumped package version to `0.0.51`.
+- Updated `@sito/dashboard` peer/dev dependency to `^0.0.71`.
+- Refactored dialog hook types to support both:
+  - legacy entity-coupled `useFormDialog` usage
+  - new core mode-based usage with `mapIn`/`mapOut`, `resetOnOpen`, `reinitializeOnOpen`, and submit/apply/clear handlers
+- Exported `usePostDialog` and `usePutDialog` from the dialogs hooks index/public API.
+- Added transitional aliases for entity usage:
+  - `useFormDialogLegacy` (deprecated)
+  - `useEntityFormDialog` (deprecated)
+
+### Fixed
+
+- Fixed `Page` floating action button class naming to use `page-fab` instead of `fab`, restoring the expected component-level style hook.
+
+### Documentation
+
+- Updated `README.md` hook list to include `useFormDialog`, `usePostDialog`, and `usePutDialog`.
+- Updated `docs/CONSUMER_GUIDE.md` with new form-dialog patterns:
+  - generic `useFormDialog` for local/state forms
+  - `usePostDialog` for create flows
+  - `usePutDialog` for edit flows
+- Updated `docs/RECIPES.md` with end-to-end examples for state filters, create dialogs, and edit dialogs.
+
 ## [0.0.50] - 2026-03-19
 
 ### Changed

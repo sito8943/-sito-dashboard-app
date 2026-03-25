@@ -7,71 +7,81 @@ import dts from "vite-plugin-dts";
 
 const srcPath = resolve(__dirname, "src");
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      components: resolve(srcPath, "components"),
-      providers: resolve(srcPath, "providers"),
-      lib: resolve(srcPath, "lib"),
-      hooks: resolve(srcPath, "hooks"),
-      layouts: resolve(__dirname, "layouts"),
-      views: resolve(__dirname, "views"),
-    },
-  },
-  plugins: [
-    react(),
-    dts({
-      insertTypesEntry: true,
-      exclude: [
-        "src/**/*.stories.ts",
-        "src/**/*.test.ts",
-        "src/**/*.test.tsx",
-        "src/**/*.stories.tsx",
-        "src/test/**",
-      ],
-      beforeWriteFile: (filePath, content) => {
-        const normalizedPath = filePath.replaceAll("\\", "/");
-        if (
-          normalizedPath.endsWith(".test.d.ts") ||
-          normalizedPath.endsWith(".stories.d.ts") ||
-          normalizedPath.includes("/test/")
-        )
-          return false;
-        return { filePath, content };
+export default defineConfig(() => {
+  const isVitest = process.env.VITEST === "true";
+
+  return {
+    resolve: {
+      alias: {
+        components: resolve(srcPath, "components"),
+        providers: resolve(srcPath, "providers"),
+        lib: resolve(srcPath, "lib"),
+        hooks: resolve(srcPath, "hooks"),
+        layouts: resolve(__dirname, "layouts"),
+        views: resolve(__dirname, "views"),
       },
-    }),
-    libInjectCss(),
-    tailwindcss(),
-  ],
-  build: {
-    copyPublicDir: false,
-    lib: {
-      entry: resolve(__dirname, "src/main.ts"),
-      name: "@sito/dashboard-app",
-      fileName: "dashboard-app",
-      formats: ["es", "cjs"],
     },
-    rollupOptions: {
-      external: [
-        "react",
-        "react/jsx-runtime",
-        "react-dom",
-        "@sito/dashboard",
-        "@tanstack/react-query",
-        "react-hook-form",
-        "@fortawesome/fontawesome-svg-core",
-        "@fortawesome/free-brands-svg-icons",
-        "@fortawesome/free-regular-svg-icons",
-        "@fortawesome/free-solid-svg-icons",
-        "@fortawesome/react-fontawesome",
-      ],
+    plugins: [
+      react(),
+      ...(!isVitest
+        ? [
+            dts({
+              insertTypesEntry: true,
+              exclude: [
+                "src/**/*.stories.ts",
+                "src/**/*.test.ts",
+                "src/**/*.test.tsx",
+                "src/**/*.stories.tsx",
+                "src/test/**",
+              ],
+              beforeWriteFile: (filePath, content) => {
+                const normalizedPath = filePath.replaceAll("\\", "/");
+                if (
+                  normalizedPath.endsWith(".test.d.ts") ||
+                  normalizedPath.endsWith(".stories.d.ts") ||
+                  normalizedPath.includes("/test/")
+                )
+                  return false;
+                return { filePath, content };
+              },
+            }),
+            libInjectCss(),
+            tailwindcss(),
+          ]
+        : []),
+    ],
+    build: {
+      copyPublicDir: false,
+      lib: {
+        entry: resolve(__dirname, "src/main.ts"),
+        name: "@sito/dashboard-app",
+        fileName: "dashboard-app",
+        formats: ["es", "cjs"],
+      },
+      rollupOptions: {
+        external: [
+          "react",
+          "react/jsx-runtime",
+          "react-dom",
+          "@sito/dashboard",
+          "@tanstack/react-query",
+          "react-hook-form",
+          "@fortawesome/fontawesome-svg-core",
+          "@fortawesome/free-brands-svg-icons",
+          "@fortawesome/free-regular-svg-icons",
+          "@fortawesome/free-solid-svg-icons",
+          "@fortawesome/react-fontawesome",
+        ],
+      },
     },
-  },
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: "./src/test/setup.ts",
-    include: ["src/**/*.test.{ts,tsx}"],
-    exclude: ["node_modules", "dist"],
-  },
+    test: {
+      globals: true,
+      environment: "jsdom",
+      setupFiles: "./src/test/setup.ts",
+      include: ["src/**/*.test.{ts,tsx}"],
+      exclude: ["node_modules", "dist"],
+      minWorkers: 1,
+      maxWorkers: 2,
+    },
+  };
 });
