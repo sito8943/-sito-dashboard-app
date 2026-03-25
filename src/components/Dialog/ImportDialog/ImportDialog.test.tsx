@@ -41,14 +41,29 @@ vi.mock("components", () => ({
   DialogActions: ({
     onPrimaryClick,
     onCancel,
+    extraActions,
   }: {
     onPrimaryClick?: () => void;
     onCancel: () => void;
+    extraActions?: Array<{
+      id?: string | number;
+      onClick?: () => void;
+      children?: ReactNode;
+    }>;
   }) => (
     <div>
       <button type="button" onClick={onPrimaryClick}>
         ok
       </button>
+      {(extraActions ?? []).map((action, index) => (
+        <button
+          key={`${action.id ?? `extra-${index}`}`}
+          type="button"
+          onClick={action.onClick}
+        >
+          {action.children}
+        </button>
+      ))}
       <button type="button" onClick={onCancel}>
         cancel
       </button>
@@ -131,5 +146,34 @@ describe("ImportDialog", () => {
     });
 
     expect(renderCustomPreview).toHaveBeenLastCalledWith([]);
+  });
+
+  it("renders and executes extra actions", () => {
+    const onDownloadTemplate = vi.fn();
+
+    render(
+      <ImportDialog<PreviewRow>
+        open
+        title="Import"
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+        extraActions={[
+          {
+            id: "download-template-action",
+            type: "button",
+            children: "Download template",
+            onClick: onDownloadTemplate,
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Download template",
+      }),
+    );
+
+    expect(onDownloadTemplate).toHaveBeenCalledOnce();
   });
 });
