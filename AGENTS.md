@@ -12,7 +12,7 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 | UI Framework | React                  | 18.3.1     |
 | Language     | TypeScript             | 5.7.2      |
 | Runtime      | Node.js                | 20.x       |
-| Styling      | Tailwind CSS + Emotion | 4.x / 11.x |
+| Styling      | Tailwind CSS           | 4.x        |
 | Icons        | FontAwesome            | 7.0.0      |
 | Forms        | React Hook Form        | 7.61.1     |
 | Server State | TanStack React Query   | 5.x        |
@@ -58,7 +58,7 @@ import {
   NavbarProvider,
   IManager,
 } from "@sito/dashboard-app";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 const authStorageKeys = {
@@ -80,30 +80,28 @@ const manager = new IManager(
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ConfigProvider
-        location={window.location}
-        navigate={(route) => {
-          /* router navigate */
-        }}
-        linkComponent={MyLinkComponent}
-      >
-        <ManagerProvider manager={manager}>
-          <AuthProvider
-            user={authStorageKeys.user}
-            remember={authStorageKeys.remember}
-            refreshTokenKey={authStorageKeys.refreshTokenKey}
-            accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
-          >
-            <NotificationProvider>
-              <DrawerMenuProvider>
-                <NavbarProvider>{/* app routes */}</NavbarProvider>
-              </DrawerMenuProvider>
-            </NotificationProvider>
-          </AuthProvider>
-        </ManagerProvider>
-      </ConfigProvider>
-    </QueryClientProvider>
+    <ConfigProvider
+      location={window.location}
+      navigate={(route) => {
+        /* router navigate */
+      }}
+      linkComponent={MyLinkComponent}
+    >
+      <ManagerProvider manager={manager} queryClient={queryClient}>
+        <AuthProvider
+          user={authStorageKeys.user}
+          remember={authStorageKeys.remember}
+          refreshTokenKey={authStorageKeys.refreshTokenKey}
+          accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
+        >
+          <NotificationProvider>
+            <DrawerMenuProvider>
+              <NavbarProvider>{/* app routes */}</NavbarProvider>
+            </DrawerMenuProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ManagerProvider>
+    </ConfigProvider>
   );
 }
 ```
@@ -160,7 +158,6 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Loading` / `SplashScreen`               | Loading indicators                                                                                                                                                                                        |
 | `IconButton`                             | FontAwesome-based icon button (overrides `@sito/dashboard`'s version)                                                                                                                                     |
 | `ToTop`                                  | Floating scroll-to-top button; customizable threshold, target coordinates, icon, tooltip, and click behavior                                                                                              |
-| `Clock`                                  | (**deprecated**) Displays a formatted clock in the navbar; will be removed in a future release                                                                                                            |
 
 ---
 
@@ -402,7 +399,7 @@ function MyPage() {
   });
 
   const { action: editAction } = useEditAction({
-    onClick: (record) => openEditDialog(record),
+    onClick: (id) => openEditDialog(id),
   });
 
   return <Actions actions={[editAction(record), deleteAction(record)]} />;
@@ -458,8 +455,9 @@ import {
   useRestoreDialog,
 } from "@sito/dashboard-app";
 
-const { open: openDeleteDialog, dialog: deleteDialog } = useDeleteDialog({
-  onConfirm: (ids) => mutate(ids),
+const deleteDialog = useDeleteDialog({
+  queryKey: ["products"],
+  mutationFn: (ids) => api.products.softDelete(ids),
 });
 ```
 
@@ -473,7 +471,6 @@ For CRUD persistence flows, prefer:
 
 ```tsx
 import { usePostForm } from "@sito/dashboard-app";
-import { useQueryClient } from "@tanstack/react-query";
 
 const formProps = usePostForm<
   ProductDto,
@@ -484,7 +481,6 @@ const formProps = usePostForm<
   defaultValues: { name: "", price: 0 },
   mutationFn: (data) => api.products.insert(data),
   queryKey: ["products"],
-  queryClient: useQueryClient(),
   onSuccess: () => closeDialog(),
 });
 
@@ -495,11 +491,12 @@ return <FormContainer {...formProps}>{/* inputs */}</FormContainer>;
 ### Query / mutation hooks
 
 ```tsx
-import { useDefaultQuery, useDefaultMutate } from "@sito/dashboard-app";
+import { useExportActionMutate } from "@sito/dashboard-app";
 
-const { data, isLoading } = useDefaultQuery<ProductDto>({
-  queryKey: ["products"],
-  queryFn: () => api.products.get(),
+const exportProducts = useExportActionMutate<ProductDto[], "products", Error>({
+  entity: "products",
+  mutationFn: () => api.products.export(),
+  onSuccessMessage: "Export generated",
 });
 ```
 
@@ -707,9 +704,9 @@ function MyComponent() {
   const handleAction = async () => {
     try {
       await doSomething();
-      showSuccessNotification({ body: "Done!" });
+      showSuccessNotification({ message: "Done!" });
     } catch (error) {
-      showErrorNotification({ body: "Something went wrong." });
+      showErrorNotification({ message: "Something went wrong." });
     }
   };
 }

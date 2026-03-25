@@ -20,7 +20,7 @@ pnpm add @sito/dashboard-app
 - `@tanstack/react-query` `5.83.0`
 - `react-hook-form` `7.61.1`
 - `@sito/dashboard` `^0.0.72`
-- Font Awesome + Emotion peers defined in `package.json`
+- Font Awesome peers defined in `package.json`
 
 Install all peers in consumer apps:
 

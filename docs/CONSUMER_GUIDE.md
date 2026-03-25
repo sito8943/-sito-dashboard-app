@@ -452,7 +452,7 @@ showErrorNotification({ message: "Something failed" });
 
 Full token and CSS override reference is available at:
 
-- `docs/THEME_AND_CSS_ES.md`
+- `docs/THEME_AND_CSS.md`
 
 ## 10. Minimum i18n coverage
 
