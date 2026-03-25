@@ -333,19 +333,22 @@ type CreateProductDto = {
 };
 
 export function CreateProductForm() {
-  const form = usePostForm<ProductDto, CreateProductDto, ProductDto, ProductForm>(
-    {
-      defaultValues: {
-        name: "",
-        description: "",
-        adminPassword: "",
-      },
-      queryKey: ["products"],
-      mutationFn: (payload) => api.products.insert(payload),
-      formToDto: (values) => values,
-      onSuccessMessage: "Product created",
+  const form = usePostForm<
+    ProductDto,
+    CreateProductDto,
+    ProductDto,
+    ProductForm
+  >({
+    defaultValues: {
+      name: "",
+      description: "",
+      adminPassword: "",
     },
-  );
+    queryKey: ["products"],
+    mutationFn: (payload) => api.products.insert(payload),
+    formToDto: (values) => values,
+    onSuccessMessage: "Product created",
+  });
 
   return (
     <FormContainer<ProductForm> {...form}>
@@ -353,11 +356,7 @@ export function CreateProductForm() {
         name="name"
         control={form.control}
         render={({ field }) => (
-          <TextInput
-            {...field}
-            label="Name"
-            placeholder="Product name"
-          />
+          <TextInput {...field} label="Name" placeholder="Product name" />
         )}
       />
 
