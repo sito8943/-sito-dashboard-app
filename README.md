@@ -18,6 +18,7 @@ pnpm add @sito/dashboard-app
 - React `18.3.1`
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
+- `@supabase/supabase-js` `^2.49.0` (optional; only if using Supabase backend)
 - `react-hook-form` `7.61.1`
 - `@sito/dashboard` `^0.0.72`
 - Font Awesome peers defined in `package.json`
@@ -37,6 +38,12 @@ npm install \
   @fortawesome/react-fontawesome@0.2.3
 ```
 
+If your app uses the Supabase backend:
+
+```bash
+npm install @supabase/supabase-js@^2.49.0
+```
+
 ## Core exports
 
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`, `ToTop`
@@ -44,7 +51,7 @@ npm install \
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
 - Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), and `useSupabase`
 
 ## Component usage patterns
 
@@ -318,6 +325,61 @@ Notes:
 - Keep `ManagerProvider` above `AuthProvider`.
 - `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
 - If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
+
+## Supabase setup (optional backend)
+
+The library does not read `.env` values directly. The consumer app must create the Supabase client and pass it to `SupabaseManagerProvider`.
+
+Use frontend-safe keys only:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Do not expose service-role keys in the browser.
+
+```tsx
+import type { ReactNode } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { Link } from "react-router-dom";
+import {
+  ConfigProvider,
+  SupabaseManagerProvider,
+  SupabaseAuthProvider,
+  NotificationProvider,
+  DrawerMenuProvider,
+  NavbarProvider,
+} from "@sito/dashboard-app";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
+
+function AppProviders({ children }: { children: ReactNode }) {
+  return (
+    <ConfigProvider
+      location={window.location}
+      navigate={() => {}}
+      linkComponent={Link}
+    >
+      <SupabaseManagerProvider supabase={supabase}>
+        <SupabaseAuthProvider>
+          <NotificationProvider>
+            <DrawerMenuProvider>
+              <NavbarProvider>{children}</NavbarProvider>
+            </DrawerMenuProvider>
+          </NotificationProvider>
+        </SupabaseAuthProvider>
+      </SupabaseManagerProvider>
+    </ConfigProvider>
+  );
+}
+```
+
+`useAuth` keeps the same contract with `SupabaseAuthProvider` (`account`, `logUser`, `logoutUser`, `logUserFromLocal`, `isInGuestMode`, `setGuestMode`).
+
+`SupabaseDataClient` follows the same generic surface as `BaseClient` and `IndexedDBClient`, so entity clients can switch backend with minimal UI/hook changes.
+It also supports optional configuration for conventional columns: `idColumn` (default `"id"`), `deletedAtColumn` (default `"deletedAt"`), and `defaultSortColumn`.
 
 ## Built-in auth refresh behavior
 

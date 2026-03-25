@@ -49,6 +49,7 @@
   "author": "sito8943",
   "license": "MIT",
   "peerDependencies": {
+    "@supabase/supabase-js": "^2.49.0",
     "@fortawesome/fontawesome-svg-core": "7.0.0",
     "@fortawesome/free-brands-svg-icons": "7.0.0",
     "@fortawesome/free-regular-svg-icons": "7.0.0",
@@ -59,6 +60,11 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "7.61.1"
+  },
+  "peerDependenciesMeta": {
+    "@supabase/supabase-js": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "7.0.0",

@@ -5,3 +5,5 @@ export * from "./APIClient";
 export * from "./AuthClient";
 export * from "./BaseClient";
 export * from "./IndexedDBClient";
+export * from "./SupabaseDataClient";
+export * from "./supabaseAuth";
