@@ -20,6 +20,7 @@ export const usePutDialog = <
 ): UseFormDialogReturnType<TFormType> => {
   const queryClient = useQueryClient();
   const entityRef = useRef<TDto>();
+  const lastHydratedDataRef = useRef<TDto>();
 
   const {
     mutationFn,
@@ -32,6 +33,11 @@ export const usePutDialog = <
     title,
     ...coreProps
   } = props;
+  const dtoToFormRef = useRef(dtoToForm);
+
+  useEffect(() => {
+    dtoToFormRef.current = dtoToForm;
+  }, [dtoToForm]);
 
   const dialogFn = useMutation<TMutationOutputDto, Error, TMutationDto>({
     mutationFn,
@@ -72,16 +78,18 @@ export const usePutDialog = <
 
   useEffect(() => {
     if (!getByIdQuery.data) return;
+    if (lastHydratedDataRef.current === getByIdQuery.data) return;
 
     entityRef.current = getByIdQuery.data;
+    lastHydratedDataRef.current = getByIdQuery.data;
 
-    if (dtoToForm && resetForm) {
-      resetForm(dtoToForm(getByIdQuery.data));
+    if (dtoToFormRef.current && resetForm) {
+      resetForm(dtoToFormRef.current(getByIdQuery.data));
       return;
     }
 
     resetForm?.(getByIdQuery.data as unknown as TFormType);
-  }, [dtoToForm, getByIdQuery.data, resetForm]);
+  }, [getByIdQuery.data, resetForm]);
 
   return {
     ...dialog,
