@@ -122,9 +122,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
 | `PrettyGrid<T>`          | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName` | Grid with empty state and optional infinite scroll |
 | `Error`                  | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)         | Reusable error fallback                            |
 | `Dialog`                 | `open`, `title`, `handleClose`, `containerClassName`, `className`                | Base modal                                         |
-| `FormDialog<TForm>`      | `Dialog` props + `FormContainer` props                                           | Form modal                                         |
-| `ConfirmationDialog`     | `open`, `title`, `handleSubmit`, `handleClose`                                   | Basic confirmation flows                           |
-| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`    | Import with preview + override                     |
+| `FormDialog<TForm>`      | `Dialog` props + `FormContainer` props + `extraActions`                          | Form modal with optional secondary footer actions  |
+| `ConfirmationDialog`     | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`      | Basic confirmation flows                           |
+| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions` | Import with preview + override                     |
 | `Drawer<MenuKeys>`       | `open`, `onClose`, `menuMap`, `logo`                                             | Side navigation                                    |
 | `Navbar`                 | `openDrawer`, `menuButtonProps`, `showSearch`                                    | Top bar with dynamic title/actions                 |
 | `ToTop`                  | `threshold`, `tooltip`, `scrollOnClick`, `className`                             | Floating scroll-to-top button                      |
@@ -222,6 +222,41 @@ export function ProductsPage() {
   return <div>...</div>;
 }
 ```
+
+### 5.6 Dialogs with `extraActions`
+
+```tsx
+import type { ButtonPropsType } from "@sito/dashboard-app";
+import { ConfirmationDialog, FormDialog } from "@sito/dashboard-app";
+
+const extraActions: ButtonPropsType[] = [
+  {
+    id: "save-draft",
+    type: "button",
+    variant: "outlined",
+    color: "secondary",
+    children: "Save draft",
+    onClick: () => saveDraft(),
+  },
+];
+
+<ConfirmationDialog
+  open={open}
+  title="Confirm change"
+  handleSubmit={confirm}
+  handleClose={close}
+  extraActions={extraActions}
+/>;
+
+<FormDialog<ProductForm>
+  {...dialog}
+  extraActions={extraActions}
+>
+  {/* fields */}
+</FormDialog>;
+```
+
+Use `type: "button"` in `FormDialog` extra actions unless you want them to submit the form.
 
 ## 6. High-Level Hooks
 

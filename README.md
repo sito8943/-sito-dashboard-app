@@ -148,6 +148,36 @@ const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
 });
 ```
 
+### Dialog extra actions
+
+`ConfirmationDialog`, `FormDialog`, and `ImportDialog` support optional `extraActions`.
+Use this when you need secondary actions in the dialog footer (for example, "Save draft", "Help", or "Download template").
+
+```tsx
+import { ConfirmationDialog, type ButtonPropsType } from "@sito/dashboard-app";
+
+const extraActions: ButtonPropsType[] = [
+  {
+    id: "help-action",
+    type: "button",
+    variant: "outlined",
+    color: "secondary",
+    children: "Help",
+    onClick: () => openHelpPanel(),
+  },
+];
+
+<ConfirmationDialog
+  open={open}
+  title="Confirm delete"
+  handleClose={close}
+  handleSubmit={confirm}
+  extraActions={extraActions}
+/>;
+```
+
+For `FormDialog`, set `type: "button"` on extra actions unless you explicitly want submit behavior.
+
 ### PrettyGrid infinite scroll
 
 `PrettyGrid` supports optional infinite loading with `IntersectionObserver`.
