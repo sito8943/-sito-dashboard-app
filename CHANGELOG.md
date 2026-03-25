@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Bumped package version to `0.0.52`.
-- Updated `@sito/dashboard` peer/dev dependency to `^0.0.71`.
+- Updated `@sito/dashboard` peer/dev dependency to `^0.0.72`.
 - Refactored dialog hook types to support both:
   - legacy entity-coupled `useFormDialog` usage
   - new core mode-based usage with `mapIn`/`mapOut`, `resetOnOpen`, `reinitializeOnOpen`, and submit/apply/clear handlers

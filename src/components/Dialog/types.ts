@@ -3,6 +3,7 @@ import { FieldValues } from "react-hook-form";
 
 // form
 import { FormContainerPropsType } from "../Form";
+import { ButtonPropsType } from "components";
 
 export type DialogPropsType = {
   open?: boolean;
@@ -38,4 +39,5 @@ export type DialogActionsProps = {
   primaryAriaLabel?: string;
   cancelName?: string;
   cancelAriaLabel?: string;
+  extraActions?: ButtonPropsType[];
 };
