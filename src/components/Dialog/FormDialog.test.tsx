@@ -74,7 +74,7 @@ const FormDialogHarness = ({
 }: {
   onSubmit: (values: FormValues) => void | Promise<void>;
   extraActions?: Array<{
-    id?: string | number;
+    id?: string;
     type?: "button" | "submit" | "reset";
     onClick?: () => void;
     children?: ReactNode;
