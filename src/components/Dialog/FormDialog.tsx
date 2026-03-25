@@ -22,6 +22,7 @@ export const FormDialog = <TInput extends FieldValues>(
     handleClose,
     isLoading = false,
     buttonEnd = true,
+    extraActions = [],
     ...rest
   } = props;
 
@@ -42,6 +43,7 @@ export const FormDialog = <TInput extends FieldValues>(
           primaryAriaLabel={t("_accessibility:ariaLabels.submit")}
           cancelName={t("_accessibility:buttons.cancel")}
           cancelAriaLabel={t("_accessibility:ariaLabels.cancel")}
+          extraActions={extraActions}
         />
       </form>
     </Dialog>
