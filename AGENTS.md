@@ -7,16 +7,16 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 
 ## Tech Stack
 
-| Layer        | Technology             | Version    |
-| ------------ | ---------------------- | ---------- |
-| UI Framework | React                  | 18.3.1     |
-| Language     | TypeScript             | 5.7.2      |
-| Runtime      | Node.js                | 20.x       |
-| Styling      | Tailwind CSS           | 4.x        |
-| Icons        | FontAwesome            | 7.0.0      |
-| Forms        | React Hook Form        | 7.61.1     |
-| Server State | TanStack React Query   | 5.x        |
-| Base Library | @sito/dashboard        | ^0.0.72    |
+| Layer        | Technology           | Version |
+| ------------ | -------------------- | ------- |
+| UI Framework | React                | 18.3.1  |
+| Language     | TypeScript           | 5.7.2   |
+| Runtime      | Node.js              | 20.x    |
+| Styling      | Tailwind CSS         | 4.x     |
+| Icons        | FontAwesome          | 7.0.0   |
+| Forms        | React Hook Form      | 7.61.1  |
+| Server State | TanStack React Query | 5.x     |
+| Base Library | @sito/dashboard      | ^0.0.72 |
 
 ---
 
