@@ -56,3 +56,41 @@ export const Loading: Story = {
     );
   },
 };
+
+export const WithExtraActions: Story = {
+  args: {
+    open: true,
+    handleClose: () => {},
+    handleSubmit: () => {},
+    extraActions: [
+      {
+        id: "preview-action",
+        type: "button",
+        variant: "outlined",
+        color: "secondary",
+        children: "Preview",
+        onClick: () => {},
+      },
+      {
+        id: "archive-action",
+        type: "button",
+        variant: "text",
+        children: "Archive",
+        onClick: () => {},
+      },
+    ],
+  },
+  render: (args) => {
+    const [open, setOpen] = useState(true);
+    return (
+      <ConfirmationDialog
+        {...args}
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleSubmit={() => setOpen(false)}
+      >
+        <p>Use extra actions for secondary workflows before confirming.</p>
+      </ConfirmationDialog>
+    );
+  },
+};

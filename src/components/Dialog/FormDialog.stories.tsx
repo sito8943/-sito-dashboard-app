@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TextInput } from "@sito/dashboard";
+import { TextInput, type ButtonPropsType } from "@sito/dashboard";
 import { FormDialog } from "./FormDialog";
 
 type FormData = { description: string };
@@ -10,12 +10,14 @@ type FormDialogStoryProps = {
   title?: string;
   isLoading?: boolean;
   buttonEnd?: boolean;
+  extraActions?: ButtonPropsType[];
 };
 
 const FormDialogStory = ({
   title = "Edit Description",
   isLoading = false,
   buttonEnd = true,
+  extraActions = [],
 }: FormDialogStoryProps) => {
   const [open, setOpen] = useState(true);
   const { register, handleSubmit } = useForm<FormData>({
@@ -31,6 +33,7 @@ const FormDialogStory = ({
       handleClose={() => setOpen(false)}
       isLoading={isLoading}
       buttonEnd={buttonEnd}
+      extraActions={extraActions}
     >
       <TextInput
         value={""}
@@ -67,5 +70,27 @@ export const Loading: Story = {
 export const ButtonsAlignedStart: Story = {
   args: {
     buttonEnd: false,
+  },
+};
+
+export const WithExtraActions: Story = {
+  args: {
+    extraActions: [
+      {
+        id: "save-draft-action",
+        type: "button",
+        variant: "outlined",
+        color: "secondary",
+        children: "Save draft",
+        onClick: () => {},
+      },
+      {
+        id: "discard-action",
+        type: "button",
+        variant: "text",
+        children: "Discard",
+        onClick: () => {},
+      },
+    ],
   },
 };
