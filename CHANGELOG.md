@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.51] - 2026-03-24
+## [0.0.51/0.0.52] - 2026-03-24
 
 ### Added
 
@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Bumped package version to `0.0.51`.
+- Bumped package version to `0.0.52`.
 - Updated `@sito/dashboard` peer/dev dependency to `^0.0.71`.
 - Refactored dialog hook types to support both:
   - legacy entity-coupled `useFormDialog` usage
