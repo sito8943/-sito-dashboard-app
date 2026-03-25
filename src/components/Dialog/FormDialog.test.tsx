@@ -10,13 +10,7 @@ vi.mock("@sito/dashboard", () => ({
 }));
 
 vi.mock("./Dialog", () => ({
-  Dialog: ({
-    children,
-    title,
-  }: {
-    children: ReactNode;
-    title: string;
-  }) => (
+  Dialog: ({ children, title }: { children: ReactNode; title: string }) => (
     <div role="dialog">
       <h2>{title}</h2>
       {children}
