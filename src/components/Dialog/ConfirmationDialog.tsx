@@ -20,6 +20,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogPropsType) => {
     handleSubmit,
     handleClose,
     isLoading = false,
+    extraActions = [],
     ...rest
   } = props;
 
@@ -39,6 +40,7 @@ export const ConfirmationDialog = (props: ConfirmationDialogPropsType) => {
         primaryAriaLabel={t("_accessibility:ariaLabels.ok")}
         cancelName={t("_accessibility:buttons.cancel")}
         cancelAriaLabel={t("_accessibility:ariaLabels.cancel")}
+        extraActions={extraActions}
       />
     </Dialog>
   );

@@ -19,7 +19,7 @@ pnpm add @sito/dashboard-app
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.71`
+- `@sito/dashboard` `^0.0.72`
 - Font Awesome + Emotion peers defined in `package.json`
 
 Install all peers in consumer apps:
@@ -27,7 +27,7 @@ Install all peers in consumer apps:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.71 \
+  @sito/dashboard@^0.0.72 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -147,6 +147,36 @@ const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
   renderCustomPreview: (items) => <ProductsPreviewTable items={items ?? []} />,
 });
 ```
+
+### Dialog extra actions
+
+`ConfirmationDialog`, `FormDialog`, and `ImportDialog` support optional `extraActions`.
+Use this when you need secondary actions in the dialog footer (for example, "Save draft", "Help", or "Download template").
+
+```tsx
+import { ConfirmationDialog, type ButtonPropsType } from "@sito/dashboard-app";
+
+const extraActions: ButtonPropsType[] = [
+  {
+    id: "help-action",
+    type: "button",
+    variant: "outlined",
+    color: "secondary",
+    children: "Help",
+    onClick: () => openHelpPanel(),
+  },
+];
+
+<ConfirmationDialog
+  open={open}
+  title="Confirm delete"
+  handleClose={close}
+  handleSubmit={confirm}
+  extraActions={extraActions}
+/>;
+```
+
+For `FormDialog`, set `type: "button"` on extra actions unless you explicitly want submit behavior.
 
 ### PrettyGrid infinite scroll
 

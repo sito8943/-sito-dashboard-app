@@ -9,6 +9,7 @@ type ImportDialogStoryProps = {
   helperText?: string;
   fileProcessor?: ImportDialogPropsType<ImportPreviewDto>["fileProcessor"];
   renderCustomPreview?: ImportDialogPropsType<ImportPreviewDto>["renderCustomPreview"];
+  extraActions?: ImportDialogPropsType<ImportPreviewDto>["extraActions"];
 };
 
 const sleep = (ms: number) =>
@@ -35,6 +36,7 @@ const ImportDialogStory = ({
   helperText = "Choose a file and confirm.",
   fileProcessor,
   renderCustomPreview,
+  extraActions = [],
 }: ImportDialogStoryProps) => {
   const [open, setOpen] = useState(true);
 
@@ -46,6 +48,7 @@ const ImportDialogStory = ({
       handleSubmit={() => setOpen(false)}
       fileProcessor={fileProcessor}
       renderCustomPreview={renderCustomPreview}
+      extraActions={extraActions}
     >
       <p className="mt-2">{helperText}</p>
     </ImportDialog>
@@ -99,5 +102,28 @@ export const WithCustomPreview: Story = {
         </ul>
       </div>
     ),
+  },
+};
+
+export const WithExtraActions: Story = {
+  args: {
+    extraActions: [
+      {
+        id: "download-template-action",
+        type: "button",
+        variant: "outlined",
+        color: "secondary",
+        children: "Download template",
+        onClick: () => {},
+      },
+      {
+        id: "clear-selection-action",
+        type: "button",
+        variant: "text",
+        children: "Clear",
+        onClick: () => {},
+      },
+    ],
+    helperText: "Use extra actions for template/help flows during import.",
   },
 };

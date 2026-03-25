@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.53] - 2026-03-25
+
+### Added
+
+- Added `extraActions?: ButtonPropsType[]` support for `ConfirmationDialog`, `FormDialog`, and `ImportDialog` by forwarding custom actions to `DialogActions`.
+- Added dialog component test coverage for `extraActions`:
+  - `DialogActions.test.tsx`
+  - `FormDialog.test.tsx`
+  - extended `ConfirmationDialog.test.tsx` and `ImportDialog.test.tsx`
+- Added Storybook `WithExtraActions` stories for:
+  - `DialogActions`
+  - `ConfirmationDialog`
+  - `FormDialog`
+  - `ImportDialog`
+
+### Documentation
+
+- Updated `README.md` with dialog `extraActions` usage notes and examples.
+- Updated `docs/CONSUMER_GUIDE.md` component table/examples to include dialog `extraActions`.
+
 ## [0.0.51/0.0.52] - 2026-03-24
 
 ### Added
@@ -20,7 +40,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Bumped package version to `0.0.52`.
-- Updated `@sito/dashboard` peer/dev dependency to `^0.0.71`.
+- Updated `@sito/dashboard` peer/dev dependency to `^0.0.72`.
 - Refactored dialog hook types to support both:
   - legacy entity-coupled `useFormDialog` usage
   - new core mode-based usage with `mapIn`/`mapOut`, `resetOnOpen`, `reinitializeOnOpen`, and submit/apply/clear handlers

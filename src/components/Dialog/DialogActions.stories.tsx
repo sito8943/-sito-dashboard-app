@@ -30,3 +30,25 @@ export const AlignedEnd: Story = {
     alignEnd: true,
   },
 };
+
+export const WithExtraActions: Story = {
+  args: {
+    extraActions: [
+      {
+        id: "save-draft-action",
+        type: "button",
+        variant: "outlined",
+        color: "secondary",
+        children: "Save draft",
+        onClick: () => {},
+      },
+      {
+        id: "discard-action",
+        type: "button",
+        variant: "text",
+        children: "Discard",
+        onClick: () => {},
+      },
+    ],
+  },
+};

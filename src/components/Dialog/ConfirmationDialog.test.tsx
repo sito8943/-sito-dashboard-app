@@ -34,6 +34,7 @@ vi.mock("./DialogActions", () => ({
     disabled,
     primaryAriaLabel,
     cancelAriaLabel,
+    extraActions,
   }: {
     primaryText: string;
     cancelText: string;
@@ -43,6 +44,11 @@ vi.mock("./DialogActions", () => ({
     disabled?: boolean;
     primaryAriaLabel?: string;
     cancelAriaLabel?: string;
+    extraActions?: Array<{
+      id?: string | number;
+      onClick?: () => void;
+      children?: React.ReactNode;
+    }>;
   }) => (
     <div>
       <button
@@ -53,6 +59,15 @@ vi.mock("./DialogActions", () => ({
         {isLoading && <span data-testid="loading" />}
         {primaryText}
       </button>
+      {(extraActions ?? []).map((action, index) => (
+        <button
+          key={`${action.id ?? `extra-${index}`}`}
+          type="button"
+          onClick={action.onClick}
+        >
+          {action.children}
+        </button>
+      ))}
       <button
         onClick={onCancel}
         disabled={disabled}
@@ -113,5 +128,27 @@ describe("ConfirmationDialog", () => {
   it("shows the loading indicator when isLoading is true", () => {
     render(<ConfirmationDialog {...baseProps} isLoading />);
     expect(screen.getByTestId("loading")).toBeInTheDocument();
+  });
+
+  it("renders and executes extra actions", () => {
+    const onPreview = vi.fn();
+
+    render(
+      <ConfirmationDialog
+        {...baseProps}
+        extraActions={[
+          {
+            id: "preview-action",
+            type: "button",
+            children: "Preview",
+            onClick: onPreview,
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Preview" }));
+
+    expect(onPreview).toHaveBeenCalledOnce();
   });
 });

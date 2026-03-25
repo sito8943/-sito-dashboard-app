@@ -26,6 +26,7 @@ export const DialogActions = (props: DialogActionsProps) => {
     primaryAriaLabel,
     cancelName,
     cancelAriaLabel,
+    extraActions = [],
   } = props;
 
   return (
@@ -51,6 +52,9 @@ export const DialogActions = (props: DialogActionsProps) => {
         ) : null}
         {primaryText}
       </Button>
+      {extraActions?.map((action) => (
+        <Button key={action.id} {...action}></Button>
+      ))}
       <Button
         type="button"
         variant="outlined"

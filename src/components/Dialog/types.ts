@@ -3,6 +3,7 @@ import { FieldValues } from "react-hook-form";
 
 // form
 import { FormContainerPropsType } from "../Form";
+import { ButtonPropsType } from "components";
 
 export type DialogPropsType = {
   open?: boolean;
@@ -17,11 +18,14 @@ export type DialogPropsType = {
 export interface ConfirmationDialogPropsType extends DialogPropsType {
   handleSubmit: () => void;
   isLoading?: boolean;
+  extraActions?: ButtonPropsType[];
 }
 
 export interface FormDialogPropsType<TFormType extends FieldValues>
   extends DialogPropsType,
-    Omit<FormContainerPropsType<TFormType>, "children"> {}
+    Omit<FormContainerPropsType<TFormType>, "children"> {
+  extraActions?: ButtonPropsType[];
+}
 
 export type DialogActionsProps = {
   primaryText: string;
@@ -38,4 +42,5 @@ export type DialogActionsProps = {
   primaryAriaLabel?: string;
   cancelName?: string;
   cancelAriaLabel?: string;
+  extraActions?: ButtonPropsType[];
 };

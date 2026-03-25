@@ -88,6 +88,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     renderCustomPreview,
     onOverrideChange,
     open,
+    extraActions = [],
     ...rest
   } = props;
 
@@ -197,6 +198,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         primaryAriaLabel={t("_accessibility:ariaLabels.ok")}
         cancelName={t("_accessibility:buttons.cancel")}
         cancelAriaLabel={t("_accessibility:ariaLabels.cancel")}
+        extraActions={extraActions}
       />
     </Dialog>
   );
