@@ -381,6 +381,77 @@ function AppProviders({ children }: { children: ReactNode }) {
 `SupabaseDataClient` follows the same generic surface as `BaseClient` and `IndexedDBClient`, so entity clients can switch backend with minimal UI/hook changes.
 It also supports optional configuration for conventional columns: `idColumn` (default `"id"`), `deletedAtColumn` (default `"deletedAt"`), and `defaultSortColumn`.
 
+### Supabase entity client example
+
+```ts
+import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  BaseCommonEntityDto,
+  BaseEntityDto,
+  BaseFilterDto,
+  DeleteDto,
+  ImportPreviewDto,
+  SupabaseDataClient,
+} from "@sito/dashboard-app";
+
+interface ProductDto extends BaseEntityDto {
+  name: string;
+  price: number;
+  categoryId?: number;
+}
+
+interface ProductCommonDto extends BaseCommonEntityDto {
+  name: string;
+}
+
+interface CreateProductDto {
+  name: string;
+  price: number;
+  categoryId?: number;
+}
+
+interface UpdateProductDto extends DeleteDto {
+  name?: string;
+  price?: number;
+  categoryId?: number;
+}
+
+interface ProductFilterDto extends BaseFilterDto {
+  categoryId?: number;
+}
+
+interface ProductImportPreviewDto extends ImportPreviewDto {
+  id: number;
+  name: string;
+  price: number;
+}
+
+class ProductsSupabaseClient extends SupabaseDataClient<
+  "products",
+  ProductDto,
+  ProductCommonDto,
+  CreateProductDto,
+  UpdateProductDto,
+  ProductFilterDto,
+  ProductImportPreviewDto
+> {
+  constructor(supabase: SupabaseClient) {
+    super("products", supabase, {
+      defaultSortColumn: "id",
+    });
+  }
+}
+
+const productsClient = new ProductsSupabaseClient(supabase);
+```
+
+### Compatibility and incremental migration
+
+- The REST flow stays intact: existing apps using `ManagerProvider` + `AuthProvider` + `BaseClient` do not need changes.
+- You can migrate entity by entity: move one resource client at a time from `BaseClient` to `SupabaseDataClient`.
+- During migration, mixed data backends are valid (`BaseClient` for some entities, `SupabaseDataClient` for others) as long as each UI flow uses the corresponding client methods.
+- If you switch auth to Supabase, use `SupabaseManagerProvider` + `SupabaseAuthProvider`; if you keep REST auth, continue with `ManagerProvider` + `AuthProvider`.
+
 ## Built-in auth refresh behavior
 
 `APIClient` and `BaseClient` already include refresh/retry behavior for secured requests:
