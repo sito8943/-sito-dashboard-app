@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.54] - 2026-03-26
+
+### Changed
+
+- Declared `@supabase/supabase-js` in both `peerDependencies` (optional) and `devDependencies` to keep consumer opt-in behavior while supporting local test tooling.
+
+### Fixed
+
+- Fixed `AuthProvider` test mocking path in `AuthProvider.test.tsx` so `useManager` is mocked from the correct module (`../ManagerProvider`).
+- Fixed `SupabaseAuthProvider` test setup in `SupabaseAuthProvider.test.tsx` by mocking `useSupabase` from `SupabaseContext` and returning a stable mocked client reference to avoid repeated effect churn and flaky call-count/timeouts.
+
+### Documentation
+
+- Added a Supabase entity-client example (`ProductsSupabaseClient`) in `README.md`, showing how to extend `SupabaseDataClient` with typed DTO/filter/import contracts.
+- Added compatibility and incremental migration notes for mixed backend rollout (`BaseClient` + `SupabaseDataClient`) and auth-provider switching guidance.
+- Updated `planning/supabase-phased-plan.md` status checklist and aligned soft-delete filter wording to `deletedAt?: Date | null` + `softDeleteScope` (`ACTIVE`/`DELETED`/`ALL`).
+
 ## [0.0.53] - 2026-03-25
 
 ### Added
