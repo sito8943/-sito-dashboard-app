@@ -18,7 +18,7 @@ pnpm add @sito/dashboard-app
 - React `18.3.1`
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
-- `@supabase/supabase-js` `^2.49.0` (optional; only if using Supabase backend)
+- `@supabase/supabase-js` `2.100.0` (optional; only if using Supabase backend)
 - `react-hook-form` `7.61.1`
 - `@sito/dashboard` `^0.0.73`
 - Font Awesome peers defined in `package.json`
@@ -41,7 +41,7 @@ npm install \
 If your app uses the Supabase backend:
 
 ```bash
-npm install @supabase/supabase-js@^2.49.0
+npm install @supabase/supabase-js@2.100.0
 ```
 
 ## Core exports

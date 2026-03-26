@@ -26,7 +26,7 @@ npm install \
 If you use Supabase backend, also install:
 
 ```bash
-npm install @supabase/supabase-js@^2.49.0
+npm install @supabase/supabase-js@2.100.0
 ```
 
 ## 2. Required Providers

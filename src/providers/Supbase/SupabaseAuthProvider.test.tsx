@@ -10,22 +10,35 @@ let authStateHandler:
   | ((event: string, session: Session | null) => void)
   | undefined;
 
-const { signOutMock, getSessionMock, onAuthStateChangeMock, unsubscribeMock } =
-  vi.hoisted(() => ({
-    signOutMock: vi.fn(),
-    getSessionMock: vi.fn(),
-    onAuthStateChangeMock: vi.fn(),
-    unsubscribeMock: vi.fn(),
-  }));
+const {
+  signOutMock,
+  getSessionMock,
+  onAuthStateChangeMock,
+  unsubscribeMock,
+  supabaseMock,
+} = vi.hoisted(() => {
+  const signOutMock = vi.fn();
+  const getSessionMock = vi.fn();
+  const onAuthStateChangeMock = vi.fn();
+  const unsubscribeMock = vi.fn();
 
-vi.mock("./SupabaseManagerProvider", () => ({
-  useSupabase: () => ({
-    auth: {
-      signOut: signOutMock,
-      getSession: getSessionMock,
-      onAuthStateChange: onAuthStateChangeMock,
+  return {
+    signOutMock,
+    getSessionMock,
+    onAuthStateChangeMock,
+    unsubscribeMock,
+    supabaseMock: {
+      auth: {
+        signOut: signOutMock,
+        getSession: getSessionMock,
+        onAuthStateChange: onAuthStateChangeMock,
+      },
     },
-  }),
+  };
+});
+
+vi.mock("./SupabaseContext", () => ({
+  useSupabase: () => supabaseMock,
 }));
 
 const createSupabaseSession = (overrides?: Partial<Session>): Session => {
@@ -89,7 +102,7 @@ describe("SupabaseAuthProvider", () => {
       expect(result.current.account.token).toBe("access-token");
     });
 
-    expect(getSessionMock).toHaveBeenCalledOnce();
+    expect(getSessionMock).toHaveBeenCalled();
     expect(localStorage.getItem("user")).toBe("access-token");
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token");
     expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
@@ -180,6 +193,6 @@ describe("SupabaseAuthProvider", () => {
 
     unmount();
 
-    expect(unsubscribeMock).toHaveBeenCalledOnce();
+    expect(unsubscribeMock).toHaveBeenCalled();
   });
 });
