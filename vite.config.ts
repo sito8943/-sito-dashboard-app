@@ -65,6 +65,7 @@ export default defineConfig(() => {
           "react-dom",
           "@sito/dashboard",
           "@tanstack/react-query",
+          "@supabase/supabase-js",
           "react-hook-form",
           "@fortawesome/fontawesome-svg-core",
           "@fortawesome/free-brands-svg-icons",

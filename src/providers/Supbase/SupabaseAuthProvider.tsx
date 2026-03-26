@@ -1,30 +1,18 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { AuthContext } from "providers/Auth";
+import type { SupabaseAuthProviderPropTypes } from "./types";
+import { useSupabase } from "./SupabaseContext";
+
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+  fromLocal,
+  mapSupabaseSessionToSessionDto,
+  removeFromLocal,
+  SessionDto,
+  toLocal,
+} from "lib";
 
-// type
-import { AuthProviderContextType, AuthProviderPropTypes } from "./types";
-
-// providers
-import { useManager } from "./ManagerProvider";
-
-// lib
-import { toLocal, removeFromLocal, fromLocal, SessionDto } from "lib";
-
-const AuthContext = createContext<AuthProviderContextType | undefined>(
-  undefined,
-);
-
-/**
- * Auth Provider
- * @param props - provider props
- * @returns  React component
- */
-const AuthProvider = (props: AuthProviderPropTypes) => {
+const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
   const {
     children,
     guestMode = "guest_mode",
@@ -32,9 +20,15 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     remember = "remember",
     refreshTokenKey = "refreshToken",
     accessTokenExpiresAtKey = "accessTokenExpiresAt",
+    sessionMapper,
   } = props;
 
-  const manager = useManager();
+  const supabase = useSupabase();
+  const mapperRef = useRef(sessionMapper ?? mapSupabaseSessionToSessionDto);
+
+  useEffect(() => {
+    mapperRef.current = sessionMapper ?? mapSupabaseSessionToSessionDto;
+  }, [sessionMapper]);
 
   const [account, setAccount] = useState<SessionDto>({} as SessionDto);
 
@@ -85,42 +79,61 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
   );
 
   const logoutUser = useCallback(async () => {
-    const accessToken =
-      (fromLocal(user) as string | undefined) ?? account.token;
-    const refreshToken =
-      (fromLocal(refreshTokenKey) as string | undefined) ??
-      (typeof account.refreshToken === "string"
-        ? account.refreshToken
-        : undefined);
-
     try {
-      await manager.Auth.logout({
-        accessToken,
-        refreshToken,
-      });
+      await supabase.auth.signOut();
     } catch (err) {
       console.error(err);
     }
+
     setAccount({} as SessionDto);
     clearStoredSession();
-  }, [
-    account.refreshToken,
-    account.token,
-    clearStoredSession,
-    manager.Auth,
-    refreshTokenKey,
-    user,
-  ]);
+  }, [clearStoredSession, supabase.auth]);
 
   const logUserFromLocal = useCallback(async () => {
     try {
-      const authDto = await manager.Auth.getSession();
-      logUser(authDto);
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+
+      if (!data.session) {
+        setAccount({} as SessionDto);
+        clearStoredSession();
+        return;
+      }
+
+      logUser(mapperRef.current(data.session));
     } catch (err) {
       console.error(err);
-      logoutUser();
+      await logoutUser();
     }
-  }, [logUser, logoutUser, manager.Auth]);
+  }, [clearStoredSession, logUser, logoutUser, supabase.auth]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const bootstrapSession = async () => {
+      if (!mounted) return;
+      await logUserFromLocal();
+    };
+
+    bootstrapSession();
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+
+      if (!session) {
+        setAccount({} as SessionDto);
+        clearStoredSession();
+        return;
+      }
+
+      logUser(mapperRef.current(session));
+    });
+
+    return () => {
+      mounted = false;
+      data.subscription.unsubscribe();
+    };
+  }, [clearStoredSession, logUser, logUserFromLocal, supabase.auth]);
 
   const value = useMemo(() => {
     return {
@@ -143,16 +156,4 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-/**
- * useAuth hook
- * @returns Provider
- */
-const useAuth = () => {
-  const context = useContext(AuthContext);
-
-  if (!context) throw new Error("authContext must be used within a Provider");
-  return context;
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { AuthProvider, useAuth };
+export { SupabaseAuthProvider };

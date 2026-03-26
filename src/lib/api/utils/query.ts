@@ -4,6 +4,27 @@ import { QueryParam } from "../types";
 // entities
 import { BaseFilterDto } from "../../entities";
 
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === "object" && value !== null;
+};
+
+const toEncodedScalar = (value: unknown): string => {
+  if (value instanceof Date) return encodeURIComponent(value.toISOString());
+  return encodeURIComponent(String(value));
+};
+
+const resolveSoftDeleteScope = (value: unknown) => {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().toUpperCase();
+  if (
+    normalized === "ACTIVE" ||
+    normalized === "DELETED" ||
+    normalized === "ALL"
+  )
+    return normalized;
+  return undefined;
+};
+
 /**
  * Builds a query string from pagination and filter params
  * @param query - Pagination and sorting info
@@ -28,38 +49,46 @@ export const parseQueries = <TDto, TFilter extends BaseFilterDto>(
 
   // Build filters
   if (filters) {
+    const softDeleteScope = resolveSoftDeleteScope(filters.softDeleteScope);
+    if (softDeleteScope)
+      queryParts.push(`softDeleteScope=${encodeURIComponent(softDeleteScope)}`);
+
     const filterParts = Object.entries(filters)
       .filter(
-        ([, value]) => value !== null && value !== undefined && value !== "",
+        ([key, value]) =>
+          key !== "softDeleteScope" &&
+          value !== null &&
+          value !== undefined &&
+          value !== "",
       )
       .flatMap(([key, value]) => {
         // Multiple values (array)
         if (Array.isArray(value)) {
-          return value.map((v) => `${key}==${encodeURIComponent(v?.id ?? v)}`);
+          return value.map((v) => {
+            if (v instanceof Date) return `${key}==${toEncodedScalar(v)}`;
+            if (isRecord(v)) return `${key}==${toEncodedScalar(v.id ?? "")}`;
+            return `${key}==${toEncodedScalar(v)}`;
+          });
         }
 
         // Range filters (start/end)
-        if (
-          typeof value === "object" &&
-          value !== null &&
-          "start" in value &&
-          "end" in value
-        ) {
+        if (isRecord(value) && "start" in value && "end" in value) {
           const range: string[] = [];
           if (value.start != null && value.start !== "")
-            range.push(`${key}>=${encodeURIComponent(value.start)}`);
+            range.push(`${key}>=${toEncodedScalar(value.start)}`);
           if (value.end != null && value.end !== "")
-            range.push(`${key}<=${encodeURIComponent(value.end)}`);
+            range.push(`${key}<=${toEncodedScalar(value.end)}`);
           return range;
         }
 
         // Object with `id` fallback
-        if (typeof value === "object" && value !== null) {
-          return `${key}==${encodeURIComponent(value.id ?? "")}`;
+        if (value instanceof Date) return `${key}==${toEncodedScalar(value)}`;
+        if (isRecord(value)) {
+          return `${key}==${toEncodedScalar(value.id ?? "")}`;
         }
 
         // Primitive
-        return `${key}==${encodeURIComponent(value)}`;
+        return `${key}==${toEncodedScalar(value)}`;
       });
 
     if (filterParts.length > 0) {

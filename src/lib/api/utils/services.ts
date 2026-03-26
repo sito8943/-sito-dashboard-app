@@ -118,12 +118,17 @@ export function buildQueryUrl<TFilter>(
   endpoint: string,
   params?: TFilter,
 ): string {
+  const toQueryValue = (value: unknown) => {
+    if (value instanceof Date) return value.toISOString();
+    return String(value);
+  };
+
   if (params) {
     const queryString = Object.entries(params)
       .filter(([, value]) => value !== undefined && value !== null)
       .map(
         ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+          `${encodeURIComponent(key)}=${encodeURIComponent(toQueryValue(value))}`,
       )
       .join("&");
 

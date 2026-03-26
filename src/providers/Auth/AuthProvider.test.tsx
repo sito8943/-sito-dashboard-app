@@ -11,7 +11,7 @@ const { logoutMock, getSessionMock } = vi.hoisted(() => ({
   getSessionMock: vi.fn(),
 }));
 
-vi.mock("./ManagerProvider", () => ({
+vi.mock("../ManagerProvider", () => ({
   useManager: () => ({
     Auth: {
       logout: logoutMock,

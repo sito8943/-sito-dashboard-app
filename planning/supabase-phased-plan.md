@@ -1,0 +1,71 @@
+# Plan Por Fases: Soporte Supabase (CRUD + Auth) en `@sito/dashboard-app`
+
+## Resumen
+
+1. [x] Objetivo: agregar un backend Supabase para que el consumidor elija entre REST (`BaseClient`), offline (`IndexedDBClient`) o Supabase.
+2. [x] Alcance confirmado: incluir datos + autenticación Supabase.
+3. [x] Decisiones confirmadas: usar `Provider` nuevo para auth Supabase y declarar `@supabase/supabase-js` como peer opcional.
+4. [x] Entrega de ejecución: crear `planning/supabase-phased-plan.md` con este contenido y luego implementar.
+5. [x] Requisito operativo: escribir tests como parte obligatoria de la implementación, pero sin ejecutar scripts automáticos durante esta etapa.
+
+## Cambios De API Pública
+
+1. [x] Nuevo cliente de datos: `SupabaseDataClient<...>` con la misma superficie que `BaseClient`/`IndexedDBClient`:
+       `insert`, `insertMany`, `update`, `get`, `getById`, `export`, `import`, `commonGet`, `softDelete`, `restore`.
+2. [x] Nuevo provider de entorno Supabase: `SupabaseManagerProvider` (incluye `QueryClientProvider` + contexto de cliente Supabase).
+3. [x] Nuevo provider de sesión: `SupabaseAuthProvider` (flujo auth Supabase).
+4. [x] Nuevo hook: `useSupabase()` para acceder al cliente Supabase desde contexto.
+5. [x] `useAuth` se mantiene como contrato de consumo; el flujo actual REST (`ManagerProvider` + `AuthProvider`) no cambia.
+
+## Fases De Implementación
+
+1. Fase 1: Contratos y dependencias
+
+- [x] Añadir `@supabase/supabase-js` como `peerDependency` opcional y `devDependency` para tests.
+- [x] Definir tipos utilitarios para mapear sesión Supabase a `SessionDto`.
+- [x] Definir opciones de cliente Supabase para columnas convencionales (`id`, `deletedAt`) con defaults.
+
+2. Fase 2: Cliente de datos Supabase
+
+- [x] Implementar `SupabaseDataClient` con genéricos equivalentes a `BaseClient`.
+- [x] Implementar traducción de filtros existentes a query builder Supabase:
+      primitivos (`eq`), arrays (`in`), rango `{start,end}` (`gte/lte`), objetos con `id`, y contrato de borrado lógico con `deletedAt?: Date | null` + `softDeleteScope` (`ACTIVE`/`DELETED`/`ALL`).
+- [x] Implementar paginación y orden para devolver `QueryResult<TDto>` con shape idéntico al actual.
+- [x] Mantener semántica:
+      `insertMany` devuelve el último item, `import(override=true)` usa `upsert`, `import(override=false)` usa `insert` y propaga conflicto.
+
+3. Fase 3: Auth Supabase con provider nuevo
+
+- [x] Crear `SupabaseManagerProvider` para contexto Supabase + React Query.
+- [x] Crear `SupabaseAuthProvider` con el mismo contrato funcional que hoy consume `useAuth`:
+      `account`, `logUser`, `logoutUser`, `logUserFromLocal`, `isInGuestMode`, `setGuestMode`.
+- [x] Implementar sincronización de sesión con `supabase.auth.getSession()` al montar y `onAuthStateChange` para mantener estado/local storage consistente.
+- [x] Mantener `AuthProvider` actual sin cambios para backend REST.
+
+4. Fase 4: Documentación y recetas
+
+- [x] Documentar instalación y setup Supabase (nuevo bloque de providers y ejemplo de cliente por entidad).
+- [x] Documentar estrategia de elección de backend por app consumidora (REST vs IndexedDB vs Supabase).
+- [x] Añadir notas de compatibilidad: flujo REST intacto y migración incremental por entidad.
+
+5. Fase 5: Testing y validación final
+
+- [x] Tests unitarios de `SupabaseDataClient`: CRUD, filtros, orden/paginación, import/export, soft delete/restore.
+- [x] Tests de providers Supabase: bootstrap de sesión, cambios de estado auth, logout, guest mode.
+- [x] No correr scripts (`npm run test`, `npm run build`) en esta etapa; dejar los tests implementados y listos para ejecución posterior.
+
+## Plan De Pruebas
+
+1. [x] `get` con filtros combinados (array + rango + objeto con `id`) devuelve `QueryResult` correcto.
+2. [x] `deletedAt?: Date | null` y `softDeleteScope` (`ACTIVE`/`DELETED`/`ALL`) aplican el filtro de borrado lógico esperado.
+3. [x] `import` con `override=false` falla ante duplicados; con `override=true` hace upsert.
+4. [x] `SupabaseAuthProvider` inicializa `account` desde sesión activa.
+5. [x] `SupabaseAuthProvider.logoutUser` invoca `signOut` y limpia estado/keys.
+6. [x] Flujo REST existente sigue pasando tests sin cambios de setup.
+
+## Supuestos y defaults
+
+1. Las tablas Supabase usan `id` como PK y `deletedAt` nullable para soft delete (configurable en opciones del cliente).
+2. El contrato de retorno hacia UI se mantiene en tipos actuales (`SessionDto`, `QueryResult`, errores con `status/message`).
+3. No se elimina ni rompe la ruta REST existente; Supabase entra como capacidad adicional.
+4. El primer release de Supabase prioriza paridad funcional de clientes y providers, no features avanzadas de RLS/policies guiadas.

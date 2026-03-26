@@ -18,8 +18,9 @@ pnpm add @sito/dashboard-app
 - React `18.3.1`
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`
+- `@supabase/supabase-js` `2.100.0` (optional; only if using Supabase backend)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.72`
+- `@sito/dashboard` `^0.0.73`
 - Font Awesome peers defined in `package.json`
 
 Install all peers in consumer apps:
@@ -27,7 +28,7 @@ Install all peers in consumer apps:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.72 \
+  @sito/dashboard@^0.0.73 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -37,6 +38,12 @@ npm install \
   @fortawesome/react-fontawesome@0.2.3
 ```
 
+If your app uses the Supabase backend:
+
+```bash
+npm install @supabase/supabase-js@2.100.0
+```
+
 ## Core exports
 
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`, `ToTop`
@@ -44,7 +51,7 @@ npm install \
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
 - Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), and `useSupabase`
 
 ## Component usage patterns
 
@@ -319,6 +326,132 @@ Notes:
 - `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
 - If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
 
+## Supabase setup (optional backend)
+
+The library does not read `.env` values directly. The consumer app must create the Supabase client and pass it to `SupabaseManagerProvider`.
+
+Use frontend-safe keys only:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Do not expose service-role keys in the browser.
+
+```tsx
+import type { ReactNode } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { Link } from "react-router-dom";
+import {
+  ConfigProvider,
+  SupabaseManagerProvider,
+  SupabaseAuthProvider,
+  NotificationProvider,
+  DrawerMenuProvider,
+  NavbarProvider,
+} from "@sito/dashboard-app";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
+
+function AppProviders({ children }: { children: ReactNode }) {
+  return (
+    <ConfigProvider
+      location={window.location}
+      navigate={() => {}}
+      linkComponent={Link}
+    >
+      <SupabaseManagerProvider supabase={supabase}>
+        <SupabaseAuthProvider>
+          <NotificationProvider>
+            <DrawerMenuProvider>
+              <NavbarProvider>{children}</NavbarProvider>
+            </DrawerMenuProvider>
+          </NotificationProvider>
+        </SupabaseAuthProvider>
+      </SupabaseManagerProvider>
+    </ConfigProvider>
+  );
+}
+```
+
+`useAuth` keeps the same contract with `SupabaseAuthProvider` (`account`, `logUser`, `logoutUser`, `logUserFromLocal`, `isInGuestMode`, `setGuestMode`).
+
+`SupabaseDataClient` follows the same generic surface as `BaseClient` and `IndexedDBClient`, so entity clients can switch backend with minimal UI/hook changes.
+It also supports optional configuration for conventional columns: `idColumn` (default `"id"`), `deletedAtColumn` (default `"deletedAt"`), and `defaultSortColumn`.
+
+### Supabase entity client example
+
+```ts
+import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  BaseCommonEntityDto,
+  BaseEntityDto,
+  BaseFilterDto,
+  DeleteDto,
+  ImportPreviewDto,
+  SupabaseDataClient,
+} from "@sito/dashboard-app";
+
+interface ProductDto extends BaseEntityDto {
+  name: string;
+  price: number;
+  categoryId?: number;
+}
+
+interface ProductCommonDto extends BaseCommonEntityDto {
+  name: string;
+}
+
+interface CreateProductDto {
+  name: string;
+  price: number;
+  categoryId?: number;
+}
+
+interface UpdateProductDto extends DeleteDto {
+  name?: string;
+  price?: number;
+  categoryId?: number;
+}
+
+interface ProductFilterDto extends BaseFilterDto {
+  categoryId?: number;
+}
+
+interface ProductImportPreviewDto extends ImportPreviewDto {
+  id: number;
+  name: string;
+  price: number;
+}
+
+class ProductsSupabaseClient extends SupabaseDataClient<
+  "products",
+  ProductDto,
+  ProductCommonDto,
+  CreateProductDto,
+  UpdateProductDto,
+  ProductFilterDto,
+  ProductImportPreviewDto
+> {
+  constructor(supabase: SupabaseClient) {
+    super("products", supabase, {
+      defaultSortColumn: "id",
+    });
+  }
+}
+
+const productsClient = new ProductsSupabaseClient(supabase);
+```
+
+### Compatibility and incremental migration
+
+- The REST flow stays intact: existing apps using `ManagerProvider` + `AuthProvider` + `BaseClient` do not need changes.
+- You can migrate entity by entity: move one resource client at a time from `BaseClient` to `SupabaseDataClient`.
+- During migration, mixed data backends are valid (`BaseClient` for some entities, `SupabaseDataClient` for others) as long as each UI flow uses the corresponding client methods.
+- If you switch auth to Supabase, use `SupabaseManagerProvider` + `SupabaseAuthProvider`; if you keep REST auth, continue with `ManagerProvider` + `AuthProvider`.
+
 ## Built-in auth refresh behavior
 
 `APIClient` and `BaseClient` already include refresh/retry behavior for secured requests:
@@ -453,9 +586,11 @@ Contract and filtering notes:
 - Preferred update contract is `update(value)` (aligned with `BaseClient.update(value)`).
 - Legacy `update(id, value)` remains temporarily supported for backward compatibility.
 - Filtering uses strict equality for regular keys.
-- `deletedAt` also supports boolean filtering:
-  - `deletedAt: true` => deleted rows (`deletedAt` not null/undefined)
-  - `deletedAt: false` => active rows (`deletedAt` null/undefined)
+- `deletedAt` remains a date filter (`Date | null`) for exact-match filtering.
+- Use `softDeleteScope` for trash filters:
+  - `softDeleteScope: "ACTIVE"` => active rows (`deletedAt` null/undefined)
+  - `softDeleteScope: "DELETED"` => deleted rows (`deletedAt` not null/undefined)
+  - `softDeleteScope: "ALL"` => all rows
 
 ## Tests
 

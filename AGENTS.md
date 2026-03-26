@@ -16,7 +16,7 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.0.72 |
+| Base Library | @sito/dashboard      | ^0.0.73 |
 
 ---
 
@@ -31,7 +31,7 @@ All peer dependencies **must** be installed in the consumer project:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.72 \
+  @sito/dashboard@^0.0.73 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -652,9 +652,12 @@ useEffect(() => {
 - Browser-only: do not instantiate in SSR or Node environments.
 - `update(value)` is the primary contract (aligned with `BaseClient.update(value)`).
 - Backward compatibility is preserved temporarily for legacy `update(id, value)` calls.
-- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key, except `deletedAt` boolean filters:
-  - `deletedAt: true` => only deleted rows (`deletedAt` not null/undefined)
-  - `deletedAt: false` => only active rows (`deletedAt` null/undefined)
+- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key.
+- `deletedAt` remains a date filter (`Date | null`) for exact date filtering.
+- Use `softDeleteScope` for trash filtering:
+  - `"ACTIVE"` => only active rows (`deletedAt` null/undefined)
+  - `"DELETED"` => only deleted rows (`deletedAt` not null/undefined)
+  - `"ALL"` => include both active and deleted rows
 - `import` with `override: false` uses `store.add` (throws on duplicate key); `override: true` uses `store.put` (upsert).
 - Keep consumer-facing behavior aligned with your `BaseClient` implementation; do not couple UI code to raw IndexedDB details.
 
