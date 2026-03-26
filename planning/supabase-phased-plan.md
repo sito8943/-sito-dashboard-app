@@ -29,7 +29,7 @@
 
 - Implementar `SupabaseDataClient` con genéricos equivalentes a `BaseClient`.
 - Implementar traducción de filtros existentes a query builder Supabase:
-  primitivos (`eq`), arrays (`in`), rango `{start,end}` (`gte/lte`), objetos con `id`, y booleano `deletedAt` (nulo/no nulo).
+  primitivos (`eq`), arrays (`in`), rango `{start,end}` (`gte/lte`), objetos con `id`, y contrato de borrado lógico con `deletedAt?: Date | null` + `softDeleteScope` (`ACTIVE`/`DELETED`/`ALL`).
 - Implementar paginación y orden para devolver `QueryResult<TDto>` con shape idéntico al actual.
 - Mantener semántica:
   `insertMany` devuelve el último item, `import(override=true)` usa `upsert`, `import(override=false)` usa `insert` y propaga conflicto.
@@ -57,7 +57,7 @@
 ## Plan De Pruebas
 
 1. `get` con filtros combinados (array + rango + objeto con `id`) devuelve `QueryResult` correcto.
-2. `deletedAt: true/false` aplica filtro de borrado lógico esperado.
+2. `deletedAt?: Date | null` y `softDeleteScope` (`ACTIVE`/`DELETED`/`ALL`) aplican el filtro de borrado lógico esperado.
 3. `import` con `override=false` falla ante duplicados; con `override=true` hace upsert.
 4. `SupabaseAuthProvider` inicializa `account` desde sesión activa.
 5. `SupabaseAuthProvider.logoutUser` invoca `signOut` y limpia estado/keys.
