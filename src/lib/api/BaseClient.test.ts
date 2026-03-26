@@ -98,7 +98,7 @@ describe("BaseClient", () => {
         currentPage: 1,
         pageSize: 10,
       },
-      { status: "active" },
+      { status: "active", softDeleteScope: "ALL" },
     );
 
     expect(getSpy).toHaveBeenCalledWith(
@@ -109,7 +109,7 @@ describe("BaseClient", () => {
         currentPage: 1,
         pageSize: 10,
       },
-      { status: "active" },
+      { status: "active", softDeleteScope: "ALL" },
     );
   });
 
@@ -119,7 +119,7 @@ describe("BaseClient", () => {
       .spyOn(client.api, "doQuery")
       .mockResolvedValue([] as UserDto[]);
 
-    await client.export({ status: "active" });
+    await client.export({ status: "active", softDeleteScope: "DELETED" });
 
     const [url, method, body] = doQuerySpy.mock.calls[0] as [
       string,
@@ -127,6 +127,7 @@ describe("BaseClient", () => {
       undefined,
     ];
     expect(url).toContain("users/export");
+    expect(url).toContain("softDeleteScope=DELETED");
     expect(url).toContain("filters=status==active");
     expect(method).toBe(Methods.GET);
     expect(body).toBeUndefined();

@@ -389,7 +389,7 @@ describe("APIClient", () => {
         currentPage: 1,
         pageSize: 10,
       },
-      { status: "active" },
+      { status: "active", softDeleteScope: "ACTIVE" },
     );
 
     const [url, method] = makeRequestMock.mock.calls[0] as [string, Methods];
@@ -398,6 +398,7 @@ describe("APIClient", () => {
     expect(url).toContain("order=ASC");
     expect(url).toContain("page=1");
     expect(url).toContain("pageSize=10");
+    expect(url).toContain("softDeleteScope=ACTIVE");
     expect(url).toContain("filters=status==active");
     expect(method).toBe(Methods.GET);
     expect(result.items).toHaveLength(1);

@@ -515,9 +515,11 @@ Contract and filtering notes:
 - Preferred update contract is `update(value)` (aligned with `BaseClient.update(value)`).
 - Legacy `update(id, value)` remains temporarily supported for backward compatibility.
 - Filtering uses strict equality for regular keys.
-- `deletedAt` also supports boolean filtering:
-  - `deletedAt: true` => deleted rows (`deletedAt` not null/undefined)
-  - `deletedAt: false` => active rows (`deletedAt` null/undefined)
+- `deletedAt` remains a date filter (`Date | null`) for exact-match filtering.
+- Use `softDeleteScope` for trash filters:
+  - `softDeleteScope: "ACTIVE"` => active rows (`deletedAt` null/undefined)
+  - `softDeleteScope: "DELETED"` => deleted rows (`deletedAt` not null/undefined)
+  - `softDeleteScope: "ALL"` => all rows
 
 ## Tests
 

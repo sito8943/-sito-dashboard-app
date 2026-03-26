@@ -133,7 +133,7 @@ const createFilterBuilder = <TRow>(
 type SupabaseFromClient = Pick<SupabaseClient, "from">;
 
 const asSupabaseFromClient = (from: unknown): SupabaseFromClient =>
-  ({ from } as unknown as SupabaseFromClient);
+  ({ from }) as unknown as SupabaseFromClient;
 
 const createClient = (supabase: SupabaseFromClient) =>
   new SupabaseDataClient<
@@ -232,7 +232,7 @@ describe("SupabaseDataClient", () => {
     const result = await client.get(
       {
         sortingBy: "name",
-        sortingOrder: "DESC",
+        sortingOrder: "DESC" as any,
         currentPage: 1,
         pageSize: 5,
       },
@@ -261,7 +261,7 @@ describe("SupabaseDataClient", () => {
     expect(result.items[0]?.id).toBe(1);
   });
 
-  it("get maps deletedAt=true to not-is-null", async () => {
+  it("get maps softDeleteScope=DELETED to not-is-null", async () => {
     const listBuilder = createFilterBuilder<ProductRow>({
       data: [baseRow],
       error: null,
@@ -275,12 +275,12 @@ describe("SupabaseDataClient", () => {
 
     const client = createClient(asSupabaseFromClient(fromMock));
 
-    await client.get(undefined, { deletedAt: true });
+    await client.get(undefined, { softDeleteScope: "DELETED" });
 
     expect(listBuilder.not).toHaveBeenCalledWith("deletedAt", "is", null);
   });
 
-  it("get maps deletedAt=false to is-null", async () => {
+  it("get maps softDeleteScope=ACTIVE to is-null", async () => {
     const listBuilder = createFilterBuilder<ProductRow>({
       data: [baseRow],
       error: null,
@@ -294,9 +294,32 @@ describe("SupabaseDataClient", () => {
 
     const client = createClient(asSupabaseFromClient(fromMock));
 
-    await client.get(undefined, { deletedAt: false });
+    await client.get(undefined, { softDeleteScope: "ACTIVE" });
 
     expect(listBuilder.is).toHaveBeenCalledWith("deletedAt", null);
+  });
+
+  it("get applies deletedAt date filters as ISO equality", async () => {
+    const listBuilder = createFilterBuilder<ProductRow>({
+      data: [baseRow],
+      error: null,
+      count: 1,
+      status: 200,
+    });
+
+    const fromMock = vi.fn(() => ({
+      select: vi.fn(() => listBuilder),
+    }));
+
+    const client = createClient(asSupabaseFromClient(fromMock));
+    const deletedAt = new Date("2026-01-01T00:00:00.000Z");
+
+    await client.get(undefined, { deletedAt });
+
+    expect(listBuilder.eq).toHaveBeenCalledWith(
+      "deletedAt",
+      "2026-01-01T00:00:00.000Z",
+    );
   });
 
   it("import override=false propagates duplicate conflicts", async () => {

@@ -9,6 +9,7 @@ import {
   DeleteDto,
   ImportDto,
   ImportPreviewDto,
+  SoftDeleteScope,
 } from "lib";
 
 export class IndexedDBClient<
@@ -219,10 +220,26 @@ export class IndexedDBClient<
   private applyFilter<T>(items: T[], filters?: Record<string, unknown>): T[] {
     if (!filters) return items;
 
-    return items.filter((item) =>
-      Object.entries(filters).every(([key, filterValue]) =>
+    const scope = this.resolveSoftDeleteScope(filters.softDeleteScope);
+    const scopedItems =
+      scope === undefined
+        ? items
+        : items.filter((item) =>
+            this.matchesSoftDeleteScope(
+              scope,
+              (item as Record<string, unknown>).deletedAt,
+            ),
+          );
+
+    const appliedFilters = Object.entries(filters).filter(
+      ([key, value]) => key !== "softDeleteScope" && value !== undefined,
+    );
+
+    if (appliedFilters.length === 0) return scopedItems;
+
+    return scopedItems.filter((item) =>
+      appliedFilters.every(([key, filterValue]) =>
         this.matchesFilterValue(
-          key,
           filterValue,
           (item as Record<string, unknown>)[key],
         ),
@@ -230,18 +247,34 @@ export class IndexedDBClient<
     );
   }
 
-  private matchesFilterValue(
-    key: string,
-    filterValue: unknown,
-    itemValue: unknown,
-  ) {
-    if (filterValue === undefined) return true;
-
-    if (key === "deletedAt" && typeof filterValue === "boolean") {
-      const isDeleted = itemValue !== null && itemValue !== undefined;
-      return filterValue ? isDeleted : !isDeleted;
+  private matchesFilterValue(filterValue: unknown, itemValue: unknown) {
+    if (filterValue instanceof Date) {
+      if (itemValue instanceof Date)
+        return itemValue.getTime() === filterValue.getTime();
+      if (typeof itemValue === "string" || typeof itemValue === "number") {
+        const parsed = new Date(itemValue);
+        if (Number.isNaN(parsed.getTime())) return false;
+        return parsed.getTime() === filterValue.getTime();
+      }
+      return false;
     }
 
     return itemValue === filterValue;
+  }
+
+  private resolveSoftDeleteScope(value: unknown): SoftDeleteScope | undefined {
+    if (typeof value !== "string") return undefined;
+    const normalized = value.trim().toUpperCase();
+    if (normalized === "ACTIVE") return "ACTIVE";
+    if (normalized === "DELETED") return "DELETED";
+    if (normalized === "ALL") return "ALL";
+    return undefined;
+  }
+
+  private matchesSoftDeleteScope(scope: SoftDeleteScope, deletedAt: unknown) {
+    if (scope === "ALL") return true;
+    const isDeleted = deletedAt !== null && deletedAt !== undefined;
+    if (scope === "DELETED") return isDeleted;
+    return !isDeleted;
   }
 }

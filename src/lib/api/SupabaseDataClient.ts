@@ -9,6 +9,7 @@ import {
   DeleteDto,
   ImportDto,
   ImportPreviewDto,
+  SoftDeleteScope,
 } from "lib";
 
 type SupabaseErrorLike = {
@@ -78,6 +79,17 @@ const isDefined = <T>(value: T | undefined): value is T => value !== undefined;
 const normalizeScalarValue = (value: unknown): unknown => {
   if (value instanceof Date) return value.toISOString();
   return value;
+};
+
+const resolveSoftDeleteScope = (
+  value: unknown,
+): SoftDeleteScope | undefined => {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().toUpperCase();
+  if (normalized === "ACTIVE") return "ACTIVE";
+  if (normalized === "DELETED") return "DELETED";
+  if (normalized === "ALL") return "ALL";
+  return undefined;
 };
 
 export class SupabaseDataClient<
@@ -195,58 +207,68 @@ export class SupabaseDataClient<
     if (!filters) return builder;
 
     let scopedBuilder = builder;
+    const softDeleteScope = resolveSoftDeleteScope(filters.softDeleteScope);
+    if (softDeleteScope === "ACTIVE")
+      scopedBuilder = scopedBuilder.is(this.deletedAtColumn, null);
+    else if (softDeleteScope === "DELETED")
+      scopedBuilder = scopedBuilder.not(this.deletedAtColumn, "is", null);
 
     Object.entries(filters).forEach(([key, filterValue]) => {
       if (
+        key === "softDeleteScope" ||
         filterValue === undefined ||
         filterValue === null ||
         filterValue === ""
       )
         return;
 
-      if (key === "deletedAt" && typeof filterValue === "boolean") {
-        if (filterValue)
-          scopedBuilder = scopedBuilder.not(this.deletedAtColumn, "is", null);
-        else scopedBuilder = scopedBuilder.is(this.deletedAtColumn, null);
-        return;
-      }
+      const column = key === "deletedAt" ? this.deletedAtColumn : key;
 
       if (Array.isArray(filterValue)) {
         const values = filterValue
           .map((item) => {
+            if (item instanceof Date) return item.toISOString();
             if (isRecord(item)) return this.resolveObjectFilterValue(item);
             return normalizeScalarValue(item);
           })
           .filter(isDefined);
 
-        if (values.length > 0) scopedBuilder = scopedBuilder.in(key, values);
+        if (values.length > 0) scopedBuilder = scopedBuilder.in(column, values);
         return;
       }
 
       if (hasRangeShape(filterValue)) {
         if (filterValue.start !== undefined && filterValue.start !== "")
           scopedBuilder = scopedBuilder.gte(
-            key,
+            column,
             normalizeScalarValue(filterValue.start),
           );
 
         if (filterValue.end !== undefined && filterValue.end !== "")
           scopedBuilder = scopedBuilder.lte(
-            key,
+            column,
             normalizeScalarValue(filterValue.end),
           );
         return;
       }
 
+      if (filterValue instanceof Date) {
+        scopedBuilder = scopedBuilder.eq(column, filterValue.toISOString());
+        return;
+      }
+
       if (isRecord(filterValue)) {
         scopedBuilder = scopedBuilder.eq(
-          key,
+          column,
           this.resolveObjectFilterValue(filterValue),
         );
         return;
       }
 
-      scopedBuilder = scopedBuilder.eq(key, normalizeScalarValue(filterValue));
+      scopedBuilder = scopedBuilder.eq(
+        column,
+        normalizeScalarValue(filterValue),
+      );
     });
 
     return scopedBuilder;
@@ -474,11 +496,9 @@ export class SupabaseDataClient<
     const deletedAt =
       this.options.nowFactory?.().toISOString() ?? new Date().toISOString();
 
-    const updateQuery = this.supabase
-      .from(this.table)
-      .update({
-        [this.deletedAtColumn]: deletedAt,
-      } as Record<string, unknown>);
+    const updateQuery = this.supabase.from(this.table).update({
+      [this.deletedAtColumn]: deletedAt,
+    } as Record<string, unknown>);
 
     const inFilterValue = `(${ids.join(",")})`;
 

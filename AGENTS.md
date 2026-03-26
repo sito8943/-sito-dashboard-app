@@ -652,9 +652,12 @@ useEffect(() => {
 - Browser-only: do not instantiate in SSR or Node environments.
 - `update(value)` is the primary contract (aligned with `BaseClient.update(value)`).
 - Backward compatibility is preserved temporarily for legacy `update(id, value)` calls.
-- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key, except `deletedAt` boolean filters:
-  - `deletedAt: true` => only deleted rows (`deletedAt` not null/undefined)
-  - `deletedAt: false` => only active rows (`deletedAt` null/undefined)
+- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key.
+- `deletedAt` remains a date filter (`Date | null`) for exact date filtering.
+- Use `softDeleteScope` for trash filtering:
+  - `"ACTIVE"` => only active rows (`deletedAt` null/undefined)
+  - `"DELETED"` => only deleted rows (`deletedAt` not null/undefined)
+  - `"ALL"` => include both active and deleted rows
 - `import` with `override: false` uses `store.add` (throws on duplicate key); `override: true` uses `store.put` (upsert).
 - Keep consumer-facing behavior aligned with your `BaseClient` implementation; do not couple UI code to raw IndexedDB details.
 

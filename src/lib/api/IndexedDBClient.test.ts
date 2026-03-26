@@ -286,21 +286,40 @@ describe("User", () => {
     expect(deleted).toBe(1);
   });
 
-  it("filters deletedAt boolean values as deleted/not deleted", async () => {
+  it("filters with softDeleteScope values", async () => {
     await client.insert({ name: "Alice", email: "alice@test.com" });
     await client.insert({ name: "Bob", email: "bob@test.com" });
     await client.insert({ name: "Carl", email: "carl@test.com" });
 
     await client.softDelete([2]);
     const deleted = await client.get(undefined, {
-      deletedAt: true,
+      softDeleteScope: "DELETED",
     } as unknown as UserFilterDto);
     const active = await client.get(undefined, {
-      deletedAt: false,
+      softDeleteScope: "ACTIVE",
+    } as unknown as UserFilterDto);
+    const all = await client.get(undefined, {
+      softDeleteScope: "ALL",
     } as unknown as UserFilterDto);
 
     expect(deleted.items.map((u) => u.id)).toEqual([2]);
     expect(active.items.map((u) => u.id)).toEqual([1, 3]);
+    expect(all.items.map((u) => u.id)).toEqual([1, 2, 3]);
+  });
+
+  it("supports exact deletedAt date filtering", async () => {
+    await client.insert({ name: "Alice", email: "alice@test.com" });
+    await client.insert({ name: "Bob", email: "bob@test.com" });
+    await client.softDelete([2]);
+
+    const bob = await client.getById(2);
+    const deletedAt = bob.deletedAt as Date;
+
+    const result = await client.get(undefined, {
+      deletedAt,
+    } as unknown as UserFilterDto);
+
+    expect(result.items.map((u) => u.id)).toEqual([2]);
   });
 
   it("restore clears deletedAt on matching ids", async () => {
