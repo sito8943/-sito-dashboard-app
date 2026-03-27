@@ -48,7 +48,7 @@ La documentación canónica de consumo para terceros de este repositorio es `REA
 ### Fase 2: Reparar referencias y rutas
 
 - [x] Corregir referencia rota en `CLAUDE.md`:
-  - [x] Cambiar `@.sito/dashboard.md` por archivo real (`@.sito/README.md`).
+  - [x] Cambiar `.sito/dashboard.md` por archivo real (`.sito/README.md`).
 - [x] Verificar que todos los enlaces internos de `.sito/*.md` apuntan a rutas existentes.
 - [x] Decidir si `.sito/docs/` se usa o se elimina para evitar estructura “vacía/confusa”.
   - [x] Se elimina `.sito/docs/` por estar vacía y no versionada.
