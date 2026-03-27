@@ -31,3 +31,6 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+
+      - name: Run docs check
+        run: npm run docs:check

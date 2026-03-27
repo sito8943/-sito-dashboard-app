@@ -32,6 +32,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write . && npm run depcheck",
+    "docs:check": "node ./scripts/check-docs.mjs",
     "depcheck": "node ./scripts/depcheck.cjs .",
     "test": "NODE_OPTIONS=--max-old-space-size=6144 vitest run",
     "test:watch": "vitest",

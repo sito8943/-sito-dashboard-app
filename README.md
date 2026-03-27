@@ -2,6 +2,24 @@
 
 `@sito/dashboard-app` is a React 18 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
 
+## Documentation scope and source of truth
+
+Use documentation by target package:
+
+| Document                | Primary audience              | Source of truth for                                     |
+| ----------------------- | ----------------------------- | ------------------------------------------------------- |
+| `README.md` (this file) | Consumer apps and maintainers | Public usage of `@sito/dashboard-app`                   |
+| `AGENTS.md`             | AI agents and maintainers     | Implementation rules for `@sito/dashboard-app`          |
+| `.sito/*.md`            | Internal team and agents      | Upstream reference notes for `@sito/dashboard` behavior |
+
+Important:
+
+- `.sito/*.md` is not the canonical integration guide for this package.
+- For `@sito/dashboard-app` provider setup, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed).
+- `IconButton` differs by package:
+  - `@sito/dashboard`: `icon` accepts a React node.
+  - `@sito/dashboard-app`: `icon` expects `IconDefinition` (FontAwesome wrapper export).
+
 ## Installation
 
 ```bash
@@ -586,6 +604,7 @@ const productsClient = new ProductsSupabaseClient(supabase);
 - `npm run build`: compile TypeScript and build the library
 - `npm run preview`: preview the Vite build locally
 - `npm run lint`: run ESLint
+- `npm run docs:check`: validate docs policy markers, relative links, and docs consistency rules
 - `npm run test`: run unit/component tests once (Vitest)
 - `npm run test:watch`: run tests in watch mode
 - `npm run format`: run Prettier write mode
@@ -706,6 +725,7 @@ npm run test:watch
 Current validation stack:
 
 - `npm run lint`
+- `npm run docs:check`
 - `npm run test`
 - `npm run build`
 - Storybook/manual behavior checks (optional visual validation)
@@ -728,8 +748,8 @@ npm run format
 
 CI is available through GitHub Actions:
 
-- `.github/workflows/ci.yml`: runs `lint + test + build` on `push` and `pull_request`
-- `.github/workflows/lint.yml`: runs lint checks on `push` and `pull_request`
+- `.github/workflows/ci.yml`: runs `lint + docs:check + test + build` on `push` and `pull_request`
+- `.github/workflows/lint.yml`: runs `lint + docs:check` on `push` and `pull_request`
 
 Package release/publish is still handled manually.
 
