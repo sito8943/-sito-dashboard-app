@@ -13,8 +13,7 @@ All notable changes to this project will be documented in this file.
 - Updated `CLAUDE.md` documentation policy and aligned canonical provider-order wording.
 - Added automated docs consistency checks (`npm run docs:check`) and wired them into CI workflows.
 - Added a PR template checklist to enforce docs alignment and guard against regressions.
-
-## [0.0.55] - 2026-03-27
+- Added explicit dialog-hook migration guidance (`useFormDialog` legacy -> `usePostDialog`/`usePutDialog`) with before/after snippets and `onError` usage in `README.md` and `docs/CONSUMER_GUIDE.md`.
 
 ### Breaking
 
@@ -28,10 +27,6 @@ All notable changes to this project will be documented in this file.
 
 - Added core `useFormDialog.onError(error, context)` support for submit/apply/clear failures, including phase metadata (`"submit" | "apply" | "clear"`).
 - Updated `usePostDialog`/`usePutDialog` internals to consume the simplified `useFormDialog` generic signature.
-
-### Documentation
-
-- Added explicit dialog-hook migration guidance (`useFormDialog` legacy -> `usePostDialog`/`usePutDialog`) with before/after snippets and `onError` usage in `README.md` and `docs/CONSUMER_GUIDE.md`.
 
 ## [0.0.54] - 2026-03-26
 
