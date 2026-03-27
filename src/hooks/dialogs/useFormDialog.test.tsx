@@ -5,26 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import { useFormDialog } from "./useFormDialog";
 
-vi.mock("@sito/dashboard", () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
-vi.mock("providers", () => ({
-  useNotification: () => ({
-    showErrorNotification: vi.fn(),
-    showStackNotifications: vi.fn(),
-    showSuccessNotification: vi.fn(),
-  }),
-}));
-
 type FiltersForm = {
   term: string;
-};
-
-type ProductForm = {
-  name: string;
 };
 
 const createWrapper = () => {
@@ -42,7 +24,7 @@ describe("useFormDialog", () => {
 
     const { result } = renderHook(
       () =>
-        useFormDialog<never, never, never, FiltersForm, { q: string }>({
+        useFormDialog<FiltersForm, { q: string }>({
           mode: "state",
           title: "Filters",
           defaultValues: { term: "" },
@@ -91,7 +73,7 @@ describe("useFormDialog", () => {
 
     const { result } = renderHook(
       () =>
-        useFormDialog<never, never, never, FiltersForm>({
+        useFormDialog<FiltersForm>({
           mode: "state",
           title: "Filters",
           defaultValues: { term: "" },
@@ -127,34 +109,138 @@ describe("useFormDialog", () => {
     });
   });
 
-  it("keeps legacy api behavior for mutation-driven dialog", async () => {
-    const mutationFn = vi.fn(
-      async (payload: { name: string }) => payload.name.length,
-    );
+  it("calls onError when mapOut fails in submit/apply", async () => {
+    const mapError = new Error("map failed");
+    const onError = vi.fn(async () => undefined);
 
     const { result } = renderHook(
       () =>
-        useFormDialog<
-          ProductForm,
-          { name: string },
-          number,
-          ProductForm,
-          ProductForm
-        >({
-          title: "Product",
-          defaultValues: { name: "" },
-          mutationFn,
-          queryKey: ["products"],
+        useFormDialog<FiltersForm, { q: string }>({
+          mode: "state",
+          title: "Filters",
+          defaultValues: { term: "" },
+          mapOut: () => {
+            throw mapError;
+          },
+          onSubmit: async () => undefined,
+          onApply: async () => undefined,
+          onError,
         }),
       { wrapper: createWrapper() },
     );
 
-    await act(async () => {
-      await result.current.onSubmit({ name: "milk" });
+    act(() => {
+      result.current.openDialog();
+      result.current.setValue("term", "milk");
     });
 
+    await act(async () => {
+      await expect(result.current.onSubmit({ term: "milk" })).rejects.toBe(
+        mapError,
+      );
+    });
+
+    await act(async () => {
+      await expect(result.current.onApply()).rejects.toBe(mapError);
+    });
+
+    expect(onError).toHaveBeenCalledTimes(2);
+    expect(onError).toHaveBeenNthCalledWith(
+      1,
+      mapError,
+      expect.objectContaining({
+        phase: "submit",
+        values: { term: "milk" },
+      }),
+    );
+    expect(onError).toHaveBeenNthCalledWith(
+      2,
+      mapError,
+      expect.objectContaining({
+        phase: "apply",
+        values: { term: "milk" },
+      }),
+    );
+  });
+
+  it("calls onError when submit/apply/clear handlers fail and rethrows", async () => {
+    const submitError = new Error("submit failed");
+    const applyError = new Error("apply failed");
+    const clearError = new Error("clear failed");
+    const onError = vi.fn(async () => undefined);
+
+    const { result } = renderHook(
+      () =>
+        useFormDialog<FiltersForm>({
+          mode: "state",
+          title: "Filters",
+          defaultValues: { term: "" },
+          onSubmit: async () => {
+            throw submitError;
+          },
+          onApply: async () => {
+            throw applyError;
+          },
+          onClear: async () => {
+            throw clearError;
+          },
+          onError,
+        }),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.openDialog();
+      result.current.setValue("term", "milk");
+    });
+
+    await act(async () => {
+      await expect(result.current.onSubmit({ term: "milk" })).rejects.toBe(
+        submitError,
+      );
+    });
+
+    await act(async () => {
+      await expect(result.current.onApply()).rejects.toBe(applyError);
+    });
+
+    await act(async () => {
+      await expect(result.current.onClear()).rejects.toBe(clearError);
+    });
+
+    expect(onError).toHaveBeenCalledTimes(3);
+    expect(onError).toHaveBeenNthCalledWith(
+      1,
+      submitError,
+      expect.objectContaining({
+        phase: "submit",
+        id: undefined,
+        values: { term: "milk" },
+        close: expect.any(Function),
+      }),
+    );
+    expect(onError).toHaveBeenNthCalledWith(
+      2,
+      applyError,
+      expect.objectContaining({
+        phase: "apply",
+        id: undefined,
+        values: { term: "milk" },
+        close: expect.any(Function),
+      }),
+    );
+    expect(onError).toHaveBeenNthCalledWith(
+      3,
+      clearError,
+      expect.objectContaining({
+        phase: "clear",
+        id: undefined,
+        values: { term: "milk" },
+        close: expect.any(Function),
+      }),
+    );
     await waitFor(() => {
-      expect(mutationFn).toHaveBeenCalledWith({ name: "milk" });
+      expect(result.current.isSubmitting).toBe(false);
     });
   });
 });

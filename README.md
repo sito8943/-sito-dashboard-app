@@ -2,6 +2,24 @@
 
 `@sito/dashboard-app` is a React 18 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
 
+## Documentation scope and source of truth
+
+Use documentation by target package:
+
+| Document                | Primary audience              | Source of truth for                                     |
+| ----------------------- | ----------------------------- | ------------------------------------------------------- |
+| `README.md` (this file) | Consumer apps and maintainers | Public usage of `@sito/dashboard-app`                   |
+| `AGENTS.md`             | AI agents and maintainers     | Implementation rules for `@sito/dashboard-app`          |
+| `.sito/*.md`            | Internal team and agents      | Upstream reference notes for `@sito/dashboard` behavior |
+
+Important:
+
+- `.sito/*.md` is not the canonical integration guide for this package.
+- For `@sito/dashboard-app` provider setup, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed).
+- `IconButton` differs by package:
+  - `@sito/dashboard`: `icon` accepts a React node.
+  - `@sito/dashboard-app`: `icon` expects `IconDefinition` (FontAwesome wrapper export).
+
 ## Installation
 
 ```bash
@@ -20,7 +38,7 @@ pnpm add @sito/dashboard-app
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional; only if using Supabase backend)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.73`
+- `@sito/dashboard` `^0.0.74`
 - Font Awesome peers defined in `package.json`
 
 Install all peers in consumer apps:
@@ -28,7 +46,7 @@ Install all peers in consumer apps:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.73 \
+  @sito/dashboard@^0.0.74 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -238,6 +256,101 @@ Main optional props:
 - `tooltip?: string`
 - `scrollOnClick?: boolean` (default `true`)
 - `onClick?: () => void`
+
+## Dialog hook migration (`v0.0.54`)
+
+`v0.0.54` removes the legacy entity-coupled `useFormDialog` contract.
+
+### Breaking changes
+
+- `useFormDialog` is now core lifecycle only (`mode: "state" | "entity"`).
+- Legacy props were removed from `useFormDialog`: `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`.
+- Deprecated aliases were removed:
+  - `useFormDialogLegacy`
+  - `useEntityFormDialog`
+
+### What to use now
+
+- Local/state-only dialog (filters/settings): `useFormDialog`
+- Create flow (POST): `usePostDialog`
+- Edit flow (PUT + get by id): `usePutDialog`
+
+### Before -> After
+
+```tsx
+// BEFORE (no longer supported in v0.0.54+)
+const createDialog = useFormDialog<
+  ProductDto,
+  CreateProductDto,
+  ProductDto,
+  ProductForm
+>({
+  title: "Create product",
+  defaultValues: { name: "", price: 0 },
+  mutationFn: (dto) => api.products.insert(dto),
+  formToDto: (form) => ({ name: form.name, price: form.price }),
+  queryKey: ["products"],
+});
+
+// AFTER
+const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
+  title: "Create product",
+  defaultValues: { name: "", price: 0 },
+  mutationFn: (dto) => api.products.insert(dto),
+  mapOut: (form) => ({ name: form.name, price: form.price }),
+  queryKey: ["products"],
+});
+```
+
+```tsx
+// BEFORE (no longer supported in v0.0.54+)
+const editDialog = useFormDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
+  title: "Edit product",
+  defaultValues: { name: "", price: 0 },
+  getFunction: (id) => api.products.getById(id),
+  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
+  mutationFn: (dto) => api.products.update(dto),
+  formToDto: (form) => ({ id: 0, ...form }),
+  queryKey: ["products"],
+});
+
+// AFTER
+const editDialog = usePutDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
+  title: "Edit product",
+  defaultValues: { name: "", price: 0 },
+  getFunction: (id) => api.products.getById(id),
+  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
+  mutationFn: (dto) => api.products.update(dto),
+  mapOut: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
+  queryKey: ["products"],
+});
+```
+
+### Core `useFormDialog` error handling
+
+`useFormDialog` supports a core `onError` callback for failures in submit/apply/clear paths.
+
+```tsx
+const filtersDialog = useFormDialog<ProductFilters>({
+  mode: "state",
+  title: "Filters",
+  defaultValues: { search: "", minPrice: 0 },
+  onSubmit: async (values) => setTableFilters(values),
+  onError: (error, { phase, values }) => {
+    console.error("Dialog error", { error, phase, values });
+  },
+});
+```
 
 ## Initial setup example
 
@@ -491,6 +604,7 @@ const productsClient = new ProductsSupabaseClient(supabase);
 - `npm run build`: compile TypeScript and build the library
 - `npm run preview`: preview the Vite build locally
 - `npm run lint`: run ESLint
+- `npm run docs:check`: validate docs policy markers, relative links, and docs consistency rules
 - `npm run test`: run unit/component tests once (Vitest)
 - `npm run test:watch`: run tests in watch mode
 - `npm run format`: run Prettier write mode
@@ -611,6 +725,7 @@ npm run test:watch
 Current validation stack:
 
 - `npm run lint`
+- `npm run docs:check`
 - `npm run test`
 - `npm run build`
 - Storybook/manual behavior checks (optional visual validation)
@@ -633,8 +748,8 @@ npm run format
 
 CI is available through GitHub Actions:
 
-- `.github/workflows/ci.yml`: runs `lint + test + build` on `push` and `pull_request`
-- `.github/workflows/lint.yml`: runs lint checks on `push` and `pull_request`
+- `.github/workflows/ci.yml`: runs `lint + docs:check + test + build` on `push` and `pull_request`
+- `.github/workflows/lint.yml`: runs `lint + docs:check` on `push` and `pull_request`
 
 Package release/publish is still handled manually.
 

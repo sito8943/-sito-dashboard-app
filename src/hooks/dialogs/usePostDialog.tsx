@@ -19,7 +19,7 @@ export const usePostDialog = <
     mutationFn,
   });
 
-  return useFormDialog<never, never, never, TFormType, TMutationDto>({
+  return useFormDialog<TFormType, TMutationDto>({
     ...coreProps,
     mode: "entity",
     mapOut,

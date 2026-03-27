@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.55] - 2026-03-27
+
+### Documentation
+
+- Clarified documentation source-of-truth boundaries:
+  - `README.md` + `AGENTS.md` are canonical for `@sito/dashboard-app`.
+  - `.sito/*` is internal upstream reference material for `@sito/dashboard`.
+- Added explicit cross-doc context notes to prevent provider/IconButton contract mixups between `@sito/dashboard` and `@sito/dashboard-app`.
+- Updated `CLAUDE.md` documentation policy and aligned canonical provider-order wording.
+- Added automated docs consistency checks (`npm run docs:check`) and wired them into CI workflows.
+- Added a PR template checklist to enforce docs alignment and guard against regressions.
+
+## [0.0.55] - 2026-03-27
+
+### Breaking
+
+- Refactored `useFormDialog` to core lifecycle mode only (`state`/`entity`) and removed legacy entity-coupled compatibility signatures/aliases.
+  - Removed legacy `useFormDialog` props: `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`.
+  - Removed deprecated aliases:
+    - `useFormDialogLegacy`
+    - `useEntityFormDialog`
+
+### Changed
+
+- Added core `useFormDialog.onError(error, context)` support for submit/apply/clear failures, including phase metadata (`"submit" | "apply" | "clear"`).
+- Updated `usePostDialog`/`usePutDialog` internals to consume the simplified `useFormDialog` generic signature.
+
+### Documentation
+
+- Added explicit dialog-hook migration guidance (`useFormDialog` legacy -> `usePostDialog`/`usePutDialog`) with before/after snippets and `onError` usage in `README.md` and `docs/CONSUMER_GUIDE.md`.
+
 ## [0.0.54] - 2026-03-26
 
 ### Changed
@@ -57,7 +88,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Bumped package version to `0.0.52`.
-- Updated `@sito/dashboard` peer/dev dependency to `^0.0.73`.
+- Updated `@sito/dashboard` peer/dev dependency to `^0.0.74`.
 - Refactored dialog hook types to support both:
   - legacy entity-coupled `useFormDialog` usage
   - new core mode-based usage with `mapIn`/`mapOut`, `resetOnOpen`, `reinitializeOnOpen`, and submit/apply/clear handlers

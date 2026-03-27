@@ -43,7 +43,7 @@ export const usePutDialog = <
     mutationFn,
   });
 
-  const dialog = useFormDialog<never, never, never, TFormType, TMutationDto>({
+  const dialog = useFormDialog<TFormType, TMutationDto>({
     ...coreProps,
     mode: "entity",
     title,

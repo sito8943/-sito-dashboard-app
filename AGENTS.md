@@ -5,6 +5,24 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 
 ---
 
+## Documentation Scope
+
+Use documentation by purpose:
+
+| Document     | Purpose                                           | Authority level                                    |
+| ------------ | ------------------------------------------------- | -------------------------------------------------- |
+| `README.md`  | Public integration docs for consumers             | Canonical for `@sito/dashboard-app` usage          |
+| `AGENTS.md`  | Agent rules and implementation guardrails         | Canonical for agent behavior in this repo          |
+| `.sito/*.md` | Internal upstream reference for `@sito/dashboard` | Reference only (not canonical for app integration) |
+
+Critical distinction:
+
+- For `@sito/dashboard-app`, provider setup is `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` is used).
+- `IconButton` in this package is overridden and expects `icon: IconDefinition`.
+- Upstream examples in `.sito/*` may use `@sito/dashboard` patterns (for example `IconButton` with React nodes) and must not override this file's rules.
+
+---
+
 ## Tech Stack
 
 | Layer        | Technology           | Version |
@@ -16,7 +34,7 @@ This library is a React UI component library built on top of `@sito/dashboard`, 
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.0.73 |
+| Base Library | @sito/dashboard      | ^0.0.74 |
 
 ---
 
@@ -31,7 +49,7 @@ All peer dependencies **must** be installed in the consumer project:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.73 \
+  @sito/dashboard@^0.0.74 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -841,3 +859,4 @@ Consumer projects must provide translations for these namespaces.
 23. **Use `ToTop` customization props for positioning/behavior** — avoid ad-hoc wrappers when `threshold`, target coordinates, tooltip, icon, and click control are sufficient.
 24. **Prefer `IndexedDBClient.update(value)` in new code** — keep `(id, value)` only for temporary backward compatibility.
 25. **Keep documented runtime version aligned with `.nvmrc`** when writing setup instructions for this repository.
+26. **Run `npm run docs:check` after documentation edits** to validate policy markers, links, and cross-doc consistency.
