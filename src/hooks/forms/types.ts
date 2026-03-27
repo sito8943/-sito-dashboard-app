@@ -23,5 +23,5 @@ export interface UseFormPropsType<
   formToDto?: (data: TFormType) => TMutationDto;
   dtoToForm?: (data: TDto) => TFormType;
   mutationFn: MutationFunction<TMutationOutputDto, TMutationDto>;
-  queryKey: QueryKey;
+  queryKey?: QueryKey;
 }

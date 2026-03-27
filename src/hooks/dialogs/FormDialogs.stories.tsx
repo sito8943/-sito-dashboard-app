@@ -50,7 +50,7 @@ const StateDialogDemo = () => {
     minPrice: 0,
   });
 
-  const dialog = useFormDialog<never, never, never, FiltersForm, FiltersForm>({
+  const dialog = useFormDialog<FiltersForm, FiltersForm>({
     mode: "state",
     title: "Filters",
     defaultValues: { term: "", minPrice: 0 },

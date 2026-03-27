@@ -22,11 +22,7 @@ import {
   ImportPreviewDto,
   ValidationError,
 } from "lib";
-import {
-  UseBaseFormProps,
-  UseConfirmationPropsType,
-  UseFormPropsType,
-} from "../forms";
+import { UseBaseFormProps, UseConfirmationPropsType } from "../forms";
 import { FormDialogPropsType, ImportDialogPropsType } from "components";
 
 export type FormDialogMode = "entity" | "state";
@@ -40,6 +36,13 @@ export type FormDialogSubmitContext<TFormType extends FieldValues> = {
   id?: number;
   values: TFormType;
 };
+
+export type FormDialogErrorPhase = "submit" | "apply" | "clear";
+
+export type FormDialogErrorContext<TFormType extends FieldValues> =
+  FormDialogSubmitContext<TFormType> & {
+    phase: FormDialogErrorPhase;
+  };
 
 export interface UseDeleteDialogPropsType
   extends UseConfirmationPropsType<number, ValidationError> {
@@ -67,6 +70,10 @@ export interface UseFormDialogCoreBasePropsType<
     context: FormDialogSubmitContext<TFormType>,
   ) => void | Promise<void>;
   onClear?: () => void | Promise<void>;
+  onError?: (
+    error: unknown,
+    context: FormDialogErrorContext<TFormType>,
+  ) => void | Promise<void>;
 }
 
 export interface UseStateFormDialogPropsType<
@@ -83,15 +90,6 @@ export interface UseEntityCoreFormDialogPropsType<
   mode: "entity";
 }
 
-export interface UseFormDialogLegacyPropsType<
-  TDto,
-  TMutationDto,
-  TMutationOutputDto,
-  TFormType extends FieldValues,
-> extends UseFormPropsType<TDto, TMutationDto, TMutationOutputDto, TFormType> {
-  title: string;
-}
-
 export type UseFormDialogCorePropsType<
   TFormType extends FieldValues,
   TMappedValues,
@@ -100,19 +98,9 @@ export type UseFormDialogCorePropsType<
   | UseEntityCoreFormDialogPropsType<TFormType, TMappedValues>;
 
 export type UseFormDialogPropsType<
-  TDto,
-  TMutationDto,
-  TMutationOutputDto,
   TFormType extends FieldValues,
   TMappedValues = TFormType,
-> =
-  | UseFormDialogLegacyPropsType<
-      TDto,
-      TMutationDto,
-      TMutationOutputDto,
-      TFormType
-    >
-  | UseFormDialogCorePropsType<TFormType, TMappedValues>;
+> = UseFormDialogCorePropsType<TFormType, TMappedValues>;
 
 export interface TriggerFormDialogPropsType<TFormType extends FieldValues>
   extends Omit<
@@ -158,7 +146,7 @@ export interface UsePostDialogPropsType<
 > extends UseBaseFormProps<TMutationOutputDto, Error>,
     Omit<
       UseEntityCoreFormDialogPropsType<TFormType, TMutationDto>,
-      "mode" | "onSubmit"
+      "mode" | "onSubmit" | "onError"
     > {
   mutationFn: MutationFunction<TMutationOutputDto, TMutationDto>;
   queryKey?: QueryKey;
@@ -177,18 +165,6 @@ export interface UsePutDialogPropsType<
   dtoToForm?: (data: TDto) => TFormType;
   mapOut?: (data: TFormType, dto?: TDto) => TMutationDto;
 }
-
-export type UseEntityFormDialogPropsType<
-  TDto,
-  TMutationDto,
-  TMutationOutputDto,
-  TFormType extends FieldValues,
-> = UseFormDialogLegacyPropsType<
-  TDto,
-  TMutationDto,
-  TMutationOutputDto,
-  TFormType
->;
 
 export interface UseImportDialogPropsType<
   PreviewEntityDto extends ImportPreviewDto,

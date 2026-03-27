@@ -239,6 +239,86 @@ Main optional props:
 - `scrollOnClick?: boolean` (default `true`)
 - `onClick?: () => void`
 
+## Dialog hook migration (`v0.0.54`)
+
+`v0.0.54` removes the legacy entity-coupled `useFormDialog` contract.
+
+### Breaking changes
+
+- `useFormDialog` is now core lifecycle only (`mode: "state" | "entity"`).
+- Legacy props were removed from `useFormDialog`: `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`.
+- Deprecated aliases were removed:
+  - `useFormDialogLegacy`
+  - `useEntityFormDialog`
+
+### What to use now
+
+- Local/state-only dialog (filters/settings): `useFormDialog`
+- Create flow (POST): `usePostDialog`
+- Edit flow (PUT + get by id): `usePutDialog`
+
+### Before -> After
+
+```tsx
+// BEFORE (no longer supported in v0.0.54+)
+const createDialog = useFormDialog<ProductDto, CreateProductDto, ProductDto, ProductForm>({
+  title: "Create product",
+  defaultValues: { name: "", price: 0 },
+  mutationFn: (dto) => api.products.insert(dto),
+  formToDto: (form) => ({ name: form.name, price: form.price }),
+  queryKey: ["products"],
+});
+
+// AFTER
+const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
+  title: "Create product",
+  defaultValues: { name: "", price: 0 },
+  mutationFn: (dto) => api.products.insert(dto),
+  mapOut: (form) => ({ name: form.name, price: form.price }),
+  queryKey: ["products"],
+});
+```
+
+```tsx
+// BEFORE (no longer supported in v0.0.54+)
+const editDialog = useFormDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+  title: "Edit product",
+  defaultValues: { name: "", price: 0 },
+  getFunction: (id) => api.products.getById(id),
+  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
+  mutationFn: (dto) => api.products.update(dto),
+  formToDto: (form) => ({ id: 0, ...form }),
+  queryKey: ["products"],
+});
+
+// AFTER
+const editDialog = usePutDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+  title: "Edit product",
+  defaultValues: { name: "", price: 0 },
+  getFunction: (id) => api.products.getById(id),
+  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
+  mutationFn: (dto) => api.products.update(dto),
+  mapOut: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
+  queryKey: ["products"],
+});
+```
+
+### Core `useFormDialog` error handling
+
+`useFormDialog` supports a core `onError` callback for failures in submit/apply/clear paths.
+
+```tsx
+const filtersDialog = useFormDialog<ProductFilters>({
+  mode: "state",
+  title: "Filters",
+  defaultValues: { search: "", minPrice: 0 },
+  onSubmit: async (values) => setTableFilters(values),
+  onError: (error, { phase, values }) => {
+    console.error("Dialog error", { error, phase, values });
+  },
+});
+```
+
 ## Initial setup example
 
 Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.

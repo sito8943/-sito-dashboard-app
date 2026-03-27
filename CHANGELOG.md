@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.55] - 2026-03-27
+
+### Breaking
+
+- Refactored `useFormDialog` to core lifecycle mode only (`state`/`entity`) and removed legacy entity-coupled compatibility signatures/aliases.
+  - Removed legacy `useFormDialog` props: `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`.
+  - Removed deprecated aliases:
+    - `useFormDialogLegacy`
+    - `useEntityFormDialog`
+
+### Changed
+
+- Added core `useFormDialog.onError(error, context)` support for submit/apply/clear failures, including phase metadata (`"submit" | "apply" | "clear"`).
+- Updated `usePostDialog`/`usePutDialog` internals to consume the simplified `useFormDialog` generic signature.
+
+### Documentation
+
+- Added explicit dialog-hook migration guidance (`useFormDialog` legacy -> `usePostDialog`/`usePutDialog`) with before/after snippets and `onError` usage in `README.md` and `docs/CONSUMER_GUIDE.md`.
+
 ## [0.0.54] - 2026-03-26
 
 ### Changed
