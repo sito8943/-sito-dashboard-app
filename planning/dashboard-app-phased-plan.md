@@ -1,12 +1,14 @@
 # Plan Por Fases: @sito/dashboard-app (todo en uno)
 
 ## Resumen
+
 - [ ] Mantener `@sito/dashboard-app` como fachada integral para consumidores que prefieren una sola dependencia.
 - [ ] Mantener el grafo objetivo: `types -> rest/supabase/ui -> app`.
 - [ ] Reexportar `@sito/dashboard-ui`, `@sito/dashboard-rest`, `@sito/dashboard-supabase`, `@sito/dashboard-types` y `@sito/dashboard`.
 - [ ] Asegurar compatibilidad backward con la API actual durante la migracion.
 
 ## Cambios De API Publica
+
 1. [ ] Re-export completo de simbolos de `@sito/dashboard-ui`, `@sito/dashboard-rest`, `@sito/dashboard-supabase`, `@sito/dashboard-types` y `@sito/dashboard`.
 2. [ ] Mantener override de `IconButton` (implementacion local FontAwesome) como contrato de `@sito/dashboard-app`.
 3. [ ] Mantener hooks hibridos UI+data en `app`:
@@ -18,6 +20,7 @@
    - [ ] `Onboarding` de `app` preserva API legacy e inyecta `setGuestMode` a `Onboarding` de `ui`.
 
 ## Fases De Implementacion
+
 1. [ ] Fase 1 - Paquete fachada
    - [ ] Crear entrypoints de re-export y preservar la superficie publica actual.
    - [ ] Verificar que consumers actuales no requieran cambios inmediatos.
@@ -32,6 +35,7 @@
    - [ ] Definir estrategia de transicion por versiones.
 
 ## Plan De Pruebas
+
 1. [ ] Verificar compatibilidad de imports legacy desde `@sito/dashboard-app`.
 2. [ ] Ejecutar pruebas de wrappers `Drawer`/`Onboarding` en escenarios con auth y guest mode.
 3. [ ] Validar que hooks hibridos siguen funcionando con providers reexportados.
@@ -39,6 +43,7 @@
 5. [ ] Ejecutar smoke test de una app consumidora en modo todo-en-uno.
 
 ## Supuestos y defaults
+
 1. [ ] `@sito/dashboard-app` seguira existiendo como paquete de conveniencia y compatibilidad.
 2. [ ] `@sito/dashboard-types`, `@sito/dashboard-rest`, `@sito/dashboard-supabase` y `@sito/dashboard-ui` se publicaran antes o junto a la nueva version de `app`.
 3. [ ] El override de `IconButton` se mantiene mientras siga siendo parte del contrato publico.

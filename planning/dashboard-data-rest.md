@@ -1,12 +1,14 @@
 # Plan Por Fases: @sito/dashboard-rest
 
 ## Resumen
+
 - [ ] Separar la capa de datos REST y management general en un plan dedicado.
 - [ ] Mantener el grafo objetivo: `types -> rest/supabase/ui -> app`.
 - [ ] Cubrir clientes REST, auth REST y providers de management no exclusivos de Supabase.
 - [ ] Evitar exportar componentes o hooks puramente de UI.
 
 ## Cambios De API Publica
+
 1. [ ] Exportar clientes REST/core: `APIClient`, `AuthClient`, `BaseClient`, `IndexedDBClient`, `IManager`.
 2. [ ] Exportar utilidades HTTP/query generales: `Methods`, `makeRequest`, `buildQueryUrl`, `parseQueries`, `HttpResponse`.
 3. [ ] Exportar config de auth REST: `APIClientAuthConfig`.
@@ -17,6 +19,7 @@
 6. [ ] No incluir APIs ni tipos exclusivos de Supabase en este plan.
 
 ## Fases De Implementacion
+
 1. [ ] Fase 1 - Extraccion de clientes REST
    - [ ] Migrar `APIClient`, `AuthClient`, `BaseClient` e `IndexedDBClient` a `@sito/dashboard-rest`.
    - [ ] Mantener contratos publicos y generics para compatibilidad.
@@ -31,6 +34,7 @@
    - [ ] Referenciar `dashboard-data-supabase.md` para la variante Supabase.
 
 ## Plan De Pruebas
+
 1. [ ] Ejecutar tests unitarios de `APIClient`, `AuthClient`, `BaseClient`, `IndexedDBClient`.
 2. [ ] Ejecutar tests de `ManagerProvider` y `AuthProvider`.
 3. [ ] Validar flujo de refresh token, retry 401 y mutex de refresh.
@@ -38,6 +42,7 @@
 5. [ ] Verificar compilacion consumiendo tipos solo desde `@sito/dashboard-types`.
 
 ## Supuestos y defaults
+
 1. [ ] Node `20` y TypeScript `5.x` se mantienen como baseline.
 2. [ ] `@sito/dashboard-types` se publica antes de esta capa.
 3. [ ] La compatibilidad backward de la API REST es prioridad.
