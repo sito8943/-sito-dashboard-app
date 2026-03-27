@@ -261,7 +261,12 @@ Main optional props:
 
 ```tsx
 // BEFORE (no longer supported in v0.0.54+)
-const createDialog = useFormDialog<ProductDto, CreateProductDto, ProductDto, ProductForm>({
+const createDialog = useFormDialog<
+  ProductDto,
+  CreateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Create product",
   defaultValues: { name: "", price: 0 },
   mutationFn: (dto) => api.products.insert(dto),
@@ -281,7 +286,12 @@ const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
 
 ```tsx
 // BEFORE (no longer supported in v0.0.54+)
-const editDialog = useFormDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+const editDialog = useFormDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Edit product",
   defaultValues: { name: "", price: 0 },
   getFunction: (id) => api.products.getById(id),
@@ -292,7 +302,12 @@ const editDialog = useFormDialog<ProductDto, UpdateProductDto, ProductDto, Produ
 });
 
 // AFTER
-const editDialog = usePutDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+const editDialog = usePutDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Edit product",
   defaultValues: { name: "", price: 0 },
   getFunction: (id) => api.products.getById(id),

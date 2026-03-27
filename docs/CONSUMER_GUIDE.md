@@ -388,7 +388,12 @@ Migration map:
 Before:
 
 ```tsx
-const createDialog = useFormDialog<ProductDto, CreateProductDto, ProductDto, ProductForm>({
+const createDialog = useFormDialog<
+  ProductDto,
+  CreateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Create product",
   defaultValues: { name: "", price: 0 },
   mutationFn: (dto) => api.products.insert(dto),
@@ -412,7 +417,12 @@ const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
 Before:
 
 ```tsx
-const editDialog = useFormDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+const editDialog = useFormDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Edit product",
   defaultValues: { name: "", price: 0 },
   getFunction: (id) => api.products.getById(id),
@@ -426,7 +436,12 @@ const editDialog = useFormDialog<ProductDto, UpdateProductDto, ProductDto, Produ
 After:
 
 ```tsx
-const editDialog = usePutDialog<ProductDto, UpdateProductDto, ProductDto, ProductForm>({
+const editDialog = usePutDialog<
+  ProductDto,
+  UpdateProductDto,
+  ProductDto,
+  ProductForm
+>({
   title: "Edit product",
   defaultValues: { name: "", price: 0 },
   getFunction: (id) => api.products.getById(id),
