@@ -109,6 +109,71 @@ describe("useFormDialog", () => {
     });
   });
 
+  it("supports setting dialog values directly when opening", async () => {
+    const { result } = renderHook(
+      () =>
+        useFormDialog<FiltersForm>({
+          mode: "state",
+          title: "Filters",
+          defaultValues: { term: "" },
+        }),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.openDialog({ values: { term: "direct-open" } });
+    });
+
+    await waitFor(() => {
+      expect(result.current.getValues().term).toBe("direct-open");
+    });
+  });
+
+  it("prioritizes direct open values over mapIn when opening", async () => {
+    let currentFilters: FiltersForm = { term: "from-map-in" };
+
+    const { result } = renderHook(
+      () =>
+        useFormDialog<FiltersForm>({
+          mode: "state",
+          title: "Filters",
+          defaultValues: { term: "" },
+          reinitializeOnOpen: true,
+          mapIn: () => currentFilters,
+        }),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.openDialog({
+        id: 33,
+        values: { term: "from-open-values" },
+      });
+    });
+
+    await waitFor(() => {
+      expect(result.current.getValues().term).toBe("from-open-values");
+    });
+    expect(result.current.id).toBe(33);
+
+    act(() => {
+      result.current.handleClose();
+    });
+
+    await waitFor(() => {
+      expect(result.current.open).toBe(false);
+    });
+
+    act(() => {
+      currentFilters = { term: "from-map-in-second-open" };
+      result.current.openDialog();
+    });
+
+    await waitFor(() => {
+      expect(result.current.getValues().term).toBe("from-map-in-second-open");
+    });
+  });
+
   it("calls onError when mapOut fails in submit/apply", async () => {
     const mapError = new Error("map failed");
     const onError = vi.fn(async () => undefined);

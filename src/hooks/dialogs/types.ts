@@ -113,6 +113,7 @@ export interface TriggerFormDialogPropsType<TFormType extends FieldValues>
     | "handleSubmit"
     | "onSubmit"
   > {
+  openDialog: (params?: number | OpenFormDialogParamsType<TFormType>) => void;
   control: Control<TFormType, any, any>;
   getValues: UseFormGetValues<TFormType>;
   setValue: UseFormSetValue<TFormType>;
@@ -120,7 +121,11 @@ export interface TriggerFormDialogPropsType<TFormType extends FieldValues>
   setError: UseFormSetError<TFormType>;
   handleSubmit: UseFormHandleSubmit<TFormType, any>;
   onSubmit: SubmitHandler<TFormType>;
-  openDialog: (id?: number) => void;
+}
+
+export interface OpenFormDialogParamsType<TFormType extends FieldValues> {
+  id?: number;
+  values?: DefaultValues<TFormType>;
 }
 
 export interface UseFormDialogReturnType<TFormType extends FieldValues>

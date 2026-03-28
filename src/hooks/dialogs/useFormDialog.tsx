@@ -4,6 +4,7 @@ import { DefaultValues, FieldValues, useForm } from "react-hook-form";
 import { useDialog } from "./useDialog";
 import {
   FormDialogErrorPhase,
+  OpenFormDialogParamsType,
   UseFormDialogPropsType,
   UseFormDialogReturnType,
 } from "./types";
@@ -32,6 +33,7 @@ export const useFormDialog = <
   const [id, setId] = useState<number>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const initializedOpenRef = useRef(false);
+  const openValuesRef = useRef<DefaultValues<TFormType> | null>(null);
 
   const { open, handleClose, handleOpen } = useDialog();
 
@@ -43,11 +45,18 @@ export const useFormDialog = <
   useEffect(() => {
     if (!open) {
       initializedOpenRef.current = false;
+      openValuesRef.current = null;
       return;
     }
 
     if (initializedOpenRef.current) return;
     initializedOpenRef.current = true;
+
+    if (openValuesRef.current) {
+      reset(openValuesRef.current);
+      openValuesRef.current = null;
+      return;
+    }
 
     if (reinitializeOnOpen && mapIn) {
       reset(mapIn());
@@ -70,11 +79,33 @@ export const useFormDialog = <
   }, [handleClose, reset]);
 
   const openDialog = useCallback(
-    (nextId?: number) => {
+    (params?: number | OpenFormDialogParamsType<TFormType>) => {
+      let nextId: number | undefined;
+      let nextValues: DefaultValues<TFormType> | undefined;
+
+      if (typeof params === "number" || params == null) {
+        nextId = params;
+      } else {
+        nextId = params.id;
+        nextValues = params.values;
+      }
+
       setId(nextId);
-      handleOpen();
+      if (nextValues) {
+        if (open) {
+          reset(nextValues);
+        } else {
+          openValuesRef.current = nextValues;
+        }
+      } else {
+        openValuesRef.current = null;
+      }
+
+      if (!open) {
+        handleOpen();
+      }
     },
-    [handleOpen],
+    [handleOpen, open, reset],
   );
 
   const mapCoreValues = useCallback(
