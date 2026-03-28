@@ -9,11 +9,12 @@ All notable changes to this project will be documented in this file.
 - Added Storybook dialog-hook scenarios for open-time hydration:
   - `StateModeSetValuesOnOpen`
   - `StateModeReopenWithSubmittedValues`
-- Added `useFormDialog` test coverage for open-time value hydration and precedence against `mapIn`.
+- Added `useFormDialog` test coverage for open-time value hydration and precedence against `dtoToForm`.
 
 ### Changed
 
 - Extended `useFormDialog.openDialog` to support object params (`{ id?, values? }`) so dialogs can be hydrated directly when opening.
+- Restored dialog mapper naming to `dtoToForm`/`formToDto`
 
 ### Documentation
 

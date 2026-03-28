@@ -29,7 +29,7 @@ describe("useFormDialog", () => {
           title: "Filters",
           defaultValues: { term: "" },
           closeOnSubmit: false,
-          mapOut: (values) => ({ q: values.term }),
+          formToDto: (values) => ({ q: values.term }),
           onSubmit,
           onApply,
           onClear,
@@ -68,6 +68,43 @@ describe("useFormDialog", () => {
     expect(result.current.getValues().term).toBe("");
   });
 
+  it("prioritizes dtoToForm/formToDto over legacy aliases when both are provided", async () => {
+    const onSubmit = vi.fn(async () => undefined);
+
+    const { result } = renderHook(
+      () =>
+        useFormDialog<FiltersForm, { q: string }>({
+          mode: "state",
+          title: "Filters",
+          defaultValues: { term: "" },
+          reinitializeOnOpen: true,
+          dtoToForm: () => ({ term: "preferred-in" }),
+          formToDto: (values) => ({ q: `preferred-${values.term}` }),
+          onSubmit,
+        }),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.openDialog();
+    });
+
+    await waitFor(() => {
+      expect(result.current.getValues().term).toBe("preferred-in");
+    });
+
+    await act(async () => {
+      await result.current.onSubmit({ term: "value" });
+    });
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      { q: "preferred-value" },
+      expect.objectContaining({
+        values: { term: "value" },
+      }),
+    );
+  });
+
   it("reinitializes values on open when reinitializeOnOpen is enabled", async () => {
     let currentFilters: FiltersForm = { term: "first" };
 
@@ -78,7 +115,7 @@ describe("useFormDialog", () => {
           title: "Filters",
           defaultValues: { term: "" },
           reinitializeOnOpen: true,
-          mapIn: () => currentFilters,
+          dtoToForm: () => currentFilters,
         }),
       { wrapper: createWrapper() },
     );
@@ -129,8 +166,8 @@ describe("useFormDialog", () => {
     });
   });
 
-  it("prioritizes direct open values over mapIn when opening", async () => {
-    let currentFilters: FiltersForm = { term: "from-map-in" };
+  it("prioritizes direct open values over dtoToForm when opening", async () => {
+    let currentFilters: FiltersForm = { term: "from-dto-to-form" };
 
     const { result } = renderHook(
       () =>
@@ -139,7 +176,7 @@ describe("useFormDialog", () => {
           title: "Filters",
           defaultValues: { term: "" },
           reinitializeOnOpen: true,
-          mapIn: () => currentFilters,
+          dtoToForm: () => currentFilters,
         }),
       { wrapper: createWrapper() },
     );
@@ -165,16 +202,18 @@ describe("useFormDialog", () => {
     });
 
     act(() => {
-      currentFilters = { term: "from-map-in-second-open" };
+      currentFilters = { term: "from-dto-to-form-second-open" };
       result.current.openDialog();
     });
 
     await waitFor(() => {
-      expect(result.current.getValues().term).toBe("from-map-in-second-open");
+      expect(result.current.getValues().term).toBe(
+        "from-dto-to-form-second-open",
+      );
     });
   });
 
-  it("calls onError when mapOut fails in submit/apply", async () => {
+  it("calls onError when formToDto fails in submit/apply", async () => {
     const mapError = new Error("map failed");
     const onError = vi.fn(async () => undefined);
 
@@ -184,7 +223,7 @@ describe("useFormDialog", () => {
           mode: "state",
           title: "Filters",
           defaultValues: { term: "" },
-          mapOut: () => {
+          formToDto: () => {
             throw mapError;
           },
           onSubmit: async () => undefined,

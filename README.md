@@ -297,7 +297,7 @@ const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
   title: "Create product",
   defaultValues: { name: "", price: 0 },
   mutationFn: (dto) => api.products.insert(dto),
-  mapOut: (form) => ({ name: form.name, price: form.price }),
+  formToDto: (form) => ({ name: form.name, price: form.price }),
   queryKey: ["products"],
 });
 ```
@@ -331,7 +331,7 @@ const editDialog = usePutDialog<
   getFunction: (id) => api.products.getById(id),
   dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
   mutationFn: (dto) => api.products.update(dto),
-  mapOut: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
+  formToDto: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
   queryKey: ["products"],
 });
 ```
@@ -384,7 +384,7 @@ const reopenWithLastSubmitted = () => {
 };
 ```
 
-If both `openDialog({ values })` and `reinitializeOnOpen`/`mapIn` are configured, explicit `values` passed to `openDialog` take priority for that opening.
+If both `openDialog({ values })` and `reinitializeOnOpen`/`dtoToForm` are configured, explicit `values` passed to `openDialog` take priority for that opening.
 
 Storybook reference: `Hooks/Dialogs/FormDialogs` includes `StateModeSetValuesOnOpen` and `StateModeReopenWithSubmittedValues` scenarios.
 

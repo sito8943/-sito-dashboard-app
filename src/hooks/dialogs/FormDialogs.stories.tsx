@@ -55,8 +55,8 @@ const StateDialogDemo = () => {
     title: "Filters",
     defaultValues: { term: "", minPrice: 0 },
     reinitializeOnOpen: true,
-    mapIn: () => appliedFilters,
-    mapOut: (values) => values,
+    dtoToForm: () => appliedFilters,
+    formToDto: (values) => values,
     onSubmit: (values) => {
       setAppliedFilters(values);
     },
@@ -118,7 +118,7 @@ const SetValuesOnOpenDialogDemo = () => {
     mode: "state",
     title: "Filters (set values on open)",
     defaultValues: { term: "", minPrice: 0 },
-    mapOut: (values) => values,
+    formToDto: (values) => values,
     onSubmit: (values) => {
       setSubmittedFilters(values);
     },
@@ -212,7 +212,7 @@ const ReopenWithSubmittedValuesDialogDemo = () => {
     mode: "state",
     title: "Filters (reopen with submitted values)",
     defaultValues: { term: "", minPrice: 0 },
-    mapOut: (values) => values,
+    formToDto: (values) => values,
     onSubmit: (values) => {
       setLastSubmittedValues(values);
     },
@@ -279,7 +279,7 @@ const PostDialogDemo = () => {
       ...payload,
       id: Math.floor(Math.random() * 1000),
     }),
-    mapOut: (values) => values,
+    formToDto: (values) => values,
     onSuccess: (result) => setCreated(result),
   });
 
@@ -320,7 +320,7 @@ const PutDialogDemo = () => {
     getFunction: async (id) => ({ id, name: `Product ${id}` }),
     dtoToForm: (dto) => dto,
     mutationFn: async (payload) => payload,
-    mapOut: (values, dto) => ({ id: dto?.id ?? 0, name: values.name }),
+    formToDto: (values, dto) => ({ id: dto?.id ?? 0, name: values.name }),
     onSuccess: (result) => setUpdated(result),
   });
 

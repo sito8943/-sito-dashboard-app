@@ -27,6 +27,7 @@ export const usePutDialog = <
     queryKey,
     onSuccess,
     onError,
+    formToDto,
     mapOut,
     getFunction,
     dtoToForm,
@@ -61,8 +62,9 @@ export const usePutDialog = <
         throw error;
       }
     },
-    mapOut: (data) => {
-      if (mapOut) return mapOut(data, entityRef.current);
+    formToDto: (data) => {
+      const formToDtoMapper = formToDto || mapOut;
+      if (formToDtoMapper) return formToDtoMapper(data, entityRef.current);
       return data as unknown as TMutationDto;
     },
   });

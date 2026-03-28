@@ -18,8 +18,8 @@ export const useFormDialog = <
   const {
     closeOnSubmit = true,
     defaultValues,
-    mapIn,
-    mapOut,
+    dtoToForm,
+    formToDto,
     mode = "state",
     onApply: onApplyProp,
     onClear: onClearProp,
@@ -58,8 +58,9 @@ export const useFormDialog = <
       return;
     }
 
-    if (reinitializeOnOpen && mapIn) {
-      reset(mapIn());
+    const dtoToFormMapper = dtoToForm;
+    if (reinitializeOnOpen && dtoToFormMapper) {
+      reset(dtoToFormMapper());
       return;
     }
 
@@ -71,7 +72,7 @@ export const useFormDialog = <
     if (resetOnOpen) {
       reset(defaultValues || ({} as DefaultValues<TFormType>));
     }
-  }, [defaultValues, mapIn, open, reinitializeOnOpen, reset, resetOnOpen]);
+  }, [defaultValues, dtoToForm, open, reinitializeOnOpen, reset, resetOnOpen]);
 
   const close = useCallback(() => {
     handleClose();
@@ -110,10 +111,11 @@ export const useFormDialog = <
 
   const mapCoreValues = useCallback(
     (values: TFormType): TMappedValues => {
-      if (mapOut) return mapOut(values, { id });
+      const formToDtoMapper = formToDto;
+      if (formToDtoMapper) return formToDtoMapper(values, { id });
       return values as unknown as TMappedValues;
     },
-    [id, mapOut],
+    [formToDto, id],
   );
 
   const handleCoreError = useCallback(
