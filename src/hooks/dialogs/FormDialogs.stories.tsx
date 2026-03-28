@@ -105,6 +105,170 @@ const StateDialogDemo = () => {
   );
 };
 
+const SetValuesOnOpenDialogDemo = () => {
+  const [nextOpenValues, setNextOpenValues] = useState<FiltersForm>({
+    term: "",
+    minPrice: 0,
+  });
+  const [submittedFilters, setSubmittedFilters] = useState<FiltersForm | null>(
+    null,
+  );
+
+  const dialog = useFormDialog<FiltersForm, FiltersForm>({
+    mode: "state",
+    title: "Filters (set values on open)",
+    defaultValues: { term: "", minPrice: 0 },
+    mapOut: (values) => values,
+    onSubmit: (values) => {
+      setSubmittedFilters(values);
+    },
+  });
+
+  const openWithValues = (values: FiltersForm, id?: number) => {
+    setNextOpenValues(values);
+    dialog.openDialog({ id, values });
+  };
+
+  return (
+    <div className="max-w-md">
+      <div className="flex flex-wrap gap-2">
+        <button
+          className="rounded bg-violet-600 text-white px-3 py-2 text-sm"
+          onClick={() =>
+            openWithValues({
+              term: "laptop",
+              minPrice: 900,
+            })
+          }
+        >
+          Open with Laptop preset
+        </button>
+
+        <button
+          className="rounded bg-cyan-700 text-white px-3 py-2 text-sm"
+          onClick={() =>
+            openWithValues(
+              {
+                term: "keyboard",
+                minPrice: 120,
+              },
+              42,
+            )
+          }
+        >
+          Open with Keyboard preset (id=42)
+        </button>
+      </div>
+
+      <p className="mt-3 text-sm">
+        Next open values: {JSON.stringify(nextOpenValues)}
+      </p>
+      <p className="mt-1 text-sm">
+        Submitted:{" "}
+        {submittedFilters ? JSON.stringify(submittedFilters) : "none"}
+      </p>
+      <p className="mt-1 text-sm">Current dialog id: {dialog.id ?? "none"}</p>
+
+      <FormDialog<FiltersForm> {...dialog}>
+        <Controller
+          control={dialog.control}
+          name="term"
+          render={({ field }) => (
+            <Field label="Term">
+              <input className={inputClassName} {...field} />
+            </Field>
+          )}
+        />
+
+        <Controller
+          control={dialog.control}
+          name="minPrice"
+          render={({ field }) => (
+            <Field label="Min Price">
+              <input
+                className={inputClassName}
+                type="number"
+                value={field.value ?? 0}
+                onChange={(event) =>
+                  field.onChange(Number(event.target.value || 0))
+                }
+              />
+            </Field>
+          )}
+        />
+      </FormDialog>
+    </div>
+  );
+};
+
+const ReopenWithSubmittedValuesDialogDemo = () => {
+  const [lastSubmittedValues, setLastSubmittedValues] = useState<FiltersForm>({
+    term: "",
+    minPrice: 0,
+  });
+  const [openCount, setOpenCount] = useState(0);
+
+  const dialog = useFormDialog<FiltersForm, FiltersForm>({
+    mode: "state",
+    title: "Filters (reopen with submitted values)",
+    defaultValues: { term: "", minPrice: 0 },
+    mapOut: (values) => values,
+    onSubmit: (values) => {
+      setLastSubmittedValues(values);
+    },
+  });
+
+  const openWithLastSubmittedValues = () => {
+    setOpenCount((prev) => prev + 1);
+    dialog.openDialog({ values: lastSubmittedValues });
+  };
+
+  return (
+    <div className="max-w-md">
+      <button
+        className="rounded bg-indigo-700 text-white px-3 py-2 text-sm"
+        onClick={openWithLastSubmittedValues}
+      >
+        Open with last submitted values
+      </button>
+
+      <p className="mt-3 text-sm">
+        Last submitted values: {JSON.stringify(lastSubmittedValues)}
+      </p>
+      <p className="mt-1 text-sm">Opened times: {openCount}</p>
+
+      <FormDialog<FiltersForm> {...dialog}>
+        <Controller
+          control={dialog.control}
+          name="term"
+          render={({ field }) => (
+            <Field label="Term">
+              <input className={inputClassName} {...field} />
+            </Field>
+          )}
+        />
+
+        <Controller
+          control={dialog.control}
+          name="minPrice"
+          render={({ field }) => (
+            <Field label="Min Price">
+              <input
+                className={inputClassName}
+                type="number"
+                value={field.value ?? 0}
+                onChange={(event) =>
+                  field.onChange(Number(event.target.value || 0))
+                }
+              />
+            </Field>
+          )}
+        />
+      </FormDialog>
+    </div>
+  );
+};
+
 const PostDialogDemo = () => {
   const [created, setCreated] = useState<ProductDto | null>(null);
 
@@ -214,4 +378,12 @@ export const PostMode: Story = {
 
 export const PutMode: Story = {
   render: () => <PutDialogDemo />,
+};
+
+export const StateModeSetValuesOnOpen: Story = {
+  render: () => <SetValuesOnOpenDialogDemo />,
+};
+
+export const StateModeReopenWithSubmittedValues: Story = {
+  render: () => <ReopenWithSubmittedValuesDialogDemo />,
 };
