@@ -12,15 +12,8 @@ export const usePostDialog = <
   props: UsePostDialogPropsType<TMutationDto, TMutationOutputDto, TFormType>,
 ): UseFormDialogReturnType<TFormType> => {
   const queryClient = useQueryClient();
-  const {
-    mutationFn,
-    queryKey,
-    onSuccess,
-    onError,
-    formToDto,
-    mapOut,
-    ...coreProps
-  } = props;
+  const { mutationFn, queryKey, onSuccess, onError, formToDto, ...coreProps } =
+    props;
 
   const dialogFn = useMutation<TMutationOutputDto, Error, TMutationDto>({
     mutationFn,
@@ -29,7 +22,7 @@ export const usePostDialog = <
   return useFormDialog<TFormType, TMutationDto>({
     ...coreProps,
     mode: "entity",
-    formToDto: formToDto || mapOut,
+    formToDto: formToDto,
     onSubmit: async (payload) => {
       try {
         const result = await dialogFn.mutateAsync(payload);

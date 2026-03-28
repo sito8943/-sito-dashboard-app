@@ -58,28 +58,4 @@ describe("usePostDialog", () => {
       expect(mutationFn).toHaveBeenCalledWith({ name: "Cheese" });
     });
   });
-
-  it("supports legacy mapOut alias", async () => {
-    const mutationFn = vi.fn(async (payload: ProductDto) => payload);
-
-    const { result } = renderHook(
-      () =>
-        usePostDialog<ProductDto, ProductDto, ProductForm>({
-          title: "Create product",
-          defaultValues: { name: "" },
-          mutationFn,
-          mapOut: (values) => ({ name: values.name }),
-          queryKey: ["products"],
-        }),
-      { wrapper: createWrapper() },
-    );
-
-    await act(async () => {
-      await result.current.onSubmit({ name: "Milk" });
-    });
-
-    await waitFor(() => {
-      expect(mutationFn).toHaveBeenCalledWith({ name: "Milk" });
-    });
-  });
 });

@@ -170,13 +170,11 @@ export interface UsePutDialogPropsType<
   TFormType extends FieldValues,
 > extends Omit<
     UsePostDialogPropsType<TMutationDto, TMutationOutputDto, TFormType>,
-    "dtoToForm" | "formToDto" | "mapOut"
+    "dtoToForm" | "formToDto"
   > {
   getFunction: (id: number) => Promise<TDto>;
   dtoToForm?: (data: TDto) => TFormType;
   formToDto?: (data: TFormType, dto?: TDto) => TMutationDto;
-  /** @deprecated Use formToDto. */
-  mapOut?: (data: TFormType, dto?: TDto) => TMutationDto;
 }
 
 export interface UseImportDialogPropsType<

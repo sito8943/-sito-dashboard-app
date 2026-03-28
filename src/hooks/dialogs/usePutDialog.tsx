@@ -28,7 +28,6 @@ export const usePutDialog = <
     onSuccess,
     onError,
     formToDto,
-    mapOut,
     getFunction,
     dtoToForm,
     title,
@@ -63,7 +62,7 @@ export const usePutDialog = <
       }
     },
     formToDto: (data) => {
-      const formToDtoMapper = formToDto || mapOut;
+      const formToDtoMapper = formToDto;
       if (formToDtoMapper) return formToDtoMapper(data, entityRef.current);
       return data as unknown as TMutationDto;
     },
