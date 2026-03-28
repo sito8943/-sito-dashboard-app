@@ -147,10 +147,13 @@ const SetValuesOnOpenDialogDemo = () => {
         <button
           className="rounded bg-cyan-700 text-white px-3 py-2 text-sm"
           onClick={() =>
-            openWithValues({
-              term: "keyboard",
-              minPrice: 120,
-            }, 42)
+            openWithValues(
+              {
+                term: "keyboard",
+                minPrice: 120,
+              },
+              42,
+            )
           }
         >
           Open with Keyboard preset (id=42)
@@ -161,7 +164,8 @@ const SetValuesOnOpenDialogDemo = () => {
         Next open values: {JSON.stringify(nextOpenValues)}
       </p>
       <p className="mt-1 text-sm">
-        Submitted: {submittedFilters ? JSON.stringify(submittedFilters) : "none"}
+        Submitted:{" "}
+        {submittedFilters ? JSON.stringify(submittedFilters) : "none"}
       </p>
       <p className="mt-1 text-sm">Current dialog id: {dialog.id ?? "none"}</p>
 

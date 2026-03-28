@@ -352,6 +352,40 @@ const filtersDialog = useFormDialog<ProductFilters>({
 });
 ```
 
+### Opening `useFormDialog` with values
+
+`openDialog` now supports these signatures:
+
+- `openDialog()`
+- `openDialog(id: number)`
+- `openDialog({ id?: number, values?: DefaultValues<TFormType> })`
+
+Use `values` when you want to hydrate the form at open-time, for example re-opening with the last submitted filters:
+
+```tsx
+const [lastSubmittedFilters, setLastSubmittedFilters] =
+  useState<ProductFilters>({
+    search: "",
+    minPrice: 0,
+  });
+
+const filtersDialog = useFormDialog<ProductFilters>({
+  mode: "state",
+  title: "Filters",
+  defaultValues: { search: "", minPrice: 0 },
+  onSubmit: (values) => {
+    setLastSubmittedFilters(values);
+    setTableFilters(values);
+  },
+});
+
+const reopenWithLastSubmitted = () => {
+  filtersDialog.openDialog({ values: lastSubmittedFilters });
+};
+```
+
+If both `openDialog({ values })` and `reinitializeOnOpen`/`mapIn` are configured, explicit `values` passed to `openDialog` take priority for that opening.
+
 ## Initial setup example
 
 Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.
