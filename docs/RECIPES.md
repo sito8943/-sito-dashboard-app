@@ -530,6 +530,8 @@ export function ProductDialogs() {
 }
 ```
 
+Storybook reference: see `Hooks/Dialogs/FormDialogs` -> `StateModeSetValuesOnOpen` and `StateModeReopenWithSubmittedValues`.
+
 ## 7. Base dialog control with `useDialog` + `DialogActions`
 
 ```tsx

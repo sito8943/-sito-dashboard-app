@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.56] - 2026-03-28
+
+### Added
+
+- Added Storybook dialog-hook scenarios for open-time hydration:
+  - `StateModeSetValuesOnOpen`
+  - `StateModeReopenWithSubmittedValues`
+- Added `useFormDialog` test coverage for open-time value hydration and precedence against `mapIn`.
+
+### Changed
+
+- Extended `useFormDialog.openDialog` to support object params (`{ id?, values? }`) so dialogs can be hydrated directly when opening.
+
+### Documentation
+
+- Added examples for opening `useFormDialog` with explicit values (`openDialog({ values })`) and for re-opening with last submitted form values in `README.md`, `docs/CONSUMER_GUIDE.md`, and `docs/RECIPES.md`.
+- Added cross-references to the new Storybook scenarios in `README.md`, `docs/CONSUMER_GUIDE.md`, and `docs/RECIPES.md`.
+
 ## [0.0.55] - 2026-03-27
 
 ### Documentation

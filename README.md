@@ -386,6 +386,8 @@ const reopenWithLastSubmitted = () => {
 
 If both `openDialog({ values })` and `reinitializeOnOpen`/`mapIn` are configured, explicit `values` passed to `openDialog` take priority for that opening.
 
+Storybook reference: `Hooks/Dialogs/FormDialogs` includes `StateModeSetValuesOnOpen` and `StateModeReopenWithSubmittedValues` scenarios.
+
 ## Initial setup example
 
 Wrap your app with providers in this order to enable routing integration, React Query, auth, notifications, and drawer/navbar state.

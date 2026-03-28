@@ -498,6 +498,8 @@ const reopenFilters = () => {
 
 When `openDialog({ values })` is used together with `reinitializeOnOpen`/`mapIn`, the explicit `values` passed to `openDialog` are applied for that opening.
 
+Storybook reference: check `Hooks/Dialogs/FormDialogs` stories `StateModeSetValuesOnOpen` and `StateModeReopenWithSubmittedValues`.
+
 ### 6.3 Form hooks
 
 ```tsx
