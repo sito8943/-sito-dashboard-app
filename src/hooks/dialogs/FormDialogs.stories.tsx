@@ -446,9 +446,8 @@ const PutDialogDemo = () => {
 };
 
 const PutDialogMappersDemo = () => {
-  const [submittedPayload, setSubmittedPayload] = useState<UpdateProductDto | null>(
-    null,
-  );
+  const [submittedPayload, setSubmittedPayload] =
+    useState<UpdateProductDto | null>(null);
 
   const dialog = usePutDialog<
     RemoteProductDto,

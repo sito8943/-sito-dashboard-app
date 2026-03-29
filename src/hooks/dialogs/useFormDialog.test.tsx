@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { DefaultValues } from "react-hook-form";
 import { describe, expect, it, vi } from "vitest";
 
 import { useFormDialog } from "./useFormDialog";
@@ -70,7 +71,7 @@ describe("useFormDialog", () => {
 
   it("applies dtoToForm with source data and submits transformed formToDto values", async () => {
     const onSubmit = vi.fn(async () => undefined);
-    const dtoToForm = vi.fn((data: FiltersForm) => ({
+    const dtoToForm = vi.fn((data: DefaultValues<FiltersForm>) => ({
       ...data,
       term: "preferred-in",
     }));
