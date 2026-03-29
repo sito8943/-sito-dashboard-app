@@ -27,9 +27,12 @@ import { FormDialogPropsType, ImportDialogPropsType } from "components";
 
 export type FormDialogMode = "entity" | "state";
 
-export type FormDialogMapOutContext = {
+export type FormDialogFormToDtoContext = {
   id?: number;
 };
+
+/** @deprecated Use FormDialogFormToDtoContext. */
+export type FormDialogMapOutContext = FormDialogFormToDtoContext;
 
 export type FormDialogSubmitContext<TFormType extends FieldValues> = {
   close: () => void;
@@ -59,8 +62,11 @@ export interface UseFormDialogCoreBasePropsType<
   resetOnOpen?: boolean;
   reinitializeOnOpen?: boolean;
   closeOnSubmit?: boolean;
-  mapIn?: () => DefaultValues<TFormType>;
-  mapOut?: (data: TFormType, context: FormDialogMapOutContext) => TMappedValues;
+  dtoToForm?: (data: DefaultValues<TFormType>) => DefaultValues<TFormType>;
+  formToDto?: (
+    data: TFormType,
+    context: FormDialogFormToDtoContext,
+  ) => TMappedValues;
   onSubmit?: (
     data: TMappedValues,
     context: FormDialogSubmitContext<TFormType>,
@@ -164,11 +170,11 @@ export interface UsePutDialogPropsType<
   TFormType extends FieldValues,
 > extends Omit<
     UsePostDialogPropsType<TMutationDto, TMutationOutputDto, TFormType>,
-    "mapOut"
+    "dtoToForm" | "formToDto"
   > {
   getFunction: (id: number) => Promise<TDto>;
   dtoToForm?: (data: TDto) => TFormType;
-  mapOut?: (data: TFormType, dto?: TDto) => TMutationDto;
+  formToDto?: (data: TFormType, dto?: TDto) => TMutationDto;
 }
 
 export interface UseImportDialogPropsType<

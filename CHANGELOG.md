@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.57] - 2026-03-29
+
+### Changed
+
+- Standardized dialog mapper naming to `dtoToForm`/`formToDto` across dialog hooks and consumer-facing docs/examples.
+- Updated `useFormDialog.dtoToForm` to receive source data (`dtoToForm: (data) => ...`) before returning transformed form values.
+
+### Added
+
+- Added explicit Storybook mapper demos in `Hooks/Dialogs/FormDialogs`:
+  - `StateModeMapperNames`
+  - `PutModeMapperNames`
+
+### Documentation
+
+- Updated dialog mapping examples in `README.md`, `docs/CONSUMER_GUIDE.md`, and `docs/RECIPES.md` to use `dtoToForm`/`formToDto`.
+
 ## [0.0.56] - 2026-03-28
 
 ### Added
@@ -9,11 +26,13 @@ All notable changes to this project will be documented in this file.
 - Added Storybook dialog-hook scenarios for open-time hydration:
   - `StateModeSetValuesOnOpen`
   - `StateModeReopenWithSubmittedValues`
-- Added `useFormDialog` test coverage for open-time value hydration and precedence against `mapIn`.
+- Added `useFormDialog` test coverage for open-time value hydration and precedence against `dtoToForm`.
 
 ### Changed
 
 - Extended `useFormDialog.openDialog` to support object params (`{ id?, values? }`) so dialogs can be hydrated directly when opening.
+- Restored dialog mapper naming to `dtoToForm`/`formToDto`
+- Updated `useFormDialog.dtoToForm` signature to receive source data (`dtoToForm: (data) => ...`).
 
 ### Documentation
 

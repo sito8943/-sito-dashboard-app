@@ -62,7 +62,7 @@ describe("usePutDialog", () => {
           getFunction,
           mutationFn,
           dtoToForm: (dto) => ({ name: dto.name }),
-          mapOut: (values, dto) => ({ id: dto?.id, name: values.name }),
+          formToDto: (values, dto) => ({ id: dto?.id, name: values.name }),
           queryKey: ["products"],
         }),
       { wrapper: createWrapper() },
