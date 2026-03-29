@@ -68,8 +68,12 @@ describe("useFormDialog", () => {
     expect(result.current.getValues().term).toBe("");
   });
 
-  it("prioritizes dtoToForm/formToDto over legacy aliases when both are provided", async () => {
+  it("applies dtoToForm with source data and submits transformed formToDto values", async () => {
     const onSubmit = vi.fn(async () => undefined);
+    const dtoToForm = vi.fn((data: FiltersForm) => ({
+      ...data,
+      term: "preferred-in",
+    }));
 
     const { result } = renderHook(
       () =>
@@ -78,7 +82,7 @@ describe("useFormDialog", () => {
           title: "Filters",
           defaultValues: { term: "" },
           reinitializeOnOpen: true,
-          dtoToForm: () => ({ term: "preferred-in" }),
+          dtoToForm,
           formToDto: (values) => ({ q: `preferred-${values.term}` }),
           onSubmit,
         }),
@@ -92,6 +96,7 @@ describe("useFormDialog", () => {
     await waitFor(() => {
       expect(result.current.getValues().term).toBe("preferred-in");
     });
+    expect(dtoToForm).toHaveBeenCalledWith({ term: "" });
 
     await act(async () => {
       await result.current.onSubmit({ term: "value" });
@@ -115,7 +120,7 @@ describe("useFormDialog", () => {
           title: "Filters",
           defaultValues: { term: "" },
           reinitializeOnOpen: true,
-          dtoToForm: () => currentFilters,
+          dtoToForm: (data) => ({ ...data, ...currentFilters }),
         }),
       { wrapper: createWrapper() },
     );
@@ -176,7 +181,7 @@ describe("useFormDialog", () => {
           title: "Filters",
           defaultValues: { term: "" },
           reinitializeOnOpen: true,
-          dtoToForm: () => currentFilters,
+          dtoToForm: (data) => ({ ...data, ...currentFilters }),
         }),
       { wrapper: createWrapper() },
     );

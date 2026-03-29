@@ -60,7 +60,8 @@ export const useFormDialog = <
 
     const dtoToFormMapper = dtoToForm;
     if (reinitializeOnOpen && dtoToFormMapper) {
-      reset(dtoToFormMapper());
+      const sourceValues = defaultValues || ({} as DefaultValues<TFormType>);
+      reset(dtoToFormMapper(sourceValues));
       return;
     }
 

@@ -335,7 +335,7 @@ const filtersDialog = useFormDialog<ProductFilters>({
   title: "Filters",
   defaultValues: { search: "", minPrice: 0 },
   reinitializeOnOpen: true,
-  dtoToForm: () => tableFilters,
+  dtoToForm: (data) => ({ ...data, ...tableFilters }),
   onSubmit: (values) => setTableFilters(values),
 });
 

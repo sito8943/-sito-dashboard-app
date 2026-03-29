@@ -24,6 +24,21 @@ type ProductDto = {
   name: string;
 };
 
+type FiltersDto = {
+  q: string;
+  min: number;
+};
+
+type RemoteProductDto = {
+  id: number;
+  title: string;
+};
+
+type UpdateProductDto = {
+  id: number;
+  name: string;
+};
+
 const StoryProviders = ({ children }: { children: ReactNode }) => {
   const queryClient = useMemo(() => new QueryClient(), []);
 
@@ -55,7 +70,7 @@ const StateDialogDemo = () => {
     title: "Filters",
     defaultValues: { term: "", minPrice: 0 },
     reinitializeOnOpen: true,
-    dtoToForm: () => appliedFilters,
+    dtoToForm: (data) => ({ ...data, ...appliedFilters }),
     formToDto: (values) => values,
     onSubmit: (values) => {
       setAppliedFilters(values);
@@ -269,6 +284,84 @@ const ReopenWithSubmittedValuesDialogDemo = () => {
   );
 };
 
+const StateDialogMappersDemo = () => {
+  const [storedFiltersDto, setStoredFiltersDto] = useState<FiltersDto>({
+    q: "chair",
+    min: 100,
+  });
+  const [lastSubmittedDto, setLastSubmittedDto] = useState<FiltersDto | null>(
+    null,
+  );
+
+  const dialog = useFormDialog<FiltersForm, FiltersDto>({
+    mode: "state",
+    title: "Filters (dtoToForm/formToDto)",
+    defaultValues: { term: "", minPrice: 0 },
+    reinitializeOnOpen: true,
+    dtoToForm: (data) => ({
+      ...data,
+      term: storedFiltersDto.q,
+      minPrice: storedFiltersDto.min,
+    }),
+    formToDto: (values) => ({
+      q: values.term.trim(),
+      min: values.minPrice,
+    }),
+    onSubmit: (dto) => {
+      setStoredFiltersDto(dto);
+      setLastSubmittedDto(dto);
+    },
+  });
+
+  return (
+    <div className="max-w-md">
+      <button
+        className="rounded bg-sky-700 text-white px-3 py-2 text-sm"
+        onClick={() => dialog.openDialog()}
+      >
+        Open Mapper Dialog
+      </button>
+
+      <p className="mt-3 text-sm">
+        Source DTO (dtoToForm): {JSON.stringify(storedFiltersDto)}
+      </p>
+      <p className="mt-1 text-sm">
+        Submitted DTO (formToDto):{" "}
+        {lastSubmittedDto ? JSON.stringify(lastSubmittedDto) : "none"}
+      </p>
+
+      <FormDialog<FiltersForm> {...dialog}>
+        <Controller
+          control={dialog.control}
+          name="term"
+          render={({ field }) => (
+            <Field label="Term">
+              <input className={inputClassName} {...field} />
+            </Field>
+          )}
+        />
+
+        <Controller
+          control={dialog.control}
+          name="minPrice"
+          render={({ field }) => (
+            <Field label="Min Price">
+              <input
+                className={inputClassName}
+                type="number"
+                value={field.value ?? 0}
+                onChange={(event) =>
+                  field.onChange(Number(event.target.value || 0))
+                }
+              />
+            </Field>
+          )}
+        />
+      </FormDialog>
+    </div>
+  );
+};
+
 const PostDialogDemo = () => {
   const [created, setCreated] = useState<ProductDto | null>(null);
 
@@ -352,6 +445,61 @@ const PutDialogDemo = () => {
   );
 };
 
+const PutDialogMappersDemo = () => {
+  const [submittedPayload, setSubmittedPayload] = useState<UpdateProductDto | null>(
+    null,
+  );
+
+  const dialog = usePutDialog<
+    RemoteProductDto,
+    UpdateProductDto,
+    UpdateProductDto,
+    ProductForm
+  >({
+    title: "Edit Product (dtoToForm/formToDto)",
+    defaultValues: { name: "", id: 0 },
+    getFunction: async (id) => ({ id, title: `Remote Title ${id}` }),
+    dtoToForm: (dto) => ({
+      id: dto.id,
+      name: dto.title,
+    }),
+    mutationFn: async (payload) => payload,
+    formToDto: (values, dto) => ({
+      id: dto?.id ?? values.id,
+      name: values.name.trim(),
+    }),
+    onSuccess: (result) => setSubmittedPayload(result),
+  });
+
+  return (
+    <div className="max-w-md">
+      <button
+        className="rounded bg-orange-700 text-white px-3 py-2 text-sm"
+        onClick={() => dialog.openDialog(15)}
+      >
+        Open Put Mapper Dialog (id=15)
+      </button>
+
+      <p className="mt-3 text-sm">
+        Submitted payload (formToDto):{" "}
+        {submittedPayload ? JSON.stringify(submittedPayload) : "none"}
+      </p>
+
+      <FormDialog<ProductForm> {...dialog}>
+        <Controller
+          control={dialog.control}
+          name="name"
+          render={({ field }) => (
+            <Field label="Name">
+              <input className={inputClassName} {...field} />
+            </Field>
+          )}
+        />
+      </FormDialog>
+    </div>
+  );
+};
+
 const meta = {
   title: "Hooks/Dialogs/FormDialogs",
   tags: ["autodocs"],
@@ -386,4 +534,12 @@ export const StateModeSetValuesOnOpen: Story = {
 
 export const StateModeReopenWithSubmittedValues: Story = {
   render: () => <ReopenWithSubmittedValuesDialogDemo />,
+};
+
+export const StateModeMapperNames: Story = {
+  render: () => <StateDialogMappersDemo />,
+};
+
+export const PutModeMapperNames: Story = {
+  render: () => <PutDialogMappersDemo />,
 };

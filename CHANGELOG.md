@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 - Extended `useFormDialog.openDialog` to support object params (`{ id?, values? }`) so dialogs can be hydrated directly when opening.
 - Restored dialog mapper naming to `dtoToForm`/`formToDto`
+- Updated `useFormDialog.dtoToForm` signature to receive source data (`dtoToForm: (data) => ...`).
 
 ### Documentation
 

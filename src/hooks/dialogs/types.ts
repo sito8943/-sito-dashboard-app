@@ -62,7 +62,7 @@ export interface UseFormDialogCoreBasePropsType<
   resetOnOpen?: boolean;
   reinitializeOnOpen?: boolean;
   closeOnSubmit?: boolean;
-  dtoToForm?: () => DefaultValues<TFormType>;
+  dtoToForm?: (data: DefaultValues<TFormType>) => DefaultValues<TFormType>;
   formToDto?: (
     data: TFormType,
     context: FormDialogFormToDtoContext,
