@@ -6,10 +6,7 @@ import {
   faTags,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  BottomNavActionProvider,
-  useRegisterBottomNavAction,
-} from "providers";
+import { BottomNavActionProvider, useRegisterBottomNavAction } from "providers";
 
 import { BottomNavigation } from "./BottomNavigation";
 import type { BottomNavigationItemType } from "./types";
