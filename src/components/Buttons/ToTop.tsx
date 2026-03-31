@@ -28,7 +28,11 @@ export type ToTopPropsType = Omit<
   onClick?: () => void;
 };
 
-/** Renders a floating button that scrolls the page to a target position. */
+/**
+ * Renders a floating button that scrolls the page to a target position.
+ * @param props - Visual and behavior props for the button.
+ * @returns Scroll-to-top button element.
+ */
 export const ToTop = (props: ToTopPropsType) => {
   const { t } = useTranslation();
   const {

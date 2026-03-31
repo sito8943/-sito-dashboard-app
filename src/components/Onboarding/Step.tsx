@@ -7,7 +7,11 @@ import { Button } from "../Buttons";
 // styles
 import "./styles.css";
 
-/** Renders a single onboarding step with navigation actions. */
+/**
+ * Renders a single onboarding step with navigation actions.
+ * @param props - Step props.
+ * @returns Step element.
+ */
 export const Step = (props: StepPropsType) => {
   const {
     title,

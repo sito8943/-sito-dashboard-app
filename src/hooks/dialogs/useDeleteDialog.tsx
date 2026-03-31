@@ -19,7 +19,11 @@ import { useDeleteAction, useConfirmationForm } from "hooks";
 // types
 import { UseDeleteDialogPropsType } from "hooks";
 
-/** Builds delete dialog state, submit handler and matching delete action. */
+/**
+ * Builds delete dialog state, submit handler and matching delete action.
+ * @param props - Delete dialog configuration.
+ * @returns Dialog state, handlers and action factory.
+ */
 export const useDeleteDialog = (props: UseDeleteDialogPropsType) => {
   const { queryKey, onSuccess, ...rest } = props;
   const queryClient = useQueryClient();

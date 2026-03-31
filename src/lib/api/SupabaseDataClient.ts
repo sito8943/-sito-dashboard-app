@@ -119,6 +119,11 @@ export class SupabaseDataClient<
     TCommonRow
   >;
 
+  /**
+   * @param table - Resource table name.
+   * @param supabase - Supabase client with `from` capability.
+   * @param options - Mapping and column configuration options.
+   */
   constructor(
     table: Tables,
     supabase: Pick<SupabaseClient, "from">,

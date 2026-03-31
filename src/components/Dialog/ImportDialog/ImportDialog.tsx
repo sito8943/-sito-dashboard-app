@@ -5,32 +5,18 @@ import { FileInput, useTranslation } from "@sito/dashboard";
 
 // components
 import { Dialog, DialogActions, ImportDialogPropsType } from "components";
-
-// styles
-import "./styles.css";
 import { Error as ErrorComponent } from "./Error";
 import { Loading } from "./Loading";
 import { Preview } from "./Preview";
 
+// styles
+import "./styles.css";
+
 // lib
 import { ImportPreviewDto } from "lib";
 
-type State<T> = {
-  file: File | null;
-  previewItems: T[] | null;
-  parseError: string | null;
-  processing: boolean;
-  overrideExisting: boolean;
-  inputKey: number;
-};
-
-type Action<T> =
-  | { type: "SET_FILE"; file: File | null }
-  | { type: "START_PROCESSING" }
-  | { type: "SET_PREVIEW"; items: T[] }
-  | { type: "SET_ERROR"; message: string }
-  | { type: "SET_OVERRIDE"; value: boolean }
-  | { type: "RESET" };
+// types
+import type { State, Action } from "./types";
 
 const initialState = <T,>(): State<T> => ({
   file: null,
@@ -74,7 +60,11 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
   }
 }
 
-/** Handles file import, preview generation and submit for import workflows. */
+/**
+ * Handles file import, preview generation and submit for import workflows.
+ * @param props - Import dialog props.
+ * @returns Import dialog element.
+ */
 export const ImportDialog = <EntityDto extends ImportPreviewDto>(
   props: ImportDialogPropsType<EntityDto>,
 ) => {

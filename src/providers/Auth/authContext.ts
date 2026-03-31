@@ -7,7 +7,10 @@ export const AuthContext = createContext<AuthProviderContextType | undefined>(
   undefined,
 );
 
-/** Returns AuthContext value and throws when provider is missing. */
+/**
+ * Returns AuthContext value and throws when provider is missing.
+ * @returns Required auth context value.
+ */
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
 
@@ -15,7 +18,10 @@ export const useAuthContext = () => {
   return context;
 };
 
-/** Returns AuthContext value or undefined when provider is absent. */
+/**
+ * Returns AuthContext value or undefined when provider is absent.
+ * @returns Optional auth context value.
+ */
 export const useOptionalAuthContext = () => {
   return useContext(AuthContext);
 };

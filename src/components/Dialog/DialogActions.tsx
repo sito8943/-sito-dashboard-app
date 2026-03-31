@@ -10,7 +10,11 @@ import { Button } from "components";
 // styles
 import "./styles.css";
 
-/** Renders primary, secondary and optional extra actions for dialogs. */
+/**
+ * Renders primary, secondary and optional extra actions for dialogs.
+ * @param props - Dialog actions configuration.
+ * @returns Actions container element.
+ */
 export const DialogActions = (props: DialogActionsProps) => {
   const {
     primaryText,

@@ -6,7 +6,11 @@ import "./styles.css";
 // types
 import { LoadingPropsType } from "./types";
 
-/** Renders a full-screen loading overlay for app bootstrapping states. */
+/**
+ * Renders a full-screen loading overlay for app bootstrapping states.
+ * @param props - Loading component props.
+ * @returns Splash screen element.
+ */
 export function SplashScreen(props: LoadingPropsType) {
   const { className, ...rest } = props;
   return (

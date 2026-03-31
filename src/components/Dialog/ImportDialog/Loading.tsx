@@ -3,12 +3,14 @@ import { useTranslation, Loading as BaseLoading } from "@sito/dashboard";
 // styles
 import "./styles.css";
 
-type ImportDialogLoadingProps = {
-  message?: string;
-  className?: string;
-};
+// types
+import { ImportDialogLoadingProps } from "./types";
 
-/** Shows a loading state while an import file is being processed. */
+/**
+ * Shows a loading state while an import file is being processed.
+ * @param props - Loading view props.
+ * @returns Loading indicator element.
+ */
 export function Loading(props: ImportDialogLoadingProps) {
   const { message, className = "" } = props;
   const { t } = useTranslation();

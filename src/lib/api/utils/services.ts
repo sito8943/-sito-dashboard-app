@@ -115,7 +115,12 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
   }
 }
 
-/** Builds a URL with query-string parameters from a filter object. */
+/**
+ * Builds a URL with query-string parameters from a filter object.
+ * @param endpoint - Base endpoint path.
+ * @param params - Filter/query params object.
+ * @returns Endpoint with encoded query string.
+ */
 export function buildQueryUrl<TFilter>(
   endpoint: string,
   params?: TFilter,

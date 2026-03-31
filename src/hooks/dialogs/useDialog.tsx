@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-/** Provides basic open/close state helpers for dialog components. */
+/**
+ * Provides basic open/close state helpers for dialog components.
+ * @returns Open state and imperative open/close handlers.
+ */
 export const useDialog = () => {
   const [open, setOpen] = useState(false);
 

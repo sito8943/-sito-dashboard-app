@@ -70,7 +70,10 @@ const bgColor = (type: NotificationEnumType) => {
   }
 };
 
-/** Renders portal-based toast notifications managed by NotificationProvider. */
+/**
+ * Renders portal-based toast notifications managed by NotificationProvider.
+ * @returns Notification portal element.
+ */
 export function Notification() {
   const { t } = useTranslation();
 

@@ -19,7 +19,11 @@ import {
 import { UseFormPropsType } from "hooks";
 import { FormPropsType } from "components";
 
-/** Creates a mutation-backed form handler with notification-aware errors. */
+/**
+ * Creates a mutation-backed form handler with notification-aware errors.
+ * @param props - Post form configuration.
+ * @returns Form handlers and mutation loading state.
+ */
 export const usePostForm = <
   TDto,
   TMutationDto,

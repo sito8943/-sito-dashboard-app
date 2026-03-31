@@ -6,7 +6,10 @@ export const SupabaseManagerContext = createContext<
   SupabaseManagerProviderContextType | undefined
 >(undefined);
 
-/** Returns the Supabase client from context and enforces provider usage. */
+/**
+ * Returns the Supabase client from context and enforces provider usage.
+ * @returns Supabase manager client.
+ */
 export const useSupabase = () => {
   const context = useContext(SupabaseManagerContext);
 

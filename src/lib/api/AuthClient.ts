@@ -20,6 +20,11 @@ type AuthClientLogoutOptions = {
 export class AuthClient {
   api: APIClient;
 
+  /**
+   * @param baseUrl - API base URL.
+   * @param userKey - Storage key for user session data.
+   * @param authConfig - Custom auth storage key configuration.
+   */
   constructor(
     baseUrl: string,
     userKey: string = "user",

@@ -18,7 +18,11 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
   undefined,
 );
 
-/** Provides notification state and helper actions to descendant components. */
+/**
+ * Provides notification state and helper actions to descendant components.
+ * @param props - Provider props.
+ * @returns Notification context provider.
+ */
 export function NotificationProvider(props: BasicProviderPropTypes) {
   const { children } = props;
 

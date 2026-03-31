@@ -11,7 +11,11 @@ import { GlobalActions, UseMultipleActionPropTypes } from "hooks";
 // lib
 import { BaseEntityDto } from "lib";
 
-/** Creates a delete action descriptor for single and multi-row operations. */
+/**
+ * Creates a delete action descriptor for single and multi-row operations.
+ * @param props - Delete action options.
+ * @returns Action factory compatible with Actions/PrettyGrid.
+ */
 export const useDeleteAction = (props: UseMultipleActionPropTypes<number>) => {
   const { t } = useTranslation();
 

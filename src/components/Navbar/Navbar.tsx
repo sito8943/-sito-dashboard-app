@@ -20,7 +20,11 @@ import { isMac } from "lib";
 import { useConfig } from "providers";
 import { useNavbar } from "./NavbarProvider.js";
 
-/** Renders the top navigation bar with menu, title and optional search. */
+/**
+ * Renders the top navigation bar with menu, title and optional search.
+ * @param props - Navbar props.
+ * @returns Navbar element.
+ */
 export function Navbar(props: NavbarPropsType) {
   const { t } = useTranslation();
 

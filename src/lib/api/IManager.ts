@@ -5,6 +5,11 @@ import type { APIClientAuthConfig } from "./APIClient";
 export class IManager {
   auth: AuthClient;
 
+  /**
+   * @param baseUrl - API base URL.
+   * @param userKey - Storage key for user session data.
+   * @param authConfig - Custom auth storage key configuration.
+   */
   constructor(
     baseUrl: string,
     userKey?: string,

@@ -1,7 +1,10 @@
 import { useCallback } from "react";
 import { useTranslation } from "@sito/dashboard";
 
-/** Returns a translator that formats dates as relative age labels. */
+/**
+ * Returns a translator that formats dates as relative age labels.
+ * @returns Helper with `timeAge(date)` formatter.
+ */
 export function useTimeAge() {
   const { t, language } = useTranslation();
 

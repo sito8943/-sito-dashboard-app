@@ -11,7 +11,11 @@ import { GlobalActions, UseMultipleActionPropTypes } from "hooks";
 // lib
 import { BaseEntityDto } from "lib";
 
-/** Creates a restore action descriptor for soft-deleted records. */
+/**
+ * Creates a restore action descriptor for soft-deleted records.
+ * @param props - Restore action options.
+ * @returns Action factory compatible with Actions/PrettyGrid.
+ */
 export const useRestoreAction = (props: UseMultipleActionPropTypes<number>) => {
   const { t } = useTranslation();
 
