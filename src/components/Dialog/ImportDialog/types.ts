@@ -1,5 +1,9 @@
 import { ReactNode } from "react";
+
+// lib
 import { ImportPreviewDto } from "lib";
+
+// components
 import { ButtonPropsType, DialogPropsType } from "components";
 
 export interface ImportDialogPropsType<EntityDto extends ImportPreviewDto>
@@ -21,7 +25,7 @@ export type ImportDialogLoadingProps = {
   className?: string;
 };
 
-export type State<T> = {
+export type ImportState<T> = {
   file: File | null;
   previewItems: T[] | null;
   parseError: string | null;
@@ -30,7 +34,7 @@ export type State<T> = {
   inputKey: number;
 };
 
-export type Action<T> =
+export type ImportAction<T> =
   | { type: "SET_FILE"; file: File | null }
   | { type: "START_PROCESSING" }
   | { type: "SET_PREVIEW"; items: T[] }

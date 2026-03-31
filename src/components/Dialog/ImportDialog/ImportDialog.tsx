@@ -16,7 +16,7 @@ import "./styles.css";
 import { ImportPreviewDto } from "lib";
 
 // types
-import type { State, Action } from "./types";
+import type { ImportState as State, ImportAction as Action } from "./types";
 
 const initialState = <T,>(): State<T> => ({
   file: null,
