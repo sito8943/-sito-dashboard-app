@@ -6,6 +6,7 @@ import {
   faTags,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { BottomNavActionProvider, useRegisterBottomNavAction } from "providers";
 
 import { BottomNavigation } from "./BottomNavigation";
 import type { BottomNavigationItemType } from "./types";
@@ -63,6 +64,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const DynamicCenterActionRegistration = () => {
+  useRegisterBottomNavAction({
+    icon: faTags,
+    ariaLabel: "Dynamic category action",
+    to: "/categories/new",
+    color: "secondary",
+  });
+
+  return null;
+};
+
 export const Basic: Story = {};
 
 export const WithoutCenterAction: Story = {
@@ -97,5 +109,22 @@ export const WithDisabledItem: Story = {
         position: "right",
       },
     ],
+  },
+};
+
+export const WithDynamicCenterActionOverride: Story = {
+  render: (args) => (
+    <BottomNavActionProvider>
+      <DynamicCenterActionRegistration />
+      <BottomNavigation {...args} />
+    </BottomNavActionProvider>
+  ),
+  args: {
+    centerAction: {
+      icon: faPlus,
+      ariaLabel: "Quick action",
+      to: "/log",
+      color: "primary",
+    },
   },
 };

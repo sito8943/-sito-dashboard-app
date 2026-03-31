@@ -15,7 +15,7 @@ Use documentation by target package:
 Important:
 
 - `.sito/*.md` is not the canonical integration guide for this package.
-- For auth-enabled apps, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed).
+- For auth-enabled apps, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed; `BottomNavActionProvider` optional for dynamic mobile center actions).
 - `Drawer` and `Onboarding` can run without `AuthProvider`; in that case they behave as guest-mode UI defaults.
 - `IconButton` differs by package:
   - `@sito/dashboard`: `icon` accepts a React node.
@@ -70,7 +70,7 @@ npm install @supabase/supabase-js@2.100.0
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
 - Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `usePostForm`, `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), and `useSupabase`
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), and `useSupabase`
 
 ## Component usage patterns
 
@@ -305,12 +305,43 @@ const bottomItems: BottomNavigationItemType<BottomNavId>[] = [
 />;
 ```
 
+Dynamic center action with provider (optional):
+
+```tsx
+import {
+  BottomNavActionProvider,
+  BottomNavigation,
+  useRegisterBottomNavAction,
+  type BottomNavigationItemType,
+} from "@sito/dashboard-app";
+import { faTags } from "@fortawesome/free-solid-svg-icons";
+
+function ProductsCenterAction() {
+  useRegisterBottomNavAction({
+    icon: faTags,
+    ariaLabel: "Create category",
+    to: "/categories/new",
+    color: "secondary",
+  });
+  return null;
+}
+
+<BottomNavActionProvider>
+  <ProductsCenterAction />
+  <BottomNavigation
+    items={bottomItems}
+    centerAction={{ to: "/products/new" }}
+  />
+</BottomNavActionProvider>;
+```
+
 Key notes:
 
 - Use `position: "right"` to place items in the right group; omitted/`"left"` stays on the left group.
 - Use `isItemActive={(pathname, item) => ...}` for custom active matching (default uses path-prefix matching, with exact match for `/`).
 - Use `hidden`/`disabled` on each item and `centerAction.hidden` for conditional rendering.
 - `centerAction` supports `IconButton` visual props and optional `to`; navigation runs after `onClick` unless `event.preventDefault()` is called.
+- `BottomNavActionProvider` is optional. When mounted, `useRegisterBottomNavAction` can override center-action fields dynamically from active page scope; registered fields take precedence over static `centerAction` props.
 
 ## Dialog hook migration (`v0.0.54`)
 
@@ -459,6 +490,7 @@ import {
 } from "react-router-dom";
 import {
   AuthProvider,
+  BottomNavActionProvider,
   ConfigProvider,
   DrawerMenuProvider,
   IManager,
@@ -506,7 +538,10 @@ function AppProviders({ children }: { children: ReactNode }) {
         >
           <NotificationProvider>
             <DrawerMenuProvider>
-              <NavbarProvider>{children}</NavbarProvider>
+              <NavbarProvider>
+                {/* Optional: only when pages register dynamic BottomNavigation center actions */}
+                <BottomNavActionProvider>{children}</BottomNavActionProvider>
+              </NavbarProvider>
             </DrawerMenuProvider>
           </NotificationProvider>
         </AuthProvider>
@@ -529,6 +564,7 @@ Notes:
 - Keep `ManagerProvider` above `AuthProvider`.
 - `Drawer` and `Onboarding` are auth-optional wrappers. Without `AuthProvider`, `Drawer` treats the session as logged-out and `Onboarding` skips `setGuestMode`.
 - `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
+- `BottomNavActionProvider` is optional; mount it around your app shell when pages/components use `useRegisterBottomNavAction`.
 - If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
 
 ## Supabase setup (optional backend)
@@ -547,6 +583,7 @@ import type { ReactNode } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Link } from "react-router-dom";
 import {
+  BottomNavActionProvider,
   ConfigProvider,
   SupabaseManagerProvider,
   SupabaseAuthProvider,
@@ -571,7 +608,10 @@ function AppProviders({ children }: { children: ReactNode }) {
         <SupabaseAuthProvider>
           <NotificationProvider>
             <DrawerMenuProvider>
-              <NavbarProvider>{children}</NavbarProvider>
+              <NavbarProvider>
+                {/* Optional: only when pages register dynamic BottomNavigation center actions */}
+                <BottomNavActionProvider>{children}</BottomNavActionProvider>
+              </NavbarProvider>
             </DrawerMenuProvider>
           </NotificationProvider>
         </SupabaseAuthProvider>

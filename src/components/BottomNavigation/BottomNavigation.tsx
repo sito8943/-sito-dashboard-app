@@ -5,7 +5,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { AppIconButton } from "components";
 
 // providers
-import { useConfig } from "providers";
+import { useConfig, useOptionalBottomNavAction } from "providers";
 
 // utils
 import { isPathActive, splitBottomNavigationItems } from "./utils";
@@ -29,6 +29,10 @@ export const BottomNavigation = <TId extends string = string>(
   props: BottomNavigationPropsType<TId>,
 ) => {
   const { items, centerAction, className = "", isItemActive } = props;
+  const registeredCenterAction = useOptionalBottomNavAction()?.centerAction;
+  const effectiveCenterAction = registeredCenterAction
+    ? { ...(centerAction ?? {}), ...registeredCenterAction }
+    : centerAction;
 
   const { location, navigate, linkComponent } = useConfig();
 
@@ -47,8 +51,8 @@ export const BottomNavigation = <TId extends string = string>(
     color: centerActionColor = "primary",
     className: centerActionClassName = "",
     ...centerActionProps
-  } = centerAction ?? {};
-  const hasCenterAction = !!centerAction && !centerActionHidden;
+  } = effectiveCenterAction ?? {};
+  const hasCenterAction = !!effectiveCenterAction && !centerActionHidden;
 
   const resolveIsActive = (item: BottomNavigationItemType<TId>) => {
     return isItemActive
