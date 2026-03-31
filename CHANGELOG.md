@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.60] - 2026-03-31
+
+### Added
+
+- Added `BottomNavActionProvider` exports to `providers` and package public API.
+- Added `useOptionalBottomNavAction` and expanded `useRegisterBottomNavAction` usage to support dynamic center-action registration from page scope.
+- Added `BottomNavigation` Storybook coverage for dynamic center-action override (`WithDynamicCenterActionOverride`).
+- Added `BottomNavigation` test coverage for provider-based center-action override and callback-only registration compatibility.
+
+### Changed
+
+- Updated `BottomNavigation` to consume `BottomNavActionProvider` context when available and merge registered center-action fields over `centerAction` props.
+- Updated bottom-nav action registration to support either:
+  - a full center-action descriptor object
+  - a callback-only registration (`() => void`)
+- Kept provider usage optional so existing `BottomNavigation` usage without `BottomNavActionProvider` still works.
+
+### Fixed
+
+- Fixed incomplete bottom-nav action integration that could cause runtime failures due to missing hook wiring.
+
+### Documentation
+
+- Updated `README.md`, `docs/CONSUMER_GUIDE.md`, and `docs/RECIPES.md` with:
+  - optional `BottomNavActionProvider` setup guidance
+  - dynamic center-action registration examples with `useRegisterBottomNavAction`
+  - provider-order notes for app-shell integration
+
 ## [0.0.59] - 2026-03-31
 
 ### Added
