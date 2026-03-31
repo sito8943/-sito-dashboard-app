@@ -9,6 +9,7 @@ import {
   UseFormDialogReturnType,
 } from "./types";
 
+/** Handles reusable form-dialog lifecycle, mapping and submit orchestration. */
 export const useFormDialog = <
   TFormType extends FieldValues,
   TMappedValues = TFormType,

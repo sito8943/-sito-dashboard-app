@@ -25,6 +25,7 @@ export interface UseExportAction extends UseActionPropTypes {
 
 export type UseImportAction = UseExportAction;
 
+/** Built-in identifiers for prefab page actions. */
 export enum GlobalActions {
   Add = "add",
   Edit = "edit",

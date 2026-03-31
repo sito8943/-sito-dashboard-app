@@ -5,6 +5,7 @@ import { TabPropsType } from "./types";
 import { useConfig } from "providers/ConfigProvider";
 import { Button } from "../Buttons";
 
+/** Renders a single tab as either a router link or local button. */
 export const Tab = (props: TabPropsType) => {
   const {
     id,

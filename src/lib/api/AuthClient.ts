@@ -16,6 +16,7 @@ type AuthClientLogoutOptions = {
   refreshToken?: string;
 };
 
+/** Auth-focused API client for login, refresh, logout and session endpoints. */
 export class AuthClient {
   api: APIClient;
 

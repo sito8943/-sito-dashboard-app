@@ -12,6 +12,7 @@ import {
   SoftDeleteScope,
 } from "lib";
 
+/** Generic IndexedDB-backed client mirroring BaseClient CRUD semantics. */
 export class IndexedDBClient<
   Tables extends string,
   TDto extends BaseEntityDto,

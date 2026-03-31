@@ -19,6 +19,7 @@ import { useRestoreAction, useConfirmationForm } from "hooks";
 // types
 import { UseDeleteDialogPropsType } from "hooks";
 
+/** Builds restore dialog state, submit handler and matching restore action. */
 export const useRestoreDialog = (props: UseDeleteDialogPropsType) => {
   const { queryKey, onSuccess, ...rest } = props;
   const queryClient = useQueryClient();

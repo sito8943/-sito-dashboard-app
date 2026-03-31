@@ -1,3 +1,4 @@
+/** Notification variants supported by NotificationProvider/Notification UI. */
 export enum NotificationEnumType {
   success,
   error,

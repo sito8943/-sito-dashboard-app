@@ -74,6 +74,7 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
   }
 }
 
+/** Handles file import, preview generation and submit for import workflows. */
 export const ImportDialog = <EntityDto extends ImportPreviewDto>(
   props: ImportDialogPropsType<EntityDto>,
 ) => {

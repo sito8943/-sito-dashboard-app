@@ -40,6 +40,7 @@ const resolveNumericId = (
   return defaultId;
 };
 
+/** Maps a Supabase session object into the library SessionDto shape. */
 export const mapSupabaseSessionToSessionDto: (
   session: Session,
   options?: SupabaseSessionMapperOptions,

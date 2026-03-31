@@ -13,6 +13,7 @@ import { UseImportDialogPropsType, UseImportDialogReturnType } from "./types";
 // hooks
 import { useImportAction } from "hooks";
 
+/** Builds import dialog state and mutation flow for entity imports. */
 export function useImportDialog<
   EntityDto extends BaseEntityDto,
   PreviewEntityDto extends ImportPreviewDto,

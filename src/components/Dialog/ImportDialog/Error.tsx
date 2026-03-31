@@ -8,6 +8,7 @@ type ErrorProps = {
   className?: string;
 };
 
+/** Displays parse or processing errors inside the import dialog flow. */
 export function Error(props: ErrorProps) {
   const { message, className = "" } = props;
   const { t } = useTranslation();

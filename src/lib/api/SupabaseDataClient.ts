@@ -92,6 +92,7 @@ const resolveSoftDeleteScope = (
   return undefined;
 };
 
+/** Generic Supabase data client aligned with BaseClient behavior. */
 export class SupabaseDataClient<
   Tables extends string,
   TDto extends BaseEntityDto,

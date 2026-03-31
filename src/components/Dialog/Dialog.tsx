@@ -14,6 +14,7 @@ import { AppIconButton } from "components";
 // styles
 import "./styles.css";
 
+/** Renders a portal-based modal dialog with backdrop and close behavior. */
 export const Dialog = (props: DialogPropsType) => {
   const { t } = useTranslation();
   const {

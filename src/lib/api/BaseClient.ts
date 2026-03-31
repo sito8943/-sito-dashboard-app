@@ -19,6 +19,7 @@ import {
 } from "lib";
 import { parseQueries } from "./utils/query";
 
+/** Generic REST client with CRUD, import/export and common list operations. */
 export class BaseClient<
   Tables,
   TDto extends BaseEntityDto,

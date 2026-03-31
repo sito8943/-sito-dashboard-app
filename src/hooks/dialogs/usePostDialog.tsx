@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormDialog } from "./useFormDialog";
 import { UseFormDialogReturnType, UsePostDialogPropsType } from "./types";
 
+/** Creates a form dialog wired to a create mutation and cache invalidation. */
 export const usePostDialog = <
   TMutationDto,
   TMutationOutputDto,

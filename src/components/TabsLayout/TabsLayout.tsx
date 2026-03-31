@@ -9,6 +9,7 @@ import { Tab } from "./Tab";
 // styles
 import "./styles.css";
 
+/** Renders tab navigation and active tab content in controlled/uncontrolled mode. */
 export const TabsLayout = (props: TabsLayoutPropsType) => {
   const {
     tabs = [],

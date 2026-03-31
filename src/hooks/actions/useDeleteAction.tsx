@@ -11,6 +11,7 @@ import { GlobalActions, UseMultipleActionPropTypes } from "hooks";
 // lib
 import { BaseEntityDto } from "lib";
 
+/** Creates a delete action descriptor for single and multi-row operations. */
 export const useDeleteAction = (props: UseMultipleActionPropTypes<number>) => {
   const { t } = useTranslation();
 

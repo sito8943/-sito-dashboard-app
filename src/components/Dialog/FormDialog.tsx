@@ -11,6 +11,7 @@ import { FormDialogPropsType } from "./types";
 // styles
 import "./styles.css";
 
+/** Renders a form dialog with built-in submit and cancel controls. */
 export const FormDialog = <TInput extends FieldValues>(
   props: FormDialogPropsType<TInput>,
 ) => {

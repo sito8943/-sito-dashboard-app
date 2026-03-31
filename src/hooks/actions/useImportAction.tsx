@@ -13,6 +13,7 @@ import {
 // types
 import { GlobalActions, UseImportAction } from "hooks";
 
+/** Creates an import action descriptor with loading-state icon handling. */
 export const useImportAction = (props: UseImportAction) => {
   const { t } = useTranslation();
 

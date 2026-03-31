@@ -10,6 +10,7 @@ import { FormContainerPropsType } from "./types";
 // styles
 import "./styles.css";
 
+/** Wraps form content and renders default submit/cancel actions. */
 export const FormContainer = <TInput extends FieldValues>(
   props: FormContainerPropsType<TInput>,
 ) => {

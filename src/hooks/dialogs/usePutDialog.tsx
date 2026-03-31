@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormDialog } from "./useFormDialog";
 import { UseFormDialogReturnType, UsePutDialogPropsType } from "./types";
 
+/** Creates an edit dialog with get-by-id hydration and update mutation flow. */
 export const usePutDialog = <
   TDto,
   TMutationDto,

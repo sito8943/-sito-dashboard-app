@@ -15,6 +15,7 @@ import { Empty } from "components";
 // styles
 import "./styles.css";
 
+/** Renders a card grid with empty, loading and infinite-scroll states. */
 export const PrettyGrid = <TDto extends BaseEntityDto>(
   props: PrettyGridPropsType<TDto>,
 ) => {

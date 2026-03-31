@@ -12,6 +12,7 @@ type PreviewProps<EntityDto extends ImportPreviewDto> = {
   className?: string;
 };
 
+/** Renders a compact JSON preview of parsed import items. */
 export function Preview<EntityDto extends ImportPreviewDto>(
   props: PreviewProps<EntityDto>,
 ) {

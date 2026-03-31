@@ -11,6 +11,7 @@ import { GlobalActions, UseMultipleActionPropTypes } from "hooks";
 // lib
 import { BaseEntityDto } from "lib";
 
+/** Creates a restore action descriptor for soft-deleted records. */
 export const useRestoreAction = (props: UseMultipleActionPropTypes<number>) => {
   const { t } = useTranslation();
 

@@ -12,6 +12,7 @@ import { Action } from "components";
 // styles
 import "./styles.css";
 
+/** Displays an empty-state message with optional icon and action. */
 export const Empty = <TRow extends BaseEntityDto>(
   props: EmptyPropsType<TRow>,
 ) => {

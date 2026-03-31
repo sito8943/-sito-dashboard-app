@@ -13,6 +13,7 @@ import "./styles.css";
 import { useConfig, useDrawerMenu, useOptionalAuthContext } from "providers";
 import { SubMenuItemType } from "lib";
 
+/** Renders the side drawer and resolves menu visibility by auth state. */
 export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const { t } = useTranslation();
 

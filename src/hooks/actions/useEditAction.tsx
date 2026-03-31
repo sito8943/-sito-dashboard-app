@@ -14,6 +14,7 @@ import { GlobalActions, UseSingleActionPropTypes } from "hooks";
 // lib
 import { BaseEntityDto } from "lib";
 
+/** Creates an edit action descriptor for row-level editing flows. */
 export const useEditAction = <TRow extends BaseEntityDto>(
   props: UseSingleActionPropTypes<number>,
 ) => {

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 const getWindowScrollY = () =>
   typeof window !== "undefined" ? window.scrollY : 0;
 
+/** Returns true when page scroll exceeds the provided offset. */
 export function useScrollTrigger(offset: number) {
   const [scrollY, setScrollY] = useState(getWindowScrollY);
 

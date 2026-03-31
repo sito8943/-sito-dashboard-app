@@ -12,6 +12,7 @@ import { ConfirmationDialogPropsType } from "./types";
 // styles
 import "./styles.css";
 
+/** Renders a confirmation dialog with cancel and primary actions. */
 export const ConfirmationDialog = (props: ConfirmationDialogPropsType) => {
   const { t } = useTranslation();
 

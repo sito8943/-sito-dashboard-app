@@ -8,6 +8,7 @@ type ImportDialogLoadingProps = {
   className?: string;
 };
 
+/** Shows a loading state while an import file is being processed. */
 export function Loading(props: ImportDialogLoadingProps) {
   const { message, className = "" } = props;
   const { t } = useTranslation();

@@ -18,6 +18,7 @@ import { useConfig } from "providers";
 // styles
 import "./styles.css";
 
+/** Renders page title plus desktop/mobile action controls and back button. */
 export const PageHeader = <TEntity extends BaseEntityDto>(
   props: PageHeaderPropsType<TEntity>,
 ) => {
