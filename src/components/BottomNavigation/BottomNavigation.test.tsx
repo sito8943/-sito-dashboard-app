@@ -5,6 +5,11 @@ import type { ComponentProps, MouseEvent } from "react";
 import { faFile, faHome, faPlus } from "@fortawesome/free-solid-svg-icons";
 import type { Location } from "lib";
 import { ConfigProvider } from "providers/ConfigProvider";
+import {
+  BottomNavActionProvider,
+  useRegisterBottomNavAction,
+  type BottomNavActionRegistrationType,
+} from "providers";
 import type { BaseLinkPropsType } from "components/types";
 import type { BottomNavigationItemType } from "./types";
 import { BottomNavigation } from "./BottomNavigation";
@@ -56,17 +61,28 @@ const items: BottomNavigationItemType[] = [
   },
 ];
 
+const RegisterBottomAction = ({
+  action,
+}: {
+  action: BottomNavActionRegistrationType;
+}) => {
+  useRegisterBottomNavAction(action);
+  return null;
+};
+
 const renderBottomNavigation = (params?: {
   location?: Location;
   navigate?: (route: string | number) => void;
   navItems?: BottomNavigationItemType[];
   centerAction?: ComponentProps<typeof BottomNavigation>["centerAction"];
+  registerAction?: BottomNavActionRegistrationType;
 }) => {
   const {
     location = baseLocation,
     navigate = () => {},
     navItems = items,
     centerAction,
+    registerAction,
   } = params ?? {};
 
   return render(
@@ -75,7 +91,14 @@ const renderBottomNavigation = (params?: {
       navigate={navigate}
       linkComponent={Link}
     >
-      <BottomNavigation items={navItems} centerAction={centerAction} />
+      {registerAction === undefined ? (
+        <BottomNavigation items={navItems} centerAction={centerAction} />
+      ) : (
+        <BottomNavActionProvider>
+          <RegisterBottomAction action={registerAction} />
+          <BottomNavigation items={navItems} centerAction={centerAction} />
+        </BottomNavActionProvider>
+      )}
     </ConfigProvider>,
   );
 };
@@ -150,5 +173,46 @@ describe("BottomNavigation", () => {
       screen.queryByRole("link", { name: "Home" }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("Home")).toBeInTheDocument();
+  });
+
+  it("overrides center action from BottomNavActionProvider", () => {
+    const navigate = vi.fn();
+
+    renderBottomNavigation({
+      navigate,
+      centerAction: {
+        icon: faPlus,
+        to: "/log",
+        ariaLabel: "Log period",
+      },
+      registerAction: {
+        ariaLabel: "Quick add",
+        to: "/quick",
+      },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Quick add" }));
+
+    expect(navigate).toHaveBeenCalledWith("/quick");
+  });
+
+  it("keeps props destination when registered center action is callback-only", () => {
+    const navigate = vi.fn();
+    const onAction = vi.fn();
+
+    renderBottomNavigation({
+      navigate,
+      centerAction: {
+        icon: faPlus,
+        to: "/log",
+        ariaLabel: "Log period",
+      },
+      registerAction: onAction,
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Log period" }));
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(navigate).toHaveBeenCalledWith("/log");
   });
 });
