@@ -328,7 +328,10 @@ function ProductsCenterAction() {
 
 <BottomNavActionProvider>
   <ProductsCenterAction />
-  <BottomNavigation items={bottomItems} centerAction={{ to: "/products/new" }} />
+  <BottomNavigation
+    items={bottomItems}
+    centerAction={{ to: "/products/new" }}
+  />
 </BottomNavActionProvider>;
 ```
 
