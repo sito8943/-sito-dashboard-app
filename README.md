@@ -15,7 +15,8 @@ Use documentation by target package:
 Important:
 
 - `.sito/*.md` is not the canonical integration guide for this package.
-- For `@sito/dashboard-app` provider setup, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed).
+- For auth-enabled apps, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed).
+- `Drawer` and `Onboarding` can run without `AuthProvider`; in that case they behave as guest-mode UI defaults.
 - `IconButton` differs by package:
   - `@sito/dashboard`: `icon` accepts a React node.
   - `@sito/dashboard-app`: `icon` expects `IconDefinition` (FontAwesome wrapper export).
@@ -472,6 +473,7 @@ export function App() {
 Notes:
 
 - Keep `ManagerProvider` above `AuthProvider`.
+- `Drawer` and `Onboarding` are auth-optional wrappers. Without `AuthProvider`, `Drawer` treats the session as logged-out and `Onboarding` skips `setGuestMode`.
 - `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
 - If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
 

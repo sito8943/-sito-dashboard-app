@@ -6,11 +6,12 @@ import { Drawer } from "./Drawer";
 
 import type { MenuItemType } from "lib";
 
-const { useAuthMock, useConfigMock, useDrawerMenuMock } = vi.hoisted(() => ({
-  useAuthMock: vi.fn(),
-  useConfigMock: vi.fn(),
-  useDrawerMenuMock: vi.fn(),
-}));
+const { useOptionalAuthContextMock, useConfigMock, useDrawerMenuMock } =
+  vi.hoisted(() => ({
+    useOptionalAuthContextMock: vi.fn(),
+    useConfigMock: vi.fn(),
+    useDrawerMenuMock: vi.fn(),
+  }));
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -18,13 +19,13 @@ vi.mock("@sito/dashboard", () => ({
 
 vi.mock("providers", async () => {
   return {
-    useAuth: () => useAuthMock(),
+    useOptionalAuthContext: () => useOptionalAuthContextMock(),
     useConfig: () => useConfigMock(),
     useDrawerMenu: () => useDrawerMenuMock(),
   };
 });
 
-type Keys = "home";
+type Keys = "home" | "private";
 
 type LinkProps = {
   children?: ReactNode;
@@ -44,7 +45,9 @@ const menuMap: MenuItemType<Keys>[] = [{ page: "home", path: "/home" }];
 
 describe("Drawer", () => {
   beforeEach(() => {
-    useAuthMock.mockReturnValue({ account: { email: "user@test.com" } });
+    useOptionalAuthContextMock.mockReturnValue({
+      account: { email: "user@test.com" },
+    });
     useConfigMock.mockReturnValue({
       linkComponent: Link,
       location: window.location,
@@ -70,5 +73,27 @@ describe("Drawer", () => {
     render(<Drawer<Keys> open={true} onClose={() => {}} menuMap={menuMap} />);
 
     expect(screen.getByText("Child label")).toBeInTheDocument();
+  });
+
+  it("renders without auth context and shows guest menu entries", () => {
+    useOptionalAuthContextMock.mockReturnValue(undefined);
+
+    render(
+      <Drawer<Keys>
+        open={true}
+        onClose={() => {}}
+        menuMap={[
+          { page: "home", path: "/home", auth: false },
+          { page: "private", path: "/private", auth: true },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "_accessibility:ariaLabels.home" }),
+    ).toHaveAttribute("href", "/home");
+    expect(
+      screen.queryByRole("link", { name: "_accessibility:ariaLabels.private" }),
+    ).toBeNull();
   });
 });

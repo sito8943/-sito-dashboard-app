@@ -4,10 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Onboarding } from "./Onboarding";
 
-const { navigateMock, setGuestModeMock } = vi.hoisted(() => ({
-  navigateMock: vi.fn(),
-  setGuestModeMock: vi.fn(),
-}));
+const { navigateMock, setGuestModeMock, useOptionalAuthContextMock } =
+  vi.hoisted(() => ({
+    navigateMock: vi.fn(),
+    setGuestModeMock: vi.fn(),
+    useOptionalAuthContextMock: vi.fn(),
+  }));
 
 type MockButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
@@ -30,7 +32,7 @@ vi.mock("@sito/dashboard", () => ({
 }));
 
 vi.mock("providers", () => ({
-  useAuth: () => ({ setGuestMode: setGuestModeMock }),
+  useOptionalAuthContext: () => useOptionalAuthContextMock(),
   useConfig: () => ({
     navigate: navigateMock,
     linkComponent: ({ children, to = "", ...props }: MockLinkProps) => (
@@ -55,6 +57,9 @@ describe("Onboarding", () => {
   beforeEach(() => {
     navigateMock.mockReset();
     setGuestModeMock.mockReset();
+    useOptionalAuthContextMock.mockReturnValue({
+      setGuestMode: setGuestModeMock,
+    });
   });
 
   it("renders the current step with optional custom content", () => {
@@ -182,6 +187,33 @@ describe("Onboarding", () => {
     expect(onStartAsGuest).toHaveBeenCalledTimes(1);
     expect(onSignIn).toHaveBeenCalledTimes(1);
     expect(navigateMock).not.toHaveBeenCalled();
+    expect(setGuestModeMock).not.toHaveBeenCalled();
+  });
+
+  it("starts as guest without auth context", () => {
+    useOptionalAuthContextMock.mockReturnValue(undefined);
+
+    render(
+      <Onboarding
+        steps={[
+          {
+            title: "Welcome",
+            body: "Intro copy",
+          },
+          {
+            title: "Finish",
+            body: "Done copy",
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.next" }),
+    );
+    fireEvent.click(screen.getByText("_accessibility:buttons.startAsGuest"));
+
+    expect(navigateMock).toHaveBeenCalledWith("/");
     expect(setGuestModeMock).not.toHaveBeenCalled();
   });
 });
