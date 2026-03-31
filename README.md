@@ -65,7 +65,7 @@ npm install @supabase/supabase-js@2.100.0
 
 ## Core exports
 
-- Layout and navigation: `Page`, `Navbar`, `Drawer`, `TabsLayout`, `PrettyGrid`, `ToTop`
+- Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
@@ -257,6 +257,60 @@ Main optional props:
 - `tooltip?: string`
 - `scrollOnClick?: boolean` (default `true`)
 - `onClick?: () => void`
+
+### BottomNavigation
+
+`BottomNavigation` is a mobile-first fixed navigation bar intended for compact app shells.
+It is router-agnostic and uses `ConfigProvider` primitives (`location`, `navigate`, `linkComponent`).
+
+```tsx
+import {
+  BottomNavigation,
+  type BottomNavigationItemType,
+} from "@sito/dashboard-app";
+import {
+  faBox,
+  faHome,
+  faPlus,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+
+type BottomNavId = "home" | "products" | "profile";
+
+const bottomItems: BottomNavigationItemType<BottomNavId>[] = [
+  { id: "home", label: "Home", to: "/", icon: faHome, position: "left" },
+  {
+    id: "products",
+    label: "Products",
+    to: "/products",
+    icon: faBox,
+    position: "left",
+  },
+  {
+    id: "profile",
+    label: "Profile",
+    to: "/profile",
+    icon: faUser,
+    position: "right",
+  },
+];
+
+<BottomNavigation
+  items={bottomItems}
+  centerAction={{
+    icon: faPlus,
+    to: "/products/new",
+    ariaLabel: "Create product",
+  }}
+/>;
+```
+
+Key notes:
+
+- Use `position: "right"` to place items in the right group; omitted/`"left"` stays on the left group.
+- Use `isItemActive={(pathname, item) => ...}` for custom active matching (default uses path-prefix matching, with exact match for `/`).
+- Use `hidden`/`disabled` on each item and `centerAction.hidden` for conditional rendering.
+- `centerAction` supports `IconButton` visual props and optional `to`; navigation runs after `onClick` unless `event.preventDefault()` is called.
 
 ## Dialog hook migration (`v0.0.54`)
 
