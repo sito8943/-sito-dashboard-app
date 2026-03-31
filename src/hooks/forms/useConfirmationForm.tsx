@@ -11,6 +11,11 @@ import { useNotification } from "providers";
 import { NotificationType } from "lib";
 import { UseConfirmationPropsType } from "hooks";
 
+/**
+ * Manages confirmation dialog state and mutation execution for bulk actions.
+ * @param props - Confirmation mutation configuration.
+ * @returns Dialog state, handlers and mutation object.
+ */
 export const useConfirmationForm = <TInDto, TError extends Error>(
   props: UseConfirmationPropsType<TInDto, TError>,
 ) => {

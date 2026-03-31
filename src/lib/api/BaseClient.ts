@@ -19,6 +19,7 @@ import {
 } from "lib";
 import { parseQueries } from "./utils/query";
 
+/** Generic REST client with CRUD, import/export and common list operations. */
 export class BaseClient<
   Tables,
   TDto extends BaseEntityDto,
@@ -32,9 +33,11 @@ export class BaseClient<
   secured: boolean;
   api: APIClient;
   /**
-   *
-   * @param table
-   * @param secured to see if the api client requires jwt protection
+   * @param table - Resource table/endpoint name.
+   * @param baseUrl - API base URL.
+   * @param userKey - Storage key for user session data.
+   * @param secured - Whether this client requires auth headers.
+   * @param authConfig - Custom auth storage key configuration.
    */
   constructor(
     table: Tables,

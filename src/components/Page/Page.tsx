@@ -36,6 +36,11 @@ import { PageHeader } from "./PageHeader";
 // styles
 import "./styles.css";
 
+/**
+ * Composes standard page layout with actions, header and loading states.
+ * @param props - Page props.
+ * @returns Page layout element.
+ */
 export const Page = <TEntity extends BaseEntityDto>(
   props: PagePropsType<TEntity>,
 ) => {

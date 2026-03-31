@@ -92,6 +92,7 @@ const resolveSoftDeleteScope = (
   return undefined;
 };
 
+/** Generic Supabase data client aligned with BaseClient behavior. */
 export class SupabaseDataClient<
   Tables extends string,
   TDto extends BaseEntityDto,
@@ -118,6 +119,11 @@ export class SupabaseDataClient<
     TCommonRow
   >;
 
+  /**
+   * @param table - Resource table name.
+   * @param supabase - Supabase client with `from` capability.
+   * @param options - Mapping and column configuration options.
+   */
   constructor(
     table: Tables,
     supabase: Pick<SupabaseClient, "from">,

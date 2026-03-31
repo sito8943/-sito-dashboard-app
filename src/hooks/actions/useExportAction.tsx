@@ -13,6 +13,11 @@ import {
 // types
 import { GlobalActions, UseExportAction } from "hooks";
 
+/**
+ * Creates an export action descriptor with loading-state icon handling.
+ * @param props - Export action options.
+ * @returns Action factory for export triggers.
+ */
 export const useExportAction = (props: UseExportAction) => {
   const { t } = useTranslation();
 

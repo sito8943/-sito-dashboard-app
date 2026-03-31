@@ -3,6 +3,8 @@ import { FieldValues } from "react-hook-form";
 
 // form
 import { FormContainerPropsType } from "../Form";
+
+// types
 import { ButtonPropsType } from "components";
 
 export type DialogPropsType = {

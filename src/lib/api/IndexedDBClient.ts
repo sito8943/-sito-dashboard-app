@@ -12,6 +12,7 @@ import {
   SoftDeleteScope,
 } from "lib";
 
+/** Generic IndexedDB-backed client mirroring BaseClient CRUD semantics. */
 export class IndexedDBClient<
   Tables extends string,
   TDto extends BaseEntityDto,
@@ -26,6 +27,11 @@ export class IndexedDBClient<
   version: number;
   private db: IDBDatabase | null = null;
 
+  /**
+   * @param table - Object store name.
+   * @param dbName - IndexedDB database name.
+   * @param version - IndexedDB schema version.
+   */
   constructor(table: Tables, dbName: string, version: number = 1) {
     this.table = table;
     this.dbName = dbName;

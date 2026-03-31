@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.59] - 2026-03-31
+
+### Added
+
+- Added `BottomNavigation` for mobile navigation with typed `items`, optional `centerAction`, and customizable active matching via `isItemActive`.
+- Added `BottomNavigation` public exports and related types to the package component surface.
+- Added Storybook scenarios and unit tests for `BottomNavigation`, including active-state rendering, disabled items, and center-action navigation behavior.
+
+### Changed
+
+- Improved inline API documentation coverage (JSDoc/type-level docs) across components, hooks, providers, and API utilities.
+- Renamed `ImportDialog` internal reducer aliases to explicit `ImportState` and `ImportAction` for clearer typing and safer imports.
+
+### Fixed
+
+- Fixed a `0.0.59` build issue in `ImportDialog` caused by ambiguous internal `State`/`Action` type alias imports.
+
+### Documentation
+
+- Added `BottomNavigation` explanation and usage examples in `README.md`, `docs/CONSUMER_GUIDE.md`, and `docs/RECIPES.md`.
+
 ## [0.0.58] - 2026-03-31
 
 ### Added

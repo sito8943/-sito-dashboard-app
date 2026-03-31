@@ -13,6 +13,11 @@ import { ErrorPropsType } from "./types";
 // styles
 import "./styles.css";
 
+/**
+ * Renders either a default error panel or fully custom error content.
+ * @param props - Error props in default or custom-content mode.
+ * @returns Error UI element.
+ */
 export function Error(props: ErrorPropsType) {
   const { t } = useTranslation();
   const hasCustomContent = "children" in props;

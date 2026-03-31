@@ -10,6 +10,11 @@ import { FormContainerPropsType } from "./types";
 // styles
 import "./styles.css";
 
+/**
+ * Wraps form content and renders default submit/cancel actions.
+ * @param props - Form container props.
+ * @returns Form element with default action buttons.
+ */
 export const FormContainer = <TInput extends FieldValues>(
   props: FormContainerPropsType<TInput>,
 ) => {

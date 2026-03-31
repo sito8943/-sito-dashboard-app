@@ -1,3 +1,8 @@
+/**
+ * Converts an enum-like object into key/value entries for UI consumers.
+ * @param enumObj - Enum-like object.
+ * @returns Key/value array representation.
+ */
 export function enumToKeyValueArray<T extends Record<string, string | number>>(
   enumObj: T,
 ) {

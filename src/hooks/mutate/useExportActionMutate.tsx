@@ -14,6 +14,11 @@ import { UseExportActionMutatePropsType } from "./types";
 // actions
 import { useExportAction } from "../actions";
 
+/**
+ * Runs export mutation and returns a prefab export action descriptor.
+ * @param props - Export mutation configuration.
+ * @returns Export action factory with loading state integration.
+ */
 export const useExportActionMutate = <TInOutDto, Tables, TError extends Error>(
   props: UseExportActionMutatePropsType<TInOutDto, Tables, TError>,
 ) => {

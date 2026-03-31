@@ -15,6 +15,11 @@ export interface HttpError extends Error {
   message: string;
 }
 
+/**
+ * Type guard for validation errors with field/code tuples.
+ * @param error - Unknown error candidate.
+ * @returns True when error matches ValidationError shape.
+ */
 export function isValidationError(error: unknown): error is ValidationError {
   if (!error || typeof error !== "object") return false;
   const maybe = error as Partial<ValidationError> & { errors?: unknown };
@@ -26,6 +31,11 @@ export function isValidationError(error: unknown): error is ValidationError {
   );
 }
 
+/**
+ * Type guard for normalized HTTP-like errors.
+ * @param error - Unknown error candidate.
+ * @returns True when error matches HttpError shape.
+ */
 export function isHttpError(error: unknown): error is HttpError {
   if (!error || typeof error !== "object") return false;
   const maybe = error as Partial<HttpError>;
@@ -34,6 +44,12 @@ export function isHttpError(error: unknown): error is HttpError {
   );
 }
 
+/**
+ * Maps validation tuples to translated or domain-specific messages.
+ * @param error - Validation error instance.
+ * @param map - Mapper from field/code to display message.
+ * @returns List of mapped messages.
+ */
 export function mapValidationErrors(
   error: ValidationError,
   map: (field: string, code: string) => string,

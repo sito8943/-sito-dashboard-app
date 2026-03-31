@@ -7,6 +7,12 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { TextInput, TextInputPropsType, useTranslation } from "@sito/dashboard";
 import { AppIconButton } from "components";
 
+/**
+ * Text input specialized for passwords with show/hide visibility toggle.
+ * @param props - TextInput props.
+ * @param ref - Forwarded input ref.
+ * @returns Password input element.
+ */
 export const PasswordInput = forwardRef(function (
   props: TextInputPropsType,
   ref: ForwardedRef<HTMLInputElement>,

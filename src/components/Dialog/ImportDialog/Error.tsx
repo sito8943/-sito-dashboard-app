@@ -3,11 +3,14 @@ import { useTranslation } from "@sito/dashboard";
 // styles
 import "./styles.css";
 
-type ErrorProps = {
-  message?: string | null;
-  className?: string;
-};
+// types
+import { ErrorProps } from "./types";
 
+/**
+ * Displays parse or processing errors inside the import dialog flow.
+ * @param props - Error view props.
+ * @returns Error message element.
+ */
 export function Error(props: ErrorProps) {
   const { message, className = "" } = props;
   const { t } = useTranslation();

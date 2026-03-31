@@ -13,6 +13,11 @@ import "./styles.css";
 // types
 import { OnboardingPropsType } from "./types";
 
+/**
+ * Renders the onboarding flow using controlled TabsLayout steps.
+ * @param props - Onboarding props.
+ * @returns Onboarding element.
+ */
 export const Onboarding = (props: OnboardingPropsType) => {
   const {
     steps,

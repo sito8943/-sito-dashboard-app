@@ -14,6 +14,11 @@ import { GlobalActions, UseSingleActionPropTypes } from "hooks";
 // lib
 import { BaseEntityDto } from "lib";
 
+/**
+ * Creates an edit action descriptor for row-level editing flows.
+ * @param props - Edit action options.
+ * @returns Action factory compatible with Actions/PrettyGrid.
+ */
 export const useEditAction = <TRow extends BaseEntityDto>(
   props: UseSingleActionPropTypes<number>,
 ) => {
