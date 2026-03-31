@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.58] - 2026-03-31
+
+### Added
+
+- Added `useOptionalAuthContext` in `providers/Auth/authContext` to support auth-aware wrappers without requiring `AuthProvider`.
+- Added regression coverage for auth-optional wrapper behavior:
+  - `Drawer.test.tsx` now validates guest rendering when auth context is missing.
+  - `Onboarding.test.tsx` now validates "Start as guest" flow without auth context.
+
+### Changed
+
+- Refactored `Drawer` to consume optional auth context instead of strict `useAuth()`, defaulting to logged-out behavior when `AuthProvider` is not mounted.
+- Refactored `Onboarding` to consume optional auth context and call `setGuestMode` only when auth context is available.
+- Preserved strict auth behavior for `useAuth()` (still throws outside `AuthProvider`), while making `Drawer`/`Onboarding` usable in no-auth app shells.
+
+### Documentation
+
+- Updated `README.md` provider guidance to distinguish auth-enabled setup from auth-optional wrapper usage.
+- Updated `docs/TROUBLESHOOTING.md` checklist and auth troubleshooting notes to clarify when `AuthProvider` is mandatory vs optional.
+
 ## [0.0.57] - 2026-03-29
 
 ### Changed

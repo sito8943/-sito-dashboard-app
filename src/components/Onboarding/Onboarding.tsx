@@ -5,7 +5,7 @@ import { TabsLayout } from "../TabsLayout";
 import { Step } from "./Step";
 
 // providers
-import { useAuth, useConfig } from "providers";
+import { useConfig, useOptionalAuthContext } from "providers";
 
 // styles
 import "./styles.css";
@@ -23,7 +23,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
     onStartAsGuest,
   } = props;
 
-  const { setGuestMode } = useAuth();
+  const auth = useOptionalAuthContext();
   const { navigate } = useConfig();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -49,9 +49,9 @@ export const Onboarding = (props: OnboardingPropsType) => {
       onStartAsGuest();
       return;
     }
-    setGuestMode(true);
+    auth?.setGuestMode(true);
     navigate(guestPath);
-  }, [guestPath, navigate, onStartAsGuest, setGuestMode]);
+  }, [auth, guestPath, navigate, onStartAsGuest]);
 
   const onboardingSteps = useMemo(() => {
     return steps.map((step, i) => ({

@@ -10,7 +10,7 @@ import { DrawerPropsTypes } from "./types";
 import "./styles.css";
 
 // providers
-import { useAuth, useConfig, useDrawerMenu } from "providers";
+import { useConfig, useDrawerMenu, useOptionalAuthContext } from "providers";
 import { SubMenuItemType } from "lib";
 
 export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
@@ -18,7 +18,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
 
   const { open, onClose, menuMap, logo } = props;
 
-  const { account } = useAuth();
+  const auth = useOptionalAuthContext();
   const { dynamicItems } = useDrawerMenu();
 
   const { linkComponent, location } = useConfig();
@@ -27,7 +27,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const parsedMenu = useMemo(() => {
     return menuMap.filter((item) => {
       const requiresAuth = item.auth;
-      const isLoggedIn = Boolean(account?.email);
+      const isLoggedIn = Boolean(auth?.account?.email);
 
       // Include item if it doesn’t require auth, or if auth matches login status
       return (
@@ -36,7 +36,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         (!requiresAuth && !isLoggedIn)
       );
     });
-  }, [account?.email, menuMap]);
+  }, [auth?.account?.email, menuMap]);
 
   const onEscapePress = useCallback(
     (e: KeyboardEvent) => {
