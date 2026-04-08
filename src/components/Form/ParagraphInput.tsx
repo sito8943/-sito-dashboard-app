@@ -8,6 +8,9 @@ import {
   State,
 } from "@sito/dashboard";
 
+// lib
+import { classNames } from "lib";
+
 // types
 import { ParagraphInputPropsType } from "./types";
 
@@ -65,12 +68,23 @@ export const ParagraphInput = forwardRef(function (
   };
 
   return (
-    <div className={`form-paragraph-container group ${containerClassName}`}>
+    <div
+      className={classNames(
+        "form-paragraph-container group",
+        containerClassName,
+      )}
+    >
       <textarea
         ref={ref}
         name={name}
         id={id}
-        className={`text-input text-area form-paragraph-textarea peer ${inputStateClassName(state)} ${hasValue ? "has-value" : ""} ${rest.placeholder ? "has-placeholder" : ""} ${inputClassName}`}
+        className={classNames(
+          "text-input text-area form-paragraph-textarea peer",
+          inputStateClassName(state),
+          hasValue && "has-value",
+          rest.placeholder && "has-placeholder",
+          inputClassName,
+        )}
         required={required}
         defaultValue={defaultValue}
         {...(isControlled ? { value } : {})}
@@ -80,14 +94,22 @@ export const ParagraphInput = forwardRef(function (
       ></textarea>
       <label
         htmlFor={id}
-        className={`text-input-label ${labelStateClassName(state)} ${labelClassName}`}
+        className={classNames(
+          "text-input-label",
+          labelStateClassName(state),
+          labelClassName,
+        )}
       >
         {label}
         {required ? " *" : ""}
       </label>
       {!!helperText && (
         <p
-          className={`text-input-helper-text ${helperTextStateClassName(state)} ${helperTextClassName}`}
+          className={classNames(
+            "text-input-helper-text",
+            helperTextStateClassName(state),
+            helperTextClassName,
+          )}
         >
           {helperText}
         </p>

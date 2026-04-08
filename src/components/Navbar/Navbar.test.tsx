@@ -33,6 +33,12 @@ vi.mock("./Clock", () => ({
 
 vi.mock("lib", () => ({
   isMac: () => false,
+  classNames: (...values: Array<string | null | undefined | false>) =>
+    values
+      .filter((value): value is string => typeof value === "string")
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)
+      .join(" "),
 }));
 
 const baseProps = { openDrawer: vi.fn() };

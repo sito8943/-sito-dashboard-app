@@ -4,6 +4,9 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 // components
 import { AppIconButton } from "components";
 
+// lib
+import { classNames } from "lib";
+
 // providers
 import { useConfig, useOptionalBottomNavAction } from "providers";
 
@@ -62,7 +65,10 @@ export const BottomNavigation = <TId extends string = string>(
 
   return (
     <nav
-      className={`fixed -bottom-1 left-0 right-0 z-20 bg-base border-t border-border sm:hidden ${className}`.trim()}
+      className={classNames(
+        "fixed -bottom-1 left-0 right-0 z-20 bg-base border-t border-border sm:hidden",
+        className,
+      )}
     >
       <div className="flex items-center justify-around h-16">
         {leftItems.map((item) => (
@@ -90,9 +96,10 @@ export const BottomNavigation = <TId extends string = string>(
                   navigate(centerActionTo);
                 }
               }}
-              className={`rounded-full! w-12! h-12! min-w-0! p-0! flex items-center justify-center shadow-lg -mt-4 ${
-                centerActionClassName
-              }`.trim()}
+              className={classNames(
+                "rounded-full! w-12! h-12! min-w-0! p-0! flex items-center justify-center shadow-lg -mt-4",
+                centerActionClassName,
+              )}
             />
           </div>
         )}

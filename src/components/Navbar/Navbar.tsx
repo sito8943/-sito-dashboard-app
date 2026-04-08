@@ -14,7 +14,7 @@ import "./styles.css";
 import { AppIconButton } from "components";
 
 // utils
-import { isMac } from "lib";
+import { classNames, isMac } from "lib";
 
 // providers
 import { useConfig } from "providers";
@@ -73,7 +73,10 @@ export function Navbar(props: NavbarPropsType) {
               menuButtonProps?.["aria-label"] ??
               t("_accessibility:ariaLabels.openMenu")
             }
-            className={`navbar-menu animated ${menuButtonProps?.className ?? ""}`}
+            className={classNames(
+              "navbar-menu animated",
+              menuButtonProps?.className,
+            )}
           />
           <h1 className="poppins navbar-title">
             {title || t("_pages:home.appName")}

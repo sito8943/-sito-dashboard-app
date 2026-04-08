@@ -5,6 +5,9 @@ import { TabPropsType } from "./types";
 import { useConfig } from "providers/ConfigProvider";
 import { Button } from "../Buttons";
 
+// lib
+import { classNames } from "lib";
+
 /**
  * Renders a single tab as either a router link or local button.
  * @param props - Tab props.
@@ -38,7 +41,7 @@ export const Tab = (props: TabPropsType) => {
         type="button"
         variant={variant}
         color={color}
-        className={`tab ${customClassName}`}
+        className={classNames("tab", customClassName, active && "active")}
         onClick={onClick}
         {...restTabButtonProps}
       >
@@ -47,9 +50,11 @@ export const Tab = (props: TabPropsType) => {
     );
   }
 
-  const linkClassName = `button submit tab ${
-    active ? "primary" : "outlined"
-  } ${tabButtonProps?.className ?? ""}`.trim();
+  const linkClassName = classNames(
+    "button submit tab",
+    active ? "primary" : "outlined",
+    tabButtonProps?.className,
+  );
 
   return (
     <Link

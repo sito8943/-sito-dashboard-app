@@ -13,7 +13,7 @@ import "./styles.css";
 import { useConfig, useDrawerMenu, useOptionalAuthContext } from "providers";
 
 // lib
-import { SubMenuItemType } from "lib";
+import { SubMenuItemType, classNames } from "lib";
 
 /**
  * Renders the side drawer and resolves menu visibility by auth state.
@@ -73,9 +73,11 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
     (child: SubMenuItemType) => (
       <li
         key={child.id as string}
-        className={`drawer-list-item-child ${
-          isActive(child.path, true) ? "active" : ""
-        } animated`}
+        className={classNames(
+          "drawer-list-item-child",
+          isActive(child.path, true) && "active",
+          "animated",
+        )}
       >
         {child.path ? (
           <Link
@@ -99,9 +101,11 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const renderItems = useMemo(() => {
     return parsedMenu.map((link, i) => {
       const key = (link.page as string) ?? String(i);
-      const liClass = `drawer-list-item ${
-        isActive(link.path) ? "active" : ""
-      } animated`;
+      const liClass = classNames(
+        "drawer-list-item",
+        isActive(link.path) && "active",
+        "animated",
+      );
 
       if (link.type === "divider") {
         return (
@@ -144,10 +148,12 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
     <div
       aria-label={t("_accessibility:ariaLabels.closeMenu")}
       aria-disabled={!open}
-      className={`${open ? "opened" : "closed"} drawer-backdrop`}
+      className={classNames(open ? "opened" : "closed", "drawer-backdrop")}
       onClick={() => onClose()}
     >
-      <aside className={`${open ? "opened" : "closed"} drawer animated`}>
+      <aside
+        className={classNames(open ? "opened" : "closed", "drawer animated")}
+      >
         <div className="drawer-header-container">
           {logo}
           <h2 className="drawer-header poppins">{t("_pages:home.appName")}</h2>

@@ -25,7 +25,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // lib
-import { BaseEntityDto } from "lib";
+import { BaseEntityDto, classNames } from "lib";
 
 // hooks
 import { GlobalActions } from "hooks";
@@ -87,7 +87,7 @@ export const Page = <TEntity extends BaseEntityDto>(
         icon: <FontAwesomeIcon icon={faFilter} />,
         children: (
           <Badge
-            className={`${countOfFilters > 0 ? "show" : "hide"} `}
+            className={classNames(countOfFilters > 0 ? "show" : "hide")}
             count={countOfFilters}
           />
         ),
@@ -112,7 +112,7 @@ export const Page = <TEntity extends BaseEntityDto>(
         actions={parsedActions}
         title={title}
       />
-      <div className={`page-main-content ${isAnimated ? "appear" : ""}`}>
+      <div className={classNames("page-main-content", isAnimated && "appear")}>
         {isLoading ? <Loading className="page-loading" /> : children}
       </div>
       {addOptions && (
@@ -121,7 +121,7 @@ export const Page = <TEntity extends BaseEntityDto>(
           color={addOptions.color ?? "primary"}
           variant={addOptions.variant ?? "submit"}
           onClick={() => addOptions.onClick?.()}
-          className={`button page-fab ${addOptions.className ?? ""}`}
+          className={classNames("button page-fab", addOptions.className)}
         />
       )}
     </main>

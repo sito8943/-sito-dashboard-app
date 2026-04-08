@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useTranslation, Loading } from "@sito/dashboard";
 
 // lib
-import { BaseEntityDto } from "lib";
+import { BaseEntityDto, classNames } from "lib";
 
 // types
 import { PrettyGridPropsType } from "./types";
@@ -89,9 +89,12 @@ export const PrettyGrid = <TDto extends BaseEntityDto>(
   return (
     <>
       {data?.length ? (
-        <ul className={`pretty-grid-main ${className}`}>
+        <ul className={classNames("pretty-grid-main", className)}>
           {data?.map((item) => (
-            <li className={`pretty-grid-item ${itemClassName}`} key={item.id}>
+            <li
+              className={classNames("pretty-grid-item", itemClassName)}
+              key={item.id}
+            >
               {renderComponent(item)}
             </li>
           ))}

@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react";
 
+// lib
+import { classNames } from "lib";
+
 // types
 import { TabsLayoutPropsType } from "./types";
 
@@ -35,9 +38,12 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
   }, [tabs, activeTab]);
 
   return (
-    <div className={`tabs-layout-main ${className}`}>
+    <div className={classNames("tabs-layout-main", className)}>
       <ul
-        className={`horizontal tabs tabs-container ${tabsContainerClassName}`}
+        className={classNames(
+          "horizontal tabs tabs-container",
+          tabsContainerClassName,
+        )}
       >
         {tabs.map(({ id, to, label }) => (
           <li key={id}>

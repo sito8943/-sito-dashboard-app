@@ -108,7 +108,7 @@
     "vitest": "^3.2.1"
   },
   "dependencies": {
-    "some-javascript-utils": "0.10.10"
+    "some-javascript-utils": "^0.10.10"
   },
   "overrides": {
     "minimatch": "10.2.2"

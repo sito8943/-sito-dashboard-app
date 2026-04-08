@@ -4,6 +4,9 @@ import { useTranslation } from "@sito/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSadTear } from "@fortawesome/free-regular-svg-icons";
 
+// lib
+import { classNames } from "lib";
+
 // components
 import { Button } from "../Buttons";
 
@@ -25,9 +28,7 @@ export function Error(props: ErrorPropsType) {
   if (hasCustomContent) {
     const { children, className } = props;
     return (
-      <div className={`error-container${className ? ` ${className}` : ""}`}>
-        {children}
-      </div>
+      <div className={classNames("error-container", className)}>{children}</div>
     );
   }
 
@@ -55,17 +56,17 @@ export function Error(props: ErrorPropsType) {
   const shouldRenderIcon = iconProps !== null;
 
   return (
-    <div className={`error-container${className ? ` ${className}` : ""}`}>
+    <div className={classNames("error-container", className)}>
       {shouldRenderIcon && (
         <FontAwesomeIcon
           {...iconProps}
           icon={iconProps?.icon ?? faSadTear}
-          className={`error-icon${iconProps?.className ? ` ${iconProps.className}` : ""}`}
+          className={classNames("error-icon", iconProps?.className)}
         />
       )}
       <p
         {...restMessageProps}
-        className={`error-message${messageClassName ? ` ${messageClassName}` : ""}`}
+        className={classNames("error-message", messageClassName)}
       >
         {message ?? error?.message ?? t("_accessibility:errors.unknownError")}
       </p>
@@ -75,7 +76,7 @@ export function Error(props: ErrorPropsType) {
           variant="submit"
           color="primary"
           {...restRetryButtonProps}
-          className={`error-retry ${retryClassName ? ` ${retryClassName}` : ""}`}
+          className={classNames("error-retry", retryClassName)}
           onClick={(e) => {
             retryOnClick?.(e);
             if (!e.defaultPrevented) retryAction();

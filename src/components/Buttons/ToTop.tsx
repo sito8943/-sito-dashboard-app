@@ -9,6 +9,9 @@ import type { IconButtonPropsLocalType } from "./IconButton";
 // hook
 import { useScrollTrigger } from "hooks";
 
+// lib
+import { classNames } from "lib";
+
 // components
 import { AppIconButton } from "components";
 
@@ -65,7 +68,7 @@ export const ToTop = (props: ToTopPropsType) => {
       icon={icon}
       data-tooltip-id="tooltip"
       onClick={handleClick}
-      className={`to-top ${isScrolled ? "show" : "hide"} ${className}`.trim()}
+      className={classNames("to-top", isScrolled ? "show" : "hide", className)}
       data-tooltip-content={tooltip}
       {...rest}
     />
