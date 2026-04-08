@@ -10,7 +10,7 @@ import type { IconButtonPropsLocalType } from "./IconButton";
 import { useScrollTrigger } from "hooks";
 
 // lib
-import { classNames } from "lib";
+import { classNames } from "@sito/dashboard";
 
 // components
 import { AppIconButton } from "components";

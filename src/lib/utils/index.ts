@@ -4,4 +4,3 @@ export * from "./local";
 export * from "./date";
 export * from "./os";
 export * from "./navigation";
-export * from "./classNames";

@@ -1,7 +1,7 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, classNames } from "@sito/dashboard";
 
 // lib
-import { ImportPreviewDto, classNames } from "lib";
+import { ImportPreviewDto } from "lib";
 
 // styles
 import "./styles.css";

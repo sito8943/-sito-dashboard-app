@@ -1,8 +1,7 @@
-import { useTranslation, Loading } from "@sito/dashboard";
 import { FieldValues } from "react-hook-form";
 
-// lib
-import { classNames } from "lib";
+// @sito/dashboard
+import { useTranslation, Loading, classNames } from "@sito/dashboard";
 
 // components
 import { Button } from "components";

@@ -6,7 +6,7 @@ import { useTranslation } from "@sito/dashboard";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 
 // lib
-import { classNames } from "lib";
+import { classNames } from "@sito/dashboard";
 
 // types
 import { DialogPropsType } from "./types";

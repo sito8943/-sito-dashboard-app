@@ -5,7 +5,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { AppIconButton } from "components";
 
 // lib
-import { classNames } from "lib";
+import { classNames } from "@sito/dashboard";
 
 // providers
 import { useConfig, useOptionalBottomNavAction } from "providers";

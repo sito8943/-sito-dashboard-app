@@ -1,12 +1,14 @@
+// @sito/dashboard
+import { classNames } from "@sito/dashboard";
+
 // types
 import { TabPropsType } from "./types";
 
 // providers
 import { useConfig } from "providers/ConfigProvider";
-import { Button } from "../Buttons";
 
-// lib
-import { classNames } from "lib";
+// components
+import { Button } from "../Buttons";
 
 /**
  * Renders a single tab as either a router link or local button.

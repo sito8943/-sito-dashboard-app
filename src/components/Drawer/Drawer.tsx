@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 
 // @sito/dashboard
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, classNames } from "@sito/dashboard";
 
 //types
 import { DrawerPropsTypes } from "./types";
@@ -13,7 +13,7 @@ import "./styles.css";
 import { useConfig, useDrawerMenu, useOptionalAuthContext } from "providers";
 
 // lib
-import { SubMenuItemType, classNames } from "lib";
+import { SubMenuItemType } from "lib";
 
 /**
  * Renders the side drawer and resolves menu visibility by auth state.

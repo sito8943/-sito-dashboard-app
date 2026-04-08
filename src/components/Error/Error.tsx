@@ -1,11 +1,8 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, classNames } from "@sito/dashboard";
 
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSadTear } from "@fortawesome/free-regular-svg-icons";
-
-// lib
-import { classNames } from "lib";
 
 // components
 import { Button } from "../Buttons";

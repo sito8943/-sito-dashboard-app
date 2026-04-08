@@ -5,8 +5,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { useTranslation } from "@sito/dashboard";
 import { createPortal } from "react-dom";
+
+// @sito/dashboard
+import { useTranslation, classNames } from "@sito/dashboard";
 
 // provider
 import { useNotification } from "providers";
@@ -20,7 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { NotificationEnumType, NotificationType, classNames } from "lib";
+import { NotificationEnumType, NotificationType } from "lib";
 
 // components
 import { AppIconButton } from "../Buttons";

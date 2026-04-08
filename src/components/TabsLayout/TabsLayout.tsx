@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 // lib
-import { classNames } from "lib";
+import { classNames } from "@sito/dashboard";
 
 // types
 import { TabsLayoutPropsType } from "./types";

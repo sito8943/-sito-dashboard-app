@@ -6,10 +6,8 @@ import {
   inputStateClassName,
   helperTextStateClassName,
   State,
+  classNames,
 } from "@sito/dashboard";
-
-// lib
-import { classNames } from "lib";
 
 // types
 import { ParagraphInputPropsType } from "./types";

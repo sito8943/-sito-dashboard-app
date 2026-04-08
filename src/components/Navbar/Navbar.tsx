@@ -1,4 +1,4 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, classNames } from "@sito/dashboard";
 import { useCallback, useEffect, useState } from "react";
 
 // icons
@@ -14,7 +14,7 @@ import "./styles.css";
 import { AppIconButton } from "components";
 
 // utils
-import { classNames, isMac } from "lib";
+import { isMac } from "lib";
 
 // providers
 import { useConfig } from "providers";

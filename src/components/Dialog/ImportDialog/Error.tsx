@@ -1,7 +1,7 @@
 import { useTranslation } from "@sito/dashboard";
 
 // lib
-import { classNames } from "lib";
+import { classNames } from "@sito/dashboard";
 
 // styles
 import "./styles.css";

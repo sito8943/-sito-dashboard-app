@@ -1,7 +1,4 @@
-import { Loading } from "@sito/dashboard";
-
-// lib
-import { classNames } from "lib";
+import { Loading, classNames } from "@sito/dashboard";
 
 // styles
 import "./styles.css";

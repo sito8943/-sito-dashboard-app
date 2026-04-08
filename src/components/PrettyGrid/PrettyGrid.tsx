@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 
 // @sito/dashboard
-import { useTranslation, Loading } from "@sito/dashboard";
+import { useTranslation, Loading, classNames } from "@sito/dashboard";
 
 // lib
-import { BaseEntityDto, classNames } from "lib";
+import { BaseEntityDto } from "lib";
 
 // types
 import { PrettyGridPropsType } from "./types";

@@ -8,7 +8,7 @@ import { DialogActionsProps } from "./types";
 import { Button } from "components";
 
 // lib
-import { classNames } from "lib";
+import { classNames } from "@sito/dashboard";
 
 // styles
 import "./styles.css";

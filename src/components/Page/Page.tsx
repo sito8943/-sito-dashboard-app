@@ -8,6 +8,7 @@ import {
   useTableOptions,
   Loading,
   useTranslation,
+  classNames,
 } from "@sito/dashboard";
 
 // components
@@ -25,7 +26,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // lib
-import { BaseEntityDto, classNames } from "lib";
+import { BaseEntityDto } from "lib";
 
 // hooks
 import { GlobalActions } from "hooks";
