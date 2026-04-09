@@ -10,12 +10,7 @@ import {
 // types
 import { NavbarContextType, NavbarProviderPropTypes } from "./types.js";
 
-const NavbarContext = createContext<NavbarContextType>({
-  title: "",
-  setTitle: () => {},
-  rightContent: null,
-  setRightContent: () => {},
-});
+const NavbarContext = createContext<NavbarContextType | undefined>(undefined);
 
 /**
  * Navbar Provider
@@ -53,9 +48,14 @@ const NavbarProvider = (props: NavbarProviderPropTypes) => {
 
 /**
  * useNavbar hook
- * @returns Navbar context
+ * @returns {NavbarContextType} Navbar context values.
+ * @throws {Error} If used outside `NavbarProvider`.
  */
-const useNavbar = () => useContext(NavbarContext);
+const useNavbar = () => {
+  const context = useContext(NavbarContext);
+  if (!context) throw new Error("useNavbar must be used within NavbarProvider");
+  return context;
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { NavbarContext, NavbarProvider, useNavbar };

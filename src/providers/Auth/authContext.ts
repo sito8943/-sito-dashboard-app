@@ -10,11 +10,13 @@ export const AuthContext = createContext<AuthProviderContextType | undefined>(
 /**
  * Returns AuthContext value and throws when provider is missing.
  * @returns Required auth context value.
+ * @throws {Error} If used outside `AuthProvider`.
  */
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
 
-  if (!context) throw new Error("authContext must be used within a Provider");
+  if (!context)
+    throw new Error("useAuthContext must be used within AuthProvider");
   return context;
 };
 

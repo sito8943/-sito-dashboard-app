@@ -15,7 +15,7 @@ describe("NotificationProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => renderHook(() => useNotification())).toThrow(
-      "NotificationContext must be used within a Provider",
+      "useNotification must be used within NotificationProvider",
     );
 
     consoleErrorSpy.mockRestore();

@@ -111,13 +111,19 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
 }
 
 /**
+ * Hook to consume the notification context.
  *
- * @returns notification context
+ * @returns {NotificationContextType} Notification state and helper methods.
+ * `notification` is `NotificationType[]`.
+ * `showNotification` receives `NotificationType`.
+ * `showSuccessNotification` and `showErrorNotification` receive `Partial<NotificationType>`.
+ * `showStackNotifications` receives `NotificationType[]`.
+ * @throws {Error} If used outside `NotificationProvider`.
  */
-export const useNotification = () => {
+export const useNotification = (): NotificationContextType => {
   const context = useContext(NotificationContext);
 
   if (!context)
-    throw new Error("NotificationContext must be used within a Provider");
+    throw new Error("useNotification must be used within NotificationProvider");
   return context;
 };

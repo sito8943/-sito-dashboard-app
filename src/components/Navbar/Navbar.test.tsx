@@ -151,6 +151,23 @@ describe("NavbarProvider", () => {
     expect(screen.getByTestId("child")).toBeInTheDocument();
   });
 
+  it("throws when useNavbar is called outside provider", () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    const Consumer = () => {
+      useNavbar();
+      return null;
+    };
+
+    expect(() => render(<Consumer />)).toThrow(
+      "useNavbar must be used within NavbarProvider",
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
   it("provides default empty title — navbar falls back to app name key", () => {
     renderWithProvider(<Navbar {...baseProps} />);
     expect(
