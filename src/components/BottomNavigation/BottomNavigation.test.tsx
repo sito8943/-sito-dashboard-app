@@ -14,6 +14,11 @@ import type { BaseLinkPropsType } from "components/types";
 import type { BottomNavigationItemType } from "./types";
 import { BottomNavigation } from "./BottomNavigation";
 
+vi.mock("@sito/dashboard", () => ({
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
+}));
+
 vi.mock("components", () => ({
   AppIconButton: ({
     onClick,

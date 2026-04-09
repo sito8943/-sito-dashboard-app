@@ -1,8 +1,13 @@
+// @sito/dashboard
+import { classNames } from "@sito/dashboard";
+
 // types
 import { TabPropsType } from "./types";
 
 // providers
 import { useConfig } from "providers/ConfigProvider";
+
+// components
 import { Button } from "../Buttons";
 
 /**
@@ -38,7 +43,7 @@ export const Tab = (props: TabPropsType) => {
         type="button"
         variant={variant}
         color={color}
-        className={`tab ${customClassName}`}
+        className={classNames("tab", customClassName, active && "active")}
         onClick={onClick}
         {...restTabButtonProps}
       >
@@ -47,9 +52,11 @@ export const Tab = (props: TabPropsType) => {
     );
   }
 
-  const linkClassName = `button submit tab ${
-    active ? "primary" : "outlined"
-  } ${tabButtonProps?.className ?? ""}`.trim();
+  const linkClassName = classNames(
+    "button submit tab",
+    active ? "primary" : "outlined",
+    tabButtonProps?.className,
+  );
 
   return (
     <Link

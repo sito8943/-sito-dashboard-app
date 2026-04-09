@@ -5,8 +5,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { useTranslation } from "@sito/dashboard";
 import { createPortal } from "react-dom";
+
+// @sito/dashboard
+import { useTranslation, classNames } from "@sito/dashboard";
 
 // provider
 import { useNotification } from "providers";
@@ -217,21 +219,38 @@ export function Notification() {
   }, [items.length, close]);
 
   return createPortal(
-    <div className={`notification-portal ${items.length ? "active" : ""}`}>
+    <div
+      className={classNames(
+        "notification-portal",
+        items.length ? "active" : undefined,
+      )}
+    >
       {items.map(({ id, type, message, closing }) => {
         const resolvedT = resolvedType(type);
         return (
           <div
             key={id}
-            className={`notification ${closing ? "closing" : ""} ${bgColor(resolvedT)}`}
+            className={classNames(
+              "notification",
+              closing && "closing",
+              bgColor(resolvedT),
+            )}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="notification-body">
               <FontAwesomeIcon
                 icon={renderIcon(resolvedT)}
-                className={`notification-icon ${textColor(resolvedT)}`}
+                className={classNames(
+                  "notification-icon",
+                  textColor(resolvedT),
+                )}
               />
-              <p className={`notification-text ${textColor(resolvedT)}`}>
+              <p
+                className={classNames(
+                  "notification-text",
+                  textColor(resolvedT),
+                )}
+              >
                 {message}
               </p>
             </div>
@@ -244,7 +263,10 @@ export function Notification() {
                 e.stopPropagation();
                 if (id !== undefined) close(id);
               }}
-              iconClassName={`${textColor(resolvedT)} notification-close-icon`}
+              iconClassName={classNames(
+                textColor(resolvedT),
+                "notification-close-icon",
+              )}
               name={t("_accessibility:buttons.closeNotification")}
               aria-label={t("_accessibility:ariaLabels.closeNotification")}
             />

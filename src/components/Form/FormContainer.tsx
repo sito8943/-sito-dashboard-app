@@ -1,5 +1,7 @@
-import { useTranslation, Loading } from "@sito/dashboard";
 import { FieldValues } from "react-hook-form";
+
+// @sito/dashboard
+import { useTranslation, Loading, classNames } from "@sito/dashboard";
 
 // components
 import { Button } from "components";
@@ -31,7 +33,7 @@ export const FormContainer = <TInput extends FieldValues>(
   return (
     <form className="form-container" onSubmit={handleSubmit(onSubmit)}>
       {children}
-      <div className={`form-actions ${buttonEnd ? "end" : ""}`}>
+      <div className={classNames("form-actions", buttonEnd && "end")}>
         <Button
           type="submit"
           color="primary"

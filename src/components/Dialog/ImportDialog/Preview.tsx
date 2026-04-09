@@ -1,4 +1,4 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, classNames } from "@sito/dashboard";
 
 // lib
 import { ImportPreviewDto } from "lib";
@@ -28,7 +28,7 @@ export function Preview<EntityDto extends ImportPreviewDto>(
   const limited = items.slice(0, max);
 
   return (
-    <div className={`import-preview ${className}`}>
+    <div className={classNames("import-preview", className)}>
       <p className="import-preview-count">
         {t("_pages:common.actions.import.previewCount", {
           count: items.length,

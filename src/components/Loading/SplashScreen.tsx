@@ -1,4 +1,4 @@
-import { Loading } from "@sito/dashboard";
+import { Loading, classNames } from "@sito/dashboard";
 
 // styles
 import "./styles.css";
@@ -15,10 +15,7 @@ export function SplashScreen(props: LoadingPropsType) {
   const { className, ...rest } = props;
   return (
     <div className="splash-screen">
-      <Loading
-        className={`blur-appear ${className ? ` ${className}` : ""}`}
-        {...rest}
-      />
+      <Loading className={classNames("blur-appear", className)} {...rest} />
     </div>
   );
 }

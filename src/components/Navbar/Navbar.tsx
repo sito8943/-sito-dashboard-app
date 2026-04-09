@@ -1,4 +1,4 @@
-import { useTranslation } from "@sito/dashboard";
+import { useTranslation, classNames } from "@sito/dashboard";
 import { useCallback, useEffect, useState } from "react";
 
 // icons
@@ -73,7 +73,10 @@ export function Navbar(props: NavbarPropsType) {
               menuButtonProps?.["aria-label"] ??
               t("_accessibility:ariaLabels.openMenu")
             }
-            className={`navbar-menu animated ${menuButtonProps?.className ?? ""}`}
+            className={classNames(
+              "navbar-menu animated",
+              menuButtonProps?.className,
+            )}
           />
           <h1 className="poppins navbar-title">
             {title || t("_pages:home.appName")}

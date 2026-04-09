@@ -7,6 +7,9 @@ import { DialogActionsProps } from "./types";
 // components
 import { Button } from "components";
 
+// lib
+import { classNames } from "@sito/dashboard";
+
 // styles
 import "./styles.css";
 
@@ -36,7 +39,11 @@ export const DialogActions = (props: DialogActionsProps) => {
 
   return (
     <div
-      className={`dialog-actions ${alignEnd ? "end" : ""} ${containerClassName}`}
+      className={classNames(
+        "dialog-actions",
+        alignEnd && "end",
+        containerClassName,
+      )}
     >
       <Button
         type={primaryType}

@@ -15,6 +15,8 @@ const { useOptionalAuthContextMock, useConfigMock, useDrawerMenuMock } =
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
 }));
 
 vi.mock("providers", async () => {

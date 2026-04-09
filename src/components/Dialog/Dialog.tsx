@@ -5,6 +5,9 @@ import { useTranslation } from "@sito/dashboard";
 // icons
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 
+// lib
+import { classNames } from "@sito/dashboard";
+
 // types
 import { DialogPropsType } from "./types";
 
@@ -71,14 +74,18 @@ export const Dialog = (props: DialogPropsType) => {
       aria-label={t("_accessibility:ariaLabels.closeDialog")}
       aria-hidden={!open}
       onClick={bigHandleClose}
-      className={`dialog-backdrop animated ${
-        open ? `opened ${animationClass}` : "closed"
-      } ${containerClassName}`}
+      className={classNames(
+        "dialog-backdrop animated",
+        open ? `opened ${animationClass}` : "closed",
+        containerClassName,
+      )}
     >
       <div
-        className={`dialog elevated animated ${
-          open ? `opened ${animationClass}` : "closed"
-        } ${className}`}
+        className={classNames(
+          "dialog elevated animated",
+          open ? `opened ${animationClass}` : "closed",
+          className,
+        )}
       >
         <div className="dialog-header">
           <h3 className="dialog-title">{title}</h3>

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.61] - 2026-04-08
+
+### Changed
+
+- Bumped package version to `0.0.61`.
+- Refactored class-name composition across UI components (`BottomNavigation`, `Dialog*`, `Drawer`, `Error`, `FormContainer`, `ParagraphInput`, `Navbar`, `Notification`, `Page`, `PrettyGrid`, `TabsLayout`, `ToTop`, `SplashScreen`) to use `classNames` from `@sito/dashboard` instead of template-literal string concatenation.
+- Consolidated shared onboarding classes (layout, spacing, typography, and responsive breakpoints used by multiple consumer dashboards) into `src/components/Onboarding/styles.css` as component-owned defaults.
+- Updated peer dependency `@sito/dashboard` to `^0.0.75`.
+- Relaxed React peer ranges to `react@>=18.2 <20` and `react-dom@>=18.2 <20`.
+- Updated `some-javascript-utils` dependency spec to `^0.10.10`.
+
+### Fixed
+
+- Fixed className whitespace/empty-token edge cases caused by manual string concatenation when optional classes were missing.
+
+### Documentation
+
+- Updated peer dependency references in `README.md`, `docs/CONSUMER_GUIDE.md`, and `AGENTS.md` to `@sito/dashboard@^0.0.75`.
+
 ## [0.0.60] - 2026-03-31
 
 ### Added
@@ -189,7 +208,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Bumped package version to `0.0.52`.
-- Updated `@sito/dashboard` peer/dev dependency to `^0.0.74`.
+- Updated `@sito/dashboard` peer/dev dependency to `^0.0.75`.
 - Refactored dialog hook types to support both:
   - legacy entity-coupled `useFormDialog` usage
   - new core mode-based usage with `mapIn`/`mapOut`, `resetOnOpen`, `reinitializeOnOpen`, and submit/apply/clear handlers

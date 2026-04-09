@@ -29,6 +29,8 @@ vi.mock("@sito/dashboard", () => ({
     </button>
   ),
   useTranslation: () => ({ t: (key: string) => key }),
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
 }));
 
 vi.mock("providers", () => ({

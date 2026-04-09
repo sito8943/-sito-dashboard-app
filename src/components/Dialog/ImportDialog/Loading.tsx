@@ -1,5 +1,8 @@
 import { useTranslation, Loading as BaseLoading } from "@sito/dashboard";
 
+// lib
+import { classNames } from "@sito/dashboard";
+
 // styles
 import "./styles.css";
 
@@ -16,7 +19,7 @@ export function Loading(props: ImportDialogLoadingProps) {
   const { t } = useTranslation();
 
   return (
-    <div className={`import-loading ${className}`}>
+    <div className={classNames("import-loading", className)}>
       <BaseLoading loaderClass="w-5 h-5" className="!w-auto" />
       <span>
         {message ??
