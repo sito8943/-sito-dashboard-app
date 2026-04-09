@@ -6,6 +6,11 @@ import { ConfigProvider } from "providers/ConfigProvider";
 import type { BaseLinkPropsType } from "components/types";
 import type { Location } from "lib";
 
+vi.mock("@sito/dashboard", () => ({
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
+}));
+
 vi.mock("../Buttons", () => ({
   Button: ({
     children,

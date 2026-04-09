@@ -1,15 +1,28 @@
 @reference "../../index.css";
 
 .onboarding-main {
-  @apply fixed w-screen h-screen top-0 left-0 bg-base z-50 flex items-center justify-center;
+  @apply fixed w-screen h-screen top-0 left-0 bg-base z-50 flex justify-center;
+  padding: 0.75rem;
+  overflow-y: auto;
+  align-items: flex-start;
 }
 
 .onboarding-main .tabs-layout-main {
-  @apply flex gap-40 flex-col-reverse h-auto;
+  @apply flex flex-col-reverse;
+  width: 100%;
+  max-width: 36rem;
+  margin: 0 auto;
+  min-height: 100%;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 0.5rem 0;
 }
 
 .onboarding-main .tabs-container {
-  @apply justify-center gap-5;
+  @apply justify-center;
+  margin-bottom: 0;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .onboarding-main .tab {
@@ -21,25 +34,68 @@
 }
 
 .step-container {
-  @apply w-md flex flex-col gap-20;
+  @apply flex flex-col;
+  width: min(100%, 32rem);
+  gap: 1rem;
 }
 
 .step-title {
-  @apply text-5xl text-center leading-16;
+  @apply text-center;
+  font-size: clamp(1.55rem, 7vw, 2.4rem);
+  line-height: 1.2;
 }
 
 .step-body {
-  @apply text-center !text-lg;
+  @apply text-center;
+  font-size: clamp(0.95rem, 3.9vw, 1.125rem) !important;
+  line-height: 1.45 !important;
 }
 
 .step-content {
-  @apply flex flex-col gap-5;
+  @apply flex flex-col;
+  gap: 0.75rem;
 }
 
 .step-actions {
-  @apply flex gap-5 items-center justify-center;
+  @apply flex items-center justify-center;
+  width: 100%;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .step-button {
-  @apply !px-8;
+  width: 100%;
+  justify-content: center;
+  padding-inline: 1rem !important;
+}
+
+@media (min-width: 28rem) {
+  .onboarding-main {
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .onboarding-main .tabs-layout-main {
+    gap: 1.5rem;
+    min-height: auto;
+  }
+
+  .step-container {
+    gap: 1.25rem;
+  }
+
+  .step-button {
+    width: auto;
+    min-width: 10rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .onboarding-main .tabs-layout-main {
+    gap: 2rem;
+  }
+
+  .step-container {
+    gap: 1.5rem;
+  }
 }

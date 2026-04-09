@@ -6,6 +6,8 @@ import { DialogActions } from "./DialogActions";
 
 vi.mock("@sito/dashboard", () => ({
   Loading: () => <span data-testid="loading-indicator" />,
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
 }));
 
 vi.mock("components", () => ({

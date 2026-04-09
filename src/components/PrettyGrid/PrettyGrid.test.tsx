@@ -6,6 +6,8 @@ import { PrettyGrid } from "./PrettyGrid";
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
   Loading: () => <div data-testid="loading" />,
 }));
 

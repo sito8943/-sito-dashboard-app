@@ -10,6 +10,8 @@ vi.mock("@sito/dashboard", () => ({
     t: (key: string, options?: { defaultValue?: string }) =>
       options?.defaultValue ?? key,
   }),
+  classNames: (...classes: Array<string | false | null | undefined>) =>
+    classes.filter(Boolean).join(" "),
   FileInput: ({
     onChange,
     onClear,
