@@ -29,6 +29,11 @@ If you use Supabase backend, also install:
 npm install @supabase/supabase-js@2.100.0
 ```
 
+## Runtime scope (important)
+
+`@sito/dashboard-app` is **client-side only**. This package is not designed for SSR/server rendering pipelines.
+Use it in browser-rendered applications.
+
 ## 2. Required Providers
 
 Recommended order:

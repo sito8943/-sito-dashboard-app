@@ -40,6 +40,11 @@ const toHeaderRecord = (headers?: HeadersInit): Record<string, string> => {
   return headers;
 };
 
+const getObjectValue = (value: unknown, key: string): unknown => {
+  if (typeof value !== "object" || value === null) return undefined;
+  return (value as Record<string, unknown>)[key];
+};
+
 /**
  * @description Make a request to the API
  * @param url - URL to make the request
@@ -80,10 +85,14 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
     }
 
     if (!response.ok) {
+      const parsedMessage = getObjectValue(parsed, "message");
+      const parsedError = getObjectValue(parsed, "error");
       const message =
-        typeof parsed === "object" && parsed !== null
-          ? ((parsed as any).message ?? (parsed as any).error ?? rawText)
-          : rawText || response.statusText;
+        typeof parsedMessage === "string" && parsedMessage.length
+          ? parsedMessage
+          : typeof parsedError === "string" && parsedError.length
+            ? parsedError
+            : rawText || response.statusText;
 
       return {
         data: null,
