@@ -22,6 +22,12 @@ describe("local storage utils", () => {
     expect(fromLocal("profile", "object")).toEqual({ id: 7, role: "admin" });
   });
 
+  it("returns undefined when object parsing fails", () => {
+    localStorage.setItem("corrupted", "{invalid-json");
+
+    expect(fromLocal("corrupted", "object")).toBeUndefined();
+  });
+
   it("parses boolean values from string and numeric forms", () => {
     localStorage.setItem("enabled", "true");
     expect(fromLocal("enabled", "boolean")).toBe(true);
@@ -31,6 +37,12 @@ describe("local storage utils", () => {
 
     localStorage.setItem("enabled", "0");
     expect(fromLocal("enabled", "boolean")).toBe(false);
+  });
+
+  it("returns undefined for invalid numeric values", () => {
+    localStorage.setItem("amount", "abc");
+
+    expect(fromLocal("amount", "number")).toBeUndefined();
   });
 
   it("removes keys", () => {

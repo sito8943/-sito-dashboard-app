@@ -136,7 +136,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
 
 /**
  * useAuth hook
- * @returns Provider
+ * @returns Auth context values from `AuthProvider`.
  */
 const useAuth = () => {
   return useAuthContext();

@@ -10,6 +10,7 @@ import { classNames } from "@sito/dashboard";
 
 // types
 import { DialogPropsType } from "./types";
+import { lockBodyScroll, unlockBodyScroll } from "./bodyScrollLock";
 
 // components
 import { AppIconButton } from "components";
@@ -56,16 +57,10 @@ export const Dialog = (props: DialogPropsType) => {
   );
 
   useEffect(() => {
-    const toggleBodyOverflow = (open: boolean) => {
-      if (open) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "auto";
-      }
-    };
-    toggleBodyOverflow(open);
+    if (!open) return;
+    lockBodyScroll();
     return () => {
-      toggleBodyOverflow(false);
+      unlockBodyScroll();
     };
   }, [open]);
 

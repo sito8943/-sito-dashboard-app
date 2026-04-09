@@ -29,6 +29,12 @@ export default tseslint.config(
       ],
       "no-console": ["error", { allow: ["warn", "error"] }],
       "prefer-const": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+    },
+  },
+  {
+    files: ["**/*.test.{ts,tsx}"],
+    rules: {
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
@@ -38,6 +44,7 @@ export default tseslint.config(
       "react-hooks/rules-of-hooks": "off",
       "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 );

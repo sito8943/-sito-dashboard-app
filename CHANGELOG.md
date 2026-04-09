@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.62] - 2026-04-09
+
+### Changed
+
+- Moved `@sito/dashboard@^0.0.75` from `peerDependencies` to `dependencies` so consumer apps do not fail with unresolved `@sito/dashboard` when only installing `@sito/dashboard-app`.
+- Tightened provider/context hook contracts:
+  - `useConfig` now uses an `undefined` default context and throws `useConfig must be used within ConfigProvider` when missing.
+  - `useManager`, `useAuthContext`, `useNotification`, and `useSupabase` now expose consistent provider-specific error messages.
+  - `useNavbar` now throws when `NavbarProvider` is missing instead of silently using no-op defaults.
+- Improved provider hook inline docs (JSDoc) with explicit return types and `@throws` semantics.
+- Updated related test expectations to match the new error messages and added explicit coverage for `useNavbar` outside `NavbarProvider`.
+
+### Fixed
+
+- Fixed `useRegisterBottomNavAction` stability when consumers pass inline action objects:
+  - registration now derives a stable comparison key to avoid unnecessary re-registration churn.
+  - hook cleanup now runs on unmount via a dedicated effect.
+- Fixed React ref render-phase mutation warning by moving `latestActionRef` synchronization to an effect instead of mutating `ref.current` during render.
+
 ## [0.0.61] - 2026-04-08
 
 ### Changed

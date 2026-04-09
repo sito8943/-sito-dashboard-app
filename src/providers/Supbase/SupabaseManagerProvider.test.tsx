@@ -35,7 +35,7 @@ describe("SupabaseManagerProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => renderHook(() => useSupabase())).toThrow(
-      "supabaseManagerContext must be used within a Provider",
+      "useSupabase must be used within SupabaseManagerProvider",
     );
 
     consoleErrorSpy.mockRestore();

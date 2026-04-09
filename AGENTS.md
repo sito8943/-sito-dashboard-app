@@ -18,6 +18,7 @@ Use documentation by purpose:
 Critical distinction:
 
 - For `@sito/dashboard-app`, provider setup is `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` is used).
+- `@sito/dashboard-app` is browser-only and **not SSR-compatible** as a package integration target.
 - `IconButton` in this package is overridden and expects `icon: IconDefinition`.
 - Upstream examples in `.sito/*` may use `@sito/dashboard` patterns (for example `IconButton` with React nodes) and must not override this file's rules.
 
@@ -860,3 +861,4 @@ Consumer projects must provide translations for these namespaces.
 24. **Prefer `IndexedDBClient.update(value)` in new code** — keep `(id, value)` only for temporary backward compatibility.
 25. **Keep documented runtime version aligned with `.nvmrc`** when writing setup instructions for this repository.
 26. **Run `npm run docs:check` after documentation edits** to validate policy markers, links, and cross-doc consistency.
+27. **Do not document or propose SSR integration for this package** — `@sito/dashboard-app` is client-side/browser-only.

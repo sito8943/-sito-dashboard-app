@@ -44,13 +44,14 @@ const ManagerProvider = (props: ManagerProviderPropTypes) => {
 
 /**
  * useManager hook
- * @returns Provider
+ * @returns Manager client from context.
+ * @throws {Error} If used outside `ManagerProvider`.
  */
 const useManager = () => {
   const context = useContext(ManagerContext);
 
   if (!context)
-    throw new Error("managerContext must be used within a Provider");
+    throw new Error("useManager must be used within ManagerProvider");
   return context.client;
 };
 

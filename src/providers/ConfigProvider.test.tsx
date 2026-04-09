@@ -61,7 +61,7 @@ describe("ConfigProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => render(<Consumer />)).toThrow(
-      "Config provider has not been set.",
+      "useConfig must be used within ConfigProvider",
     );
 
     consoleErrorSpy.mockRestore();

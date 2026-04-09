@@ -178,7 +178,7 @@ describe("AuthProvider", () => {
       .mockImplementation(() => undefined);
 
     expect(() => renderHook(() => useAuth())).toThrow(
-      "authContext must be used within a Provider",
+      "useAuthContext must be used within AuthProvider",
     );
 
     consoleErrorSpy.mockRestore();

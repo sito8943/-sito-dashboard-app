@@ -15,6 +15,7 @@ Use documentation by target package:
 Important:
 
 - `.sito/*.md` is not the canonical integration guide for this package.
+- `@sito/dashboard-app` is **not SSR-compatible**. Treat it as browser-only (client-rendered apps).
 - For auth-enabled apps, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed; `BottomNavActionProvider` optional for dynamic mobile center actions).
 - `Drawer` and `Onboarding` can run without `AuthProvider`; in that case they behave as guest-mode UI defaults.
 - `IconButton` differs by package:
@@ -34,6 +35,7 @@ pnpm add @sito/dashboard-app
 ## Requirements
 
 - Node.js `20.x` (see `.nvmrc`)
+- Browser runtime only (no SSR/server rendering for this package)
 - React `18.3.1`
 - React DOM `18.3.1`
 - `@tanstack/react-query` `5.83.0`

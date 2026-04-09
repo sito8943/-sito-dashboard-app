@@ -3,7 +3,9 @@
  * @returns Whether the running platform is Apple-based.
  */
 export const isMac = () => {
-  const nav = navigator as any;
+  const nav = navigator as Navigator & {
+    userAgentData?: { platform?: string };
+  };
   const platform = nav?.userAgentData?.platform || nav?.platform || "";
   return /Mac|iPhone|iPod|iPad/i.test(platform);
 };

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { BottomNavActionContext } from "./BottomNavActionContext";
 import type { BottomNavigationCenterActionType } from "components/BottomNavigation/types";
 
@@ -13,6 +13,35 @@ const normalizeBottomNavAction = (
   if (!action) return null;
   if (typeof action === "function") return { onClick: () => action() };
   return action;
+};
+
+const toActionRegistrationKey = (
+  action: BottomNavActionRegistrationType,
+): string => {
+  if (!action) return "null";
+  if (typeof action === "function") return "function";
+
+  const { onClick, icon, ...rest } = action;
+  const toComparableString = (value: unknown) => {
+    if (typeof value === "function") return "__function__";
+
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  };
+
+  const stableRest = Object.entries(rest)
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, value]) => `${key}:${toComparableString(value)}`)
+    .join("|");
+
+  return [
+    `rest=${stableRest}`,
+    `hasOnClick=${typeof onClick === "function"}`,
+    `icon=${icon ? `${icon.prefix}:${icon.iconName}` : "null"}`,
+  ].join(";");
 };
 
 /**
@@ -42,9 +71,35 @@ export const useRegisterBottomNavAction = (
   action: BottomNavActionRegistrationType,
 ) => {
   const { setCenterAction } = useBottomNavAction();
+  const latestActionRef = useRef<BottomNavActionRegistrationType>(action);
+  const registrationKey = toActionRegistrationKey(action);
 
   useEffect(() => {
-    setCenterAction(normalizeBottomNavAction(action));
+    latestActionRef.current = action;
+  }, [action]);
+
+  useEffect(() => {
+    const normalizedAction = normalizeBottomNavAction(latestActionRef.current);
+
+    if (!normalizedAction) {
+      setCenterAction(null);
+      return;
+    }
+
+    setCenterAction({
+      ...normalizedAction,
+      onClick: normalizedAction.onClick
+        ? (event) => {
+            const latestAction = normalizeBottomNavAction(
+              latestActionRef.current,
+            );
+            latestAction?.onClick?.(event);
+          }
+        : undefined,
+    });
+  }, [registrationKey, setCenterAction]);
+
+  useEffect(() => {
     return () => setCenterAction(null);
-  }, [action, setCenterAction]);
+  }, [setCenterAction]);
 };

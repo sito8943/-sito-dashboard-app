@@ -3,7 +3,9 @@ import { createContext, useContext } from "react";
 // config
 import { ConfigProviderContextType, ConfigProviderPropTypes } from "./types";
 
-const ConfigContext = createContext({} as ConfigProviderContextType);
+const ConfigContext = createContext<ConfigProviderContextType | undefined>(
+  undefined,
+);
 
 /**
  * Config Provider
@@ -25,14 +27,12 @@ const ConfigProvider = (props: ConfigProviderPropTypes) => {
 
 /**
  * useConfig hook
- * @returns Provider
+ * @returns {ConfigProviderContextType} Config context values.
+ * @throws {Error} If used outside `ConfigProvider`.
  */
 const useConfig = () => {
   const context = useContext(ConfigContext);
-  if (context === undefined || Object.keys(context).length === 0)
-    throw new Error(
-      "Config provider has not been set. This step is required and cannot be skipped.",
-    );
+  if (!context) throw new Error("useConfig must be used within ConfigProvider");
   return context;
 };
 

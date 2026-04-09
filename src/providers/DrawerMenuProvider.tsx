@@ -85,7 +85,7 @@ const DrawerMenuProvider = <MenuKeys extends string>(
 
 /**
  * useDrawerMenu hook
- * @returns Provider
+ * @returns {DrawerMenuContextType<MenuKeys>} Drawer menu context values.
  */
 const useDrawerMenu = <MenuKeys extends string>() => {
   const context = useContext(DrawerMenuContext);
