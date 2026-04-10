@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.63] - 2026-04-10
+
+### Changed
+
+- Bumped package version to `0.0.63`.
+- Updated documentation dependency references to `@sito/dashboard@^0.0.76` across `README.md`, `AGENTS.md`, and `docs/CONSUMER_GUIDE.md` to align with package runtime dependencies.
+- Split lint behavior into read-only validation and explicit autofix:
+  - `npm run lint`: `eslint` + `prettier --check` + `depcheck` (no file mutations).
+  - `npm run lint:fix`: `eslint --fix` + `prettier --write`.
+- Updated `format` script to `prettier --write .` for consistent full-repo formatting behavior.
+- Simplified CI workflow scope to remove duplicate checks:
+  - `.github/workflows/ci.yml` now runs `test + build`.
+  - `.github/workflows/lint.yml` remains responsible for `lint + docs:check` and now runs on `pull_request`.
+- Relaxed peer dependency version constraints to compatible semver ranges (`<next major>`) for Font Awesome, React Query, Supabase, and React Hook Form to reduce consumer dependency resolution conflicts.
+
+### Fixed
+
+- Renamed internal providers module path from `Supbase` to `Supabase` and updated provider-barrel exports accordingly.
+- Removed duplicate `Drawer` re-export from `src/components/index.ts`.
+
+### Documentation
+
+- Added automated docs policy validation in `scripts/check-docs.mjs` to enforce `@sito/dashboard` version alignment between `package.json`, `README.md`, `AGENTS.md`, and `docs/CONSUMER_GUIDE.md`.
+- Updated README script and CI sections to reflect the new non-mutating lint flow and deduplicated pipeline responsibilities.
+
 ## [0.0.62] - 2026-04-09
 
 ### Changed
