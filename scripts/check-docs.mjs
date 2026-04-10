@@ -20,12 +20,23 @@ const failures = [];
 const exists = (relativePath) => fs.existsSync(path.join(root, relativePath));
 const read = (relativePath) =>
   fs.readFileSync(path.join(root, relativePath), "utf8");
+const readJson = (relativePath) => JSON.parse(read(relativePath));
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const expectInFile = (relativePath, needle, description) => {
   const content = read(relativePath);
   if (!content.includes(needle)) {
     failures.push(
       `[content] ${relativePath}: missing ${description} (${JSON.stringify(needle)})`,
+    );
+  }
+};
+
+const expectRegexInFile = (relativePath, regex, description) => {
+  const content = read(relativePath);
+  if (!regex.test(content)) {
+    failures.push(
+      `[content] ${relativePath}: missing ${description} (${regex.toString()})`,
     );
   }
 };
@@ -139,6 +150,46 @@ const checkNodeRuntimeAlignment = () => {
   }
 };
 
+const checkDashboardVersionAlignment = () => {
+  const packageJson = readJson("package.json");
+  const dashboardVersion = packageJson?.dependencies?.["@sito/dashboard"];
+
+  if (typeof dashboardVersion !== "string" || dashboardVersion.length === 0) {
+    failures.push(
+      "[version] package.json dependencies must include @sito/dashboard",
+    );
+    return;
+  }
+
+  expectInFile(
+    "README.md",
+    `\`@sito/dashboard\` \`${dashboardVersion}\``,
+    `README requirements version for @sito/dashboard (${dashboardVersion})`,
+  );
+  expectInFile(
+    "README.md",
+    `@sito/dashboard@${dashboardVersion}`,
+    `README install command version for @sito/dashboard (${dashboardVersion})`,
+  );
+  expectRegexInFile(
+    "AGENTS.md",
+    new RegExp(
+      `\\|\\s*Base Library\\s*\\|\\s*@sito\\/dashboard\\s*\\|\\s*${escapeRegExp(dashboardVersion)}\\s*\\|`,
+    ),
+    `AGENTS Tech Stack version for @sito/dashboard (${dashboardVersion})`,
+  );
+  expectInFile(
+    "AGENTS.md",
+    `@sito/dashboard@${dashboardVersion}`,
+    `AGENTS install command version for @sito/dashboard (${dashboardVersion})`,
+  );
+  expectInFile(
+    "docs/CONSUMER_GUIDE.md",
+    `@sito/dashboard@${dashboardVersion}`,
+    `CONSUMER_GUIDE install command version for @sito/dashboard (${dashboardVersion})`,
+  );
+};
+
 const checkRelativeMarkdownLinks = () => {
   const linkRegex = /\[[^\]]+\]\(([^)]+)\)/g;
 
@@ -188,6 +239,7 @@ const main = () => {
   checkPolicyMarkers();
   checkNoDeprecatedReferences();
   checkNodeRuntimeAlignment();
+  checkDashboardVersionAlignment();
   checkRelativeMarkdownLinks();
 
   if (failures.length > 0) {

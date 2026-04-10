@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.61",
+  "version": "0.0.63",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -31,7 +31,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write . && npm run depcheck",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 && prettier --check . && npm run depcheck",
+    "lint:fix": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write .",
     "docs:check": "node ./scripts/check-docs.mjs",
     "depcheck": "node ./scripts/depcheck.cjs .",
     "test": "NODE_OPTIONS=--max-old-space-size=6144 vitest run",
@@ -39,7 +40,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format": "prettier --write .",
     "prepare": "husky"
   },
   "keywords": [
@@ -50,16 +51,16 @@
   "author": "sito8943",
   "license": "MIT",
   "peerDependencies": {
-    "@fortawesome/fontawesome-svg-core": "7.0.0",
-    "@fortawesome/free-brands-svg-icons": "7.0.0",
-    "@fortawesome/free-regular-svg-icons": "7.0.0",
-    "@fortawesome/free-solid-svg-icons": "7.0.0",
-    "@fortawesome/react-fontawesome": "0.2.3",
-    "@supabase/supabase-js": "2.100.0",
-    "@tanstack/react-query": "5.83.0",
+    "@fortawesome/fontawesome-svg-core": ">=7.0.0 <8",
+    "@fortawesome/free-brands-svg-icons": ">=7.0.0 <8",
+    "@fortawesome/free-regular-svg-icons": ">=7.0.0 <8",
+    "@fortawesome/free-solid-svg-icons": ">=7.0.0 <8",
+    "@fortawesome/react-fontawesome": ">=0.2.3 <1",
+    "@supabase/supabase-js": ">=2.100.0 <3",
+    "@tanstack/react-query": ">=5.83.0 <6",
     "react": ">=18.2 <20",
     "react-dom": ">=18.2 <20",
-    "react-hook-form": "7.61.1"
+    "react-hook-form": ">=7.61.1 <8"
   },
   "peerDependenciesMeta": {
     "@supabase/supabase-js": {
@@ -108,7 +109,7 @@
   },
   "dependencies": {
     "some-javascript-utils": "^0.10.10",
-    "@sito/dashboard": "^0.0.75"
+    "@sito/dashboard": "^0.0.76"
   },
   "overrides": {
     "minimatch": "10.2.2"

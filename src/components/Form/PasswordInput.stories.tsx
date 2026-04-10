@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { FormEvent, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { PasswordInput } from "./PasswordInput";
 import { State } from "@sito/dashboard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -84,6 +84,28 @@ export const CustomLabelWithState: Story = {
         state={State.good}
         helperText="Strong password"
         placeholder="Enter a secure password"
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+      />
+    );
+  },
+};
+
+export const ErrorState: Story = {
+  args: {
+    value: "",
+  },
+  render: (args) => {
+    const ref = useRef<HTMLInputElement | null>(null);
+    const [value, setValue] = useState("");
+    return (
+      <PasswordInput
+        {...args}
+        ref={ref}
+        label="Password"
+        placeholder="Enter your password"
+        state={State.error}
+        helperText="Password is required"
         value={value}
         onChange={(e) => setValue(e.currentTarget.value)}
       />

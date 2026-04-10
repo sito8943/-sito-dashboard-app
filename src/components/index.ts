@@ -11,7 +11,6 @@ export * from "./Page";
 export * from "./PrettyGrid";
 export * from "./Navbar";
 export * from "./Notification";
-export * from "./Drawer";
 export * from "./Loading";
 export * from "./TabsLayout";
 export * from "./Onboarding";

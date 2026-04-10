@@ -41,7 +41,7 @@ pnpm add @sito/dashboard-app
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional; only if using Supabase backend)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.75`
+- `@sito/dashboard` `^0.0.76`
 - Font Awesome peers defined in `package.json`
 
 Install all peers in consumer apps:
@@ -49,7 +49,7 @@ Install all peers in consumer apps:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.75 \
+  @sito/dashboard@^0.0.76 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -737,7 +737,8 @@ const productsClient = new ProductsSupabaseClient(supabase);
 - `npm run dev`: start Vite dev server
 - `npm run build`: compile TypeScript and build the library
 - `npm run preview`: preview the Vite build locally
-- `npm run lint`: run ESLint
+- `npm run lint`: run ESLint + Prettier check + depcheck (no file writes)
+- `npm run lint:fix`: run ESLint autofix + Prettier write mode
 - `npm run docs:check`: validate docs policy markers, relative links, and docs consistency rules
 - `npm run test`: run unit/component tests once (Vitest)
 - `npm run test:watch`: run tests in watch mode
@@ -872,6 +873,12 @@ Run linters:
 npm run lint
 ```
 
+Run automatic fixes:
+
+```bash
+npm run lint:fix
+```
+
 Run formatting:
 
 ```bash
@@ -882,8 +889,8 @@ npm run format
 
 CI is available through GitHub Actions:
 
-- `.github/workflows/ci.yml`: runs `lint + docs:check + test + build` on `push` and `pull_request`
-- `.github/workflows/lint.yml`: runs `lint + docs:check` on `push` and `pull_request`
+- `.github/workflows/ci.yml`: runs `test + build` on `push` and `pull_request`
+- `.github/workflows/lint.yml`: runs `lint + docs:check` on `pull_request`
 
 Package release/publish is still handled manually.
 
