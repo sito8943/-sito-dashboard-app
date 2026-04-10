@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.61",
+  "version": "0.0.63",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -31,7 +31,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write . && npm run depcheck",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 && prettier --check . && npm run depcheck",
+    "lint:fix": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write .",
     "docs:check": "node ./scripts/check-docs.mjs",
     "depcheck": "node ./scripts/depcheck.cjs .",
     "test": "NODE_OPTIONS=--max-old-space-size=6144 vitest run",
@@ -39,7 +40,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format": "prettier --write .",
     "prepare": "husky"
   },
   "keywords": [
@@ -108,7 +109,7 @@
   },
   "dependencies": {
     "some-javascript-utils": "^0.10.10",
-    "@sito/dashboard": "^0.0.75"
+    "@sito/dashboard": "^0.0.76"
   },
   "overrides": {
     "minimatch": "10.2.2"
