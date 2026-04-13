@@ -41,7 +41,7 @@ pnpm add @sito/dashboard-app
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional; only if using Supabase backend)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.78`
+- `@sito/dashboard` `^0.0.79`
 - Font Awesome peers defined in `package.json`
 
 Install all peers in consumer apps:
@@ -49,7 +49,7 @@ Install all peers in consumer apps:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.78 \
+  @sito/dashboard@^0.0.79 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \

@@ -109,7 +109,7 @@
   },
   "dependencies": {
     "some-javascript-utils": "^0.10.10",
-    "@sito/dashboard": "^0.0.78"
+    "@sito/dashboard": "^0.0.79"
   },
   "overrides": {
     "minimatch": "10.2.2"
