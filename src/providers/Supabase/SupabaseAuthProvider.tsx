@@ -32,6 +32,7 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
   }, [sessionMapper]);
 
   const [account, setAccount] = useState<SessionAccountDto>({});
+  const authRevisionRef = useRef(0);
 
   const clearStoredSession = useCallback(() => {
     removeFromLocal(user);
@@ -39,6 +40,16 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
     removeFromLocal(refreshTokenKey);
     removeFromLocal(accessTokenExpiresAtKey);
   }, [accessTokenExpiresAtKey, refreshTokenKey, remember, user]);
+
+  const bumpAuthRevision = useCallback(() => {
+    authRevisionRef.current += 1;
+  }, []);
+
+  const clearSessionState = useCallback(() => {
+    bumpAuthRevision();
+    setAccount({});
+    clearStoredSession();
+  }, [bumpAuthRevision, clearStoredSession]);
 
   const isInGuestMode = useCallback(() => {
     return !!fromLocal(guestMode, "boolean") && account.token === undefined;
@@ -54,6 +65,8 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
   const logUser = useCallback(
     (data: SessionDto, rememberMe?: boolean) => {
       if (!data) return;
+
+      bumpAuthRevision();
 
       const storedRemember = fromLocal(remember, "boolean");
       const resolvedRemember =
@@ -76,7 +89,14 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
         toLocal(accessTokenExpiresAtKey, data.accessTokenExpiresAt);
       else removeFromLocal(accessTokenExpiresAtKey);
     },
-    [accessTokenExpiresAtKey, guestMode, refreshTokenKey, remember, user],
+    [
+      accessTokenExpiresAtKey,
+      bumpAuthRevision,
+      guestMode,
+      refreshTokenKey,
+      remember,
+      user,
+    ],
   );
 
   const logoutUser = useCallback(async () => {
@@ -86,55 +106,59 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
       console.error(err);
     }
 
-    setAccount({});
-    clearStoredSession();
-  }, [clearStoredSession, supabase.auth]);
+    clearSessionState();
+  }, [clearSessionState, supabase.auth]);
 
   const logUserFromLocal = useCallback(async () => {
+    const requestRevision = authRevisionRef.current;
+
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
 
+      // Ignore stale bootstrap/read responses when a newer auth mutation
+      // (SIGN_IN/SIGN_OUT/manual logUser) already updated the state.
+      if (requestRevision !== authRevisionRef.current) return;
+
       if (!data.session) {
-        setAccount({});
-        clearStoredSession();
+        clearSessionState();
         return;
       }
 
       logUser(mapperRef.current(data.session));
     } catch (err) {
       console.error(err);
+      if (requestRevision !== authRevisionRef.current) return;
       await logoutUser();
     }
-  }, [clearStoredSession, logUser, logoutUser, supabase.auth]);
+  }, [clearSessionState, logUser, logoutUser, supabase.auth]);
 
   useEffect(() => {
     let mounted = true;
-
-    const bootstrapSession = async () => {
-      if (!mounted) return;
-      await logUserFromLocal();
-    };
-
-    bootstrapSession();
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
 
       if (!session) {
-        setAccount({});
-        clearStoredSession();
+        clearSessionState();
         return;
       }
 
       logUser(mapperRef.current(session));
     });
 
+    const bootstrapSession = async () => {
+      if (!mounted) return;
+      await logUserFromLocal();
+    };
+
+    void bootstrapSession();
+
     return () => {
       mounted = false;
       data.subscription.unsubscribe();
     };
-  }, [clearStoredSession, logUser, logUserFromLocal, supabase.auth]);
+  }, [clearSessionState, logUser, logUserFromLocal, supabase.auth]);
 
   const value = useMemo(() => {
     return {
