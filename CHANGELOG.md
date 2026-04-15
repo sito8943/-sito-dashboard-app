@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.67] - 2026-04-15
+
+### Added
+
+- Added `SupabaseAuthProvider` Storybook race scenarios in `src/providers/Supabase/SupabaseAuthProvider.stories.tsx`:
+  - `Race Reproduction (No SIGNED_IN Event)`
+  - `Control Case (SIGNED_IN Event Enabled)`
+- Added regression coverage in `SupabaseAuthProvider.test.tsx` to ensure a stale `getSession() -> null` bootstrap response cannot clear a newer `SIGNED_IN` session.
+
+### Fixed
+
+- Fixed a Supabase auth race condition where `SupabaseAuthProvider` could clear in-memory/local session state when an older bootstrap `getSession()` call resolved after a newer sign-in/auth-state update.
+- `SupabaseAuthProvider` now guards bootstrap/auth-read responses with an internal auth revision check, ignoring stale responses instead of overwriting newer state.
+- `SupabaseAuthProvider` now subscribes to `onAuthStateChange` before bootstrapping `getSession()` to reduce first-mount timing windows between auth events and bootstrap reads.
+
 ## [0.0.66] - 2026-04-15
 
 ### Changed
