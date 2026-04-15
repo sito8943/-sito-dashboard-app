@@ -5,7 +5,11 @@ import { parseQueries } from "./query";
 import type { BaseEntityDto, BaseFilterDto } from "lib";
 
 type UserDto = BaseEntityDto & { name: string };
-type UserFilterDto = BaseFilterDto & { status?: string };
+type UserFilterDto = BaseFilterDto & {
+  status?: string;
+  category?: { id?: number; label?: string };
+  categories?: Array<{ id?: number; label?: string }>;
+};
 
 describe("parseQueries", () => {
   it("does not serialize undefined query fields", () => {
@@ -46,5 +50,14 @@ describe("parseQueries", () => {
     expect(result).toContain(
       `filters=deletedAt==${encodeURIComponent(deletedAt.toISOString())}`,
     );
+  });
+
+  it("skips object filters when id is missing or empty", () => {
+    const result = parseQueries<UserDto, UserFilterDto>("/users", undefined, {
+      category: { label: "no-id" },
+      categories: [{ id: 7 }, { label: "missing-id" }, { id: undefined }],
+    });
+
+    expect(result).toBe("/users?filters=categories==7");
   });
 });

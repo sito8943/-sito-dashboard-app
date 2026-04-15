@@ -1,4 +1,4 @@
-import { SessionDto } from "lib";
+import { SessionAccountDto, SessionDto } from "lib";
 import { BasicProviderPropTypes } from "providers";
 
 export interface AuthProviderPropTypes extends BasicProviderPropTypes {
@@ -10,7 +10,7 @@ export interface AuthProviderPropTypes extends BasicProviderPropTypes {
 }
 
 export type AuthProviderContextType = {
-  account: SessionDto;
+  account: SessionAccountDto;
   logUser: (data: SessionDto, rememberMe?: boolean) => void;
   logoutUser: () => Promise<void>;
   logUserFromLocal: () => Promise<void>;

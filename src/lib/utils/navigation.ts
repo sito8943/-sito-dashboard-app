@@ -26,14 +26,14 @@ export interface Location<State = unknown> extends Path {
   /**
    * A value of arbitrary data associated with this location.
    */
-  state: State;
+  state?: State;
   /**
    * A unique string associated with this location. May be used to safely store
    * and retrieve data in some other storage API, like `localStorage`.
    *
    * Note: This value is always "default" on the initial location.
    */
-  key: string;
+  key?: string;
 }
 
 export type ViewPageType<PageId> = {

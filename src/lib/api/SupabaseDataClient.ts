@@ -201,9 +201,16 @@ export class SupabaseDataClient<
     return value as unknown as Partial<TRow>;
   }
 
-  private resolveObjectFilterValue(value: Record<string, unknown>): unknown {
-    if ("id" in value) return normalizeScalarValue(value.id);
-    return "";
+  private resolveObjectFilterValue(
+    value: Record<string, unknown>,
+  ): unknown | undefined {
+    if (!("id" in value)) return undefined;
+
+    const normalized = normalizeScalarValue(value.id);
+    if (normalized === undefined || normalized === null || normalized === "")
+      return undefined;
+
+    return normalized;
   }
 
   private applyFilters<TBuilder extends FilterBuilder<TBuilder>>(
@@ -264,10 +271,10 @@ export class SupabaseDataClient<
       }
 
       if (isRecord(filterValue)) {
-        scopedBuilder = scopedBuilder.eq(
-          column,
-          this.resolveObjectFilterValue(filterValue),
-        );
+        const resolvedValue = this.resolveObjectFilterValue(filterValue);
+        if (!isDefined(resolvedValue)) return;
+
+        scopedBuilder = scopedBuilder.eq(column, resolvedValue);
         return;
       }
 

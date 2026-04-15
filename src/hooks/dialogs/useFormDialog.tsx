@@ -98,7 +98,7 @@ export const useFormDialog = <
       }
 
       setId(nextId);
-      if (nextValues) {
+      if (nextValues !== undefined) {
         if (open) {
           reset(nextValues);
         } else {

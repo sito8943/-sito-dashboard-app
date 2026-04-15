@@ -158,6 +158,12 @@ describe("User", () => {
     expect(result.totalElements).toBe(3);
   });
 
+  it("insertMany throws when receiving an empty array", async () => {
+    await expect(client.insertMany([])).rejects.toThrow(
+      "insertMany requires items",
+    );
+  });
+
   it("get returns paginated result with defaults", async () => {
     await client.insert({ name: "Alice", email: "alice@test.com" });
     await client.insert({ name: "Bob", email: "bob@test.com" });
@@ -182,6 +188,18 @@ describe("User", () => {
     expect(page0.totalPages).toBe(3);
     expect(page1.items).toHaveLength(2);
     expect(page1.items[0]!.name).toBe("User3");
+  });
+
+  it("get falls back to default pagination when pageSize is 0", async () => {
+    await client.insert({ name: "Alice", email: "alice@test.com" });
+    await client.insert({ name: "Bob", email: "bob@test.com" });
+
+    const result = await client.get({ pageSize: 0, currentPage: 0 });
+
+    expect(result.pageSize).toBe(10);
+    expect(result.totalPages).toBe(1);
+    expect(result.totalPages).not.toBe(Infinity);
+    expect(result.items).toHaveLength(2);
   });
 
   it("get sorts by field ascending and descending", async () => {

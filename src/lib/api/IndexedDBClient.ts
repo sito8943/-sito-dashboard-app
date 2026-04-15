@@ -94,6 +94,8 @@ export class IndexedDBClient<
   }
 
   async insertMany(data: TAddDto[]): Promise<TDto> {
+    if (data.length === 0) throw new Error("insertMany requires items");
+
     const store = await this.transaction("readwrite");
     let lastId: IDBValidKey = 0;
     for (const item of data) {
@@ -144,7 +146,11 @@ export class IndexedDBClient<
       return 0;
     });
 
-    const pageSize = query?.pageSize ?? 10;
+    const requestedPageSize = query?.pageSize;
+    const pageSize =
+      typeof requestedPageSize === "number" && requestedPageSize > 0
+        ? requestedPageSize
+        : 10;
     const currentPage = query?.currentPage ?? 0;
     const totalElements = filtered.length;
     const totalPages = Math.ceil(totalElements / pageSize);
