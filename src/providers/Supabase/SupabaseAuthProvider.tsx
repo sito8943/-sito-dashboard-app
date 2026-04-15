@@ -8,6 +8,7 @@ import {
   fromLocal,
   mapSupabaseSessionToSessionDto,
   removeFromLocal,
+  SessionAccountDto,
   SessionDto,
   toLocal,
 } from "lib";
@@ -30,7 +31,7 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
     mapperRef.current = sessionMapper ?? mapSupabaseSessionToSessionDto;
   }, [sessionMapper]);
 
-  const [account, setAccount] = useState<SessionDto>({} as SessionDto);
+  const [account, setAccount] = useState<SessionAccountDto>({});
 
   const clearStoredSession = useCallback(() => {
     removeFromLocal(user);
@@ -85,7 +86,7 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
       console.error(err);
     }
 
-    setAccount({} as SessionDto);
+    setAccount({});
     clearStoredSession();
   }, [clearStoredSession, supabase.auth]);
 
@@ -95,7 +96,7 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
       if (error) throw error;
 
       if (!data.session) {
-        setAccount({} as SessionDto);
+        setAccount({});
         clearStoredSession();
         return;
       }
@@ -121,7 +122,7 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
       if (!mounted) return;
 
       if (!session) {
-        setAccount({} as SessionDto);
+        setAccount({});
         clearStoredSession();
         return;
       }

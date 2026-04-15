@@ -158,6 +158,40 @@ describe("AuthProvider", () => {
     consoleErrorSpy.mockRestore();
   });
 
+  it("waits for logout completion when session recovery fails", async () => {
+    getSessionMock.mockRejectedValue(new Error("Session expired"));
+    let resolveLogout: (() => void) | undefined;
+    logoutMock.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveLogout = resolve;
+        }),
+    );
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    const logUserFromLocalPromise = result.current.logUserFromLocal();
+    let settled = false;
+    void logUserFromLocalPromise.then(() => {
+      settled = true;
+    });
+
+    await Promise.resolve();
+
+    expect(logoutMock).toHaveBeenCalledOnce();
+    expect(settled).toBe(false);
+
+    await act(async () => {
+      resolveLogout?.();
+      await logUserFromLocalPromise;
+    });
+
+    expect(settled).toBe(true);
+    consoleErrorSpy.mockRestore();
+  });
+
   it("detects guest mode only when enabled and no token is loaded", () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
 

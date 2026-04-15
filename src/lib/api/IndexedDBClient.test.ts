@@ -158,6 +158,12 @@ describe("User", () => {
     expect(result.totalElements).toBe(3);
   });
 
+  it("insertMany throws when receiving an empty array", async () => {
+    await expect(client.insertMany([])).rejects.toThrow(
+      "insertMany requires items",
+    );
+  });
+
   it("get returns paginated result with defaults", async () => {
     await client.insert({ name: "Alice", email: "alice@test.com" });
     await client.insert({ name: "Bob", email: "bob@test.com" });

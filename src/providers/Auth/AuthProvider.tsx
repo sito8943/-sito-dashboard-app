@@ -8,7 +8,13 @@ import { AuthContext, useAuthContext } from "./authContext";
 import { useManager } from "../ManagerProvider";
 
 // lib
-import { toLocal, removeFromLocal, fromLocal, SessionDto } from "lib";
+import {
+  toLocal,
+  removeFromLocal,
+  fromLocal,
+  SessionAccountDto,
+  SessionDto,
+} from "lib";
 
 /**
  * Auth Provider
@@ -27,7 +33,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
 
   const manager = useManager();
 
-  const [account, setAccount] = useState<SessionDto>({} as SessionDto);
+  const [account, setAccount] = useState<SessionAccountDto>({});
 
   const clearStoredSession = useCallback(() => {
     removeFromLocal(user);
@@ -92,7 +98,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     } catch (err) {
       console.error(err);
     }
-    setAccount({} as SessionDto);
+    setAccount({});
     clearStoredSession();
   }, [
     account.refreshToken,
@@ -109,7 +115,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
       logUser(authDto);
     } catch (err) {
       console.error(err);
-      logoutUser();
+      await logoutUser();
     }
   }, [logUser, logoutUser, manager.Auth]);
 

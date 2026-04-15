@@ -94,6 +94,8 @@ export class IndexedDBClient<
   }
 
   async insertMany(data: TAddDto[]): Promise<TDto> {
+    if (data.length === 0) throw new Error("insertMany requires items");
+
     const store = await this.transaction("readwrite");
     let lastId: IDBValidKey = 0;
     for (const item of data) {
