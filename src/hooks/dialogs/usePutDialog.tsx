@@ -25,7 +25,6 @@ export const usePutDialog = <
 ): UseFormDialogReturnType<TFormType> => {
   const queryClient = useQueryClient();
   const entityRef = useRef<TDto>();
-  const lastHydratedDataRef = useRef<TDto>();
 
   const {
     mutationFn,
@@ -75,19 +74,18 @@ export const usePutDialog = <
   const { reset: resetForm } = dialog;
 
   const resolveQueryKey = queryKey || ["put-dialog", title];
+  const hasDialogId = typeof dialog.id === "number";
 
   const getByIdQuery = useQuery({
     queryFn: () => getFunction(dialog.id as number),
     queryKey: [...resolveQueryKey, dialog.id],
-    enabled: dialog.open && !!dialog.id,
+    enabled: dialog.open && hasDialogId,
   });
 
   useEffect(() => {
-    if (!getByIdQuery.data) return;
-    if (lastHydratedDataRef.current === getByIdQuery.data) return;
+    if (!dialog.open || !getByIdQuery.data) return;
 
     entityRef.current = getByIdQuery.data;
-    lastHydratedDataRef.current = getByIdQuery.data;
 
     if (dtoToFormRef.current && resetForm) {
       resetForm(dtoToFormRef.current(getByIdQuery.data));
@@ -95,7 +93,12 @@ export const usePutDialog = <
     }
 
     resetForm?.(getByIdQuery.data as unknown as TFormType);
-  }, [getByIdQuery.data, resetForm]);
+  }, [dialog.open, getByIdQuery.data, resetForm]);
+
+  useEffect(() => {
+    if (dialog.open) return;
+    entityRef.current = undefined;
+  }, [dialog.open]);
 
   return {
     ...dialog,

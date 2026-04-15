@@ -41,6 +41,43 @@ const createWrapper = () => {
 };
 
 describe("usePutDialog", () => {
+  it("supports id = 0 when loading entity data", async () => {
+    const getFunction = vi.fn(async (id: number) => ({
+      id,
+      name: "Zero Product",
+    }));
+
+    const mutationFn = vi.fn(async (payload: ProductUpdateDto) => payload);
+
+    const { result } = renderHook(
+      () =>
+        usePutDialog<
+          ProductDto,
+          ProductUpdateDto,
+          ProductUpdateDto,
+          ProductForm
+        >({
+          title: "Edit product",
+          defaultValues: { name: "" },
+          getFunction,
+          mutationFn,
+          dtoToForm: (dto) => ({ name: dto.name }),
+          formToDto: (values, dto) => ({ id: dto?.id, name: values.name }),
+          queryKey: ["products"],
+        }),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.openDialog(0);
+    });
+
+    await waitFor(() => {
+      expect(getFunction).toHaveBeenCalledWith(0);
+      expect(result.current.getValues().name).toBe("Zero Product");
+    });
+  });
+
   it("loads by id and submits mapped update payload", async () => {
     const getFunction = vi.fn(async (id: number) => ({
       id,
@@ -84,5 +121,67 @@ describe("usePutDialog", () => {
     await waitFor(() => {
       expect(mutationFn).toHaveBeenCalledWith({ id: 7, name: "Updated" });
     });
+  });
+
+  it("rehydrates cached data when reopening the same id", async () => {
+    const cachedEntity: ProductDto = { id: 7, name: "Remote Product" };
+    const getFunction = vi.fn(async () => cachedEntity);
+    const mutationFn = vi.fn(async (payload: ProductUpdateDto) => payload);
+
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: Number.POSITIVE_INFINITY,
+        },
+      },
+    });
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    const { result } = renderHook(
+      () =>
+        usePutDialog<
+          ProductDto,
+          ProductUpdateDto,
+          ProductUpdateDto,
+          ProductForm
+        >({
+          title: "Edit product",
+          defaultValues: { name: "" },
+          getFunction,
+          mutationFn,
+          dtoToForm: (dto) => ({ name: dto.name }),
+          formToDto: (values, dto) => ({ id: dto?.id, name: values.name }),
+          queryKey: ["products"],
+        }),
+      { wrapper },
+    );
+
+    act(() => {
+      result.current.openDialog(7);
+    });
+
+    await waitFor(() => {
+      expect(result.current.getValues().name).toBe("Remote Product");
+    });
+
+    act(() => {
+      result.current.setValue("name", "Locally edited");
+      result.current.handleClose();
+    });
+
+    await waitFor(() => {
+      expect(result.current.open).toBe(false);
+    });
+
+    act(() => {
+      result.current.openDialog(7);
+    });
+
+    await waitFor(() => {
+      expect(result.current.getValues().name).toBe("Remote Product");
+    });
+    expect(getFunction).toHaveBeenCalledTimes(1);
   });
 });
