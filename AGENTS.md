@@ -35,7 +35,7 @@ Critical distinction:
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.0.79 |
+| Base Library | @sito/dashboard      | ^0.0.80 |
 
 ---
 
@@ -50,7 +50,7 @@ All peer dependencies **must** be installed in the consumer project:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.79 \
+  @sito/dashboard@^0.0.80 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
