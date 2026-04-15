@@ -146,7 +146,11 @@ export class IndexedDBClient<
       return 0;
     });
 
-    const pageSize = query?.pageSize ?? 10;
+    const requestedPageSize = query?.pageSize;
+    const pageSize =
+      typeof requestedPageSize === "number" && requestedPageSize > 0
+        ? requestedPageSize
+        : 10;
     const currentPage = query?.currentPage ?? 0;
     const totalElements = filtered.length;
     const totalPages = Math.ceil(totalElements / pageSize);
