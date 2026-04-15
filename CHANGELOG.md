@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.66] - 2026-04-15
+
+### Changed
+
+- Bumped package version to `0.0.66`.
+
+### Fixed
+
+- `usePutDialog` now enables id hydration with `id = 0` and consistently rehydrates form state when reopening an already-cached entity id.
+- `AuthProvider` and `SupabaseAuthProvider` now use `SessionAccountDto` for partial in-memory session state and await `logoutUser()` in session-recovery error paths.
+- `IndexedDBClient.insertMany` now fails fast on empty batches with a clear `insertMany requires items` error.
+- `IndexedDBClient.get` now guards invalid pagination input and falls back to default page size when `pageSize <= 0`, avoiding `totalPages = Infinity`.
+- REST query serialization and Supabase filtering now skip object filters when object `id` is missing/empty instead of applying empty-string equality filters.
+- `Location` now allows optional `state` and `key`, aligning the type contract with `window.location` usage in docs/examples.
+
+### Known Issues
+
+- `BaseEntityDto` declares `createdAt`/`updatedAt`/`deletedAt` as `Date`, but the default REST client path returns parsed JSON payloads without date normalization, creating a runtime/type-contract mismatch for consumers.
+
 ## [0.0.63] - 2026-04-10
 
 ### Changed
