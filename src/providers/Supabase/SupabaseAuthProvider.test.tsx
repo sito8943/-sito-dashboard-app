@@ -144,6 +144,48 @@ describe("SupabaseAuthProvider", () => {
     expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
   });
 
+  it("ignores stale null bootstrap session after a newer SIGNED_IN event", async () => {
+    let resolveGetSession:
+      | ((value: { data: { session: Session | null }; error: null }) => void)
+      | undefined;
+
+    getSessionMock.mockImplementation(
+      () =>
+        new Promise<{ data: { session: Session | null }; error: null }>(
+          (resolve) => {
+            resolveGetSession = resolve;
+          },
+        ),
+    );
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await waitFor(() => {
+      expect(getSessionMock).toHaveBeenCalledOnce();
+    });
+
+    act(() => {
+      authStateHandler?.(
+        "SIGNED_IN",
+        createSupabaseSession({ access_token: "signed-in-token" }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(result.current.account.token).toBe("signed-in-token");
+    });
+
+    await act(async () => {
+      resolveGetSession?.({
+        data: { session: null },
+        error: null,
+      });
+    });
+
+    expect(result.current.account.token).toBe("signed-in-token");
+    expect(localStorage.getItem("user")).toBe("signed-in-token");
+  });
+
   it("logoutUser calls supabase signOut and clears storage", async () => {
     signOutMock.mockResolvedValue({ error: null });
     getSessionMock.mockResolvedValue({
