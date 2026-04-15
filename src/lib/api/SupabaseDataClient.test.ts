@@ -261,6 +261,27 @@ describe("SupabaseDataClient", () => {
     expect(result.items[0]?.id).toBe(1);
   });
 
+  it("get skips object filters when id is missing or empty", async () => {
+    const listBuilder = createFilterBuilder<ProductRow>({
+      data: [baseRow],
+      error: null,
+      count: 1,
+      status: 200,
+    });
+
+    const fromMock = vi.fn(() => ({
+      select: vi.fn(() => listBuilder),
+    }));
+
+    const client = createClient(asSupabaseFromClient(fromMock));
+
+    await client.get(undefined, {
+      category: { label: "no-id" } as unknown as { id: number },
+    });
+
+    expect(listBuilder.eq).not.toHaveBeenCalled();
+  });
+
   it("get maps softDeleteScope=DELETED to not-is-null", async () => {
     const listBuilder = createFilterBuilder<ProductRow>({
       data: [baseRow],

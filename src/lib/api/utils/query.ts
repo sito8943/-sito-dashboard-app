@@ -13,6 +13,13 @@ const toEncodedScalar = (value: unknown): string => {
   return encodeURIComponent(String(value));
 };
 
+const resolveObjectId = (value: Record<string, unknown>): unknown => {
+  if (!("id" in value)) return undefined;
+  if (value.id === undefined || value.id === null || value.id === "")
+    return undefined;
+  return value.id;
+};
+
 const resolveSoftDeleteScope = (value: unknown) => {
   if (typeof value !== "string") return undefined;
   const normalized = value.trim().toUpperCase();
@@ -64,9 +71,13 @@ export const parseQueries = <TDto, TFilter extends BaseFilterDto>(
       .flatMap(([key, value]) => {
         // Multiple values (array)
         if (Array.isArray(value)) {
-          return value.map((v) => {
+          return value.flatMap((v) => {
             if (v instanceof Date) return `${key}==${toEncodedScalar(v)}`;
-            if (isRecord(v)) return `${key}==${toEncodedScalar(v.id ?? "")}`;
+            if (isRecord(v)) {
+              const resolvedId = resolveObjectId(v);
+              if (resolvedId === undefined) return [];
+              return `${key}==${toEncodedScalar(resolvedId)}`;
+            }
             return `${key}==${toEncodedScalar(v)}`;
           });
         }
@@ -81,10 +92,12 @@ export const parseQueries = <TDto, TFilter extends BaseFilterDto>(
           return range;
         }
 
-        // Object with `id` fallback
+        // Object filters only apply when a non-empty `id` is available
         if (value instanceof Date) return `${key}==${toEncodedScalar(value)}`;
         if (isRecord(value)) {
-          return `${key}==${toEncodedScalar(value.id ?? "")}`;
+          const resolvedId = resolveObjectId(value);
+          if (resolvedId === undefined) return [];
+          return `${key}==${toEncodedScalar(resolvedId)}`;
         }
 
         // Primitive

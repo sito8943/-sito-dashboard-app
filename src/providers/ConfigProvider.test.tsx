@@ -10,8 +10,6 @@ const mockLocation: Location = {
   pathname: "/dashboard",
   search: "",
   hash: "",
-  state: null,
-  key: "default",
 };
 
 const LinkComponent = ({ to, children, ...props }: BaseLinkPropsType) => {
