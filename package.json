@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.68",
+  "version": "0.0.69",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -109,7 +109,7 @@
   },
   "dependencies": {
     "some-javascript-utils": "^0.10.10",
-    "@sito/dashboard": "^0.0.80"
+    "@sito/dashboard": "^0.0.81"
   },
   "overrides": {
     "minimatch": "10.2.2"
