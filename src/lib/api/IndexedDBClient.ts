@@ -121,7 +121,8 @@ export class IndexedDBClient<
   }
 
   private async openLocked(): Promise<IDBDatabase> {
-    if (this.db && this.db.objectStoreNames.contains(this.table)) return this.db;
+    if (this.db && this.db.objectStoreNames.contains(this.table))
+      return this.db;
     if (this.db) this.close();
 
     const registered = getRegisteredStores(this.dbName);
@@ -169,9 +170,7 @@ export class IndexedDBClient<
       };
 
       request.onblocked = () => {
-        reject(
-          new Error(`IndexedDB upgrade blocked for ${this.dbName}`),
-        );
+        reject(new Error(`IndexedDB upgrade blocked for ${this.dbName}`));
       };
     });
   }

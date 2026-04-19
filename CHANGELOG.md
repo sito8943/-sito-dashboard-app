@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.71] - 2026-04-19
+
+### Fixed
+
+- `IndexedDBClient` now supports multiple clients (different stores) sharing the same `dbName` without clobbering each other's object stores. Previously, opening a second client with a new `table` under an existing database could leave earlier stores missing or trigger `NotFoundError` on CRUD calls.
+- `IndexedDBClient.open` is now serialized per `dbName` via an internal lock, preventing races between concurrent `open()` calls that could fire overlapping `onupgradeneeded` events.
+- `IndexedDBClient` now probes the existing database version/stores before opening, bumps the version only when required stores are missing, and recreates all registered stores in a single `onupgradeneeded` pass.
+- `IndexedDBClient` now rejects explicitly on `onblocked` events during probe/upgrade instead of hanging.
+
+### Added
+
+- Internal store registry and open-lock utilities in `IndexedDBClient` so every client instance contributes its `table` to the shared schema for its `dbName`.
+- New `IndexedDBClient` test suite "Shared database across multiple stores" covering concurrent multi-store inserts and late-registered stores with prior data preserved.
+
 ## [0.0.67] - 2026-04-15
 
 ### Added

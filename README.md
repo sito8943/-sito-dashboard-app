@@ -841,6 +841,34 @@ Contract and filtering notes:
   - `softDeleteScope: "DELETED"` => deleted rows (`deletedAt` not null/undefined)
   - `softDeleteScope: "ALL"` => all rows
 
+### Sharing a database across multiple entity clients
+
+Multiple `IndexedDBClient` instances can share the same `dbName` to co-locate related stores (e.g. `users`, `accounts`, `transactions`) in a single database. Each client registers its `table` internally, so opening one store no longer drops stores registered by other clients.
+
+```ts
+class UsersIndexedDBClient extends IndexedDBClient<"users" /* ... */> {
+  constructor() {
+    super("users", "my-app-db");
+  }
+}
+
+class AccountsIndexedDBClient extends IndexedDBClient<"accounts" /* ... */> {
+  constructor() {
+    super("accounts", "my-app-db");
+  }
+}
+
+// Concurrent opens are serialized per `dbName` and share one upgrade pass.
+const users = new UsersIndexedDBClient();
+const accounts = new AccountsIndexedDBClient();
+```
+
+Notes:
+
+- Pass the same `dbName` to every client that belongs to the same logical database.
+- `version` is the minimum schema version for that client; the actual open runs at `max(registered versions, current db version)` and bumps automatically when a registered store is missing.
+- Opens are serialized per `dbName` via an internal lock, so parallel `Promise.all([...])` calls across clients are safe.
+
 ## Tests
 
 Automated tests are configured with `Vitest` + `@testing-library/react`.

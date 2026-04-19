@@ -679,6 +679,9 @@ useEffect(() => {
   - `"ALL"` => include both active and deleted rows
 - `import` with `override: false` uses `store.add` (throws on duplicate key); `override: true` uses `store.put` (upsert).
 - Keep consumer-facing behavior aligned with your `BaseClient` implementation; do not couple UI code to raw IndexedDB details.
+- Multiple clients may share the same `dbName` (one store per client). Each instance registers its `table` in an internal registry, so opening one client will not drop stores registered by other clients.
+- Concurrent `open()` calls are serialized per `dbName` through an internal lock; parallel CRUD across sibling clients is safe.
+- The effective open version is `max(registered versions, current db version)`; when a registered store is missing, the version is bumped once and all registered stores are created in a single `onupgradeneeded` pass.
 
 ---
 
@@ -847,7 +850,7 @@ Consumer projects must provide translations for these namespaces.
 10. **Respect the styling system** — use `State` enum and `*StateClassName` utilities for stateful inputs; do not override with inline styles.
 11. **Do not add `any` types** — the library is fully typed; if types seem missing, check for the correct DTO or utility type.
 12. **`IconButton` is overridden** — the export from this library wraps FontAwesome and expects `icon: IconDefinition`, not a React node.
-13. **Use `IndexedDBClient` as offline fallback** — when building offline-capable features, extend `IndexedDBClient` instead of writing custom storage logic. Keep its consumer-facing behavior aligned with your `BaseClient` implementation, and never instantiate it in SSR/Node contexts.
+13. **Use `IndexedDBClient` as offline fallback** — when building offline-capable features, extend `IndexedDBClient` instead of writing custom storage logic. Keep its consumer-facing behavior aligned with your `BaseClient` implementation, and never instantiate it in SSR/Node contexts. When multiple entity clients belong to the same logical database, reuse the same `dbName` across them; the internal registry + open-lock handle shared-schema creation and concurrent opens.
 14. **Sign-in should send `rememberMe` when the UI exposes a remember option.**
 15. **Do not implement ad-hoc token refresh in consumer apps** — rely on the centralized refresh/retry behavior in `APIClient`/`BaseClient`.
 16. **Keep auth storage key config aligned** — if custom keys are used in `AuthProvider`, configure the same keys in manager/client auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
