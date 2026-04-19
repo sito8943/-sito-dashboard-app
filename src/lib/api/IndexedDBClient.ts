@@ -12,6 +12,71 @@ import {
   SoftDeleteScope,
 } from "lib";
 
+type StoreRegistryEntry = {
+  stores: Set<string>;
+  version: number;
+};
+
+const storeRegistry: Map<string, StoreRegistryEntry> = new Map();
+const openLocks: Map<string, Promise<unknown>> = new Map();
+
+const registerStore = (
+  dbName: string,
+  store: string,
+  version: number,
+): void => {
+  const entry = storeRegistry.get(dbName);
+  if (entry) {
+    entry.stores.add(store);
+    if (version > entry.version) entry.version = version;
+    return;
+  }
+  storeRegistry.set(dbName, {
+    stores: new Set([store]),
+    version,
+  });
+};
+
+const getRegisteredStores = (dbName: string): Set<string> =>
+  storeRegistry.get(dbName)?.stores ?? new Set();
+
+const getRegisteredVersion = (dbName: string): number =>
+  storeRegistry.get(dbName)?.version ?? 1;
+
+/** Run `task` serialized per `dbName` so concurrent opens don't race upgrades. */
+const withOpenLock = async <T>(
+  dbName: string,
+  task: () => Promise<T>,
+): Promise<T> => {
+  const previous = openLocks.get(dbName) ?? Promise.resolve();
+  const next = previous.then(task, task);
+  openLocks.set(
+    dbName,
+    next.catch(() => undefined),
+  );
+  return next;
+};
+
+const probeDatabase = (
+  dbName: string,
+): Promise<{ version: number; stores: Set<string> }> =>
+  new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName);
+    request.onsuccess = (event) => {
+      const db = (event.target as IDBOpenDBRequest).result;
+      const version = db.version;
+      const stores = new Set<string>(Array.from(db.objectStoreNames));
+      db.close();
+      resolve({ version, stores });
+    };
+    request.onerror = (event) => {
+      reject((event.target as IDBOpenDBRequest).error);
+    };
+    request.onblocked = () => {
+      reject(new Error(`IndexedDB probe blocked for ${dbName}`));
+    };
+  });
+
 /** Generic IndexedDB-backed client mirroring BaseClient CRUD semantics. */
 export class IndexedDBClient<
   Tables extends string,
@@ -36,6 +101,7 @@ export class IndexedDBClient<
     this.table = table;
     this.dbName = dbName;
     this.version = version;
+    registerStore(dbName, table, version);
   }
 
   close() {
@@ -46,18 +112,47 @@ export class IndexedDBClient<
   }
 
   private open(): Promise<IDBDatabase> {
-    if (this.db) return Promise.resolve(this.db);
+    if (this.db && this.db.objectStoreNames.contains(this.table)) {
+      return Promise.resolve(this.db);
+    }
+    if (this.db) this.close();
+
+    return withOpenLock(this.dbName, () => this.openLocked());
+  }
+
+  private async openLocked(): Promise<IDBDatabase> {
+    if (this.db && this.db.objectStoreNames.contains(this.table)) return this.db;
+    if (this.db) this.close();
+
+    const registered = getRegisteredStores(this.dbName);
+    const { version: currentVersion, stores: currentStores } =
+      await probeDatabase(this.dbName);
+
+    let missing = false;
+    for (const store of registered) {
+      if (!currentStores.has(store)) {
+        missing = true;
+        break;
+      }
+    }
+
+    const desired = Math.max(this.version, getRegisteredVersion(this.dbName));
+    const targetVersion = missing
+      ? Math.max(currentVersion + 1, desired)
+      : Math.max(currentVersion, desired);
 
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, this.version);
+      const request = indexedDB.open(this.dbName, targetVersion);
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
-        if (!db.objectStoreNames.contains(this.table)) {
-          db.createObjectStore(this.table, {
-            keyPath: "id",
-            autoIncrement: true,
-          });
+        for (const store of registered) {
+          if (!db.objectStoreNames.contains(store)) {
+            db.createObjectStore(store, {
+              keyPath: "id",
+              autoIncrement: true,
+            });
+          }
         }
       };
 
@@ -71,6 +166,12 @@ export class IndexedDBClient<
 
       request.onerror = (event) => {
         reject((event.target as IDBOpenDBRequest).error);
+      };
+
+      request.onblocked = () => {
+        reject(
+          new Error(`IndexedDB upgrade blocked for ${this.dbName}`),
+        );
       };
     });
   }
