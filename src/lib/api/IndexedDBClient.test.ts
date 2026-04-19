@@ -582,3 +582,86 @@ describe("Full hierarchy: User → Accounts → Transactions", () => {
     expect(restoredAcc.deletedAt).toBeNull();
   });
 });
+
+// ─── Shared DB across multiple stores ────────────────────────────────────────
+
+describe("Shared database across multiple stores", () => {
+  it("creates every registered store even when clients open concurrently", async () => {
+    const dbName = freshDb();
+    const version = 2;
+
+    const users = new IndexedDBClient<
+      "users",
+      UserDto,
+      UserCommonDto,
+      UserAddDto,
+      UserUpdateDto,
+      UserFilterDto,
+      UserImportPreviewDto
+    >("users", dbName, version);
+
+    const accounts = new IndexedDBClient<
+      "accounts",
+      AccountDto,
+      AccountCommonDto,
+      AccountAddDto,
+      AccountUpdateDto,
+      AccountFilterDto,
+      AccountImportPreviewDto
+    >("accounts", dbName, version);
+
+    const transactions = new IndexedDBClient<
+      "transactions",
+      TransactionDto,
+      TransactionCommonDto,
+      TransactionAddDto,
+      TransactionUpdateDto,
+      TransactionFilterDto,
+      TransactionImportPreviewDto
+    >("transactions", dbName, version);
+
+    const [u, a, t] = await Promise.all([
+      users.insert({ name: "Alice", email: "alice@test.com" }),
+      accounts.insert({ userId: 1, balance: 100 }),
+      transactions.insert({ accountId: 1, amount: 10, description: "Coffee" }),
+    ]);
+
+    expect(u.id).toBeGreaterThan(0);
+    expect(a.id).toBeGreaterThan(0);
+    expect(t.id).toBeGreaterThan(0);
+  });
+
+  it("adds a missing store when a new client registers after initial open", async () => {
+    const dbName = freshDb();
+    const version = 1;
+
+    const users = new IndexedDBClient<
+      "users",
+      UserDto,
+      UserCommonDto,
+      UserAddDto,
+      UserUpdateDto,
+      UserFilterDto,
+      UserImportPreviewDto
+    >("users", dbName, version);
+
+    await users.insert({ name: "Alice", email: "alice@test.com" });
+    users.close();
+
+    const accounts = new IndexedDBClient<
+      "accounts",
+      AccountDto,
+      AccountCommonDto,
+      AccountAddDto,
+      AccountUpdateDto,
+      AccountFilterDto,
+      AccountImportPreviewDto
+    >("accounts", dbName, version);
+
+    const created = await accounts.insert({ userId: 1, balance: 50 });
+    expect(created.id).toBeGreaterThan(0);
+
+    const existing = await users.getById(1);
+    expect(existing.name).toBe("Alice");
+  });
+});
