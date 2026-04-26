@@ -21,7 +21,7 @@
 }
 
 .import-error-message {
-  @apply text-error text-sm mt-2;
+  @apply text-bg-error text-sm mt-2;
 }
 
 .import-loading {

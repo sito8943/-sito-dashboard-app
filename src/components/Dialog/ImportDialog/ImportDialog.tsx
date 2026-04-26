@@ -166,7 +166,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
           })}
         </span>
       </label>
-      <ErrorComponent message={parseError} />
+      {parseError && <ErrorComponent message={parseError} />}
       {processing && <Loading />}
       {renderCustomPreview
         ? renderCustomPreview(previewItems)
