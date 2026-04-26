@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.72] - 2026-04-26
+
+### Fixed
+
+- `ImportDialog` now renders the parse error block only when `parseError` exists, avoiding an unnecessary empty error placeholder in the normal flow.
+- Updated `ImportDialog` error message styling utility from `text-error` to `text-bg-error` to align with the current token/class usage.
+
 ## [0.0.71] - 2026-04-19
 
 ### Fixed
