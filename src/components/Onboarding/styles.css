@@ -69,6 +69,10 @@
   padding-inline: 1rem !important;
 }
 
+.big-appear .step-container {
+  @apply m-auto;
+}
+
 @media (min-width: 28rem) {
   .onboarding-main {
     align-items: center;
