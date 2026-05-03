@@ -25,7 +25,17 @@ export interface ConfirmationDialogPropsType extends DialogPropsType {
 
 export interface FormDialogPropsType<TFormType extends FieldValues>
   extends DialogPropsType,
-    Omit<FormContainerPropsType<TFormType>, "children"> {
+    Omit<
+      FormContainerPropsType<TFormType>,
+      | "children"
+      | "onCancel"
+      | "submitLabel"
+      | "cancelLabel"
+      | "submitDisabled"
+      | "cancelDisabled"
+      | "actionsClassName"
+      | "renderActions"
+    > {
   extraActions?: ButtonPropsType[];
 }
 

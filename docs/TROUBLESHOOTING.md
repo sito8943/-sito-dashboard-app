@@ -240,5 +240,5 @@ rg "@sito/dashboard-app/src/" src
 
 1. Build a centralized `AppProviders` component.
 2. Keep shared `authStorageKeys` in one module.
-3. Reuse official hooks (`useDeleteDialog`, `usePostForm`, `useImportDialog`).
+3. Reuse official hooks (`useDeleteDialog`, `useMutationForm`, `useImportDialog`).
 4. Customize visuals via theme variables and `className` extension points.
