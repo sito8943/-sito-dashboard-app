@@ -382,7 +382,7 @@ export function ProductActionsBar({ record }: { record: BaseEntityDto }) {
 }
 ```
 
-## 5. Form primitives (`usePostForm` + `FormContainer` + input components)
+## 5. Form primitives (`useMutationForm` + `FormContainer` + input components)
 
 ```tsx
 import { Controller } from "react-hook-form";
@@ -392,7 +392,7 @@ import {
   PasswordInput,
   State,
   TextInput,
-  usePostForm,
+  useMutationForm,
   type BaseEntityDto,
 } from "@sito/dashboard-app";
 
@@ -414,7 +414,7 @@ type CreateProductDto = {
 };
 
 export function CreateProductForm() {
-  const form = usePostForm<
+  const form = useMutationForm<
     ProductDto,
     CreateProductDto,
     ProductDto,

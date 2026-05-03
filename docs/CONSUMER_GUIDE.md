@@ -597,9 +597,9 @@ Storybook reference: check `Hooks/Dialogs/FormDialogs` stories `StateModeSetValu
 ### 6.3 Form hooks
 
 ```tsx
-import { FormContainer, usePostForm } from "@sito/dashboard-app";
+import { FormContainer, useMutationForm } from "@sito/dashboard-app";
 
-const formProps = usePostForm<
+const formProps = useMutationForm<
   ProductDto,
   CreateProductDto,
   ProductDto,

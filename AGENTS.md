@@ -489,9 +489,9 @@ For CRUD persistence flows, prefer:
 ### Form hooks
 
 ```tsx
-import { usePostForm } from "@sito/dashboard-app";
+import { useMutationForm } from "@sito/dashboard-app";
 
-const formProps = usePostForm<
+const formProps = useMutationForm<
   ProductDto,
   CreateProductDto,
   ProductDto,
@@ -845,7 +845,7 @@ Consumer projects must provide translations for these namespaces.
 5. **Extend base DTOs** (`BaseEntityDto`, `BaseFilterDto`, etc.) for all entity types.
 6. **Extend `BaseClient`** for each API resource rather than writing raw fetch calls.
 7. **Use `isValidationError` / `isHttpError`** type guards in error handling.
-8. **Use provided hooks** (`useDeleteAction`, `usePostForm`, etc.) rather than reimplementing their logic.
+8. **Use provided hooks** (`useDeleteAction`, `useMutationForm`, etc.) rather than reimplementing their logic.
 9. **Use `useNotification`** for all user-facing success/error feedback — do not use `alert` or console-only logging.
 10. **Respect the styling system** — use `State` enum and `*StateClassName` utilities for stateful inputs; do not override with inline styles.
 11. **Do not add `any` types** — the library is fully typed; if types seem missing, check for the correct DTO or utility type.
