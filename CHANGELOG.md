@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.73] - 2026-05-03
+
+### Added
+
+- `FormContainer` now supports action customization without breaking current defaults:
+  - `onCancel` to override the default cancel behavior (`reset()` fallback remains unchanged when not provided).
+  - `submitLabel` and `cancelLabel` for custom action texts.
+  - `submitDisabled` and `cancelDisabled` for independent disabled-state control.
+  - `actionsClassName` for action-row layout/style overrides.
+  - `renderActions` slot for fully custom action rendering.
+- Added Storybook coverage for new `FormContainer` action APIs:
+  - `CustomLabelsAndDisabled`
+  - `CustomActionsSlot`
+
+### Changed
+
+- `FormDialog` type contract now explicitly excludes the new `FormContainer` action customization props (`onCancel`, labels, disabled overrides, `actionsClassName`, `renderActions`) so its public API remains unchanged for now.
+
+### Documentation
+
+- Updated `docs/CONSUMER_GUIDE.md` component props table to include the new `FormContainer` action customization surface.
+
 ## [0.0.72] - 2026-04-26
 
 ### Fixed
