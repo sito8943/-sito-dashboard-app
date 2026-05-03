@@ -27,6 +27,34 @@ export interface ParagraphInputPropsType
       HTMLTextAreaElement
     > {}
 
+export type FormContainerRenderActionsContextType = {
+  isLoading: boolean;
+  submitDisabled: boolean;
+  cancelDisabled: boolean;
+  submitLabel: ReactNode;
+  cancelLabel: ReactNode;
+  onCancel: () => void;
+  submitAriaLabel: string;
+  cancelAriaLabel: string;
+  submitName: string;
+  cancelName: string;
+  defaultActions: ReactNode;
+  buttonProps: {
+    submit: {
+      type: "submit";
+      disabled: boolean;
+      name: string;
+      "aria-label": string;
+    };
+    cancel: {
+      type: "button";
+      disabled: boolean;
+      name: string;
+      "aria-label": string;
+    };
+  };
+};
+
 export type FormContainerPropsType<TFormType extends FieldValues> = {
   children: ReactNode;
   control?: Control<TFormType>;
@@ -39,6 +67,13 @@ export type FormContainerPropsType<TFormType extends FieldValues> = {
   /* if the buttons are aligned to the end */
   buttonEnd?: boolean;
   isLoading?: boolean;
+  onCancel?: () => void;
+  submitLabel?: ReactNode;
+  cancelLabel?: ReactNode;
+  submitDisabled?: boolean;
+  cancelDisabled?: boolean;
+  actionsClassName?: string;
+  renderActions?: (context: FormContainerRenderActionsContextType) => ReactNode;
 };
 
 export type FormPropsType<TFormType extends FieldValues> = Omit<

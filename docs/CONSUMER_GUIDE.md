@@ -153,26 +153,26 @@ const supabase = createClient(
 
 ## 4. Key Components and Props
 
-| Component                | Key props                                                                                     | Recommended usage                                  |
-| ------------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `Page<T>`                | `title`, `actions`, `addOptions`, `filterOptions`, `queryKey`, `isLoading`                    | CRUD layout with standard header/actions           |
-| `PageHeader<T>`          | `title`, `actions`, `showBackButton`                                                          | Reusable page header with desktop/mobile actions   |
-| `FormContainer<TForm>`   | `handleSubmit`, `onSubmit`, `reset`, `isLoading`, `buttonEnd`                                 | Form wrapper with built-in submit/cancel           |
-| `ParagraphInput`         | `label`, `state`, `containerClassName`, `inputClassName`, `helperText`                        | Textarea with state-aware styling                  |
-| `PasswordInput`          | `TextInputPropsType`                                                                          | Password input with show/hide toggle               |
-| `TabsLayout`             | `tabs`, `defaultTab`, `currentTab`, `onTabChange`, `useLinks`, `tabButtonProps`               | Route tabs or local state tabs                     |
-| `Onboarding`             | `steps`                                                                                       | Multi-step flow using controlled `TabsLayout`      |
-| `PrettyGrid<T>`          | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`              | Grid with empty state and optional infinite scroll |
-| `Error`                  | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                      | Reusable error fallback                            |
-| `Dialog`                 | `open`, `title`, `handleClose`, `containerClassName`, `className`                             | Base modal                                         |
-| `FormDialog<TForm>`      | `Dialog` props + `FormContainer` props + `extraActions`                                       | Form modal with optional secondary footer actions  |
-| `ConfirmationDialog`     | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                   | Basic confirmation flows                           |
-| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions` | Import with preview + override                     |
-| `Drawer<MenuKeys>`       | `open`, `onClose`, `menuMap`, `logo`                                                          | Side navigation                                    |
-| `Navbar`                 | `openDrawer`, `menuButtonProps`, `showSearch`                                                 | Top bar with dynamic title/actions                 |
-| `BottomNavigation<TId>`  | `items`, `centerAction`, `isItemActive`, `className`                                          | Mobile fixed navigation with optional center CTA   |
-| `ToTop`                  | `threshold`, `tooltip`, `scrollOnClick`, `className`                                          | Floating scroll-to-top button                      |
-| `IconButton`             | `icon: IconDefinition` + visual props                                                         | FontAwesome-only icon contract                     |
+| Component                | Key props                                                                                                                                                                        | Recommended usage                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `Page<T>`                | `title`, `actions`, `addOptions`, `filterOptions`, `queryKey`, `isLoading`                                                                                                       | CRUD layout with standard header/actions           |
+| `PageHeader<T>`          | `title`, `actions`, `showBackButton`                                                                                                                                             | Reusable page header with desktop/mobile actions   |
+| `FormContainer<TForm>`   | `handleSubmit`, `onSubmit`, `reset`, `isLoading`, `buttonEnd`, `onCancel`, `submitLabel`, `cancelLabel`, `submitDisabled`, `cancelDisabled`, `actionsClassName`, `renderActions` | Form wrapper with built-in or custom submit/cancel |
+| `ParagraphInput`         | `label`, `state`, `containerClassName`, `inputClassName`, `helperText`                                                                                                           | Textarea with state-aware styling                  |
+| `PasswordInput`          | `TextInputPropsType`                                                                                                                                                             | Password input with show/hide toggle               |
+| `TabsLayout`             | `tabs`, `defaultTab`, `currentTab`, `onTabChange`, `useLinks`, `tabButtonProps`                                                                                                  | Route tabs or local state tabs                     |
+| `Onboarding`             | `steps`                                                                                                                                                                          | Multi-step flow using controlled `TabsLayout`      |
+| `PrettyGrid<T>`          | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`                                                                                                 | Grid with empty state and optional infinite scroll |
+| `Error`                  | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                                                                                                         | Reusable error fallback                            |
+| `Dialog`                 | `open`, `title`, `handleClose`, `containerClassName`, `className`                                                                                                                | Base modal                                         |
+| `FormDialog<TForm>`      | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions  |
+| `ConfirmationDialog`     | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                                                                                                      | Basic confirmation flows                           |
+| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`                                                                                    | Import with preview + override                     |
+| `Drawer<MenuKeys>`       | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                    |
+| `Navbar`                 | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                 |
+| `BottomNavigation<TId>`  | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA   |
+| `ToTop`                  | `threshold`, `tooltip`, `scrollOnClick`, `className`                                                                                                                             | Floating scroll-to-top button                      |
+| `IconButton`             | `icon: IconDefinition` + visual props                                                                                                                                            | FontAwesome-only icon contract                     |
 
 ## 5. Frequent Usage Examples
 
