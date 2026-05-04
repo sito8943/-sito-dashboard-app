@@ -206,6 +206,26 @@ const extraActions: ButtonPropsType[] = [
 
 For `FormDialog`, set `type: "button"` on extra actions unless you explicitly want submit behavior.
 
+### Dialog mobile full screen
+
+`Dialog`, `ConfirmationDialog`, `FormDialog`, and `ImportDialog` support `mobileFullScreen?: boolean`.
+Default is `false`. Set it to `true` to force full-screen layout on very small screens.
+
+```tsx
+import { FormDialog } from "@sito/dashboard-app";
+
+<FormDialog<ProductForm>
+  open={open}
+  title="Edit product"
+  handleClose={close}
+  handleSubmit={handleSubmit}
+  onSubmit={onSubmit}
+  mobileFullScreen
+>
+  {/* form fields */}
+</FormDialog>;
+```
+
 ### PrettyGrid infinite scroll
 
 `PrettyGrid` supports optional infinite loading with `IntersectionObserver`.

@@ -10,6 +10,7 @@ const meta = {
   args: {
     title: "Example Dialog",
     open: true,
+    mobileFullScreen: false,
   },
 } satisfies Meta<typeof Dialog>;
 
@@ -46,4 +47,16 @@ export const Basic: Story = {
       </div>
     );
   },
+};
+
+export const MobileFullScreen: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    mobileFullScreen: true,
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+  render: Basic.render,
 };

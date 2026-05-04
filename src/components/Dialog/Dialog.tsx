@@ -30,6 +30,7 @@ export const Dialog = (props: DialogPropsType) => {
     children,
     handleClose,
     open = false,
+    mobileFullScreen = false,
     containerClassName = "",
     className = "",
     animationClass = "appear",
@@ -78,6 +79,8 @@ export const Dialog = (props: DialogPropsType) => {
       <div
         className={classNames(
           "dialog elevated animated",
+          !mobileFullScreen && "dialog-framed",
+          mobileFullScreen && "dialog-mobile-full-screen",
           open ? `opened ${animationClass}` : "closed",
           className,
         )}

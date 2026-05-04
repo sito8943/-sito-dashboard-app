@@ -7,6 +7,7 @@ import type { ImportDialogPropsType } from "./types";
 type ImportDialogStoryProps = {
   title?: string;
   helperText?: string;
+  mobileFullScreen?: boolean;
   fileProcessor?: ImportDialogPropsType<ImportPreviewDto>["fileProcessor"];
   renderCustomPreview?: ImportDialogPropsType<ImportPreviewDto>["renderCustomPreview"];
   extraActions?: ImportDialogPropsType<ImportPreviewDto>["extraActions"];
@@ -34,6 +35,7 @@ const failingFileProcessor: NonNullable<
 const ImportDialogStory = ({
   title = "Import Data",
   helperText = "Choose a file and confirm.",
+  mobileFullScreen = false,
   fileProcessor,
   renderCustomPreview,
   extraActions = [],
@@ -46,6 +48,7 @@ const ImportDialogStory = ({
       open={open}
       handleClose={() => setOpen(false)}
       handleSubmit={() => setOpen(false)}
+      mobileFullScreen={mobileFullScreen}
       fileProcessor={fileProcessor}
       renderCustomPreview={renderCustomPreview}
       extraActions={extraActions}
@@ -62,6 +65,7 @@ const meta = {
   args: {
     title: "Import Data",
     helperText: "Choose a file and confirm.",
+    mobileFullScreen: false,
   },
 } satisfies Meta<typeof ImportDialogStory>;
 
@@ -125,5 +129,15 @@ export const WithExtraActions: Story = {
       },
     ],
     helperText: "Use extra actions for template/help flows during import.",
+  },
+};
+
+export const MobileFullScreen: Story = {
+  args: {
+    mobileFullScreen: true,
+    helperText: "Full screen on mobile viewport.",
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
   },
 };

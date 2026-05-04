@@ -72,4 +72,28 @@ describe("Dialog", () => {
 
     expect(handleClose).toHaveBeenCalledOnce();
   });
+
+  it("applies mobile full screen class only when enabled", () => {
+    const { rerender } = render(
+      <Dialog open title="Confirm" handleClose={vi.fn()}>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+
+    const dialog = document.body.querySelector(".dialog");
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).not.toHaveClass("dialog-mobile-full-screen");
+    expect(dialog).toHaveClass("dialog-framed");
+
+    rerender(
+      <Dialog open title="Confirm" handleClose={vi.fn()} mobileFullScreen>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+
+    const fullscreenDialog = document.body.querySelector(".dialog");
+    expect(fullscreenDialog).toBeInTheDocument();
+    expect(fullscreenDialog).toHaveClass("dialog-mobile-full-screen");
+    expect(fullscreenDialog).not.toHaveClass("dialog-framed");
+  });
 });
