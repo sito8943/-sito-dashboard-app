@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import type { ImportPreviewDto } from "lib";
 import { ImportDialog } from "./ImportDialog";
 import type { ImportDialogPropsType } from "./types";
+import { ImportPreviewDto } from "../../../lib";
 
 type ImportDialogStoryProps = {
   title?: string;

@@ -70,9 +70,9 @@ npm install @supabase/supabase-js@2.100.0
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
-- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
-- Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), and `useSupabase`
+- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`
+- Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, `useOnlineStatus`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, and `normalizeMenuDividers`
 
 ## Component usage patterns
 
@@ -279,6 +279,44 @@ Main optional props:
 - `tooltip?: string`
 - `scrollOnClick?: boolean` (default `true`)
 - `onClick?: () => void`
+
+### Offline status helpers
+
+Use `useOnlineStatus` for connectivity state and `OfflineBanner` for a reusable offline UI hint.
+
+```tsx
+import { OfflineBanner, useOnlineStatus } from "@sito/dashboard-app";
+
+function AppShell() {
+  const { isOnline } = useOnlineStatus({
+    checkIntervalMs: 30000,
+    probeUrl: "/health",
+    timeoutMs: 5000,
+  });
+
+  return (
+    <>
+      <OfflineBanner isOnline={isOnline} />
+      {/* routes */}
+    </>
+  );
+}
+```
+
+Menu helpers for feature-flag filtering and divider cleanup:
+
+```ts
+import {
+  filterMenuByFeatureFlags,
+  normalizeMenuDividers,
+} from "@sito/dashboard-app";
+
+const filtered = filterMenuByFeatureFlags(menuMap, isFeatureEnabled, {
+  reports: "reportsFeature",
+});
+
+const normalized = normalizeMenuDividers(filtered);
+```
 
 ### BottomNavigation
 
