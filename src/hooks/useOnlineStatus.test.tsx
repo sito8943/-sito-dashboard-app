@@ -1,7 +1,13 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useOnlineStatus } from "./useOnlineStatus";
+import {
+  configureOnlineStatus,
+  probeServerReachability,
+  setServerReachable,
+  useOnlineStatus,
+  useOnlineStatusSnapshot,
+} from "./useOnlineStatus";
 
 const setNavigatorOnline = (value: boolean) => {
   Object.defineProperty(window.navigator, "onLine", {
@@ -14,6 +20,15 @@ describe("useOnlineStatus", () => {
   const originalFetch = globalThis.fetch;
 
   beforeEach(() => {
+    configureOnlineStatus({
+      checkIntervalMs: 30000,
+      probeUrl: "/",
+      timeoutMs: 5000,
+      probeMethod: "HEAD",
+      probeRequestInit: undefined,
+      resolveIsServerReachable: undefined,
+    });
+    setServerReachable(true);
     setNavigatorOnline(true);
   });
 
@@ -204,5 +219,132 @@ describe("useOnlineStatus", () => {
     });
 
     expect(result.current.isOnline).toBe(false);
+  });
+
+  it("exposes full snapshot state", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+    } satisfies Partial<Response>);
+    Object.defineProperty(globalThis, "fetch", {
+      configurable: true,
+      writable: true,
+      value: fetchMock,
+    });
+
+    const { result } = renderHook(() =>
+      useOnlineStatusSnapshot({ checkIntervalMs: 0, timeoutMs: 100 }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.lastCheckedAt).not.toBeNull();
+    });
+
+    expect(result.current.isBrowserOnline).toBe(true);
+    expect(result.current.isServerReachable).toBe(true);
+    expect(result.current.isOnline).toBe(true);
+    expect(result.current.isChecking).toBe(false);
+  });
+
+  it("supports manual server reachability updates", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+    } satisfies Partial<Response>);
+    Object.defineProperty(globalThis, "fetch", {
+      configurable: true,
+      writable: true,
+      value: fetchMock,
+    });
+
+    const { result } = renderHook(() =>
+      useOnlineStatusSnapshot({ checkIntervalMs: 0, timeoutMs: 100 }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.isOnline).toBe(true);
+    });
+
+    act(() => {
+      setServerReachable(false);
+    });
+    expect(result.current.isServerReachable).toBe(false);
+    expect(result.current.isOnline).toBe(false);
+
+    act(() => {
+      setServerReachable(true);
+    });
+    expect(result.current.isServerReachable).toBe(true);
+    expect(result.current.isOnline).toBe(true);
+  });
+
+  it("supports custom probe configuration for auth and status resolution", async () => {
+    window.localStorage.setItem("user", "token-123");
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(null, {
+        status: 401,
+      }),
+    );
+    Object.defineProperty(globalThis, "fetch", {
+      configurable: true,
+      writable: true,
+      value: fetchMock,
+    });
+
+    configureOnlineStatus({
+      checkIntervalMs: 0,
+      probeUrl: "/sync/status",
+      timeoutMs: 500,
+      probeMethod: "GET",
+      probeRequestInit: () => ({
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("user")}`,
+        },
+      }),
+      resolveIsServerReachable: (response) => response.status < 500,
+    });
+
+    const isReachable = await probeServerReachability();
+
+    expect(isReachable).toBe(true);
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/sync/status"),
+      expect.objectContaining({
+        method: "GET",
+        cache: "no-store",
+        headers: expect.objectContaining({
+          Authorization: "Bearer token-123",
+        }),
+      }),
+    );
+  });
+
+  it("does not carry previous configuration between configure calls", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+    } satisfies Partial<Response>);
+    Object.defineProperty(globalThis, "fetch", {
+      configurable: true,
+      writable: true,
+      value: fetchMock,
+    });
+
+    configureOnlineStatus({
+      probeUrl: "/custom-status",
+      probeMethod: "GET",
+    });
+
+    configureOnlineStatus();
+
+    await probeServerReachability();
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.not.stringContaining("/custom-status"),
+      expect.objectContaining({
+        method: "HEAD",
+      }),
+    );
   });
 });
