@@ -17,7 +17,7 @@ Use documentation by purpose:
 
 Critical distinction:
 
-- For `@sito/dashboard-app`, provider setup is `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` is used).
+- For `@sito/dashboard-app`, provider setup is `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` is used); this can be wired manually or through `AppProviders` / `createAppProviders`.
 - `@sito/dashboard-app` is browser-only and **not SSR-compatible** as a package integration target.
 - `IconButton` in this package is overridden and expects `icon: IconDefinition`.
 - Upstream examples in `.sito/*` may use `@sito/dashboard` patterns (for example `IconButton` with React nodes) and must not override this file's rules.
@@ -128,6 +128,15 @@ function App() {
 If your app wraps providers in custom components, keep the same effective order:
 `ManagerProvider` must stay above `AuthProvider`.
 `NavbarProvider` is optional unless you use `Navbar` or `useNavbar`.
+
+### Provider composer (`AppProviders` / `createAppProviders`)
+
+Use the built-in composer when apps share the same provider wiring:
+
+- Base order is preserved automatically (`ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider`).
+- `auth={false}` disables auth wiring when needed.
+- `withNavbarProvider` and `withBottomNavActionProvider` enable optional UI providers.
+- `featureFlagsProvider`, `offlineSyncProvider`, and `appWrapperProvider` inject app-specific wrappers without coupling domain logic into this package.
 
 ### Provider responsibilities
 

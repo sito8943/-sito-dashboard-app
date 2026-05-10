@@ -116,6 +116,14 @@ Objetivo:
 1. Compartir orden y wiring base.
 2. Permitir inyectar providers propios sin acoplar dominio.
 
+Estado actual (`0.0.74`):
+
+1. ✅ `AppProviders` implementado con orden base (`Config -> Manager -> Auth -> Notification -> Drawer`).
+2. ✅ `createAppProviders(config)` implementado para factories preconfiguradas.
+3. ✅ `AuthProvider` configurable y desactivable con `auth={false}`.
+4. ✅ Slots para `FeatureFlagsProvider`, `OfflineSyncProvider` y `appWrapperProvider`.
+5. ✅ Tests unitarios añadidos para composición base y variantes opcionales.
+
 ## P2 (evaluar según cobertura existente)
 
 ### 3.4 UI genérica repetida entre `wallet` y `notes`

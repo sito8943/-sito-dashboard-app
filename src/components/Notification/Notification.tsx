@@ -15,62 +15,27 @@ import { useNotification } from "providers";
 
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCircleCheck,
-  faClose,
-  faWarning,
-} from "@fortawesome/free-solid-svg-icons";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { NotificationEnumType, NotificationType } from "lib";
+import type { NotificationItem as Item } from "./types";
 
 // components
 import { AppIconButton } from "../Buttons";
 
+// constants
+import { NOTIFICATION_ANIMATION_MS } from "./constants";
+
+// utils
+import {
+  notificationBackgroundColor,
+  notificationIcon,
+  notificationTextColor,
+  resolveNotificationType,
+} from "./utils";
+
 // styles
 import "./styles.css";
-
-type Item = NotificationType & { closing: boolean };
-
-const ANIM_MS = 300;
-
-const resolvedType = (type?: NotificationEnumType) =>
-  type ?? NotificationEnumType.error;
-
-const renderIcon = (type: NotificationEnumType) => {
-  switch (type) {
-    case NotificationEnumType.error:
-      return faWarning;
-    default:
-      return faCircleCheck;
-  }
-};
-
-const textColor = (type: NotificationEnumType) => {
-  switch (type) {
-    case NotificationEnumType.success:
-      return "!text-success";
-    case NotificationEnumType.error:
-      return "!text-error";
-    case NotificationEnumType.warning:
-      return "!text-warning";
-    default:
-      return "!text-info";
-  }
-};
-
-const bgColor = (type: NotificationEnumType) => {
-  switch (type) {
-    case NotificationEnumType.success:
-      return "bg-bg-success";
-    case NotificationEnumType.error:
-      return "bg-bg-error";
-    case NotificationEnumType.warning:
-      return "bg-bg-warning";
-    default:
-      return "bg-bg-info";
-  }
-};
 
 /**
  * Renders portal-based toast notifications managed by NotificationProvider.
@@ -111,7 +76,7 @@ export function Notification() {
         setTimeout(() => {
           removeNotification(id);
           setItems((prev) => prev.filter((i) => i.id !== id));
-        }, ANIM_MS);
+        }, NOTIFICATION_ANIMATION_MS);
       } else {
         // Close all — use the shared timer so cleanup can cancel it.
         if (timerRef.current) clearTimeout(timerRef.current);
@@ -119,7 +84,7 @@ export function Notification() {
           removeNotification();
           setItems([]);
           timerRef.current = null;
-        }, ANIM_MS);
+        }, NOTIFICATION_ANIMATION_MS);
       }
     },
     [removeNotification],
@@ -130,7 +95,7 @@ export function Notification() {
   // react-hooks/set-state-in-effect rule.
   useEffect(() => {
     // Local timer for the "mark as closing" step (fires at ~0 ms).
-    // timerRef holds the "clear / replace" step (fires at ANIM_MS).
+    // timerRef holds the "clear / replace" step (fires at NOTIFICATION_ANIMATION_MS).
     let markClosingTimer: ReturnType<typeof setTimeout> | null = null;
 
     const cleanup = () => {
@@ -154,7 +119,7 @@ export function Notification() {
       timerRef.current = setTimeout(() => {
         setItems([]);
         timerRef.current = null;
-      }, ANIM_MS);
+      }, NOTIFICATION_ANIMATION_MS);
       return cleanup;
     }
 
@@ -190,7 +155,7 @@ export function Notification() {
     timerRef.current = setTimeout(() => {
       setItems(incoming.map((n) => ({ ...n, closing: false })));
       timerRef.current = null;
-    }, ANIM_MS);
+    }, NOTIFICATION_ANIMATION_MS);
     return cleanup;
   }, [notification]);
 
@@ -226,29 +191,29 @@ export function Notification() {
       )}
     >
       {items.map(({ id, type, message, closing }) => {
-        const resolvedT = resolvedType(type);
+        const resolvedT = resolveNotificationType(type);
         return (
           <div
             key={id}
             className={classNames(
               "notification",
               closing && "closing",
-              bgColor(resolvedT),
+              notificationBackgroundColor(resolvedT),
             )}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="notification-body">
               <FontAwesomeIcon
-                icon={renderIcon(resolvedT)}
+                icon={notificationIcon(resolvedT)}
                 className={classNames(
                   "notification-icon",
-                  textColor(resolvedT),
+                  notificationTextColor(resolvedT),
                 )}
               />
               <p
                 className={classNames(
                   "notification-text",
-                  textColor(resolvedT),
+                  notificationTextColor(resolvedT),
                 )}
               >
                 {message}
@@ -264,7 +229,7 @@ export function Notification() {
                 if (id !== undefined) close(id);
               }}
               iconClassName={classNames(
-                textColor(resolvedT),
+                notificationTextColor(resolvedT),
                 "notification-close-icon",
               )}
               name={t("_accessibility:buttons.closeNotification")}

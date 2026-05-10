@@ -42,6 +42,12 @@ export type ImportAction<T> =
   | { type: "SET_OVERRIDE"; value: boolean }
   | { type: "RESET" };
 
+export type PreviewProps<EntityDto extends ImportPreviewDto> = {
+  items: EntityDto[];
+  max?: number;
+  className?: string;
+};
+
 export type ErrorProps = {
   message?: string | null;
   className?: string;

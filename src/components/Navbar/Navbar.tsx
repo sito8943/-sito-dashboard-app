@@ -18,7 +18,7 @@ import { isMac } from "lib";
 
 // providers
 import { useConfig } from "providers";
-import { useNavbar } from "./NavbarProvider.js";
+import { useNavbar } from "./useNavbar.js";
 
 /**
  * Renders the top navigation bar with menu, title and optional search.

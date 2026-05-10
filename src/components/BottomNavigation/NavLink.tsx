@@ -1,18 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { ComponentType } from "react";
 
 // lib
 import { classNames } from "@sito/dashboard";
 
 // types
-import type { BaseLinkPropsType } from "components/types";
-import type { BottomNavigationItemType } from "./types";
-
-type NavLinkPropsType<TId extends string = string> = {
-  item: BottomNavigationItemType<TId>;
-  isActive: boolean;
-  linkComponent: ComponentType<BaseLinkPropsType>;
-};
+import type { NavLinkPropsType } from "./types";
 
 /**
  * NavLink component that renders a navigation item for the bottom navigation bar.

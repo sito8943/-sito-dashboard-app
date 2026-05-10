@@ -1,78 +1,17 @@
-import { useEffect, useSyncExternalStore } from "react";
+// types
+import type {
+  OnlineStatusListener,
+  OnlineStatusSnapshot,
+  UseOnlineStatusOptions,
+} from "./types";
 
-export type OnlineStatus = {
-  isOnline: boolean;
-  isChecking: boolean;
-  lastCheckedAt: number | null;
-};
-
-export type UseOnlineStatusOptions = {
-  checkIntervalMs?: number;
-  probeUrl?: string | null;
-  timeoutMs?: number;
-  probeMethod?: "HEAD" | "GET";
-  probeRequestInit?: RequestInit | (() => RequestInit);
-  resolveIsServerReachable?: (response: Response) => boolean;
-};
-
-const DEFAULT_CHECK_INTERVAL_MS = 30000;
-const DEFAULT_TIMEOUT_MS = 5000;
-const DEFAULT_PROBE_URL: string | null = "/";
-const DEFAULT_PROBE_METHOD: "HEAD" | "GET" = "HEAD";
-
-const DEFAULT_RESOLVE_IS_SERVER_REACHABLE = (response: Response) => {
-  return response.ok || response.status === 405;
-};
-
-const readNavigatorOnline = () =>
-  typeof navigator === "undefined" ? true : navigator.onLine;
-
-export type OnlineStatusSnapshot = {
-  isBrowserOnline: boolean;
-  isServerReachable: boolean;
-  isOnline: boolean;
-  isChecking: boolean;
-  lastCheckedAt: number | null;
-};
-
-type OnlineStatusListener = () => void;
-
-type ResolvedUseOnlineStatusOptions = {
-  checkIntervalMs: number;
-  probeUrl: string | null;
-  timeoutMs: number;
-  probeMethod: "HEAD" | "GET";
-  probeRequestInit?: RequestInit | (() => RequestInit);
-  resolveIsServerReachable: (response: Response) => boolean;
-};
-
-const resolveOptions = (
-  options: UseOnlineStatusOptions = {},
-): ResolvedUseOnlineStatusOptions => ({
-  checkIntervalMs: options.checkIntervalMs ?? DEFAULT_CHECK_INTERVAL_MS,
-  probeUrl: options.probeUrl ?? DEFAULT_PROBE_URL,
-  timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
-  probeMethod: options.probeMethod ?? DEFAULT_PROBE_METHOD,
-  probeRequestInit: options.probeRequestInit,
-  resolveIsServerReachable:
-    options.resolveIsServerReachable ?? DEFAULT_RESOLVE_IS_SERVER_REACHABLE,
-});
-
-const withCacheBuster = (url: string) => {
-  if (typeof window === "undefined") return url;
-
-  try {
-    const parsed = new URL(url, window.location.origin);
-    parsed.searchParams.set("_ts", String(Date.now()));
-    return parsed.toString();
-  } catch {
-    return url;
-  }
-};
+// utils
+import { probeConnection, readNavigatorOnline, resolveOptions } from "./utils";
 
 const listeners = new Set<OnlineStatusListener>();
 
 const initialBrowserOnline = readNavigatorOnline();
+
 const serverSnapshot: OnlineStatusSnapshot = {
   isBrowserOnline: true,
   isServerReachable: true,
@@ -147,53 +86,6 @@ const triggerProbe = () => {
   }
 
   void probeServerReachability();
-};
-
-const readProbeRequestInit = (
-  option: ResolvedUseOnlineStatusOptions["probeRequestInit"],
-): RequestInit => {
-  if (!option) return {};
-  if (typeof option === "function") {
-    return option();
-  }
-  return option;
-};
-
-const probeConnection = async (
-  options: ResolvedUseOnlineStatusOptions,
-): Promise<boolean> => {
-  const { probeUrl, timeoutMs, probeMethod, resolveIsServerReachable } =
-    options;
-  if (typeof fetch !== "function") return readNavigatorOnline();
-  if (!probeUrl) return true;
-
-  const hasAbortController = typeof AbortController !== "undefined";
-  const controller = hasAbortController ? new AbortController() : null;
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  const requestInit = readProbeRequestInit(options.probeRequestInit);
-  const { method, cache, signal, ...restRequestInit } = requestInit;
-  const targetUrl = withCacheBuster(probeUrl);
-
-  try {
-    if (controller) {
-      timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-    }
-
-    const response = await fetch(targetUrl, {
-      ...restRequestInit,
-      method: method ?? probeMethod,
-      cache: cache ?? "no-store",
-      signal: signal ?? controller?.signal,
-    });
-
-    return resolveIsServerReachable(response);
-  } catch {
-    return false;
-  } finally {
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-    }
-  }
 };
 
 export const configureOnlineStatus = (options: UseOnlineStatusOptions = {}) => {
@@ -344,7 +236,9 @@ const cleanupProbeListeners = () => {
 
 const hasSnapshotListeners = (): boolean => listeners.size > 0;
 
-const subscribe = (listener: OnlineStatusListener) => {
+export const subscribeToOnlineStatusSnapshot = (
+  listener: OnlineStatusListener,
+) => {
   ensureWindowListeners();
   ensureProbeListeners();
   listeners.add(listener);
@@ -359,56 +253,7 @@ const subscribe = (listener: OnlineStatusListener) => {
   };
 };
 
-const getSnapshot = (): OnlineStatusSnapshot => snapshot;
+export const getOnlineStatusSnapshot = (): OnlineStatusSnapshot => snapshot;
 
-const getServerSnapshot = (): OnlineStatusSnapshot => serverSnapshot;
-
-export function useOnlineStatusSnapshot(
-  options: UseOnlineStatusOptions = {},
-): OnlineStatusSnapshot {
-  const {
-    checkIntervalMs,
-    probeUrl,
-    timeoutMs,
-    probeMethod,
-    probeRequestInit,
-    resolveIsServerReachable,
-  } = options;
-
-  useEffect(() => {
-    configureOnlineStatus({
-      checkIntervalMs,
-      probeUrl,
-      timeoutMs,
-      probeMethod,
-      probeRequestInit,
-      resolveIsServerReachable,
-    });
-  }, [
-    checkIntervalMs,
-    probeUrl,
-    timeoutMs,
-    probeMethod,
-    probeRequestInit,
-    resolveIsServerReachable,
-  ]);
-
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-}
-
-/**
- * Tracks browser/network reachability and returns app-facing online metadata.
- * @param options - Probe interval, URL and timeout settings.
- * @returns Online/offline status plus probe metadata.
- */
-export function useOnlineStatus(
-  options: UseOnlineStatusOptions = {},
-): OnlineStatus {
-  const snapshotValue = useOnlineStatusSnapshot(options);
-
-  return {
-    isOnline: snapshotValue.isOnline,
-    isChecking: snapshotValue.isChecking,
-    lastCheckedAt: snapshotValue.lastCheckedAt,
-  };
-}
+export const getServerOnlineStatusSnapshot = (): OnlineStatusSnapshot =>
+  serverSnapshot;
