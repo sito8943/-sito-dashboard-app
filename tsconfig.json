@@ -11,13 +11,24 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "src"
+    "paths": {
+      "components": ["./src/components/index"],
+      "components/*": ["./src/components/*"],
+      "providers": ["./src/providers/index"],
+      "providers/*": ["./src/providers/*"],
+      "lib": ["./src/lib/index"],
+      "lib/*": ["./src/lib/*"],
+      "hooks": ["./src/hooks/index"],
+      "hooks/*": ["./src/hooks/*"],
+      "layouts/*": ["./layouts/*"],
+      "views/*": ["./views/*"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
