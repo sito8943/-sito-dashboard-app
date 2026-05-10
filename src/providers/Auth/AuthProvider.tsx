@@ -2,7 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 
 // type
 import { AuthProviderPropTypes } from "./types";
-import { AuthContext, useAuthContext } from "./authContext";
+import { AuthContext } from "./authContext";
+
+// hooks
+import { useAuthContext } from "./useAuthContext";
 
 // providers
 import { useManager } from "../ManagerProvider";

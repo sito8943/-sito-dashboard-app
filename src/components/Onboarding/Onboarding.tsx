@@ -7,6 +7,9 @@ import { Step } from "./Step";
 // providers
 import { useConfig, useOptionalAuthContext } from "providers";
 
+// lib
+import { APP_ROUTES } from "lib";
+
 // styles
 import "./styles.css";
 
@@ -21,8 +24,8 @@ import { OnboardingPropsType } from "./types";
 export const Onboarding = (props: OnboardingPropsType) => {
   const {
     steps,
-    signInPath = "/auth/sign-in",
-    guestPath = "/",
+    signInPath = APP_ROUTES.AUTH_SIGN_IN,
+    guestPath = APP_ROUTES.ROOT,
     onSkip,
     onSignIn,
     onStartAsGuest,
