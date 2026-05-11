@@ -3,7 +3,8 @@ import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
-import { ManagerProvider, useManager } from "./ManagerProvider";
+import { ManagerProvider } from "./ManagerProvider";
+import { useManager } from "./useManager";
 
 import type { IManager } from "lib";
 

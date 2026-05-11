@@ -23,33 +23,6 @@ All coding agents (Codex, Claude, or any automated contributor) **must read this
 
 ---
 
-## 3) Models and Domain Design
-
-- Define explicit, typed models for domain entities.
-- Keep model definitions centralized and reusable.
-- Avoid ad-hoc object shapes spread across components.
-- Validate incoming external data (API/local storage/imported JSON) before using it in views.
-
----
-
-## 4) Manager Classes + Provider Access
-
-- Use manager classes to encapsulate domain operations/state transitions.
-- Managers should be instantiated and exposed through providers.
-- Components must consume managers/state through provider APIs, not through direct global singletons.
-- Keep side effects and orchestration inside managers/providers, not in UI leaf components.
-
----
-
-## 5) Styling Rules (Tailwind + Global Theme)
-
-- Use **Tailwind CSS** for component styling (`className` utilities in components).
-- Define theme tokens/variables in `global.css`.
-- Global CSS should be minimal and design-token oriented (colors, spacing tokens, typography scales, etc.).
-- Do not replace Tailwind utility usage with large component-level custom CSS unless there is a strong reason.
-
----
-
 ## 6) Folder Structure (Required)
 
 Use this project structure as the default organization:
@@ -109,14 +82,6 @@ Rules:
 - Do not hardcode route strings in `navigate(...)`, `<Link to=...>`, `<Route path=...>`, menu config, or sitemap config.
 - For dynamic routes and query-based routes, expose helper functions (for example: `getShipRoute(id)`).
 - Centralize query parameter keys in route constants (for example: `RouteQueryParam`) and reuse them consistently.
-
----
-
-## 9) i18n Rules
-
-- Store translation resources in `lang/`.
-- Avoid hardcoded user-facing strings in reusable components when i18n is expected.
-- Keep translation keys consistent and domain-oriented.
 
 ---
 

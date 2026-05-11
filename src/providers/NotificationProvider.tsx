@@ -1,7 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
 import {
-  useContext,
-  createContext,
   useReducer,
   useRef,
   useMemo,
@@ -12,11 +9,8 @@ import {
 import { NotificationEnumType, NotificationType } from "lib";
 
 // types
-import { BasicProviderPropTypes, NotificationContextType } from "./types";
-
-const NotificationContext = createContext<NotificationContextType | undefined>(
-  undefined,
-);
+import { BasicProviderPropTypes } from "./types";
+import { NotificationContext } from "./NotificationContext";
 
 /**
  * Provides notification state and helper actions to descendant components.
@@ -109,21 +103,3 @@ export function NotificationProvider(props: BasicProviderPropTypes) {
     </NotificationContext.Provider>
   );
 }
-
-/**
- * Hook to consume the notification context.
- *
- * @returns {NotificationContextType} Notification state and helper methods.
- * `notification` is `NotificationType[]`.
- * `showNotification` receives `NotificationType`.
- * `showSuccessNotification` and `showErrorNotification` receive `Partial<NotificationType>`.
- * `showStackNotifications` receives `NotificationType[]`.
- * @throws {Error} If used outside `NotificationProvider`.
- */
-export const useNotification = (): NotificationContextType => {
-  const context = useContext(NotificationContext);
-
-  if (!context)
-    throw new Error("useNotification must be used within NotificationProvider");
-  return context;
-};

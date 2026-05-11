@@ -45,16 +45,6 @@ vi.mock("providers", () => ({
   }),
 }));
 
-vi.mock("providers/ConfigProvider", () => ({
-  useConfig: () => ({
-    linkComponent: ({ children, to = "", ...props }: MockLinkProps) => (
-      <a href={to} {...props}>
-        {children}
-      </a>
-    ),
-  }),
-}));
-
 describe("Onboarding", () => {
   beforeEach(() => {
     navigateMock.mockReset();

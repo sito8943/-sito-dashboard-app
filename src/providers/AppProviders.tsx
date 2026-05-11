@@ -12,35 +12,11 @@ import { NotificationProvider } from "./NotificationProvider";
 import { NavbarProvider } from "components/Navbar";
 
 // types
-import type { AuthProviderPropTypes } from "./Auth";
 import type {
+  AnyAppProviderSlot,
+  AppProvidersProps,
   BasicProviderPropTypes,
-  ConfigProviderPropTypes,
-  ManagerProviderPropTypes,
 } from "./types";
-
-type ProviderPropsWithoutChildren<T> = Omit<T, "children">;
-
-export type AppProviderSlot<
-  Props extends Record<string, unknown> = Record<string, never>,
-> = {
-  provider: ComponentType<BasicProviderPropTypes & Props>;
-  props?: Props;
-  enabled?: boolean;
-};
-
-type AnyAppProviderSlot = AppProviderSlot<Record<string, unknown>>;
-
-export interface AppProvidersProps extends BasicProviderPropTypes {
-  config: ProviderPropsWithoutChildren<ConfigProviderPropTypes>;
-  manager: ProviderPropsWithoutChildren<ManagerProviderPropTypes>;
-  auth?: false | ProviderPropsWithoutChildren<AuthProviderPropTypes>;
-  withNavbarProvider?: boolean;
-  withBottomNavActionProvider?: boolean;
-  featureFlagsProvider?: AnyAppProviderSlot;
-  offlineSyncProvider?: AnyAppProviderSlot;
-  appWrapperProvider?: AnyAppProviderSlot;
-}
 
 const applyOptionalProvider = (
   children: ReactNode,
@@ -115,3 +91,4 @@ const createAppProviders = (
 
 // eslint-disable-next-line react-refresh/only-export-components
 export { AppProviders, createAppProviders };
+export type { AppProviderSlot, AppProvidersProps } from "./types";

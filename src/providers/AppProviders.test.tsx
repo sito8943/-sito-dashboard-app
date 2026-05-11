@@ -12,10 +12,10 @@ import {
   createAppProviders,
   type AppProviderSlot,
 } from "./AppProviders";
-import { useConfig } from "./ConfigProvider";
-import { useDrawerMenu } from "./DrawerMenuProvider";
-import { useManager } from "./ManagerProvider";
-import { useNotification } from "./NotificationProvider";
+import { useConfig } from "./useConfig";
+import { useDrawerMenu } from "./useDrawerMenu";
+import { useManager } from "./useManager";
+import { useNotification } from "./useNotification";
 import type { BasicProviderPropTypes } from "./types";
 
 const manager = {

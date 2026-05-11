@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { ConfigProvider, useConfig } from "./ConfigProvider";
+import { ConfigProvider } from "./ConfigProvider";
+import { useConfig } from "./useConfig";
 
 import type { BaseLinkPropsType } from "components/types";
 import type { Location } from "lib";

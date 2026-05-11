@@ -5,7 +5,7 @@ import { classNames } from "@sito/dashboard";
 import { TabPropsType } from "./types";
 
 // providers
-import { useConfig } from "providers/ConfigProvider";
+import { useConfig } from "providers";
 
 // components
 import { Button } from "../Buttons";

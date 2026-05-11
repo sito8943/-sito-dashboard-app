@@ -1,5 +1,6 @@
 import { ComponentType, ReactNode } from "react";
 import { QueryClient } from "@tanstack/react-query";
+import type { AuthProviderPropTypes } from "./Auth/types";
 
 // lib
 import {
@@ -16,6 +17,29 @@ import { BaseLinkPropsType, BaseSearchModalPropsType } from "components";
 export type BasicProviderPropTypes = {
   children: ReactNode;
 };
+
+type ProviderPropsWithoutChildren<T> = Omit<T, "children">;
+
+export type AppProviderSlot<
+  Props extends Record<string, unknown> = Record<string, never>,
+> = {
+  provider: ComponentType<BasicProviderPropTypes & Props>;
+  props?: Props;
+  enabled?: boolean;
+};
+
+export type AnyAppProviderSlot = AppProviderSlot<Record<string, unknown>>;
+
+export interface AppProvidersProps extends BasicProviderPropTypes {
+  config: ProviderPropsWithoutChildren<ConfigProviderPropTypes>;
+  manager: ProviderPropsWithoutChildren<ManagerProviderPropTypes>;
+  auth?: false | ProviderPropsWithoutChildren<AuthProviderPropTypes>;
+  withNavbarProvider?: boolean;
+  withBottomNavActionProvider?: boolean;
+  featureFlagsProvider?: AnyAppProviderSlot;
+  offlineSyncProvider?: AnyAppProviderSlot;
+  appWrapperProvider?: AnyAppProviderSlot;
+}
 
 export interface ManagerProviderPropTypes extends BasicProviderPropTypes {
   manager: IManager;
