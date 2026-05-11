@@ -34,7 +34,7 @@
 }
 
 .step-container {
-  @apply flex flex-col;
+  @apply flex flex-col m-auto;
   width: min(100%, 32rem);
   gap: 1rem;
 }
