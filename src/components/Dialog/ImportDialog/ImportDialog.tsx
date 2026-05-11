@@ -15,50 +15,8 @@ import "./styles.css";
 // lib
 import { ImportPreviewDto } from "lib";
 
-// types
-import type { ImportState as State, ImportAction as Action } from "./types";
-
-const initialState = <T,>(): State<T> => ({
-  file: null,
-  previewItems: null,
-  parseError: null,
-  processing: false,
-  overrideExisting: false,
-  inputKey: 0,
-});
-
-function reducer<T>(state: State<T>, action: Action<T>): State<T> {
-  switch (action.type) {
-    case "SET_FILE":
-      return {
-        ...state,
-        file: action.file,
-        previewItems: null,
-        parseError: null,
-        processing: false,
-      };
-    case "START_PROCESSING":
-      return { ...state, processing: true };
-    case "SET_PREVIEW":
-      return {
-        ...state,
-        previewItems: action.items,
-        parseError: null,
-        processing: false,
-      };
-    case "SET_ERROR":
-      return {
-        ...state,
-        previewItems: null,
-        parseError: action.message,
-        processing: false,
-      };
-    case "SET_OVERRIDE":
-      return { ...state, overrideExisting: action.value };
-    case "RESET":
-      return { ...initialState<T>(), inputKey: state.inputKey + 1 };
-  }
-}
+// utils
+import { initialState, reducer } from "./utils";
 
 /**
  * Handles file import, preview generation and submit for import workflows.
@@ -117,16 +75,27 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       dispatch({ type: "START_PROCESSING" });
       try {
         const items = await fileProcessorRef.current(targetFile, { override });
-        dispatch({ type: "SET_PREVIEW", items: items ?? [] });
-        processedCallbackRef.current?.(items ?? []);
+        if (!Array.isArray(items)) {
+          throw new Error(
+            t("_accessibility:errors.invalidImportPayload", {
+              defaultValue: "Invalid import payload",
+            }),
+          );
+        }
+        dispatch({ type: "SET_PREVIEW", items });
+        processedCallbackRef.current?.(items);
       } catch (err) {
         console.error(err);
         const message =
-          err instanceof Error ? err.message : "Failed to parse file";
+          err instanceof Error
+            ? err.message
+            : t("_accessibility:errors.failedToParseFile", {
+                defaultValue: "Failed to parse file",
+              });
         dispatch({ type: "SET_ERROR", message });
       }
     },
-    [],
+    [t],
   );
 
   return (

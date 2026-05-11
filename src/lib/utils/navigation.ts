@@ -1,3 +1,4 @@
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { ReactNode } from "react";
 
 /**
@@ -36,20 +37,21 @@ export interface Location<State = unknown> extends Path {
   key?: string;
 }
 
-export type ViewPageType<PageId> = {
+export type ViewPageType<PageId extends string = string> = {
   key: PageId;
   path: string;
   children?: ViewPageType<PageId>[];
   role?: string[];
 };
 
-export interface NamedViewPageType<PageId> extends ViewPageType<PageId> {
+export interface NamedViewPageType<PageId extends string = string>
+  extends ViewPageType<PageId> {
   name: string;
 }
 
 export type SubMenuItemType = {
   id: string;
-  label: string;
+  label: string | ReactNode;
   path?: string;
 };
 
@@ -62,3 +64,72 @@ export type MenuItemType<MenuKeys> = {
   auth?: boolean;
   children?: SubMenuItemType[];
 };
+
+export type FeatureEnabledFn<FeatureKey extends string> = (
+  key: FeatureKey,
+) => boolean;
+
+export type BottomNavItemType<PageId extends string = string> = {
+  id: string;
+  page: PageId;
+  to: string;
+  icon: IconDefinition;
+  position: "left" | "right";
+};
+
+/**
+ * Filters menu entries based on optional feature-flag dependencies by page id.
+ * @param items - Menu entries to filter.
+ * @param isFeatureEnabled - Function that resolves whether a feature key is enabled.
+ * @param dependencies - Mapping between page ids and required feature flags.
+ * @returns Filtered menu entries preserving original order.
+ */
+export function filterMenuByFeatureFlags<
+  Item extends { page?: string },
+  FeatureKey extends string,
+>(
+  items: Item[],
+  isFeatureEnabled: FeatureEnabledFn<FeatureKey>,
+  dependencies: Partial<Record<NonNullable<Item["page"]>, FeatureKey>>,
+): Item[] {
+  return items.filter((item) => {
+    const page = item.page;
+
+    if (!page) return true;
+
+    const dependency = dependencies[page as NonNullable<Item["page"]>];
+    if (!dependency) return true;
+
+    return isFeatureEnabled(dependency);
+  });
+}
+
+/**
+ * Removes leading, trailing and duplicated consecutive dividers from menu entries.
+ * @param items - Menu entries to normalize.
+ * @returns Cleaned menu entries preserving valid dividers.
+ */
+export function normalizeMenuDividers<Item extends { type?: string }>(
+  items: Item[],
+): Item[] {
+  const normalized: Item[] = [];
+
+  for (const item of items) {
+    const isDivider = item.type === "divider";
+    if (!isDivider) {
+      normalized.push(item);
+      continue;
+    }
+
+    if (normalized.length === 0) continue;
+    if (normalized[normalized.length - 1]?.type === "divider") continue;
+
+    normalized.push(item);
+  }
+
+  if (normalized[normalized.length - 1]?.type === "divider") {
+    normalized.pop();
+  }
+
+  return normalized;
+}

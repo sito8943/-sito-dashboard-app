@@ -10,6 +10,7 @@ const meta = {
   args: {
     title: "Example Dialog",
     open: true,
+    mobileFullScreen: false,
   },
 } satisfies Meta<typeof Dialog>;
 
@@ -46,4 +47,35 @@ export const Basic: Story = {
       </div>
     );
   },
+};
+
+export const MobileFullScreen: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    mobileFullScreen: true,
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+  render: Basic.render,
+};
+
+export const CustomPosition: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    title: "Dialog with custom position",
+    containerClassName: "!items-start !justify-end p-6",
+    className: "!w-[28rem] !max-w-[calc(100vw-3rem)]",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Uses `containerClassName` to move the dialog container to the top-right corner.",
+      },
+    },
+  },
+  render: Basic.render,
 };

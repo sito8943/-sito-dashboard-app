@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { AuthProvider, useAuth } from "./AuthProvider";
+import { AuthProvider } from "./AuthProvider";
+import { useAuth } from "./useAuth";
 
 import type { SessionDto } from "lib";
 
@@ -11,7 +12,7 @@ const { logoutMock, getSessionMock } = vi.hoisted(() => ({
   getSessionMock: vi.fn(),
 }));
 
-vi.mock("../ManagerProvider", () => ({
+vi.mock("../useManager", () => ({
   useManager: () => ({
     Auth: {
       logout: logoutMock,

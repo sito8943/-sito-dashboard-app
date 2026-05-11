@@ -13,7 +13,7 @@ import "./styles.css";
 import { useConfig, useDrawerMenu, useOptionalAuthContext } from "providers";
 
 // lib
-import { SubMenuItemType } from "lib";
+import { APP_ROUTES, SubMenuItemType } from "lib";
 
 /**
  * Renders the side drawer and resolves menu visibility by auth state.
@@ -82,7 +82,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         {child.path ? (
           <Link
             tabIndex={open ? 0 : -1}
-            to={child.path ?? "/"}
+            to={child.path ?? APP_ROUTES.ROOT}
             aria-label={t(`_accessibility:ariaLabels.${child.id}`, {
               defaultValue: child.label,
             })}
@@ -125,7 +125,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         <li key={key} className={liClass}>
           <Link
             tabIndex={open ? 0 : -1}
-            to={link.path ?? "/"}
+            to={link.path ?? APP_ROUTES.ROOT}
             aria-label={t(`_accessibility:ariaLabels.${String(link.page)}`, {
               defaultValue: t(`_pages:${String(link.page)}.title`),
             })}

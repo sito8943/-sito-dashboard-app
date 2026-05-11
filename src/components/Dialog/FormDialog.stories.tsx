@@ -10,6 +10,7 @@ type FormDialogStoryProps = {
   title?: string;
   isLoading?: boolean;
   buttonEnd?: boolean;
+  mobileFullScreen?: boolean;
   extraActions?: ButtonPropsType[];
 };
 
@@ -17,6 +18,7 @@ const FormDialogStory = ({
   title = "Edit Description",
   isLoading = false,
   buttonEnd = true,
+  mobileFullScreen = false,
   extraActions = [],
 }: FormDialogStoryProps) => {
   const [open, setOpen] = useState(true);
@@ -33,6 +35,7 @@ const FormDialogStory = ({
       handleClose={() => setOpen(false)}
       isLoading={isLoading}
       buttonEnd={buttonEnd}
+      mobileFullScreen={mobileFullScreen}
       extraActions={extraActions}
     >
       <TextInput
@@ -53,6 +56,7 @@ const meta = {
     title: "Edit Description",
     isLoading: false,
     buttonEnd: true,
+    mobileFullScreen: false,
   },
 } satisfies Meta<typeof FormDialogStory>;
 
@@ -92,5 +96,14 @@ export const WithExtraActions: Story = {
         onClick: () => {},
       },
     ],
+  },
+};
+
+export const MobileFullScreen: Story = {
+  args: {
+    mobileFullScreen: true,
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
   },
 };

@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.74] - 2026-05-11
+
+### Added
+
+- Added provider composer APIs for shared app wiring:
+  - `AppProviders` component to compose the base stack:
+    `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider`.
+  - `createAppProviders(config)` factory for static/preconfigured provider trees.
+  - `AppProviderSlot` contract to inject optional wrapper providers (`featureFlagsProvider`, `offlineSyncProvider`, `appWrapperProvider`).
+- Added optional toggles in `AppProviders`:
+  - `auth={false}` to disable auth wiring.
+  - `withNavbarProvider` and `withBottomNavActionProvider` to enable optional UI providers.
+- Added provider-composer test coverage in `src/providers/AppProviders.test.tsx`.
+
+- Extended online-status API in `hooks/useOnlineStatus`:
+  - `useOnlineStatusSnapshot(options?)` for full connectivity snapshot (`isBrowserOnline`, `isServerReachable`, `isOnline`, `isChecking`, `lastCheckedAt`).
+  - `probeServerReachability(options?)` to run a probe and update shared snapshot state.
+  - `setServerReachable(value)` to manually update server reachability state.
+  - `configureOnlineStatus(options?)` to configure probe runtime defaults (interval, URL, timeout, method, request init, response resolver).
+
+### Changed
+
+- `configureOnlineStatus` now replaces runtime probe configuration per call instead of merging with previous values, preventing cross-use configuration carry-over.
+- `useOnlineStatus` is now implemented on top of `useOnlineStatusSnapshot`, preserving its existing return contract while sharing a centralized snapshot/probe store.
+
+### Documentation
+
+- Updated `README.md`, `AGENTS.md`, and `docs/CONSUMER_GUIDE.md` with provider-composer usage and extension points.
+- Updated `README.md` offline-status section to document the extended online-status API and no-carry configuration behavior.
+
 ## [0.0.73] - 2026-05-03
 
 ### Added

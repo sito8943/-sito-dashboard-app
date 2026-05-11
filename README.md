@@ -70,9 +70,9 @@ npm install @supabase/supabase-js@2.100.0
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
-- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`
-- Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), and `useSupabase`
+- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`
+- Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, and `normalizeMenuDividers`
 
 ## Component usage patterns
 
@@ -206,6 +206,26 @@ const extraActions: ButtonPropsType[] = [
 
 For `FormDialog`, set `type: "button"` on extra actions unless you explicitly want submit behavior.
 
+### Dialog mobile full screen
+
+`Dialog`, `ConfirmationDialog`, `FormDialog`, and `ImportDialog` support `mobileFullScreen?: boolean`.
+Default is `false`. Set it to `true` to force full-screen layout on very small screens.
+
+```tsx
+import { FormDialog } from "@sito/dashboard-app";
+
+<FormDialog<ProductForm>
+  open={open}
+  title="Edit product"
+  handleClose={close}
+  handleSubmit={handleSubmit}
+  onSubmit={onSubmit}
+  mobileFullScreen
+>
+  {/* form fields */}
+</FormDialog>;
+```
+
 ### PrettyGrid infinite scroll
 
 `PrettyGrid` supports optional infinite loading with `IntersectionObserver`.
@@ -259,6 +279,53 @@ Main optional props:
 - `tooltip?: string`
 - `scrollOnClick?: boolean` (default `true`)
 - `onClick?: () => void`
+
+### Offline status helpers
+
+Use `useOnlineStatus` for connectivity state and `OfflineBanner` for a reusable offline UI hint.
+
+```tsx
+import { OfflineBanner, useOnlineStatus } from "@sito/dashboard-app";
+
+function AppShell() {
+  const { isOnline } = useOnlineStatus({
+    checkIntervalMs: 30000,
+    probeUrl: "/health",
+    timeoutMs: 5000,
+  });
+
+  return (
+    <>
+      <OfflineBanner isOnline={isOnline} />
+      {/* routes */}
+    </>
+  );
+}
+```
+
+Menu helpers for feature-flag filtering and divider cleanup:
+
+```ts
+import {
+  filterMenuByFeatureFlags,
+  normalizeMenuDividers,
+} from "@sito/dashboard-app";
+
+const filtered = filterMenuByFeatureFlags(menuMap, isFeatureEnabled, {
+  reports: "reportsFeature",
+});
+
+const normalized = normalizeMenuDividers(filtered);
+```
+
+Advanced online-status API for sync/offline orchestration:
+
+- `useOnlineStatusSnapshot(options?)` returns `{ isBrowserOnline, isServerReachable, isOnline, isChecking, lastCheckedAt }`
+- `probeServerReachability(options?)` triggers a probe and updates the shared snapshot
+- `setServerReachable(value)` manually overrides server reachability in the snapshot
+- `configureOnlineStatus(options?)` sets probe runtime defaults (`interval`, `url`, timeout, method, headers/resolver)
+
+`configureOnlineStatus` replaces the previous runtime config on each call (no cross-use config carry-over).
 
 ### BottomNavigation
 
@@ -568,6 +635,79 @@ Notes:
 - `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
 - `BottomNavActionProvider` is optional; mount it around your app shell when pages/components use `useRegisterBottomNavAction`.
 - If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
+
+### Provider composer (`AppProviders` / `createAppProviders`)
+
+To avoid repeating provider wiring across apps, use the built-in composer.
+
+`AppProviders` keeps the base order:
+`ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider`
+
+It also supports:
+
+- `auth={false}` to disable auth wiring.
+- `withNavbarProvider` and `withBottomNavActionProvider` for optional UI providers.
+- `featureFlagsProvider`, `offlineSyncProvider`, and `appWrapperProvider` slots for app-specific wrappers.
+
+```tsx
+import type { ReactNode } from "react";
+import {
+  AppProviders,
+  IManager,
+  type BasicProviderPropTypes,
+} from "@sito/dashboard-app";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+const manager = new IManager(import.meta.env.VITE_API_URL, "user");
+
+const FeatureFlagsProvider = ({ children }: BasicProviderPropTypes) => (
+  <>{children}</>
+);
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <AppProviders
+      config={{
+        location,
+        navigate: (route) => {
+          if (typeof route === "number") navigate(route);
+          else navigate(route);
+        },
+        linkComponent: Link,
+      }}
+      manager={{ manager }}
+      auth={{ user: "user", remember: "remember" }}
+      withNavbarProvider
+      withBottomNavActionProvider
+      featureFlagsProvider={{ provider: FeatureFlagsProvider }}
+    >
+      {children}
+    </AppProviders>
+  );
+}
+```
+
+`createAppProviders(config)` returns a preconfigured component for cases where config is static:
+
+```tsx
+import { createAppProviders, IManager } from "@sito/dashboard-app";
+import { Link } from "react-router-dom";
+
+const manager = new IManager(import.meta.env.VITE_API_URL, "user");
+
+export const Providers = createAppProviders({
+  config: {
+    location: window.location,
+    navigate: () => {},
+    linkComponent: Link,
+  },
+  manager: { manager },
+  auth: false,
+});
+```
 
 ## Supabase setup (optional backend)
 

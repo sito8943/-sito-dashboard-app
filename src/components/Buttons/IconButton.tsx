@@ -1,15 +1,11 @@
-import {
-  IconButton as IconButtonBase,
-  IconButtonPropsType,
-} from "@sito/dashboard";
+import { IconButton as IconButtonBase } from "@sito/dashboard";
 
 // icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
-export type IconButtonPropsLocalType = Omit<IconButtonPropsType, "icon"> & {
-  icon: IconDefinition;
-};
+// types
+import type { IconButtonPropsLocalType } from "./types";
+export type { IconButtonPropsLocalType } from "./types";
 
 /**
  * Wraps dashboard IconButton to accept a FontAwesome IconDefinition.

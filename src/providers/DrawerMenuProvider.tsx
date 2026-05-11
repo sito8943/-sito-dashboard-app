@@ -1,27 +1,11 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useMemo, useState } from "react";
 
 // type
 import { DrawerMenuContextType, DrawerMenuProviderPropTypes } from "./types";
+import { DrawerMenuContext } from "./DrawerMenuContext";
 
 // lib
 import { SubMenuItemType } from "lib";
-
-const defaultDrawerMenuContext: DrawerMenuContextType<string> = {
-  addChildItem: () => {},
-  removeChildItem: () => {},
-  clearDynamicItems: () => {},
-  dynamicItems: {},
-};
-
-const DrawerMenuContext = createContext<DrawerMenuContextType<string>>(
-  defaultDrawerMenuContext,
-);
 
 /**
  * Drawer Menu Provider
@@ -83,14 +67,4 @@ const DrawerMenuProvider = <MenuKeys extends string>(
   );
 };
 
-/**
- * useDrawerMenu hook
- * @returns {DrawerMenuContextType<MenuKeys>} Drawer menu context values.
- */
-const useDrawerMenu = <MenuKeys extends string>() => {
-  const context = useContext(DrawerMenuContext);
-  return context as DrawerMenuContextType<MenuKeys>;
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { DrawerMenuContext, DrawerMenuProvider, useDrawerMenu };
+export { DrawerMenuProvider };

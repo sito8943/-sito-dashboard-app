@@ -1,11 +1,6 @@
-import { createContext, useContext } from "react";
+import type { ConfigProviderPropTypes } from "./types";
 
-// config
-import { ConfigProviderContextType, ConfigProviderPropTypes } from "./types";
-
-const ConfigContext = createContext<ConfigProviderContextType | undefined>(
-  undefined,
-);
+import { ConfigContext } from "./ConfigContext";
 
 /**
  * Config Provider
@@ -25,16 +20,4 @@ const ConfigProvider = (props: ConfigProviderPropTypes) => {
   );
 };
 
-/**
- * useConfig hook
- * @returns {ConfigProviderContextType} Config context values.
- * @throws {Error} If used outside `ConfigProvider`.
- */
-const useConfig = () => {
-  const context = useContext(ConfigContext);
-  if (!context) throw new Error("useConfig must be used within ConfigProvider");
-  return context;
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { ConfigProvider, useConfig };
+export { ConfigProvider };

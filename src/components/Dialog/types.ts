@@ -12,6 +12,7 @@ export type DialogPropsType = {
   title: string;
   children?: ReactNode;
   handleClose: () => void;
+  mobileFullScreen?: boolean;
   containerClassName?: string;
   className?: string;
   animationClass?: string;

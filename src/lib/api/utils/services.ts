@@ -16,6 +16,9 @@ export type RequestOptions = {
 };
 
 export type RequestConfig = HeadersInit | RequestOptions;
+export type ResponseValidator<TResponse> = (
+  value: unknown,
+) => value is TResponse;
 
 const isRequestOptions = (config: RequestConfig): config is RequestOptions => {
   if (Array.isArray(config)) return false;
@@ -45,6 +48,17 @@ const getObjectValue = (value: unknown, key: string): unknown => {
   return (value as Record<string, unknown>)[key];
 };
 
+const parseJsonBody = (
+  rawText: string,
+): { value: unknown; parsed: boolean } => {
+  if (!rawText) return { value: null, parsed: true };
+  try {
+    return { value: JSON.parse(rawText), parsed: true };
+  } catch {
+    return { value: null, parsed: false };
+  }
+};
+
 /**
  * @description Make a request to the API
  * @param url - URL to make the request
@@ -58,6 +72,7 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
   method: Methods = Methods.GET,
   body?: TBody,
   requestConfig?: RequestConfig,
+  responseValidator?: ResponseValidator<TResponse>,
 ): Promise<HttpResponse<TResponse>> {
   const normalizedConfig = toRequestOptions(requestConfig);
   const headers: HeadersInit = {
@@ -77,12 +92,8 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
 
     const rawText = await response.text();
 
-    let parsed: unknown = null;
-    try {
-      parsed = rawText ? JSON.parse(rawText) : null;
-    } catch {
-      parsed = null;
-    }
+    const { value: parsed, parsed: parsedSuccessfully } =
+      parseJsonBody(rawText);
 
     if (!response.ok) {
       const parsedMessage = getObjectValue(parsed, "message");
@@ -100,6 +111,28 @@ export async function makeRequest<TBody = undefined, TResponse = unknown>(
         error: {
           status: response.status,
           message: message || "Unknown error occurred",
+        },
+      };
+    }
+
+    if (response.status !== 204 && !parsedSuccessfully) {
+      return {
+        data: null,
+        status: response.status,
+        error: {
+          status: response.status,
+          message: "Invalid JSON response",
+        },
+      };
+    }
+
+    if (responseValidator && parsed !== null && !responseValidator(parsed)) {
+      return {
+        data: null,
+        status: response.status,
+        error: {
+          status: response.status,
+          message: "Invalid response payload",
         },
       };
     }

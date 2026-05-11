@@ -50,6 +50,8 @@ Recommended order:
 By default, each `ManagerProvider` instance creates its own isolated `QueryClient`.
 If you need custom React Query defaults, or you intentionally want multiple trees to share cache state, pass your own client with `queryClient={queryClient}`.
 
+If you prefer a pre-wired composer, use `AppProviders` or `createAppProviders` and keep the same base order.
+
 ```tsx
 import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -112,6 +114,56 @@ export function AppProviders({ children }: { children: ReactNode }) {
         </AuthProvider>
       </ManagerProvider>
     </ConfigProvider>
+  );
+}
+```
+
+### 2.0.1 Provider composer
+
+`AppProviders` composes this base tree:
+`ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider`
+
+Optional capabilities:
+
+1. Disable auth: `auth={false}`
+2. Enable optional UI providers: `withNavbarProvider`, `withBottomNavActionProvider`
+3. Inject app-specific wrappers: `featureFlagsProvider`, `offlineSyncProvider`, `appWrapperProvider`
+
+```tsx
+import type { ReactNode } from "react";
+import {
+  AppProviders,
+  IManager,
+  type BasicProviderPropTypes,
+} from "@sito/dashboard-app";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+const manager = new IManager(import.meta.env.VITE_API_URL, "user");
+
+const FeatureFlagsProvider = ({ children }: BasicProviderPropTypes) => (
+  <>{children}</>
+);
+
+function AppShell({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <AppProviders
+      config={{
+        location,
+        navigate: (route) => {
+          if (typeof route === "number") navigate(route);
+          else navigate(route);
+        },
+        linkComponent: Link,
+      }}
+      manager={{ manager }}
+      withNavbarProvider
+      featureFlagsProvider={{ provider: FeatureFlagsProvider }}
+    >
+      {children}
+    </AppProviders>
   );
 }
 ```

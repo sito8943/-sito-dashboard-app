@@ -1,35 +1,18 @@
-import { useTranslation } from "@sito/dashboard";
+import { classNames, useTranslation } from "@sito/dashboard";
 import { scrollTo } from "some-javascript-utils/browser";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 // icons
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
-import type { IconButtonPropsLocalType } from "./IconButton";
+import type { ToTopPropsType } from "./types";
 
 // hook
 import { useScrollTrigger } from "hooks";
-
-// lib
-import { classNames } from "@sito/dashboard";
 
 // components
 import { AppIconButton } from "components";
 
 // styles
 import "./styles.css";
-
-export type ToTopPropsType = Omit<
-  IconButtonPropsLocalType,
-  "icon" | "onClick"
-> & {
-  icon?: IconDefinition;
-  threshold?: number;
-  scrollTop?: number;
-  scrollLeft?: number;
-  tooltip?: string;
-  scrollOnClick?: boolean;
-  onClick?: () => void;
-};
 
 /**
  * Renders a floating button that scrolls the page to a target position.

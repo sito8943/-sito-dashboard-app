@@ -3,14 +3,11 @@ import { useTranslation, classNames } from "@sito/dashboard";
 // lib
 import { ImportPreviewDto } from "lib";
 
+// types
+import type { PreviewProps } from "./types";
+
 // styles
 import "./styles.css";
-
-type PreviewProps<EntityDto extends ImportPreviewDto> = {
-  items: EntityDto[];
-  max?: number;
-  className?: string;
-};
 
 /**
  * Renders a compact JSON preview of parsed import items.

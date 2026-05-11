@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { DrawerMenuProvider, useDrawerMenu } from "./DrawerMenuProvider";
+import { DrawerMenuProvider } from "./DrawerMenuProvider";
+import { useDrawerMenu } from "./useDrawerMenu";
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <DrawerMenuProvider>{children}</DrawerMenuProvider>

@@ -1,29 +1,10 @@
-import { createContext, useContext, useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 // manager
-import { ManagerProviderContextType, ManagerProviderPropTypes } from "./types";
-
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchInterval: false,
-        refetchOnMount: true,
-        refetchOnReconnect: false,
-        retry: false,
-        retryOnMount: true,
-        refetchOnWindowFocus: false, // default: true
-      },
-    },
-  });
-
-// Deprecated export retained for backward compatibility.
-const queryClient = createQueryClient();
-
-const ManagerContext = createContext<ManagerProviderContextType | undefined>(
-  undefined,
-);
+import { ManagerProviderPropTypes } from "./types";
+import { ManagerContext } from "./ManagerContext";
+import { createQueryClient } from "./queryClient";
 
 /**
  * Manager Provider
@@ -42,18 +23,6 @@ const ManagerProvider = (props: ManagerProviderPropTypes) => {
   );
 };
 
-/**
- * useManager hook
- * @returns Manager client from context.
- * @throws {Error} If used outside `ManagerProvider`.
- */
-const useManager = () => {
-  const context = useContext(ManagerContext);
-
-  if (!context)
-    throw new Error("useManager must be used within ManagerProvider");
-  return context.client;
-};
-
 // eslint-disable-next-line react-refresh/only-export-components
-export { createQueryClient, queryClient, ManagerProvider, useManager };
+export { createQueryClient, queryClient } from "./queryClient";
+export { ManagerProvider };

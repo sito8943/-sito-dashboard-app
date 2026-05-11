@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+import { APP_ROUTES } from "lib";
 import { Tab } from "./Tab";
 
 const meta = {
@@ -8,7 +9,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     id: "overview",
-    to: "/overview",
+    to: APP_ROUTES.NOTES,
     active: true,
     useLinks: true,
     onClick: () => {},
@@ -40,7 +41,7 @@ export const ToggleExample: Story = {
       <div className="flex gap-2">
         <Tab
           id="overview"
-          to="/overview"
+          to={APP_ROUTES.NOTES}
           useLinks={false}
           active={tab === "overview"}
           onClick={() => setTab("overview")}
@@ -49,7 +50,7 @@ export const ToggleExample: Story = {
         </Tab>
         <Tab
           id="activity"
-          to="/activity"
+          to={APP_ROUTES.CATEGORIES}
           useLinks={false}
           active={tab === "activity"}
           onClick={() => setTab("activity")}

@@ -12,15 +12,11 @@ import {
 // types
 import { ParagraphInputPropsType } from "./types";
 
+// utils
+import { hasInputValue } from "./utils";
+
 // styles
 import "./styles.css";
-
-const hasInputValue = (
-  inputValue: string | number | readonly string[] | undefined,
-) => {
-  if (inputValue === undefined || inputValue === null) return false;
-  return `${inputValue}`.length > 0;
-};
 
 /**
  * ParagraphInput

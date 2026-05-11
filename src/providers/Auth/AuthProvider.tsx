@@ -2,10 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 
 // type
 import { AuthProviderPropTypes } from "./types";
-import { AuthContext, useAuthContext } from "./authContext";
+import { AuthContext } from "./authContext";
 
-// providers
-import { useManager } from "../ManagerProvider";
+// hooks
+import { useManager } from "../useManager";
 
 // lib
 import {
@@ -140,13 +140,4 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-/**
- * useAuth hook
- * @returns Auth context values from `AuthProvider`.
- */
-const useAuth = () => {
-  return useAuthContext();
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { AuthProvider, useAuth };
+export { AuthProvider };

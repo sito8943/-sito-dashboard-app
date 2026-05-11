@@ -17,7 +17,15 @@
 }
 
 .dialog {
-  @apply flex flex-col relative xs:min-w-90 bg-base p-5 xs:rounded-2xl xs:border-border border-2 max-[28rem]:w-screen max-[28rem]:h-screen;
+  @apply flex flex-col relative xs:min-w-90 bg-base p-5 border;
+}
+
+.dialog-framed {
+  @apply rounded-2xl border-border;
+}
+
+.dialog-mobile-full-screen {
+  @apply max-[28rem]:w-screen max-[28rem]:h-screen;
 }
 
 .dialog.opened {

@@ -8,6 +8,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     title: "Confirm Delete",
+    mobileFullScreen: false,
   },
 } satisfies Meta<typeof ConfirmationDialog>;
 
@@ -90,6 +91,31 @@ export const WithExtraActions: Story = {
         handleSubmit={() => setOpen(false)}
       >
         <p>Use extra actions for secondary workflows before confirming.</p>
+      </ConfirmationDialog>
+    );
+  },
+};
+
+export const MobileFullScreen: Story = {
+  args: {
+    open: true,
+    handleClose: () => {},
+    handleSubmit: () => {},
+    mobileFullScreen: true,
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+  render: (args) => {
+    const [open, setOpen] = useState(true);
+    return (
+      <ConfirmationDialog
+        {...args}
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleSubmit={() => setOpen(false)}
+      >
+        <p>Full screen on mobile viewport.</p>
       </ConfirmationDialog>
     );
   },

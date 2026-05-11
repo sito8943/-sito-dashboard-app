@@ -12,6 +12,7 @@ export * from "./PrettyGrid";
 export * from "./Navbar";
 export * from "./Notification";
 export * from "./Loading";
+export * from "./OfflineBanner";
 export * from "./TabsLayout";
 export * from "./Onboarding";
 export * from "./BottomNavigation";

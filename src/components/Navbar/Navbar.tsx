@@ -14,11 +14,11 @@ import "./styles.css";
 import { AppIconButton } from "components";
 
 // utils
-import { isMac } from "lib";
+import { APP_ROUTES, isMac } from "lib";
 
 // providers
 import { useConfig } from "providers";
-import { useNavbar } from "./NavbarProvider.js";
+import { useNavbar } from "./useNavbar.js";
 
 /**
  * Renders the top navigation bar with menu, title and optional search.
@@ -55,7 +55,7 @@ export function Navbar(props: NavbarPropsType) {
 
   return (
     <>
-      {location.pathname !== "/" && !!Search && (
+      {location.pathname !== APP_ROUTES.ROOT && !!Search && (
         <Search open={showDialog} onClose={() => setShowDialog(false)} />
       )}
       <header id="header" className="header">

@@ -1,4 +1,5 @@
 type LocalStorageTransform = "" | "string" | "object" | "number" | "boolean";
+type LocalObjectValidator<T> = (value: unknown) => value is T;
 
 const safeParse = (value: string) => {
   try {
@@ -20,20 +21,26 @@ export function fromLocal(key: string, as: "string"): string | undefined;
 export function fromLocal<T = unknown>(
   key: string,
   as: "object",
+  validate?: LocalObjectValidator<T>,
 ): T | undefined;
 export function fromLocal(key: string, as: "number"): number | undefined;
 export function fromLocal(key: string, as: "boolean"): boolean | undefined;
 export function fromLocal<T = unknown>(
   key: string,
   as: LocalStorageTransform = "",
+  validate?: LocalObjectValidator<T>,
 ): string | number | boolean | T | undefined {
   const result = localStorage.getItem(key) ?? undefined;
   if (result === undefined) return undefined;
   if (!as.length || as === "string") return result;
 
   switch (as) {
-    case "object":
-      return safeParse(result) as T | undefined;
+    case "object": {
+      const parsed = safeParse(result);
+      if (typeof parsed !== "object" || parsed === null) return undefined;
+      if (validate && !validate(parsed)) return undefined;
+      return parsed as T;
+    }
     case "number": {
       const parsed = Number(result);
       return Number.isNaN(parsed) ? undefined : parsed;

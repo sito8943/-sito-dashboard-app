@@ -1,5 +1,9 @@
+import type { ComponentType } from "react";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
+// types
 import type { IconButtonPropsLocalType } from "components/Buttons/IconButton";
+import type { BaseLinkPropsType } from "components/types";
 
 export type BottomNavigationPositionType = "left" | "right";
 
@@ -33,4 +37,10 @@ export type BottomNavigationPropsType<TId extends string = string> = {
     pathname: string,
     item: BottomNavigationItemType<TId>,
   ) => boolean;
+};
+
+export type NavLinkPropsType<TId extends string = string> = {
+  item: BottomNavigationItemType<TId>;
+  isActive: boolean;
+  linkComponent: ComponentType<BaseLinkPropsType>;
 };
