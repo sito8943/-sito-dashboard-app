@@ -1,3 +1,4 @@
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { ReactNode } from "react";
 
 /**
@@ -36,20 +37,21 @@ export interface Location<State = unknown> extends Path {
   key?: string;
 }
 
-export type ViewPageType<PageId> = {
+export type ViewPageType<PageId extends string = string> = {
   key: PageId;
   path: string;
   children?: ViewPageType<PageId>[];
   role?: string[];
 };
 
-export interface NamedViewPageType<PageId> extends ViewPageType<PageId> {
+export interface NamedViewPageType<PageId extends string = string>
+  extends ViewPageType<PageId> {
   name: string;
 }
 
 export type SubMenuItemType = {
   id: string;
-  label: string;
+  label: string | ReactNode;
   path?: string;
 };
 
@@ -66,6 +68,14 @@ export type MenuItemType<MenuKeys> = {
 export type FeatureEnabledFn<FeatureKey extends string> = (
   key: FeatureKey,
 ) => boolean;
+
+export type BottomNavItemType<PageId extends string = string> = {
+  id: string;
+  page: PageId;
+  to: string;
+  icon: IconDefinition;
+  position: "left" | "right";
+};
 
 /**
  * Filters menu entries based on optional feature-flag dependencies by page id.
