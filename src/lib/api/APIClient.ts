@@ -4,6 +4,7 @@ import {
   Methods,
   RequestConfig,
   RequestOptions,
+  ResponseValidator,
 } from "./utils/services";
 
 // types
@@ -73,10 +74,33 @@ export class APIClient {
 
   defaultTokenAcquirer(useCookie?: boolean): RequestConfig | undefined {
     if (useCookie) return { credentials: "include" };
-    const token = fromLocal(this.userKey) as string;
-    if (token && token.length) return { Authorization: `Bearer ${token}` };
+    const token = fromLocal(this.userKey);
+    if (typeof token === "string" && token.length)
+      return { Authorization: `Bearer ${token}` };
 
     return undefined;
+  }
+
+  private isSessionDto(value: unknown): value is SessionDto {
+    if (typeof value !== "object" || value === null) return false;
+    const maybe = value as Partial<SessionDto>;
+    const hasOptionalRefresh =
+      maybe.refreshToken === undefined ||
+      maybe.refreshToken === null ||
+      typeof maybe.refreshToken === "string";
+    const hasOptionalExpiresAt =
+      maybe.accessTokenExpiresAt === undefined ||
+      maybe.accessTokenExpiresAt === null ||
+      typeof maybe.accessTokenExpiresAt === "string";
+    return (
+      typeof maybe.id === "number" &&
+      typeof maybe.username === "string" &&
+      typeof maybe.email === "string" &&
+      typeof maybe.token === "string" &&
+      maybe.token.length > 0 &&
+      hasOptionalRefresh &&
+      hasOptionalExpiresAt
+    );
   }
 
   private getRefreshLockKey() {
@@ -170,6 +194,8 @@ export class APIClient {
         this.buildUrl(this.refreshEndpoint),
         Methods.POST,
         { refreshToken },
+        undefined,
+        (value): value is SessionDto => this.isSessionDto(value),
       );
 
       if (error || !data?.token) {
@@ -246,6 +272,7 @@ export class APIClient {
     method: Methods,
     body?: TBody,
     requestConfig?: RequestConfig,
+    responseValidator?: ResponseValidator<TResponse>,
   ) {
     if (this.secured && this.shouldRefreshBeforeRequest())
       await this.refreshAccessTokenWithMutex();
@@ -255,6 +282,7 @@ export class APIClient {
       method,
       body,
       this.mergeRequestConfig(requestConfig),
+      responseValidator,
     );
 
     if (this.secured && response.status === 401 && this.canRefresh()) {
@@ -264,6 +292,7 @@ export class APIClient {
         method,
         body,
         this.mergeRequestConfig(requestConfig),
+        responseValidator,
       );
     }
 

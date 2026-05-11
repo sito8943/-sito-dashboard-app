@@ -1,6 +1,7 @@
 export * from "./NotificationProvider";
 export * from "./ManagerProvider";
 export * from "./AppProviders";
+export * from "./createAppProviders";
 export * from "./Supabase";
 export * from "./Auth";
 export * from "./ConfigProvider";

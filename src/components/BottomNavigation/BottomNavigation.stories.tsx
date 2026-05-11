@@ -6,6 +6,7 @@ import {
   faTags,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { APP_ROUTES } from "lib";
 import { BottomNavActionProvider, useRegisterBottomNavAction } from "providers";
 
 import { BottomNavigation } from "./BottomNavigation";
@@ -15,28 +16,28 @@ const items: BottomNavigationItemType[] = [
   {
     id: "home",
     label: "Home",
-    to: "/",
+    to: APP_ROUTES.ROOT,
     icon: faHome,
     position: "left",
   },
   {
     id: "notes",
     label: "Notes",
-    to: "/notes",
+    to: APP_ROUTES.NOTES,
     icon: faFile,
     position: "left",
   },
   {
     id: "categories",
     label: "Categories",
-    to: "/categories",
+    to: APP_ROUTES.CATEGORIES,
     icon: faTags,
     position: "right",
   },
   {
     id: "profile",
     label: "Profile",
-    to: "/profile",
+    to: APP_ROUTES.PROFILE,
     icon: faUser,
     position: "right",
   },
@@ -56,7 +57,7 @@ const meta = {
     centerAction: {
       icon: faPlus,
       ariaLabel: "Quick action",
-      to: "/log",
+      to: APP_ROUTES.NOTES,
     },
   },
 } satisfies Meta<typeof BottomNavigation>;
@@ -68,7 +69,7 @@ const DynamicCenterActionRegistration = () => {
   useRegisterBottomNavAction({
     icon: faTags,
     ariaLabel: "Dynamic category action",
-    to: "/categories/new",
+    to: APP_ROUTES.CATEGORIES,
     color: "secondary",
   });
 
@@ -89,14 +90,14 @@ export const WithDisabledItem: Story = {
       {
         id: "home",
         label: "Home",
-        to: "/",
+        to: APP_ROUTES.ROOT,
         icon: faHome,
         position: "left",
       },
       {
         id: "notes",
         label: "Notes",
-        to: "/notes",
+        to: APP_ROUTES.NOTES,
         icon: faFile,
         position: "left",
         disabled: true,
@@ -104,7 +105,7 @@ export const WithDisabledItem: Story = {
       {
         id: "profile",
         label: "Profile",
-        to: "/profile",
+        to: APP_ROUTES.PROFILE,
         icon: faUser,
         position: "right",
       },
@@ -123,7 +124,7 @@ export const WithDynamicCenterActionOverride: Story = {
     centerAction: {
       icon: faPlus,
       ariaLabel: "Quick action",
-      to: "/log",
+      to: APP_ROUTES.NOTES,
       color: "primary",
     },
   },

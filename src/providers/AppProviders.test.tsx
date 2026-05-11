@@ -3,15 +3,12 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { BaseLinkPropsType } from "components/types";
 import { useNavbar } from "components/Navbar";
-import type { IManager, Location } from "lib";
+import { APP_ROUTES, type IManager, type Location } from "lib";
 
 import { useAuth } from "./Auth";
 import { useBottomNavAction } from "./BottomNavAction";
-import {
-  AppProviders,
-  createAppProviders,
-  type AppProviderSlot,
-} from "./AppProviders";
+import { AppProviders, type AppProviderSlot } from "./AppProviders";
+import { createAppProviders } from "./createAppProviders";
 import { useConfig } from "./useConfig";
 import { useDrawerMenu } from "./useDrawerMenu";
 import { useManager } from "./useManager";
@@ -26,7 +23,7 @@ const manager = {
 } as unknown as IManager;
 
 const location: Location = {
-  pathname: "/dashboard",
+  pathname: APP_ROUTES.NOTES,
   search: "",
   hash: "",
 };
@@ -114,7 +111,7 @@ describe("AppProviders", () => {
       </AppProviders>,
     );
 
-    expect(screen.getByTestId("pathname")).toHaveTextContent("/dashboard");
+    expect(screen.getByTestId("pathname")).toHaveTextContent(APP_ROUTES.NOTES);
     expect(screen.getByTestId("manager-match")).toHaveTextContent("true");
     expect(screen.getByTestId("has-auth")).toHaveTextContent("true");
     expect(screen.getByTestId("notification-count")).toHaveTextContent("0");

@@ -75,16 +75,27 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       dispatch({ type: "START_PROCESSING" });
       try {
         const items = await fileProcessorRef.current(targetFile, { override });
-        dispatch({ type: "SET_PREVIEW", items: items ?? [] });
-        processedCallbackRef.current?.(items ?? []);
+        if (!Array.isArray(items)) {
+          throw new Error(
+            t("_accessibility:errors.invalidImportPayload", {
+              defaultValue: "Invalid import payload",
+            }),
+          );
+        }
+        dispatch({ type: "SET_PREVIEW", items });
+        processedCallbackRef.current?.(items);
       } catch (err) {
         console.error(err);
         const message =
-          err instanceof Error ? err.message : "Failed to parse file";
+          err instanceof Error
+            ? err.message
+            : t("_accessibility:errors.failedToParseFile", {
+                defaultValue: "Failed to parse file",
+              });
         dispatch({ type: "SET_ERROR", message });
       }
     },
-    [],
+    [t],
   );
 
   return (

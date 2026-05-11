@@ -1,4 +1,5 @@
 import type { BottomNavigationItemType } from "./types";
+import { APP_ROUTES } from "lib";
 
 /**
  * Returns whether the current pathname matches the provided path.
@@ -7,7 +8,9 @@ import type { BottomNavigationItemType } from "./types";
  * @returns True when the path is active.
  */
 export const isPathActive = (pathname: string, path: string): boolean =>
-  path === "/" ? pathname === "/" : pathname.startsWith(path);
+  path === APP_ROUTES.ROOT
+    ? pathname === APP_ROUTES.ROOT
+    : pathname.startsWith(path);
 
 /**
  * Splits visible items into left and right navigation groups.

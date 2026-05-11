@@ -5,7 +5,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { AppIconButton } from "components";
 
 // lib
-import { classNames } from "@sito/dashboard";
+import { classNames, useTranslation } from "@sito/dashboard";
 
 // providers
 import { useConfig, useOptionalBottomNavAction } from "providers";
@@ -31,6 +31,7 @@ import type {
 export const BottomNavigation = <TId extends string = string>(
   props: BottomNavigationPropsType<TId>,
 ) => {
+  const { t } = useTranslation();
   const { items, centerAction, className = "", isItemActive } = props;
   const registeredCenterAction = useOptionalBottomNavAction()?.centerAction;
   const effectiveCenterAction = registeredCenterAction
@@ -48,7 +49,10 @@ export const BottomNavigation = <TId extends string = string>(
     hidden: centerActionHidden,
     to: centerActionTo,
     icon: centerActionIcon = faPlus,
-    ariaLabel: centerActionAriaLabel = "Bottom navigation action",
+    ariaLabel: centerActionAriaLabel = t(
+      "_accessibility:ariaLabels.bottomNavigationAction",
+      { defaultValue: "Bottom navigation action" },
+    ),
     onClick: onCenterActionClick,
     variant: centerActionVariant = "submit",
     color: centerActionColor = "primary",

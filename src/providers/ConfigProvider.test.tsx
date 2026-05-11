@@ -5,10 +5,10 @@ import { ConfigProvider } from "./ConfigProvider";
 import { useConfig } from "./useConfig";
 
 import type { BaseLinkPropsType } from "components/types";
-import type { Location } from "lib";
+import { APP_ROUTES, type Location } from "lib";
 
 const mockLocation: Location = {
-  pathname: "/dashboard",
+  pathname: APP_ROUTES.NOTES,
   search: "",
   hash: "",
 };
@@ -27,7 +27,10 @@ const Consumer = () => {
   return (
     <>
       <span data-testid="pathname">{config.location.pathname}</span>
-      <button type="button" onClick={() => config.navigate("/users")}>
+      <button
+        type="button"
+        onClick={() => config.navigate(APP_ROUTES.CATEGORIES)}
+      >
         navigate
       </button>
     </>
@@ -48,10 +51,10 @@ describe("ConfigProvider", () => {
       </ConfigProvider>,
     );
 
-    expect(screen.getByTestId("pathname")).toHaveTextContent("/dashboard");
+    expect(screen.getByTestId("pathname")).toHaveTextContent(APP_ROUTES.NOTES);
 
     fireEvent.click(screen.getByRole("button", { name: "navigate" }));
-    expect(navigate).toHaveBeenCalledWith("/users");
+    expect(navigate).toHaveBeenCalledWith(APP_ROUTES.CATEGORIES);
   });
 
   it("throws when used outside ConfigProvider", () => {

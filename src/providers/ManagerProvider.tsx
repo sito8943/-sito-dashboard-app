@@ -1,26 +1,10 @@
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 // manager
 import { ManagerProviderPropTypes } from "./types";
 import { ManagerContext } from "./ManagerContext";
-
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchInterval: false,
-        refetchOnMount: true,
-        refetchOnReconnect: false,
-        retry: false,
-        retryOnMount: true,
-        refetchOnWindowFocus: false, // default: true
-      },
-    },
-  });
-
-// Deprecated export retained for backward compatibility.
-const queryClient = createQueryClient();
+import { createQueryClient } from "./queryClient";
 
 /**
  * Manager Provider
@@ -39,4 +23,6 @@ const ManagerProvider = (props: ManagerProviderPropTypes) => {
   );
 };
 
-export { createQueryClient, queryClient, ManagerProvider };
+// eslint-disable-next-line react-refresh/only-export-components
+export { createQueryClient, queryClient } from "./queryClient";
+export { ManagerProvider };

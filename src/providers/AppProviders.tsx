@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 // providers
 import { AuthProvider } from "./Auth";
@@ -12,22 +12,8 @@ import { NotificationProvider } from "./NotificationProvider";
 import { NavbarProvider } from "components/Navbar";
 
 // types
-import type {
-  AnyAppProviderSlot,
-  AppProvidersProps,
-  BasicProviderPropTypes,
-} from "./types";
-
-const applyOptionalProvider = (
-  children: ReactNode,
-  slot?: AnyAppProviderSlot,
-): ReactNode => {
-  if (!slot || slot.enabled === false) return children;
-
-  const { provider: Provider, props } = slot;
-
-  return <Provider {...(props ?? {})}>{children}</Provider>;
-};
+import type { AppProvidersProps } from "./types";
+import { applyOptionalProvider } from "./appProviders.utils";
 
 /**
  * Composes the default application provider tree with optional extension points.
@@ -76,19 +62,5 @@ const AppProviders = (props: AppProvidersProps) => {
   );
 };
 
-/**
- * Returns a configured provider component so apps can avoid repeating the tree.
- */
-const createAppProviders = (
-  config: Omit<AppProvidersProps, "children">,
-): ComponentType<BasicProviderPropTypes> => {
-  const CreatedAppProviders = ({ children }: BasicProviderPropTypes) => (
-    <AppProviders {...config}>{children}</AppProviders>
-  );
-
-  return CreatedAppProviders;
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export { AppProviders, createAppProviders };
+export { AppProviders };
 export type { AppProviderSlot, AppProvidersProps } from "./types";
