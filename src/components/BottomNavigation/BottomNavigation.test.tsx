@@ -17,6 +17,10 @@ import { BottomNavigation } from "./BottomNavigation";
 vi.mock("@sito/dashboard", () => ({
   classNames: (...classes: Array<string | false | null | undefined>) =>
     classes.filter(Boolean).join(" "),
+  useTranslation: () => ({
+    t: (key: string, options?: { defaultValue?: string }) =>
+      options?.defaultValue ?? key,
+  }),
 }));
 
 vi.mock("components", () => ({

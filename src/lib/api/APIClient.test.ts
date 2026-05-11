@@ -69,6 +69,7 @@ describe("APIClient", () => {
       Methods.GET,
       undefined,
       { credentials: "include" },
+      undefined,
     );
   });
 
@@ -97,6 +98,7 @@ describe("APIClient", () => {
         Authorization: "Bearer token-abc",
         "X-App": "dashboard",
       },
+      undefined,
     );
   });
 
@@ -125,6 +127,7 @@ describe("APIClient", () => {
       Methods.GET,
       undefined,
       { Authorization: "Bearer custom-token" },
+      undefined,
     );
   });
 
@@ -177,6 +180,8 @@ describe("APIClient", () => {
       "https://api.test/auth/refresh",
       Methods.POST,
       { refreshToken: "refresh-token-1" },
+      undefined,
+      expect.any(Function),
     );
     expect(makeRequestMock).toHaveBeenNthCalledWith(
       2,
@@ -184,6 +189,7 @@ describe("APIClient", () => {
       Methods.GET,
       undefined,
       { Authorization: "Bearer new-access-token" },
+      undefined,
     );
     expect(localStorage.getItem("user")).toBe("new-access-token");
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token-2");
@@ -265,12 +271,15 @@ describe("APIClient", () => {
       Methods.GET,
       undefined,
       { Authorization: "Bearer stale-access-token" },
+      undefined,
     );
     expect(makeRequestMock).toHaveBeenNthCalledWith(
       2,
       "https://api.test/auth/refresh",
       Methods.POST,
       { refreshToken: "refresh-token-1" },
+      undefined,
+      expect.any(Function),
     );
     expect(makeRequestMock).toHaveBeenNthCalledWith(
       3,
@@ -278,6 +287,7 @@ describe("APIClient", () => {
       Methods.GET,
       undefined,
       { Authorization: "Bearer fresh-access-token" },
+      undefined,
     );
   });
 

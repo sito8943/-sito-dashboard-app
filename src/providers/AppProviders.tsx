@@ -9,7 +9,7 @@ import { ManagerProvider } from "./ManagerProvider";
 import { NotificationProvider } from "./NotificationProvider";
 
 // components
-import { NavbarProvider } from "components/Navbar";
+import { NavbarProvider } from "components/Navbar/NavbarProvider";
 
 // types
 import type { AppProvidersProps } from "./types";

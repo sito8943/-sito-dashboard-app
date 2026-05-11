@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { BaseLinkPropsType } from "components/types";
-import { useNavbar } from "components/Navbar";
+import { useNavbar } from "components/Navbar/useNavbar";
 import { APP_ROUTES, type IManager, type Location } from "lib";
 
 import { useAuth } from "./Auth";
@@ -142,7 +142,7 @@ describe("AppProviders", () => {
       provider: OfflineSyncProvider,
       props: { mode: "auto" },
     };
-    const appWrapperProvider: AppProviderSlot<Record<string, never>> = {
+    const appWrapperProvider: AppProviderSlot<Record<string, unknown>> = {
       provider: AppWrapperProvider,
     };
 

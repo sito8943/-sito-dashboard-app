@@ -38,6 +38,9 @@ vi.mock("./Clock", () => ({
 }));
 
 vi.mock("lib", () => ({
+  APP_ROUTES: {
+    ROOT: "/",
+  },
   isMac: () => false,
   classNames: (...values: Array<string | null | undefined | false>) =>
     values
