@@ -60,3 +60,22 @@ export const MobileFullScreen: Story = {
   },
   render: Basic.render,
 };
+
+export const CustomPosition: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    title: "Dialog with custom position",
+    containerClassName: "!items-start !justify-end p-6",
+    className: "!w-[28rem] !max-w-[calc(100vw-3rem)]",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Uses `containerClassName` to move the dialog container to the top-right corner.",
+      },
+    },
+  },
+  render: Basic.render,
+};

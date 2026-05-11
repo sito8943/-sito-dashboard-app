@@ -1,6 +1,7 @@
 # Propuesta de Migración a `@sito/dashboard-app`
 
 Fecha: 2026-05-04  
+Última actualización: 2026-05-11  
 Apps analizadas: `period-calendar`, `wallet`, `notes`
 
 ## 1. Objetivo
@@ -22,7 +23,7 @@ Una pieza se migra si cumple todo:
 
 ### 3.1 `useOnlineStatus` + `OfflineBanner`
 
-Problema actual:
+Problema original:
 
 1. `wallet` y `notes` repiten hooks/infra de conectividad.
 2. El banner offline es UI transversal.
@@ -56,9 +57,15 @@ export type OfflineBannerProps = {
 };
 ```
 
+Estado actual (2026-05-11):
+
+1. ✅ `useOnlineStatus` y `useOnlineStatusSnapshot` implementados y exportados.
+2. ✅ `OfflineBanner` implementado, exportado y en uso.
+3. ✅ Cobertura de tests unitarios para hook y componente.
+
 ### 3.2 Helper genérico de `menuMap` con feature flags
 
-Problema actual:
+Problema original:
 
 1. Las 3 apps repiten filtrado por feature flags.
 2. También repiten cleanup de dividers consecutivos.
@@ -93,11 +100,17 @@ export function normalizeMenuDividers<Item extends { type?: "divider" }>(
 ): Item[];
 ```
 
+Estado actual (2026-05-11):
+
+1. ✅ `filterMenuByFeatureFlags` implementado y exportado.
+2. ✅ `normalizeMenuDividers` implementado y exportado.
+3. ✅ Tests unitarios para filtros y normalización de dividers.
+
 ## P1 (alto valor / riesgo medio)
 
 ### 3.3 Composer base de providers
 
-Problema actual:
+Problema original:
 
 1. `wallet` y `notes` tienen casi el mismo árbol de providers.
 2. `period-calendar` comparte parte del stack (`Notification`, `Translation`, `FeatureFlags`), con otra estrategia de auth.
@@ -123,6 +136,8 @@ Estado actual (`0.0.74`):
 3. ✅ `AuthProvider` configurable y desactivable con `auth={false}`.
 4. ✅ Slots para `FeatureFlagsProvider`, `OfflineSyncProvider` y `appWrapperProvider`.
 5. ✅ Tests unitarios añadidos para composición base y variantes opcionales.
+6. ✅ `AppProviders` adoptado y funcional en las apps migradas.
+7. ✅ Helpers/slots de offline integrados en el wiring actual de apps.
 
 ## P2 (evaluar según cobertura existente)
 
@@ -138,6 +153,14 @@ Condición:
 
 1. Mover solo si no rompe personalizaciones visuales actuales.
 
+Resultado de revisión Fase 4.1 (2026-05-11):
+
+1. `Search` wrapper genérico: ❌ no migrar como componente nuevo por ahora.
+2. Se mantiene el contrato actual de extensión (`ConfigProvider.searchComponent`) y uso desde `Navbar`.
+3. `Tutorial` base: ✅ usar `Onboarding` + `TabsLayout` como base compartida; no crear otro componente paralelo.
+4. `Card`/`Accordion`: ⏸️ posponer migración hasta tener contrato visual estable en 2+ apps.
+5. Decisión técnica: evitar sobre-generalización de UI visualmente sensible en esta fase.
+
 ## 4. Qué NO migrar
 
 1. Vistas de negocio: `PeriodLog`, `DailyLog`, `Transactions`, `Notes`, etc.
@@ -145,29 +168,41 @@ Condición:
 3. API clients y entidades de dominio (`lib/api`, `lib/entities` por app).
 4. Lógica de negocio de cada vertical.
 
-## 5. Plan de rollout
+## 5. Plan de rollout (actualizado)
 
-## Fase 1
+## Fase 1 (completada)
 
 1. Extraer `useOnlineStatus` + `OfflineBanner`.
 2. Publicar versión menor de `@sito/dashboard-app`.
 3. Migrar `notes` y `wallet` primero.
 
-## Fase 2
+## Fase 2 (completada)
 
 1. Extraer helpers de menú con feature flags.
 2. Migrar `menuMap` en las 3 apps manteniendo comportamiento.
 
-## Fase 3
+## Fase 3 (completada)
 
 1. Introducir composer de providers.
-2. Adoptar en `notes` y `wallet`.
-3. Evaluar adaptación de `period-calendar` con variante Supabase.
+2. Adoptar en apps consumidoras.
+3. Confirmar uso funcional de `AppProviders` y wiring offline/helper.
 
-## Fase 4
+## Fase 4 (en progreso)
 
-1. Revisar componentes UI genéricos.
-2. Mover solo lo que tenga contrato estable y pruebas.
+1. ✅ Revisar componentes UI genéricos.
+2. ⏳ Mover solo lo que tenga contrato estable y pruebas.
+
+Detalle de cierre Fase 4.1:
+
+1. `Search`: se estandariza por contrato de `searchComponent`, sin wrapper nuevo.
+2. `Tutorial`: se estandariza con `Onboarding` (pasos estructurados) y `TabsLayout`.
+3. `Card/Accordion`: quedan fuera de esta iteración, pendientes de convergencia visual.
+
+## Fase 5 (pendiente)
+
+1. Medir y documentar reducción de duplicación app por app (antes/después).
+2. Cerrar deprecaciones de utilidades locales duplicadas.
+3. Publicar changelog final de migración y guía corta de limpieza.
 
 ## 6. Criterios de aceptación
 
@@ -193,8 +228,8 @@ Mitigación:
 
 ## 8. Checklist para Codex de la librería
 
-1. Crear módulos P0 (`useOnlineStatus`, `OfflineBanner`, helpers de menú).
-2. Añadir tests unitarios para casos edge (online/offline intermitente, dividers extremos).
-3. Publicar release canary.
-4. Preparar ejemplos de integración para `notes` y `wallet`.
-5. Definir plan de deprecación de utilidades locales repetidas.
+1. ✅ Crear módulos P0 (`useOnlineStatus`, `OfflineBanner`, helpers de menú).
+2. ✅ Añadir tests unitarios para casos edge (online/offline intermitente, dividers extremos).
+3. ✅ Publicar release con piezas P0/P1.
+4. ✅ Integrar y validar en apps consumidoras con `AppProviders` funcional.
+5. ⏳ Definir y ejecutar plan de deprecación de utilidades locales repetidas.
