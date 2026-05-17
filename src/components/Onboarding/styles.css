@@ -40,7 +40,7 @@
 }
 
 .step-title {
-  @apply text-center;
+  @apply text-center text-balance;
   font-size: clamp(1.55rem, 7vw, 2.4rem);
   line-height: 1.2;
 }
