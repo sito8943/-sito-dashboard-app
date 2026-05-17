@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useTranslation, classNames } from "@sito/dashboard";
 
 // lib
@@ -23,10 +24,14 @@ export function Preview<EntityDto extends ImportPreviewDto>(
   const { items, max = 5, className = "" } = props;
   const { t } = useTranslation();
 
+  const counts = useMemo(
+    () => computeImportPreviewCounts(items ?? []),
+    [items],
+  );
+
   if (!items || items.length === 0) return null;
 
   const limited = items.slice(0, max);
-  const counts = computeImportPreviewCounts(items);
 
   return (
     <div className={classNames("import-preview", className)}>
