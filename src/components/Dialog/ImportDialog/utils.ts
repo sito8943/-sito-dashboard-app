@@ -1,4 +1,22 @@
-import type { ImportAction as Action, ImportState as State } from "./types";
+import type { ImportPreviewDto } from "lib";
+
+import type {
+  ImportAction as Action,
+  ImportPreviewStatusCounts,
+  ImportState as State,
+} from "./types";
+
+export const computeImportPreviewCounts = <T extends ImportPreviewDto>(
+  items: T[],
+): ImportPreviewStatusCounts =>
+  items.reduce<ImportPreviewStatusCounts>(
+    (acc, item) => ({
+      existing: acc.existing + (item.existing ? 1 : 0),
+      willCreate: acc.willCreate + (item.willCreate ? 1 : 0),
+      conflict: acc.conflict + (item.conflict ? 1 : 0),
+    }),
+    { existing: 0, willCreate: 0, conflict: 0 },
+  );
 
 export const initialState = <T>(): State<T> => ({
   file: null,

@@ -1,68 +1,67 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React, { useState } from "react";
+import React, { useState, type ReactNode } from "react";
 import { ConfirmationDialog } from "./ConfirmationDialog";
+import type { ConfirmationDialogPropsType } from "./types";
+
+type StoryArgs = Omit<
+  ConfirmationDialogPropsType,
+  "open" | "handleClose" | "handleSubmit" | "children"
+> & {
+  body?: ReactNode;
+};
+
+const Wrapper = (args: StoryArgs) => {
+  const { body, ...rest } = args;
+  const [open, setOpen] = useState(true);
+  return (
+    <div>
+      <button
+        className="button submit primary mb-4"
+        onClick={() => setOpen(true)}
+      >
+        Open Dialog
+      </button>
+      <ConfirmationDialog
+        {...rest}
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleSubmit={() => setOpen(false)}
+      >
+        {body}
+      </ConfirmationDialog>
+    </div>
+  );
+};
 
 const meta = {
   title: "Components/Dialog/ConfirmationDialog",
-  component: ConfirmationDialog,
+  component: Wrapper,
   tags: ["autodocs"],
   args: {
     title: "Confirm Delete",
     mobileFullScreen: false,
   },
-} satisfies Meta<typeof ConfirmationDialog>;
+} satisfies Meta<typeof Wrapper>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
   args: {
-    open: true,
-    handleClose: () => {},
-    handleSubmit: () => {},
-  },
-  render: (args) => {
-    const [open, setOpen] = useState(true);
-    return (
-      <ConfirmationDialog
-        {...args}
-        open={open}
-        handleClose={() => setOpen(false)}
-        handleSubmit={() => setOpen(false)}
-      >
-        <p>Are you sure you want to delete this item?</p>
-      </ConfirmationDialog>
-    );
+    body: <p>Are you sure you want to delete this item?</p>,
   },
 };
 
 export const Loading: Story = {
   args: {
-    open: true,
     isLoading: true,
-    handleClose: () => {},
-    handleSubmit: () => {},
-  },
-  render: (args) => {
-    const [open, setOpen] = useState(true);
-    return (
-      <ConfirmationDialog
-        {...args}
-        open={open}
-        handleClose={() => setOpen(false)}
-        handleSubmit={() => setOpen(false)}
-      >
-        <p>Please wait while we process your request.</p>
-      </ConfirmationDialog>
-    );
+    body: <p>Please wait while we process your request.</p>,
   },
 };
 
 export const WithExtraActions: Story = {
   args: {
-    open: true,
-    handleClose: () => {},
-    handleSubmit: () => {},
+    body: <p>Use extra actions for secondary workflows before confirming.</p>,
     extraActions: [
       {
         id: "preview-action",
@@ -81,42 +80,14 @@ export const WithExtraActions: Story = {
       },
     ],
   },
-  render: (args) => {
-    const [open, setOpen] = useState(true);
-    return (
-      <ConfirmationDialog
-        {...args}
-        open={open}
-        handleClose={() => setOpen(false)}
-        handleSubmit={() => setOpen(false)}
-      >
-        <p>Use extra actions for secondary workflows before confirming.</p>
-      </ConfirmationDialog>
-    );
-  },
 };
 
 export const MobileFullScreen: Story = {
   args: {
-    open: true,
-    handleClose: () => {},
-    handleSubmit: () => {},
     mobileFullScreen: true,
+    body: <p>Full screen on mobile viewport.</p>,
   },
   parameters: {
     viewport: { defaultViewport: "mobile1" },
-  },
-  render: (args) => {
-    const [open, setOpen] = useState(true);
-    return (
-      <ConfirmationDialog
-        {...args}
-        open={open}
-        handleClose={() => setOpen(false)}
-        handleSubmit={() => setOpen(false)}
-      >
-        <p>Full screen on mobile viewport.</p>
-      </ConfirmationDialog>
-    );
   },
 };

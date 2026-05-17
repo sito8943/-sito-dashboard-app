@@ -33,6 +33,20 @@ const failingFileProcessor: NonNullable<
   throw new Error("Invalid CSV format");
 };
 
+const mixedStatusFileProcessor: NonNullable<
+  ImportDialogPropsType<ImportPreviewDto>["fileProcessor"]
+> = async () => {
+  await sleep(700);
+  return [
+    { existing: true },
+    { existing: true },
+    { willCreate: true },
+    { willCreate: true },
+    { willCreate: true },
+    { conflict: true },
+  ];
+};
+
 const ImportDialogStory = ({
   title = "Import Data",
   helperText = "Choose a file and confirm.",
@@ -45,19 +59,27 @@ const ImportDialogStory = ({
   const [open, setOpen] = useState(true);
 
   return (
-    <ImportDialog<ImportPreviewDto>
-      title={title}
-      open={open}
-      handleClose={() => setOpen(false)}
-      handleSubmit={() => setOpen(false)}
-      mobileFullScreen={mobileFullScreen}
-      fileProcessor={fileProcessor}
-      renderCustomPreview={renderCustomPreview}
-      extraActions={extraActions}
-      extraFields={extraFields}
-    >
-      <p className="mt-2">{helperText}</p>
-    </ImportDialog>
+    <div>
+      <button
+        className="button submit primary mb-4"
+        onClick={() => setOpen(true)}
+      >
+        Open Dialog
+      </button>
+      <ImportDialog<ImportPreviewDto>
+        title={title}
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleSubmit={() => setOpen(false)}
+        mobileFullScreen={mobileFullScreen}
+        fileProcessor={fileProcessor}
+        renderCustomPreview={renderCustomPreview}
+        extraActions={extraActions}
+        extraFields={extraFields}
+      >
+        <p className="mt-2">{helperText}</p>
+      </ImportDialog>
+    </div>
   );
 };
 
@@ -120,6 +142,14 @@ export const WithParseError: Story = {
   args: {
     fileProcessor: failingFileProcessor,
     helperText: "Upload a file to trigger parse error state.",
+  },
+};
+
+export const WithMixedStatuses: Story = {
+  args: {
+    fileProcessor: mixedStatusFileProcessor,
+    helperText:
+      "Upload any file to see preview chips for existing, will create, and conflict items.",
   },
 };
 

@@ -22,17 +22,25 @@ const ExportDialogStory = ({
   const [open, setOpen] = useState(true);
 
   return (
-    <ExportDialog
-      title={title}
-      open={open}
-      handleClose={() => setOpen(false)}
-      handleSubmit={() => setOpen(false)}
-      mobileFullScreen={mobileFullScreen}
-      extraFields={extraFields}
-      extraActions={extraActions}
-    >
-      <p className="mt-2">{helperText}</p>
-    </ExportDialog>
+    <div>
+      <button
+        className="button submit primary mb-4"
+        onClick={() => setOpen(true)}
+      >
+        Open Dialog
+      </button>
+      <ExportDialog
+        title={title}
+        open={open}
+        handleClose={() => setOpen(false)}
+        handleSubmit={() => setOpen(false)}
+        mobileFullScreen={mobileFullScreen}
+        extraFields={extraFields}
+        extraActions={extraActions}
+      >
+        <p className="mt-2">{helperText}</p>
+      </ExportDialog>
+    </div>
   );
 };
 

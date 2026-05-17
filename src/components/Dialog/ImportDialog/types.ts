@@ -49,6 +49,12 @@ export type PreviewProps<EntityDto extends ImportPreviewDto> = {
   className?: string;
 };
 
+export type ImportPreviewStatusCounts = {
+  existing: number;
+  willCreate: number;
+  conflict: number;
+};
+
 export type ErrorProps = {
   message?: string | null;
   className?: string;

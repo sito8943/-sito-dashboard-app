@@ -80,10 +80,30 @@ const translations: Record<string, string> = {
   "_accessibility:ariaLabels.hidePassword": "Hide password",
   "_accessibility:labels.file": "File",
   "_pages:common.actions.import.override": "Override existing items",
+  "_pages:common.actions.import.previewCount": "Preview: {{count}} items",
+  "_pages:common.actions.import.statusExisting": "Existing: {{count}}",
+  "_pages:common.actions.import.statusWillCreate": "Will create: {{count}}",
+  "_pages:common.actions.import.statusConflict": "Conflict: {{count}}",
   "_messages:errors.parseFile": "Failed to process file",
 };
 
-const t = (key: string) => translations[key] ?? key;
+const interpolate = (
+  template: string,
+  opts?: Record<string, unknown>,
+): string => {
+  if (!opts) return template;
+  return template.replace(/\{\{(\w+)\}\}/g, (_, name) => {
+    const v = opts[name];
+    return v === undefined || v === null ? "" : String(v);
+  });
+};
+
+const t = (key: string, opts?: Record<string, unknown>) => {
+  const tpl = translations[key];
+  if (tpl !== undefined) return interpolate(tpl, opts);
+  const fallback = opts?.defaultValue;
+  return typeof fallback === "string" ? fallback : key;
+};
 
 const withProviders: Decorator = (Story) => (
   <TranslationProvider t={t}>
