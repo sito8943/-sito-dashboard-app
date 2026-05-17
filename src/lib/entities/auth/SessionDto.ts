@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type SessionDto<TExtra extends object = {}> = {
+export type SessionDto<TExtra extends object = Record<string, unknown>> = {
   id: number;
   username: string;
   email: string;
@@ -8,4 +7,5 @@ export type SessionDto<TExtra extends object = {}> = {
   accessTokenExpiresAt?: string | null;
 } & TExtra;
 
-export type SessionAccountDto = Partial<SessionDto>;
+export type SessionAccountDto<TExtra extends object = Record<string, unknown>> =
+  Partial<SessionDto<TExtra>>;
