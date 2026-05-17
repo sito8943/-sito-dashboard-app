@@ -1,4 +1,5 @@
-type SessionDto<TExtra extends object = Record<string, never>> = {
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type SessionDto<TExtra extends object = {}> = {
   id: number;
   username: string;
   email: string;

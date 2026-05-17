@@ -186,6 +186,8 @@ import { Page } from "@sito/dashboard-app/src/components/Page/Page";
 | `Loading` / `SplashScreen`               | Loading indicators                                                                                                                                                                                        |
 | `IconButton`                             | FontAwesome-based icon button (overrides `@sito/dashboard`'s version)                                                                                                                                     |
 | `ToTop`                                  | Floating scroll-to-top button; customizable threshold, target coordinates, icon, tooltip, and click behavior                                                                                              |
+| `ImportDialog`                           | Import flow modal with file input, preview, override, optional `extraFields`, and footer `extraActions`                                                                                                   |
+| `ExportDialog`                           | Optional export-config modal with `extraFields` slot; pair with `useExportDialog` for hook-managed state                                                                                                  |
 
 ---
 
@@ -294,6 +296,154 @@ const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
   renderCustomPreview: (items) => <ProductsPreviewTable items={items ?? []} />,
 });
 ```
+
+### `ImportDialog` extra fields
+
+`ImportDialog` supports an optional `extraFields: ReactNode` slot rendered between
+the preview and `DialogActions`. Use it for custom inputs (checkboxes, selects,
+notes) that complement the import payload. State for those inputs can be owned
+by the consumer or by the hook.
+
+```tsx
+<ImportDialog<TransactionImportPreviewDto>
+  open={open}
+  title="Import transactions"
+  handleClose={close}
+  handleSubmit={submit}
+  fileProcessor={parseFile}
+  extraFields={
+    <label>
+      <input
+        type="checkbox"
+        checked={useCurrentAccount}
+        onChange={(e) => setUseCurrentAccount(e.target.checked)}
+      />
+      Use current account
+    </label>
+  }
+/>
+```
+
+`useImportDialog` exposes a hook-managed flow through an optional `TExtra`
+generic, `defaultExtra`, and `renderExtraFields`. The hook merges the extra
+values into the mutation payload as `{ items, override, ...extra }` and resets
+them on close/submit. The returned `extraFields` is wired automatically when
+spreading the hook result into `ImportDialog`.
+
+```tsx
+type ExtraImport = { useCurrentAccount: boolean };
+
+const importDialog = useImportDialog<
+  TransactionDto,
+  TransactionImportPreviewDto,
+  ExtraImport
+>({
+  queryKey: ["transactions"],
+  entity: "transactions",
+  fileProcessor: parseFile,
+  defaultExtra: { useCurrentAccount: true },
+  mutationFn: ({ items, override, useCurrentAccount }) =>
+    api.transactions.import({
+      items,
+      override,
+      accountId: useCurrentAccount ? currentAccountId : null,
+    }),
+  renderExtraFields: ({ values, setValue }) => (
+    <label>
+      <input
+        type="checkbox"
+        checked={values.useCurrentAccount}
+        onChange={(e) => setValue("useCurrentAccount", e.target.checked)}
+      />
+      Use current account
+    </label>
+  ),
+});
+
+<ImportDialog<TransactionImportPreviewDto> {...importDialog} />;
+```
+
+Notes:
+
+- Prefer `useImportDialog` + `renderExtraFields` when the inputs are part of the
+  import flow — payload typing, reset and slot wiring are handled by the hook.
+- Use the component-level `extraFields` only when the inputs live in
+  consumer-owned state and do not affect the mutation payload.
+
+### `ExportDialog` / `useExportDialog`
+
+Export flows have two modes:
+
+- **Direct (no dialog)**: `useExportAction` + `useExportActionMutate` — click
+  triggers the mutation immediately. Use this when the entity does not need
+  extra configuration before export.
+- **With config dialog**: `useExportDialog` + `ExportDialog` — click opens a
+  modal that collects extra config (date range, format, columns), then submits
+  to `mutationFn(extra)`.
+
+Both hooks return an `action()` factory with the same `ActionType` shape, so
+`Page`/`Actions`/`PrettyGrid` consume either without changes.
+
+`useExportDialog<EntityDto, TExtra, TOutput>`:
+
+- `entity: string` — used for the dialog title translation key.
+- `mutationFn: (extra: TExtra) => Promise<TOutput>` — receives the extra form
+  values directly. Returns whatever the backend produces (Blob, URL, void).
+- `defaultExtra?: TExtra` — initial value, also used to reset on close/submit.
+- `renderExtraFields?: ({ values, setValue, setValues }) => ReactNode` — hook-
+  managed render prop; the returned node is wired into `ExportDialog` via the
+  `extraFields` slot when spreading the hook result.
+- `onSuccess?`, `onError?` — optional callbacks for post-export work
+  (download trigger, query invalidation, notifications).
+
+```tsx
+import { ExportDialog, useExportDialog } from "@sito/dashboard-app";
+
+type ExportExtra = { from: string; to: string; format: "csv" | "xlsx" };
+
+const exportDialog = useExportDialog<TransactionDto, ExportExtra, Blob>({
+  entity: "transactions",
+  defaultExtra: { from: "", to: "", format: "csv" },
+  mutationFn: ({ from, to, format }) =>
+    api.transactions.exportRange({ from, to, format }),
+  renderExtraFields: ({ values, setValue }) => (
+    <div className="grid gap-2">
+      <input
+        type="date"
+        value={values.from}
+        onChange={(e) => setValue("from", e.target.value)}
+      />
+      <input
+        type="date"
+        value={values.to}
+        onChange={(e) => setValue("to", e.target.value)}
+      />
+      <select
+        value={values.format}
+        onChange={(e) =>
+          setValue("format", e.target.value as ExportExtra["format"])
+        }
+      >
+        <option value="csv">CSV</option>
+        <option value="xlsx">XLSX</option>
+      </select>
+    </div>
+  ),
+});
+
+<Page<TransactionDto> title="Transactions" actions={[exportDialog.action()]} />;
+<ExportDialog {...exportDialog} title="Export transactions" />;
+```
+
+Notes:
+
+- `useExportDialog` does not invalidate any query — export does not mutate
+  server state. If your backend changes state on export, do it in `onSuccess`.
+- The hook does not auto-trigger downloads. Handle the file in `onSuccess`
+  (e.g. anchor click with the Blob) or have `mutationFn` perform the download
+  side-effect itself.
+- Opt out anytime: drop `useExportDialog` and go back to `useExportAction` +
+  `useExportActionMutate` for entities that don't need a dialog.
 
 ### `PrettyGrid` infinite scroll
 
@@ -867,10 +1017,11 @@ Consumer projects must provide translations for these namespaces.
 18. **Use `TabsLayout` navigation mode intentionally** — keep default links for route-driven tabs; use `useLinks={false}` (+ `tabButtonProps`) for local state tabs.
 19. **Use `TabsLayout` as a controlled component when the parent owns step state** — prefer `currentTab` + `onTabChange` for onboarding, wizard, or programmatic flows; reserve `defaultTab` for uncontrolled initial selection.
 20. **Use structured `Onboarding` steps** — pass `title`, `body`, and optional `content`/`image`/`alt`; do not rely on internal `_pages:onboarding.*` translation keys.
-21. **Use `ImportDialog`/`useImportDialog` custom preview extension when needed** — prefer `renderCustomPreview` instead of local dialog forks.
+21. **Use `ImportDialog`/`useImportDialog` extension points instead of forking** — prefer `renderCustomPreview` for custom preview UI, and `extraFields` (component) / `defaultExtra` + `renderExtraFields` (hook) for custom inputs. When using the hook, type the mutation payload as `ImportDto<TPreview> & TExtra` and let the hook merge `{ items, override, ...extra }` automatically.
 22. **Use `PrettyGrid` infinite scroll props instead of local grid forks** — `hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, and observer options are the official extension points.
 23. **Use `ToTop` customization props for positioning/behavior** — avoid ad-hoc wrappers when `threshold`, target coordinates, tooltip, icon, and click control are sufficient.
 24. **Prefer `IndexedDBClient.update(value)` in new code** — keep `(id, value)` only for temporary backward compatibility.
 25. **Keep documented runtime version aligned with `.nvmrc`** when writing setup instructions for this repository.
 26. **Run `npm run docs:check` after documentation edits** to validate policy markers, links, and cross-doc consistency.
 27. **Do not document or propose SSR integration for this package** — `@sito/dashboard-app` is client-side/browser-only.
+28. **Pick the right export flow** — for entities without extra configuration, use `useExportAction` + `useExportActionMutate` (direct mutation). For entities that need extra config before export, use `useExportDialog` + `ExportDialog` (`defaultExtra` + `renderExtraFields`). Both hooks expose the same `action()` shape, so `Page`/`Actions`/`PrettyGrid` consume either interchangeably. `useExportDialog` does not invalidate queries and does not auto-trigger downloads — handle those in `onSuccess` or inside `mutationFn`.

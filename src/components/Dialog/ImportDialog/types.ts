@@ -18,6 +18,7 @@ export interface ImportDialogPropsType<EntityDto extends ImportPreviewDto>
   renderCustomPreview?: (items?: EntityDto[] | null) => ReactNode;
   onOverrideChange?: (override: boolean) => void;
   extraActions?: ButtonPropsType[];
+  extraFields?: ReactNode;
 }
 
 export type ImportDialogLoadingProps = {

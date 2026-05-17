@@ -69,9 +69,9 @@ npm install @supabase/supabase-js@2.100.0
 
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
-- Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, form inputs
+- Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`
-- Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
+- Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, and `normalizeMenuDividers`
 
 ## Component usage patterns
@@ -175,6 +175,136 @@ const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
   renderCustomPreview: (items) => <ProductsPreviewTable items={items ?? []} />,
 });
 ```
+
+### ImportDialog extra fields
+
+`ImportDialog` supports an optional `extraFields: ReactNode` slot rendered
+between the preview and `DialogActions`. Use it for custom inputs (checkboxes,
+selects, notes) that complement the import payload.
+
+```tsx
+import { ImportDialog } from "@sito/dashboard-app";
+
+<ImportDialog<TransactionImportPreviewDto>
+  open={open}
+  title="Import transactions"
+  handleClose={close}
+  handleSubmit={submit}
+  fileProcessor={parseFile}
+  extraFields={
+    <label>
+      <input
+        type="checkbox"
+        checked={useCurrentAccount}
+        onChange={(e) => setUseCurrentAccount(e.target.checked)}
+      />
+      Use current account
+    </label>
+  }
+/>;
+```
+
+`useImportDialog` exposes a hook-managed flow through an optional `TExtra`
+generic plus two new props:
+
+- `defaultExtra?: TExtra` — initial value for the extra fields (also used to
+  reset on close/submit).
+- `renderExtraFields?: ({ values, setValue, setValues }) => ReactNode` — render
+  prop whose returned node is wired into `ImportDialog` via the `extraFields`
+  slot when spreading the hook result.
+
+The hook merges the extra values into the mutation payload as
+`{ items, override, ...extra }`. `mutationFn` is typed as
+`ImportDto<TPreview> & TExtra`.
+
+```tsx
+import { ImportDialog, useImportDialog } from "@sito/dashboard-app";
+
+type ExtraImport = { useCurrentAccount: boolean };
+
+const importDialog = useImportDialog<
+  TransactionDto,
+  TransactionImportPreviewDto,
+  ExtraImport
+>({
+  queryKey: ["transactions"],
+  entity: "transactions",
+  fileProcessor: parseFile,
+  defaultExtra: { useCurrentAccount: true },
+  mutationFn: ({ items, override, useCurrentAccount }) =>
+    api.transactions.import({
+      items,
+      override,
+      accountId: useCurrentAccount ? currentAccountId : null,
+    }),
+  renderExtraFields: ({ values, setValue }) => (
+    <label>
+      <input
+        type="checkbox"
+        checked={values.useCurrentAccount}
+        onChange={(e) => setValue("useCurrentAccount", e.target.checked)}
+      />
+      Use current account
+    </label>
+  ),
+});
+
+<ImportDialog<TransactionImportPreviewDto> {...importDialog} />;
+```
+
+### ExportDialog / useExportDialog (optional export config)
+
+Export flows are direct by default through `useExportAction` +
+`useExportActionMutate`. For entities that need configuration before export
+(date range, format, columns), use `useExportDialog` + `ExportDialog`. Both
+hooks return an `action()` with the same `ActionType` shape, so the call site
+stays the same.
+
+```tsx
+import { ExportDialog, useExportDialog } from "@sito/dashboard-app";
+
+type ExportExtra = { from: string; to: string; format: "csv" | "xlsx" };
+
+const exportDialog = useExportDialog<TransactionDto, ExportExtra, Blob>({
+  entity: "transactions",
+  defaultExtra: { from: "", to: "", format: "csv" },
+  mutationFn: ({ from, to, format }) =>
+    api.transactions.exportRange({ from, to, format }),
+  renderExtraFields: ({ values, setValue }) => (
+    <div className="grid gap-2">
+      <input
+        type="date"
+        value={values.from}
+        onChange={(e) => setValue("from", e.target.value)}
+      />
+      <input
+        type="date"
+        value={values.to}
+        onChange={(e) => setValue("to", e.target.value)}
+      />
+      <select
+        value={values.format}
+        onChange={(e) =>
+          setValue("format", e.target.value as ExportExtra["format"])
+        }
+      >
+        <option value="csv">CSV</option>
+        <option value="xlsx">XLSX</option>
+      </select>
+    </div>
+  ),
+});
+
+<Page<TransactionDto> title="Transactions" actions={[exportDialog.action()]} />;
+<ExportDialog {...exportDialog} title="Export transactions" />;
+```
+
+Notes:
+
+- `useExportDialog` does not invalidate any query and does not auto-trigger
+  downloads — handle those in `onSuccess` or inside `mutationFn`.
+- For entities that don't need a dialog, stay on `useExportAction` +
+  `useExportActionMutate`. The `action()` descriptor is interchangeable.
 
 ### Dialog extra actions
 

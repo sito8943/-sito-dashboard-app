@@ -38,6 +38,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
     onOverrideChange,
     open,
     extraActions = [],
+    extraFields,
     ...rest
   } = props;
 
@@ -141,6 +142,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
         ? renderCustomPreview(previewItems)
         : !!previewItems &&
           previewItems.length > 0 && <Preview items={previewItems} />}
+      {extraFields}
       {children}
       <DialogActions
         primaryText={t("_accessibility:buttons.ok")}
