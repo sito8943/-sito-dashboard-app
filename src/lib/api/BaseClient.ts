@@ -28,6 +28,8 @@ export class BaseClient<
   TUpdateDto extends DeleteDto,
   TFilter extends BaseFilterDto,
   TImportPreviewDto extends ImportPreviewDto,
+  TMutationOutputDto = TDto,
+  TGetByIdDto = TDto,
 > {
   table: Tables;
   secured: boolean;
@@ -56,8 +58,11 @@ export class BaseClient<
    * @param value
    * @returns inserted item
    */
-  async insert(value: TAddDto): Promise<TDto> {
-    return await this.api.post<TDto, TAddDto>(`${this.table}`, value);
+  async insert(value: TAddDto): Promise<TMutationOutputDto> {
+    return await this.api.post<TMutationOutputDto, TAddDto>(
+      `${this.table}`,
+      value,
+    );
   }
 
   /**
@@ -65,8 +70,8 @@ export class BaseClient<
    * @param data - values to insert
    * @returns - Query result
    */
-  async insertMany(data: TAddDto[]): Promise<TDto> {
-    return await this.api.doQuery<TDto, TAddDto[]>(
+  async insertMany(data: TAddDto[]): Promise<TMutationOutputDto> {
+    return await this.api.doQuery<TMutationOutputDto, TAddDto[]>(
       `${this.table}/batch`,
       Methods.POST,
       data,
@@ -78,8 +83,8 @@ export class BaseClient<
    * @param value
    * @returns updated item
    */
-  async update(value: TUpdateDto): Promise<TDto> {
-    return await this.api.patch<TDto, TUpdateDto>(
+  async update(value: TUpdateDto): Promise<TMutationOutputDto> {
+    return await this.api.patch<TMutationOutputDto, TUpdateDto>(
       `${this.table}/${value.id}`,
       value,
     );
@@ -143,8 +148,8 @@ export class BaseClient<
    * @param id
    * @returns - Query result
    */
-  async getById(id: number): Promise<TDto> {
-    return await this.api.doQuery<TDto>(`${this.table}/${id}`);
+  async getById(id: number): Promise<TGetByIdDto> {
+    return await this.api.doQuery<TGetByIdDto>(`${this.table}/${id}`);
   }
 
   async softDelete(ids: number[]): Promise<number> {

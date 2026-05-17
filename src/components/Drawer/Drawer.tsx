@@ -27,6 +27,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
 
   const auth = useOptionalAuthContext();
   const { dynamicItems } = useDrawerMenu();
+  const account = auth?.account;
 
   const { linkComponent, location } = useConfig();
   const Link = linkComponent;
@@ -34,7 +35,9 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const parsedMenu = useMemo(() => {
     return menuMap.filter((item) => {
       const requiresAuth = item.auth;
-      const isLoggedIn = Boolean(auth?.account?.email);
+      const isLoggedIn = Boolean(account?.email);
+
+      if (item.access && !item.access(account)) return false;
 
       // Include item if it doesn’t require auth, or if auth matches login status
       return (
@@ -43,7 +46,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         (!requiresAuth && !isLoggedIn)
       );
     });
-  }, [auth?.account?.email, menuMap]);
+  }, [account, menuMap]);
 
   const onEscapePress = useCallback(
     (e: KeyboardEvent) => {
@@ -115,11 +118,14 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         );
       }
 
-      const children =
+      const availableChildren =
         link.children ??
         (link.page && !!dynamicItems
           ? dynamicItems[link.page as string]
           : null);
+      const children = availableChildren?.filter(
+        (child) => !child.access || child.access(account),
+      );
 
       return (
         <li key={key} className={liClass}>
@@ -142,7 +148,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
         </li>
       );
     });
-  }, [Link, dynamicItems, isActive, open, parsedMenu, renderChild, t]);
+  }, [Link, account, dynamicItems, isActive, open, parsedMenu, renderChild, t]);
 
   return (
     <div

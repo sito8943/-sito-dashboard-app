@@ -20,6 +20,26 @@
   @apply mt-2 max-h-56 overflow-auto rounded bg-base-dark p-3 text-xs;
 }
 
+.import-preview-chips {
+  @apply mt-2 flex flex-wrap gap-2;
+}
+
+.import-preview-chip {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+}
+
+.import-preview-chip-existing {
+  @apply bg-base-dark text-text-muted;
+}
+
+.import-preview-chip-will-create {
+  @apply bg-bg-success/15 text-bg-success;
+}
+
+.import-preview-chip-conflict {
+  @apply bg-bg-error/15 text-bg-error;
+}
+
 .import-error-message {
   @apply text-bg-error text-sm mt-2;
 }

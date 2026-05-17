@@ -18,6 +18,7 @@ export interface ImportDialogPropsType<EntityDto extends ImportPreviewDto>
   renderCustomPreview?: (items?: EntityDto[] | null) => ReactNode;
   onOverrideChange?: (override: boolean) => void;
   extraActions?: ButtonPropsType[];
+  extraFields?: ReactNode;
 }
 
 export type ImportDialogLoadingProps = {
@@ -46,6 +47,12 @@ export type PreviewProps<EntityDto extends ImportPreviewDto> = {
   items: EntityDto[];
   max?: number;
   className?: string;
+};
+
+export type ImportPreviewStatusCounts = {
+  existing: number;
+  willCreate: number;
+  conflict: number;
 };
 
 export type ErrorProps = {

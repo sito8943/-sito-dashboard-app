@@ -37,7 +37,6 @@ src/
   lib/            # Core logic: models, managers, utils, services, constants
     models/
     utils/
-  lang/           # i18n resources (translations, dictionaries)
   styles/         # Global styles (including global.css/theme definitions)
 ```
 

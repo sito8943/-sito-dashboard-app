@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // @sito-dashboard
@@ -7,11 +7,14 @@ import { useTranslation } from "@sito/dashboard";
 // lib
 import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "lib";
 
+// hooks
+import { useImportAction } from "hooks";
+
 // types
 import { UseImportDialogPropsType, UseImportDialogReturnType } from "./types";
 
-// hooks
-import { useImportAction } from "hooks";
+// utils
+import { createExtraSetter, resolveInitialExtra } from "./utils";
 
 /**
  * Builds import dialog state and mutation flow for entity imports.
@@ -21,8 +24,9 @@ import { useImportAction } from "hooks";
 export function useImportDialog<
   EntityDto extends BaseEntityDto,
   PreviewEntityDto extends ImportPreviewDto,
+  TExtra extends Record<string, unknown> = Record<string, never>,
 >(
-  props: UseImportDialogPropsType<PreviewEntityDto>,
+  props: UseImportDialogPropsType<PreviewEntityDto, TExtra>,
 ): UseImportDialogReturnType<EntityDto, PreviewEntityDto> {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -34,16 +38,21 @@ export function useImportDialog<
     fileProcessor,
     renderCustomPreview,
     onError,
+    defaultExtra,
+    renderExtraFields,
   } = props;
+
+  const initialExtra = resolveInitialExtra<TExtra>(defaultExtra);
 
   const [showDialog, setShowDialog] = useState(false);
   const [items, setItems] = useState<PreviewEntityDto[] | null>(null);
   const [override, setOverride] = useState<boolean>(false);
+  const [extra, setExtra] = useState<TExtra>(initialExtra);
 
   const importMutation = useMutation<
     number,
     HttpError,
-    ImportDto<PreviewEntityDto>
+    ImportDto<PreviewEntityDto> & TExtra
   >({
     mutationFn,
     onError: (error: HttpError) => {
@@ -59,6 +68,25 @@ export function useImportDialog<
     onClick: () => setShowDialog(true),
   });
 
+  const setExtraValue = useMemo(() => createExtraSetter(setExtra), []);
+
+  const extraFields = useMemo(
+    () =>
+      renderExtraFields?.({
+        values: extra,
+        setValue: setExtraValue,
+        setValues: setExtra,
+      }) ?? null,
+    [renderExtraFields, extra, setExtraValue],
+  );
+
+  const resetState = useCallback(() => {
+    setShowDialog(false);
+    setItems(null);
+    setOverride(false);
+    setExtra(initialExtra);
+  }, [initialExtra]);
+
   return {
     handleSubmit: async () => {
       if (!items || items.length === 0) return;
@@ -66,10 +94,9 @@ export function useImportDialog<
         await importMutation.mutateAsync({
           items,
           override,
-        } as unknown as ImportDto<PreviewEntityDto>);
-        setShowDialog(false);
-        setItems(null);
-        setOverride(false);
+          ...extra,
+        } as ImportDto<PreviewEntityDto> & TExtra);
+        resetState();
       } catch (e) {
         console.error(e);
       }
@@ -83,11 +110,8 @@ export function useImportDialog<
     title: t("_pages:common.actions.import.dialog.title", {
       entity: t(`_pages:${entity}.title`),
     }),
-    handleClose: () => {
-      setShowDialog(false);
-      setItems(null);
-      setOverride(false);
-    },
+    handleClose: resetState,
     action,
+    extraFields,
   };
 }

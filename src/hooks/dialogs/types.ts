@@ -15,15 +15,9 @@ import {
 import { ActionType } from "@sito/dashboard";
 
 // types
-import {
-  BaseEntityDto,
-  HttpError,
-  ImportDto,
-  ImportPreviewDto,
-  ValidationError,
-} from "lib";
+import { BaseEntityDto, ValidationError } from "lib";
 import { UseBaseFormProps, UseConfirmationPropsType } from "../forms";
-import { FormDialogPropsType, ImportDialogPropsType } from "components";
+import { FormDialogPropsType } from "components";
 
 export type FormDialogMode = "entity" | "state";
 
@@ -176,23 +170,3 @@ export interface UsePutDialogPropsType<
   dtoToForm?: (data: TDto) => TFormType;
   formToDto?: (data: TFormType, dto?: TDto) => TMutationDto;
 }
-
-export interface UseImportDialogPropsType<
-  PreviewEntityDto extends ImportPreviewDto,
-> extends UseBaseFormProps<PreviewEntityDto, HttpError> {
-  queryKey: QueryKey;
-  entity: string;
-  mutationFn: MutationFunction<number, ImportDto<PreviewEntityDto>>;
-  fileProcessor?: (
-    file: File,
-    options?: { override?: boolean },
-  ) => Promise<PreviewEntityDto[]>;
-  renderCustomPreview?: ImportDialogPropsType<PreviewEntityDto>["renderCustomPreview"];
-}
-
-export type UseImportDialogReturnType<
-  EntityDto extends BaseEntityDto,
-  PreviewEntityDto extends ImportPreviewDto,
-> = ImportDialogPropsType<PreviewEntityDto> & {
-  action: () => ActionType<EntityDto>;
-};

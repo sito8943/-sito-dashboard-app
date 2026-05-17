@@ -34,13 +34,13 @@
 }
 
 .step-container {
-  @apply flex flex-col;
+  @apply flex flex-col m-auto;
   width: min(100%, 32rem);
   gap: 1rem;
 }
 
 .step-title {
-  @apply text-center;
+  @apply text-center text-balance;
   font-size: clamp(1.55rem, 7vw, 2.4rem);
   line-height: 1.2;
 }

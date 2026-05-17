@@ -27,24 +27,32 @@ const FormDialogStory = ({
   });
 
   return (
-    <FormDialog<FormData>
-      title={title}
-      open={open}
-      handleSubmit={handleSubmit}
-      onSubmit={() => setOpen(false)}
-      handleClose={() => setOpen(false)}
-      isLoading={isLoading}
-      buttonEnd={buttonEnd}
-      mobileFullScreen={mobileFullScreen}
-      extraActions={extraActions}
-    >
-      <TextInput
-        value={""}
-        label="Description"
-        placeholder="Type here"
-        {...register("description")}
-      />
-    </FormDialog>
+    <div>
+      <button
+        className="button submit primary mb-4"
+        onClick={() => setOpen(true)}
+      >
+        Open Dialog
+      </button>
+      <FormDialog<FormData>
+        title={title}
+        open={open}
+        handleSubmit={handleSubmit}
+        onSubmit={() => setOpen(false)}
+        handleClose={() => setOpen(false)}
+        isLoading={isLoading}
+        buttonEnd={buttonEnd}
+        mobileFullScreen={mobileFullScreen}
+        extraActions={extraActions}
+      >
+        <TextInput
+          value={""}
+          label="Description"
+          placeholder="Type here"
+          {...register("description")}
+        />
+      </FormDialog>
+    </div>
   );
 };
 

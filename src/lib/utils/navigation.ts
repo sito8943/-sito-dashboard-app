@@ -1,5 +1,6 @@
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { ReactNode } from "react";
+import type { SessionAccountDto } from "../entities/auth";
 
 /**
  * The pathname, search, and hash values of a URL.
@@ -37,11 +38,14 @@ export interface Location<State = unknown> extends Path {
   key?: string;
 }
 
+export type AccessGuard = (account?: SessionAccountDto) => boolean;
+
 export type ViewPageType<PageId extends string = string> = {
   key: PageId;
   path: string;
   children?: ViewPageType<PageId>[];
   role?: string[];
+  access?: AccessGuard;
 };
 
 export interface NamedViewPageType<PageId extends string = string>
@@ -53,6 +57,7 @@ export type SubMenuItemType = {
   id: string;
   label: string | ReactNode;
   path?: string;
+  access?: AccessGuard;
 };
 
 export type MenuItemType<MenuKeys> = {
@@ -63,6 +68,7 @@ export type MenuItemType<MenuKeys> = {
   type?: "menu" | "divider";
   auth?: boolean;
   children?: SubMenuItemType[];
+  access?: AccessGuard;
 };
 
 export type FeatureEnabledFn<FeatureKey extends string> = (

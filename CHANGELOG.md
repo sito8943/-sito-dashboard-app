@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.75] - 2026-05-17
+
+### Added
+
+- `ImportDialog` now accepts an optional `extraFields: ReactNode` slot rendered between the preview and `DialogActions` for custom inputs (checkboxes, selects, notes).
+- `useImportDialog` gains an optional third generic `TExtra` plus:
+  - `defaultExtra?: TExtra` — initial value for the extra fields, also used to reset on close/submit.
+  - `renderExtraFields?: ({ values, setValue, setValues }) => ReactNode` — hook-managed render prop wired into `ImportDialog` via the `extraFields` slot when spreading the hook result.
+  - `mutationFn` is typed as `ImportDto<TPreview> & TExtra`; the hook merges extra values into the payload as `{ items, override, ...extra }`.
+- New `ExportDialog` component for optional export-config flows (date range, format, columns) — accepts `extraFields`, `extraActions`, and `mobileFullScreen`.
+- New `useExportDialog<EntityDto, TExtra, TOutput>` hook with `defaultExtra`/`renderExtraFields` and `mutationFn(extra)`. Returns an `action()` factory with the same `ActionType` shape as `useExportAction`, so consumers can opt in/out of the dialog per entity without changing the call site.
+- Shared `hooks/dialogs/shared` module with `EMPTY_EXTRA`, `resolveInitialExtra`, `createExtraSetter`, `ExtraFieldsContext`, and `RenderExtraFields` reused by both import and export dialog hooks.
+- Navigation menu contracts now support optional access guards:
+  - `AccessGuard = (account?: SessionAccountDto) => boolean`
+  - `access?: AccessGuard` on `ViewPageType`, `MenuItemType`, and `SubMenuItemType`
+  - `Drawer` now filters both top-level items and nested children against the current account.
+- `ImportPreviewDto` now supports `willCreate?: boolean` and `conflict?: boolean` so import previews can express more than the existing/non-existing state.
+- Storybook coverage: `Components/Dialog/ImportDialog/WithExtraFields`, `Components/Dialog/ExportDialog/WithExtraFields`, and `Hooks/Dialogs/ImportDialogs/WithExtraFields`.
+
+### Changed
+
+- Refactored `useImportDialog` into a per-feature folder (`hooks/dialogs/useImportDialog/`) with sibling `types.ts`, `constants.ts`, and `utils.ts` to comply with `docs/ARCHITECTURE_RULES.md` §7. Shared helpers moved to `hooks/dialogs/shared` and re-exported.
+- `BaseClient` now accepts two optional output generics:
+  - `TMutationOutputDto` for `insert`, `insertMany`, and `update`
+  - `TGetByIdDto` for `getById`
+    This allows mutation/detail endpoints to return shapes that differ from the list DTO without requiring consumer-side casts.
+- `SessionDto` is now generic (`SessionDto<TExtra>`) so auth/session payloads can carry extra backend fields while preserving the base session contract.
+- `ImportDialog` preview now shows compact status chips for `existing`, `willCreate`, and `conflict` counts above the JSON preview.
+- Refined onboarding step layout with centered step content and balanced titles on narrow screens.
+
+### Documentation
+
+- Updated `README.md`, `AGENTS.md`, `docs/CONSUMER_GUIDE.md`, `docs/RECIPES.md`, and `docs/THEME_AND_CSS.md` to document the new import/export dialog extension points.
+
 ## [0.0.74] - 2026-05-11
 
 ### Added

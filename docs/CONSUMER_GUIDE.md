@@ -219,7 +219,8 @@ const supabase = createClient(
 | `Dialog`                 | `open`, `title`, `handleClose`, `containerClassName`, `className`                                                                                                                | Base modal                                         |
 | `FormDialog<TForm>`      | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions  |
 | `ConfirmationDialog`     | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                                                                                                      | Basic confirmation flows                           |
-| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`                                                                                    | Import with preview + override                     |
+| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`, `extraFields`                                                                     | Import with preview + override + custom inputs     |
+| `ExportDialog`           | `handleSubmit`, `isLoading`, `extraFields`, `extraActions`                                                                                                                       | Optional export config modal (date range, format)  |
 | `Drawer<MenuKeys>`       | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                    |
 | `Navbar`                 | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                 |
 | `BottomNavigation<TId>`  | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA   |
@@ -296,6 +297,89 @@ import { ImportDialog } from "@sito/dashboard-app";
   renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
 />;
 ```
+
+### 5.4.1 `ImportDialog`: extra fields (custom inputs)
+
+Use `extraFields` to render custom inputs (checkboxes, selects, text) between the
+preview and the footer actions. When the consumer owns the state, pass the node
+directly:
+
+```tsx
+import { useState } from "react";
+import { ImportDialog } from "@sito/dashboard-app";
+
+const [useCurrentAccount, setUseCurrentAccount] = useState(true);
+
+<ImportDialog<TransactionImportPreviewDto>
+  open={open}
+  title="Import transactions"
+  handleClose={close}
+  handleSubmit={() => submitImport({ useCurrentAccount, items: previewItems })}
+  fileProcessor={parseFile}
+  extraFields={
+    <label className="flex items-center gap-2">
+      <input
+        type="checkbox"
+        checked={useCurrentAccount}
+        onChange={(e) => setUseCurrentAccount(e.target.checked)}
+      />
+      <span>Use current account</span>
+    </label>
+  }
+/>;
+```
+
+When pairing with `useImportDialog`, prefer the hook-managed flow via
+`defaultExtra` + `renderExtraFields` (see `RECIPES.md` §8). The hook merges the
+extra values into the `mutationFn` payload as
+`{ items, override, ...extra }`.
+
+### 5.4.2 `ExportDialog` / `useExportDialog`: optional export config
+
+Export flows are direct by default (`useExportAction` + `useExportActionMutate`).
+When an entity needs extra configuration before the request (date range, format,
+columns), swap to `useExportDialog` — same `action()` shape, so `Page`/`Actions`
+consume either without changes.
+
+```tsx
+import { ExportDialog, useExportDialog } from "@sito/dashboard-app";
+
+type ExportExtra = { from: string; to: string; format: "csv" | "xlsx" };
+
+const exportDialog = useExportDialog<TransactionDto, ExportExtra, Blob>({
+  entity: "transactions",
+  defaultExtra: { from: "", to: "", format: "csv" },
+  mutationFn: ({ from, to, format }) =>
+    api.transactions.exportRange({ from, to, format }),
+  renderExtraFields: ({ values, setValue }) => (
+    <div className="grid gap-2">
+      <input
+        type="date"
+        value={values.from}
+        onChange={(e) => setValue("from", e.target.value)}
+      />
+      <input
+        type="date"
+        value={values.to}
+        onChange={(e) => setValue("to", e.target.value)}
+      />
+      <select
+        value={values.format}
+        onChange={(e) => setValue("format", e.target.value as ExportExtra["format"])}
+      >
+        <option value="csv">CSV</option>
+        <option value="xlsx">XLSX</option>
+      </select>
+    </div>
+  ),
+});
+
+<Page exportAction={exportDialog.action} ... />
+<ExportDialog {...exportDialog} title="Export transactions" />
+```
+
+Opt out of the dialog by using `useExportAction` + `useExportActionMutate`
+directly — the action triggers the mutation without any modal.
 
 ### 5.5 `useNavbar`: dynamic title and right slot
 
