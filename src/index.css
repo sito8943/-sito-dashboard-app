@@ -31,3 +31,7 @@
   --color-error: #fbfbfb;
   --breakpoint-xs: 28rem;
 }
+
+.animated {
+  @apply transition duration-300 ease-in-out;
+}
