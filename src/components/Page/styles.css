@@ -1,7 +1,6 @@
 @reference "../../index.css";
 
 .page-header {
-  transition: all 300ms ease-in-out;
   @apply flex items-center justify-between
     pr-3 pl-4 py-2 bg-primary text-base-light w-full;
 }

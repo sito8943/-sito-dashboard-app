@@ -33,7 +33,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
   const { navigate } = useConfig();
 
   return (
-    <div className="page-header">
+    <div className="page-header animated">
       <div className="page-header-left">
         {showBackButton && (
           <AppIconButton

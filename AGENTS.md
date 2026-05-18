@@ -105,6 +105,7 @@ function App() {
         /* router navigate */
       }}
       linkComponent={MyLinkComponent}
+      motion="auto"
     >
       <ManagerProvider manager={manager} queryClient={queryClient}>
         <AuthProvider
@@ -137,12 +138,13 @@ Use the built-in composer when apps share the same provider wiring:
 - `auth={false}` disables auth wiring when needed.
 - `withNavbarProvider` and `withBottomNavActionProvider` enable optional UI providers.
 - `featureFlagsProvider`, `offlineSyncProvider`, and `appWrapperProvider` inject app-specific wrappers without coupling domain logic into this package.
+- `config.motion` controls library transitions globally: `"auto"` (default), `"none"`, or `"always"`.
 
 ### Provider responsibilities
 
 | Provider               | Purpose                                                                                                                                               |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ConfigProvider`       | Injects router `location`, `navigate`, `linkComponent`, and optional `searchComponent`                                                                |
+| `ConfigProvider`       | Injects router `location`, `navigate`, `linkComponent`, optional `searchComponent`, and global `motion` preference                                    |
 | `ManagerProvider`      | Injects the API manager (`IManager`) consumed by hooks and components                                                                                 |
 | `AuthProvider`         | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
 | `NotificationProvider` | Global toast notification system                                                                                                                      |
@@ -974,8 +976,15 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
     else navigate(route);
   }}
   linkComponent={Link}
+  motion="auto"
 />;
 ```
+
+`motion` semantics:
+
+- `"auto"` respects `prefers-reduced-motion`.
+- `"none"` disables library transitions and animations.
+- `"always"` keeps library transitions enabled even when the OS/browser requests reduced motion.
 
 ---
 

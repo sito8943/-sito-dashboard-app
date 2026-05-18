@@ -727,6 +727,7 @@ function AppProviders({ children }: { children: ReactNode }) {
         else go(route);
       }}
       linkComponent={Link}
+      motion="auto"
     >
       <ManagerProvider manager={manager}>
         <AuthProvider
@@ -765,6 +766,7 @@ Notes:
 - `NavbarProvider` is required when using `Navbar` or `useNavbar`; otherwise it can be omitted.
 - `BottomNavActionProvider` is optional; mount it around your app shell when pages/components use `useRegisterBottomNavAction`.
 - If you customize auth storage keys in `AuthProvider`, pass the same keys to `IManager`/`BaseClient` auth config.
+- `ConfigProvider` accepts `motion="auto" | "none" | "always"` to control library transitions globally; `auto` is the default and respects `prefers-reduced-motion`.
 
 ### Provider composer (`AppProviders` / `createAppProviders`)
 
@@ -778,6 +780,7 @@ It also supports:
 - `auth={false}` to disable auth wiring.
 - `withNavbarProvider` and `withBottomNavActionProvider` for optional UI providers.
 - `featureFlagsProvider`, `offlineSyncProvider`, and `appWrapperProvider` slots for app-specific wrappers.
+- `config.motion` to control library transitions globally: `"auto"` (default), `"none"`, or `"always"`.
 
 ```tsx
 import type { ReactNode } from "react";
@@ -807,6 +810,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           else navigate(route);
         },
         linkComponent: Link,
+        motion: "auto",
       }}
       manager={{ manager }}
       auth={{ user: "user", remember: "remember" }}
@@ -833,6 +837,7 @@ export const Providers = createAppProviders({
     location: window.location,
     navigate: () => {},
     linkComponent: Link,
+    motion: "auto",
   },
   manager: { manager },
   auth: false,
@@ -875,6 +880,7 @@ function AppProviders({ children }: { children: ReactNode }) {
       location={window.location}
       navigate={() => {}}
       linkComponent={Link}
+      motion="auto"
     >
       <SupabaseManagerProvider supabase={supabase}>
         <SupabaseAuthProvider>

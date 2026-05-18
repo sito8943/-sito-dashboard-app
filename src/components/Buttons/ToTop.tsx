@@ -51,7 +51,11 @@ export const ToTop = (props: ToTopPropsType) => {
       icon={icon}
       data-tooltip-id="tooltip"
       onClick={handleClick}
-      className={classNames("to-top", isScrolled ? "show" : "hide", className)}
+      className={classNames(
+        "to-top animated",
+        isScrolled ? "show" : "hide",
+        className,
+      )}
       data-tooltip-content={tooltip}
       {...rest}
     />
