@@ -96,4 +96,20 @@ describe("Dialog", () => {
     expect(fullscreenDialog).toHaveClass("dialog-mobile-full-screen");
     expect(fullscreenDialog).not.toHaveClass("dialog-framed");
   });
+
+  it("prevents native form navigation and delegates submit", () => {
+    const onSubmit = vi.fn((event?: { defaultPrevented?: boolean }) => {
+      expect(event?.defaultPrevented).toBe(true);
+    });
+
+    render(
+      <Dialog open title="Confirm" handleClose={vi.fn()} onSubmit={onSubmit}>
+        <button type="submit">Submit</button>
+      </Dialog>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Submit" }));
+
+    expect(onSubmit).toHaveBeenCalledOnce();
+  });
 });

@@ -13,13 +13,15 @@ vi.mock("./Dialog", () => ({
   Dialog: ({
     children,
     title,
+    onSubmit,
   }: {
     children: React.ReactNode;
     title: string;
+    onSubmit?: (event?: React.BaseSyntheticEvent) => void | Promise<void>;
   }) => (
     <div role="dialog">
       <h2>{title}</h2>
-      {children}
+      {onSubmit ? <form onSubmit={onSubmit}>{children}</form> : children}
     </div>
   ),
 }));
@@ -32,6 +34,7 @@ vi.mock("./DialogActions", () => ({
     onCancel,
     isLoading,
     disabled,
+    primaryType = "submit",
     primaryAriaLabel,
     cancelAriaLabel,
     extraActions,
@@ -42,6 +45,7 @@ vi.mock("./DialogActions", () => ({
     onCancel: () => void;
     isLoading?: boolean;
     disabled?: boolean;
+    primaryType?: "button" | "submit";
     primaryAriaLabel?: string;
     cancelAriaLabel?: string;
     extraActions?: Array<{
@@ -52,6 +56,7 @@ vi.mock("./DialogActions", () => ({
   }) => (
     <div>
       <button
+        type={primaryType}
         onClick={onPrimaryClick}
         disabled={disabled}
         aria-label={primaryAriaLabel}
@@ -69,6 +74,7 @@ vi.mock("./DialogActions", () => ({
         </button>
       ))}
       <button
+        type="button"
         onClick={onCancel}
         disabled={disabled}
         aria-label={cancelAriaLabel}

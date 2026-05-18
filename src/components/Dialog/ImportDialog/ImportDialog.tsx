@@ -100,7 +100,16 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
   );
 
   return (
-    <Dialog {...rest} open={open} handleClose={handleClose}>
+    <Dialog
+      {...rest}
+      open={open}
+      handleClose={handleClose}
+      onSubmit={() => {
+        const canSubmit =
+          !fileProcessor || (!!previewItems && previewItems.length > 0);
+        if (canSubmit) handleSubmit();
+      }}
+    >
       <FileInput
         key={inputKey}
         onClear={() => {
@@ -147,14 +156,9 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
       <DialogActions
         primaryText={t("_accessibility:buttons.ok")}
         cancelText={t("_accessibility:buttons.cancel")}
-        onPrimaryClick={() => {
-          const canSubmit =
-            !fileProcessor || (!!previewItems && previewItems.length > 0);
-          if (canSubmit) handleSubmit();
-        }}
         onCancel={handleClose}
         isLoading={isLoading}
-        primaryType="button"
+        primaryType="submit"
         containerClassName="import-dialog-actions"
         primaryName={t("_accessibility:buttons.ok")}
         primaryAriaLabel={t("_accessibility:ariaLabels.ok")}
