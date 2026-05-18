@@ -131,6 +131,27 @@ Legacy entity-coupled `useFormDialog` (`mutationFn`, `queryKey`, `getFunction`, 
 import { isValidationError, isHttpError } from "@sito/dashboard-app";
 ```
 
+### Phase 1 shared shells (consumer apps)
+
+Migrated from `wallet` / `period-calendar` consumer apps; use these instead of forking local copies.
+
+| Export                   | Folder                               | Purpose                                                                                                                                                                            |
+| ------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppShell`               | `src/layouts/AppShell`               | Authenticated route shell. Slots: `header`, `children`, `footer`, `bottomNavigation`, `extras`. Built-in `Notification` portal (opt out via `withNotification={false}`).           |
+| `AuthShell`              | `src/layouts/AuthShell`              | Auth route wrapper. Renders `children` + optional `Notification`. Redirect/error-boundary logic stays in the consumer.                                                             |
+| `DashboardHeader`        | `src/layouts/DashboardHeader`        | `Drawer` + `Navbar` combo. Owns drawer state internally. Generic over `MenuKeys`. Optional `OfflineBanner`.                                                                        |
+| `DashboardFooter`        | `src/layouts/DashboardFooter`        | Copyright line + optional `ToTop`. `bottomNavSpacing` for apps mounting `BottomNavigation`. Accepts `children` for full custom content.                                            |
+| `NotFoundView`           | `src/views/NotFoundView`             | Generic 404 fallback. CTA via `linkComponent` from `ConfigProvider` — consumer supplies `ctaTo` from its own `routes.ts`.                                                          |
+| `FeatureUnavailableView` | `src/views/FeatureUnavailableView`   | Generic feature-disabled fallback. Icon defaults to `faWarning`; overridable.                                                                                                      |
+| `PwaUpdateDialog`        | `src/components/app/PwaUpdateDialog` | Presentational PWA update prompt. Library does NOT import `navigator.serviceWorker` or `virtual:pwa-register/react` — consumer wires its own SW hook and passes `open`/`onUpdate`. |
+
+### Onboarding step animations
+
+- Lib ships `onboarding-step-rise-in` + `onboarding-step-pop-in` keyframes with stagger (title 30ms / body 90ms / content 140ms / actions 180–230ms) in `src/components/app/Onboarding/styles.css`.
+- Default reconciliation reuses the `<Step>` tree across step changes — animations only play on first mount.
+- Opt into per-step remount via `<Onboarding remountStepOnChange />`.
+- Gated by `ConfigProvider.motion`: disabled on `:root[data-sito-motion="none"]` and under `prefers-reduced-motion: reduce` unless `motion="always"`.
+
 ---
 
 ## Agent Rules
@@ -167,3 +188,9 @@ import { isValidationError, isHttpError } from "@sito/dashboard-app";
     - `ui/` — generic primitives. No provider/domain coupling. May only depend on other `ui/` siblings.
     - `app/` — high-level/shell pieces coupled to providers, routing, or domain (e.g. `Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`).
     - `app/` may import from `ui/`. `ui/` must NOT import from `app/`. Public surface stays the same — re-export through `src/components/index.ts`.
+30. **Place page-level screens** under `src/views/` (e.g. `NotFoundView`, `FeatureUnavailableView`) and **shared layout shells** under `src/layouts/` (e.g. `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`). Each follows the §7 feature folder convention (`FeatureName.tsx` + `types.ts` + `index.ts` + optional `constants.ts`/`utils.ts`).
+31. **Use `AppShell` / `AuthShell` instead of bespoke layout wrappers.** Mount providers via `AppProviders`, then compose routes with these shells. `AppShell` slots: `header` / `children` / `footer` / `bottomNavigation` / `extras` (Tooltip/Onboarding/PwaUpdateDialog) — in that render order — plus the built-in `Notification` portal. Opt out with `withNotification={false}` only when mounting your own.
+32. **Use `DashboardHeader` / `DashboardFooter` instead of forking app-local header/footer files.** Drawer open/close state lives inside `DashboardHeader`. Set `bottomNavSpacing` on `DashboardFooter` when also mounting `BottomNavigation`.
+33. **Use `NotFoundView` / `FeatureUnavailableView` for 404 / feature-off fallbacks.** Pass `ctaTo` from the consumer's `routes.ts` constants — never hardcode. CTA navigation goes through `linkComponent` from `ConfigProvider`, so they stay router-agnostic.
+34. **`PwaUpdateDialog` is presentational only.** Library never imports `navigator.serviceWorker` or `virtual:pwa-register/react`. Consumer owns the SW source (`useServiceWorkerUpdate` custom hook, `vite-plugin-pwa`'s `useRegisterSW`, etc.) and passes `open` / `onDismiss` / `onUpdate` plus consumer-side i18n strings.
+35. **`Onboarding` step animations are opt-in per-mount.** Default reuses the step tree (no animation restart between steps). Set `remountStepOnChange={true}` for wizard-like flows where each step should animate in from scratch. Library provides the keyframes (`onboarding-step-rise-in`/`onboarding-step-pop-in`); do NOT redeclare them in consumer CSS.

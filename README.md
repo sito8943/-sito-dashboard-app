@@ -68,8 +68,10 @@ npm install @supabase/supabase-js@2.100.0
 ## Core exports
 
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
+- Layout shells: `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`
+- Reusable views: `NotFoundView`, `FeatureUnavailableView`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
-- Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, form inputs
+- Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, `PwaUpdateDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`, `TopBanner`
 - Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, and `normalizeMenuDividers`
@@ -561,6 +563,131 @@ Key notes:
 - Use `hidden`/`disabled` on each item and `centerAction.hidden` for conditional rendering.
 - `centerAction` supports `IconButton` visual props and optional `to`; navigation runs after `onClick` unless `event.preventDefault()` is called.
 - `BottomNavActionProvider` is optional. When mounted, `useRegisterBottomNavAction` can override center-action fields dynamically from active page scope; registered fields take precedence over static `centerAction` props.
+
+### AppShell, AuthShell, DashboardHeader, DashboardFooter (layout shells)
+
+These layout shells consolidate the header/footer/auth wrapper patterns previously duplicated across consumer apps.
+
+`AppShell` is the authenticated layout shell. It mounts header/content/footer/bottom-nav slots plus the global `Notification` portal. Wrap your route content with `AppShell` after the standard providers (`ConfigProvider`/`NavbarProvider`/`BottomNavActionProvider`, e.g. via `AppProviders`):
+
+```tsx
+import {
+  AppShell,
+  DashboardHeader,
+  DashboardFooter,
+  BottomNavigation,
+} from "@sito/dashboard-app";
+
+<AppShell
+  header={<DashboardHeader menuMap={menuMap} showOfflineBanner />}
+  footer={<DashboardFooter copyrightText="© Acme" bottomNavSpacing />}
+  bottomNavigation={
+    <BottomNavigation items={bottomItems} centerAction={centerAction} />
+  }
+  extras={<Tooltip id="tooltip" />}
+>
+  <Outlet />
+</AppShell>;
+```
+
+Props (`AppShell`):
+
+- `header?`, `footer?`, `bottomNavigation?`, `extras?` (slot for `Tooltip`/`Onboarding`/`PwaUpdateDialog`).
+- `withNotification?: boolean` (default `true`) — toggles the built-in `Notification` portal.
+- `className?` — merged onto the `app-shell` wrapper.
+- Slot order: `header → children → footer → bottomNavigation → extras → Notification`.
+
+`AuthShell` is the wrapper for auth routes. It renders `children` (typically `<Outlet />`) plus the global `Notification` portal:
+
+```tsx
+<AuthShell>
+  <Outlet />
+</AuthShell>
+```
+
+Props (`AuthShell`): `children`, `withNotification?` (default `true`), `className?`. Authenticated-redirect logic and error boundary stay in the consumer where route constants are known.
+
+`DashboardHeader` combines `Drawer` + `Navbar` (+ optional `OfflineBanner`) and owns the drawer open/close state internally. Generic over `MenuKeys`:
+
+```tsx
+<DashboardHeader<"home" | "settings">
+  menuMap={menuMap}
+  logo={<Logo />}
+  showOfflineBanner
+  navbarProps={{ showSearch: true }}
+/>
+```
+
+Props: `menuMap` (required), `logo?`, `showOfflineBanner?` (default `false`), `navbarProps?` (everything except `openDrawer`, which is wired internally).
+
+`DashboardFooter` renders copyright + optional `ToTop`:
+
+```tsx
+<DashboardFooter
+  copyrightText="© Acme"
+  year={2026}
+  bottomNavSpacing
+  toTopProps={{ tooltip: "Back to top" }}
+/>
+```
+
+Props: `copyrightText` (required), `year?` (default current year), `showToTop?` (default `true`), `toTopProps?`, `bottomNavSpacing?` (adds `mb-16 sm:mb-0` when mounting `BottomNavigation`), `children?` (full custom content), `className?`, `textClassName?`.
+
+### NotFoundView and FeatureUnavailableView
+
+Reusable fallback views for 404 / disabled-feature screens. Both use `linkComponent` from `ConfigProvider` for the CTA, so navigation stays router-agnostic. Consumer provides text and CTA target (route constant from `lib/routes.ts`).
+
+```tsx
+import { NotFoundView, FeatureUnavailableView } from "@sito/dashboard-app";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
+
+<NotFoundView
+  title={t("_pages:notFound.title")}
+  body={t("_pages:notFound.body")}
+  ctaLabel={t("_pages:home.title")}
+  ctaTo={AppRoutes.Home}
+/>;
+
+<FeatureUnavailableView
+  title={t("_pages:featureFlags.route.title")}
+  body={t("_pages:featureFlags.route.body", { module: t(moduleKey) })}
+  ctaLabel={t("_pages:featureFlags.route.cta")}
+  ctaTo={AppRoutes.Home}
+  icon={faLock}
+/>;
+```
+
+Both accept className overrides (`className`, `titleClassName`, `bodyClassName`, `ctaClassName`); `FeatureUnavailableView` also accepts `iconClassName` and a custom `icon: IconDefinition` (default `faWarning`).
+
+### PwaUpdateDialog
+
+Presentational dialog for "new version available, reload to apply." The source of `needRefresh` and the update callback stays in the consumer (custom service-worker hook, `vite-plugin-pwa`, etc.) — the library does not import `navigator.serviceWorker` or `virtual:pwa-register/react`.
+
+```tsx
+import { PwaUpdateDialog } from "@sito/dashboard-app";
+
+<PwaUpdateDialog
+  open={needRefresh}
+  onDismiss={dismissUpdate}
+  onUpdate={applyUpdate}
+  title={t("_pages:pwaUpdate.title")}
+  description={t("_pages:pwaUpdate.description")}
+  dismissLabel={t("_pages:pwaUpdate.actions.later")}
+  updateLabel={t("_pages:pwaUpdate.actions.update")}
+/>;
+```
+
+Props: `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, optional `mobileFullScreen` and `containerClassName` (default `"!items-end pb-3"`).
+
+### Onboarding step animations (`remountStepOnChange`)
+
+`Onboarding` ships with built-in step entry animations (`onboarding-step-rise-in` + `onboarding-step-pop-in`, with stagger on title/body/content/actions). By default the same `<Step>` tree is reconciled across steps, so the animation only runs on first mount. Opt into `remountStepOnChange={true}` to force a remount of the active step on every transition:
+
+```tsx
+<Onboarding remountStepOnChange steps={steps} />
+```
+
+Animation gating follows `ConfigProvider.motion`: disabled when `:root[data-sito-motion="none"]` and under `prefers-reduced-motion: reduce` unless `:root[data-sito-motion="always"]` overrides.
 
 ## Dialog hook migration (`v0.0.54`)
 
