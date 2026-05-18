@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { BaseLinkPropsType } from "components/types";
-import { useNavbar } from "components/Navbar/useNavbar";
+import { useNavbar } from "components/app/Navbar/useNavbar";
 import { APP_ROUTES, type IManager, type Location } from "lib";
 
 import { useAuth } from "./Auth";

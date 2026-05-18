@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ToTopPropsType } from "components/Buttons/types";
+import { ToTopPropsType } from "components/ui/Buttons/types";
 
 export type DashboardFooterPropsType = {
   copyrightText: ReactNode;

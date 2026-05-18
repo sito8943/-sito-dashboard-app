@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 // types
-import type { IconButtonPropsLocalType } from "components/Buttons/IconButton";
+import type { IconButtonPropsLocalType } from "components/ui/Buttons/IconButton";
 import type { BaseLinkPropsType } from "components/types";
 
 export type BottomNavigationPositionType = "left" | "right";

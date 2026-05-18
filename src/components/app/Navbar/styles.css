@@ -1,4 +1,4 @@
-@reference "../../index.css";
+@reference "../../../index.css";
 
 .header {
   @apply w-full flex items-center justify-between z-20 px-3 h-12 sticky top-0 bg-primary text-base-light;

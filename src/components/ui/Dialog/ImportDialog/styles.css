@@ -1,4 +1,4 @@
-@reference "../../../index.css";
+@reference "../../../../index.css";
 
 .import-override-label {
   @apply mt-3 flex items-center gap-2 text-sm;

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState, type ReactNode } from "react";
 import { ImportDialog } from "./ImportDialog";
 import type { ImportDialogPropsType } from "./types";
-import { ImportPreviewDto } from "../../../lib";
+import { ImportPreviewDto } from "../../../../lib";
 
 type ImportDialogStoryProps = {
   title?: string;

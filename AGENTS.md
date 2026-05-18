@@ -163,3 +163,7 @@ import { isValidationError, isHttpError } from "@sito/dashboard-app";
 26. **Run `npm run docs:check`** after doc edits.
 27. **Never document or propose SSR** for this package.
 28. **Pick the right export flow** — direct (`useExportAction`) vs config dialog (`useExportDialog`). Both return the same `action()` shape. `useExportDialog` doesn't invalidate queries or auto-download.
+29. **Place new components by tier** under `src/components/`:
+    - `ui/` — generic primitives. No provider/domain coupling. May only depend on other `ui/` siblings.
+    - `app/` — high-level/shell pieces coupled to providers, routing, or domain (e.g. `Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`).
+    - `app/` may import from `ui/`. `ui/` must NOT import from `app/`. Public surface stays the same — re-export through `src/components/index.ts`.

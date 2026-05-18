@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 // components
-import { TabsLayout } from "../TabsLayout";
+import { TabsLayout } from "../../ui/TabsLayout";
 import { Step } from "./Step";
 
 // providers

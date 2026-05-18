@@ -1,4 +1,4 @@
-@reference "../../index.css";
+@reference "../../../index.css";
 
 .pretty-grid-main {
   @apply flex flex-wrap max-[28rem]:flex-col gap-3;

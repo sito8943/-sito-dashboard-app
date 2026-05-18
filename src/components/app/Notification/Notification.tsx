@@ -21,7 +21,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import type { NotificationItem as Item } from "./types";
 
 // components
-import { AppIconButton } from "../Buttons";
+import { AppIconButton } from "../../ui/Buttons";
 
 // constants
 import { NOTIFICATION_ANIMATION_MS } from "./constants";

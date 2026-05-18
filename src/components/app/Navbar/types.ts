@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 // types
-import type { IconButtonPropsLocalType } from "../Buttons/IconButton";
+import type { IconButtonPropsLocalType } from "../../ui/Buttons/IconButton";
 
 export type NavbarPropsType = {
   menuButtonProps?: IconButtonPropsLocalType;

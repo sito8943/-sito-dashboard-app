@@ -1,5 +1,5 @@
-import { Button } from "../Buttons";
-import { Dialog } from "../Dialog";
+import { Button } from "../../ui/Buttons";
+import { Dialog } from "../../ui/Dialog";
 
 import { PwaUpdateDialogPropsType } from "./types";
 

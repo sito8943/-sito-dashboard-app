@@ -1,4 +1,4 @@
-@reference "../../index.css";
+@reference "../../../index.css";
 
 .error-container {
   @apply flex flex-col items-center justify-center pt-10 gap-5;

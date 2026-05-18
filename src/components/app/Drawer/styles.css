@@ -1,4 +1,4 @@
-@reference "../../index.css";
+@reference "../../../index.css";
 
 .drawer-backdrop {
   @apply fixed z-36;

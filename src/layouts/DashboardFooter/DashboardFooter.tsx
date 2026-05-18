@@ -1,6 +1,6 @@
 import { classNames } from "@sito/dashboard";
 
-import { ToTop } from "components/Buttons";
+import { ToTop } from "components/ui/Buttons";
 
 import { DASHBOARD_FOOTER_CLASSNAMES } from "./constants";
 import { DashboardFooterPropsType } from "./types";

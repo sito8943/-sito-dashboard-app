@@ -2,7 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.0.78] - 2026-05-18
+
+### Changed
+
+- Reorganized `src/components/` into two tiers:
+  - `components/ui/` — generic primitives (`Buttons`, `Clock`, `Dialog`, `Empty`, `Error`, `Form`, `Loading`, `Palette`, `PrettyGrid`, `TabsLayout`).
+  - `components/app/` — high-level/shell pieces coupled to providers, routing, or domain (`BottomNavigation`, `Drawer`, `Navbar`, `Notification`, `OfflineBanner`, `Onboarding`, `Page`, `PwaUpdateDialog`).
+  - Moves are pure relocations done with `git mv` (history preserved). Public exports from `@sito/dashboard-app` are unchanged — consumers do not need code changes.
+  - Internal path-alias imports (`components/X`) were rewritten to `components/ui/X` or `components/app/X`. CSS `@reference` paths were bumped by one level accordingly.
+
+### Documentation
+
+- `AGENTS.md`: added rule #29 — new components must be placed under `components/ui/` or `components/app/` per coupling, with `app/` allowed to depend on `ui/` (not the reverse).
+- `docs/ARCHITECTURE_RULES.md`: documented the `components/ui/` vs `components/app/` split, the import direction rule, and the decision rule for new components.
 
 ### Added
 

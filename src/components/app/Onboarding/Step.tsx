@@ -2,7 +2,7 @@ import { useTranslation } from "@sito/dashboard";
 
 // types
 import { StepPropsType } from "./types";
-import { Button } from "../Buttons";
+import { Button } from "../../ui/Buttons";
 
 // styles
 import "./styles.css";
