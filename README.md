@@ -70,7 +70,7 @@ npm install @supabase/supabase-js@2.100.0
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Actions and menus: `Actions`, `Action`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, form inputs
-- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`
+- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`, `TopBanner`
 - Hooks: `useFormDialog` (generic state/entity), `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm` (`usePostForm` deprecated alias), `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — all action hooks ship with default `sticky`, `multiple`, `id`, `icon`, and `tooltip` values so only `onClick` is required
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, and `normalizeMenuDividers`
 
@@ -410,9 +410,29 @@ Main optional props:
 - `scrollOnClick?: boolean` (default `true`)
 - `onClick?: () => void`
 
+### TopBanner (generic)
+
+`TopBanner` is a presentational, full-width banner used as the base for any global notice. `OfflineBanner` is a thin wrapper around it. Its `color` prop matches the `Button` color contract, plus the extended `tertiary` and `quaternary` palette tokens defined in `src/index.css`.
+
+```tsx
+import { TopBanner } from "@sito/dashboard-app";
+
+<TopBanner color="warning">Scheduled maintenance at 22:00 UTC</TopBanner>;
+```
+
+Props:
+
+- `visible?: boolean` (default `true`) — renders nothing when `false`.
+- `children: ReactNode` — banner content.
+- `color?: "default" | "primary" | "secondary" | "tertiary" | "quaternary" | "info" | "success" | "warning" | "error"` (default `"default"`).
+- `role?: string` (default `"status"`) and `ariaLive?: "off" | "polite" | "assertive"` (default `"polite"`).
+- `className?: string` — merged with `top-banner` + `top-banner--{color}`.
+
+Prefer `TopBanner` for ad-hoc app-wide notices; reach for `OfflineBanner` for the connectivity-specific case.
+
 ### Offline status helpers
 
-Use `useOnlineStatus` for connectivity state and `OfflineBanner` for a reusable offline UI hint.
+Use `useOnlineStatus` for connectivity state and `OfflineBanner` for a reusable offline UI hint. `OfflineBanner` is a predefined preset of `TopBanner` — its color is fixed to `warning` and is not exposed as a prop. Props are limited to `isOnline?`, `message?`, and `className?`. For banners with different colors, use `TopBanner` directly.
 
 ```tsx
 import { OfflineBanner, useOnlineStatus } from "@sito/dashboard-app";

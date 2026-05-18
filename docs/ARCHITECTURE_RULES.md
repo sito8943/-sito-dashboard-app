@@ -45,7 +45,7 @@ src/
 Notes:
 
 - `components/` is for shared/global UI blocks, not route-specific page composition.
-- `components/ui/` holds generic primitives (`Buttons`, `Dialog`, `Form`, `Loading`, `Empty`, `Error`, `PrettyGrid`, `TabsLayout`, …). They must NOT import from `components/app/` or from any provider/domain module.
+- `components/ui/` holds generic primitives (`Buttons`, `Dialog`, `Form`, `Loading`, `Empty`, `Error`, `PrettyGrid`, `TabsLayout`, `TopBanner`, …). They must NOT import from `components/app/` or from any provider/domain module.
 - `components/app/` holds high-level pieces coupled to providers, routing, or domain (`Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`, …). They MAY import from `components/ui/`.
 - Public surface stays unchanged: re-export both tiers from `src/components/index.ts`. Consumers never reach into `ui/`/`app/` directly.
 - Decision rule when adding a new component: if it depends only on props + styles, place it in `ui/`; if it depends on a provider, routing primitive, or domain hook, place it in `app/`.

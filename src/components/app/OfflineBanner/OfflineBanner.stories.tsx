@@ -22,6 +22,13 @@ export const CustomMessage: Story = {
   },
 };
 
+export const WithCustomClass: Story = {
+  args: {
+    className: "uppercase tracking-wide",
+    message: "Offline — read-only",
+  },
+};
+
 export const HiddenWhenOnline: Story = {
   args: {
     isOnline: true,

@@ -41,7 +41,8 @@ describe("OfflineBanner", () => {
 
     const banner = screen.getByRole("status");
     expect(banner).toHaveTextContent("No connection");
-    expect(banner).toHaveClass("offline-banner");
+    expect(banner).toHaveClass("top-banner");
+    expect(banner).toHaveClass("top-banner--warning");
     expect(banner).toHaveClass("custom-banner");
   });
 
@@ -53,5 +54,10 @@ describe("OfflineBanner", () => {
 
     render(<OfflineBanner />);
     expect(screen.getByRole("status")).toHaveTextContent("You are offline");
+  });
+
+  it("is always rendered with the warning preset", () => {
+    render(<OfflineBanner isOnline={false} />);
+    expect(screen.getByRole("status")).toHaveClass("top-banner--warning");
   });
 });

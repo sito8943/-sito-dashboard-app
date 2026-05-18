@@ -4,13 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.78] - 2026-05-18
 
+### Added
+
+- New generic `TopBanner` primitive in `components/ui/TopBanner`. Props: `visible?` (default `true`), `children`, `color?` (`"default" | "primary" | "secondary" | "tertiary" | "quaternary" | "info" | "success" | "warning" | "error"`, default `"default"`), `role?` (default `"status"`), `ariaLive?` (default `"polite"`), `className?`. Renders nothing when `visible={false}`. Color tokens map to the existing `--color-bg-*` / `--color-*` CSS variables (including `tertiary` and `quaternary` from `src/index.css`), aligning with the `Button` color contract.
+
 ### Changed
 
 - Reorganized `src/components/` into two tiers:
-  - `components/ui/` — generic primitives (`Buttons`, `Clock`, `Dialog`, `Empty`, `Error`, `Form`, `Loading`, `Palette`, `PrettyGrid`, `TabsLayout`).
+  - `components/ui/` — generic primitives (`Buttons`, `Clock`, `Dialog`, `Empty`, `Error`, `Form`, `Loading`, `Palette`, `PrettyGrid`, `TabsLayout`, `TopBanner`).
   - `components/app/` — high-level/shell pieces coupled to providers, routing, or domain (`BottomNavigation`, `Drawer`, `Navbar`, `Notification`, `OfflineBanner`, `Onboarding`, `Page`, `PwaUpdateDialog`).
   - Moves are pure relocations done with `git mv` (history preserved). Public exports from `@sito/dashboard-app` are unchanged — consumers do not need code changes.
   - Internal path-alias imports (`components/X`) were rewritten to `components/ui/X` or `components/app/X`. CSS `@reference` paths were bumped by one level accordingly.
+- Refactored `OfflineBanner` to compose `TopBanner` instead of duplicating banner markup/styles. `OfflineBanner` is intentionally a predefined preset of `TopBanner` — its color is hardcoded to `warning` and not exposed as a prop. Public API stays the same as before (`isOnline?`, `message?`, `className?`). The internal `offline-banner` class was removed; the rendered banner now uses `top-banner` + `top-banner--warning`. For ad-hoc banners with different colors, use `TopBanner` directly.
 
 ### Documentation
 

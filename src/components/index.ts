@@ -13,6 +13,7 @@ export * from "./ui/Form";
 export * from "./ui/Loading";
 export * from "./ui/PrettyGrid";
 export * from "./ui/TabsLayout";
+export * from "./ui/TopBanner";
 
 // app (high-level, provider/shell-coupled)
 export * from "./app/BottomNavigation";

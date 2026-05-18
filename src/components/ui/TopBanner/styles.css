@@ -1,0 +1,41 @@
+@reference "../../../index.css";
+
+.top-banner {
+  @apply w-full text-center px-4 py-2 text-sm font-medium;
+}
+
+.top-banner--default {
+  @apply bg-base text-text;
+}
+
+.top-banner--primary {
+  @apply bg-bg-primary text-base-light;
+}
+
+.top-banner--secondary {
+  @apply bg-bg-secondary text-base-light;
+}
+
+.top-banner--tertiary {
+  @apply bg-bg-tertiary text-base-light;
+}
+
+.top-banner--quaternary {
+  @apply bg-bg-quaternary text-base-light;
+}
+
+.top-banner--info {
+  @apply bg-bg-info text-info;
+}
+
+.top-banner--success {
+  @apply bg-bg-success text-success;
+}
+
+.top-banner--warning {
+  @apply bg-bg-warning text-warning;
+}
+
+.top-banner--error {
+  @apply bg-bg-error text-error;
+}
