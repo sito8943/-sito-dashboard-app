@@ -196,7 +196,7 @@ export function Notification() {
           <div
             key={id}
             className={classNames(
-              "notification",
+              "notification animated",
               closing && "closing",
               notificationBackgroundColor(resolvedT),
             )}

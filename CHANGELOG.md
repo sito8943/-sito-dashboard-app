@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.77] - 2026-05-18
+
+### Added
+
+- Added global motion control to `ConfigProvider` through `motion?: "auto" | "none" | "always"`.
+- Added reduced-motion aware animation handling for shared `.animated` transitions:
+  - `motion="auto"` respects `prefers-reduced-motion`
+  - `motion="none"` disables library transitions and animations
+  - `motion="always"` forces library transitions even when reduced motion is requested by the OS/browser
+- Added Storybook motion scenarios for `Dialog`:
+  - `MotionAuto`
+  - `MotionNone`
+  - `MotionAlways`
+
+### Changed
+
+- Refactored `ConfigProvider` to comply with `docs/ARCHITECTURE_RULES.md` by moving it into a feature folder with:
+  - `ConfigProvider.tsx`
+  - `constants.ts`
+  - `utils.ts`
+  - `index.ts`
+- Updated shared animation usage so components can opt into the common `.animated` transition utility instead of duplicating transition declarations.
+- Updated `ToTop` tests to assert relevant class tokens instead of exact class-name strings, keeping coverage stable after adding shared animation classes.
+
+### Documentation
+
+- Updated `README.md` and `AGENTS.md` to document `ConfigProvider.motion` and its interaction with `prefers-reduced-motion`.
+
 ## [0.0.75] - 2026-05-17
 
 ### Added

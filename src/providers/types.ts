@@ -50,11 +50,14 @@ export type ManagerProviderContextType = {
   client: IManager;
 };
 
+export type MotionPreference = "auto" | "always" | "none";
+
 export interface ConfigProviderPropTypes extends BasicProviderPropTypes {
   location: Location;
   navigate: (route: string | number) => void;
   linkComponent: ComponentType<BaseLinkPropsType>;
   searchComponent?: ComponentType<BaseSearchModalPropsType>;
+  motion?: MotionPreference;
 }
 
 export type ConfigProviderContextType = {
@@ -62,6 +65,7 @@ export type ConfigProviderContextType = {
   navigate: (route: string | number) => void;
   linkComponent: ComponentType<BaseLinkPropsType>;
   searchComponent?: ComponentType<BaseSearchModalPropsType>;
+  motion: MotionPreference;
 };
 
 export type LocalCacheProviderContextType = {

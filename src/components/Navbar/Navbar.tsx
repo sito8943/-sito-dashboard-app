@@ -58,7 +58,7 @@ export function Navbar(props: NavbarPropsType) {
       {location.pathname !== APP_ROUTES.ROOT && !!Search && (
         <Search open={showDialog} onClose={() => setShowDialog(false)} />
       )}
-      <header id="header" className="header">
+      <header id="header" className="header animated">
         <div className="navbar-left">
           <AppIconButton
             {...menuButtonProps}

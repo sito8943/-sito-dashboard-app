@@ -10,10 +10,18 @@ vi.mock("@sito/dashboard", () => ({
 }));
 
 vi.mock("./Dialog", () => ({
-  Dialog: ({ children, title }: { children: ReactNode; title: string }) => (
+  Dialog: ({
+    children,
+    title,
+    onSubmit,
+  }: {
+    children: ReactNode;
+    title: string;
+    onSubmit?: (event?: React.BaseSyntheticEvent) => void | Promise<void>;
+  }) => (
     <div role="dialog">
       <h2>{title}</h2>
-      {children}
+      {onSubmit ? <form onSubmit={onSubmit}>{children}</form> : children}
     </div>
   ),
 }));

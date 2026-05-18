@@ -1,4 +1,4 @@
-import { useCallback, useEffect, MouseEvent } from "react";
+import { FormEvent, MouseEvent, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "@sito/dashboard";
 
@@ -25,10 +25,12 @@ import "./styles.css";
  */
 export const Dialog = (props: DialogPropsType) => {
   const { t } = useTranslation();
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const {
     title,
     children,
     handleClose,
+    onSubmit,
     open = false,
     mobileFullScreen = false,
     containerClassName = "",
@@ -57,12 +59,44 @@ export const Dialog = (props: DialogPropsType) => {
     [handleClose],
   );
 
+  const handleFormSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      onSubmit?.(e);
+    },
+    [onSubmit],
+  );
+
   useEffect(() => {
     if (!open) return;
     lockBodyScroll();
     return () => {
       unlockBodyScroll();
     };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const primaryInput = dialog.querySelector<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >(
+      'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
+    );
+
+    if (primaryInput) {
+      primaryInput.focus();
+      return;
+    }
+
+    const submitButton = dialog.querySelector<HTMLElement>(
+      'button[type="submit"]:not([disabled]), input[type="submit"]:not([disabled])',
+    );
+
+    submitButton?.focus();
   }, [open]);
 
   return createPortal(
@@ -77,6 +111,7 @@ export const Dialog = (props: DialogPropsType) => {
       )}
     >
       <div
+        ref={dialogRef}
         className={classNames(
           "dialog elevated animated",
           !mobileFullScreen && "dialog-framed",
@@ -99,7 +134,11 @@ export const Dialog = (props: DialogPropsType) => {
             aria-label={t("_accessibility:ariaLabels.closeDialog")}
           />
         </div>
-        {children}
+        {onSubmit ? (
+          <form onSubmit={handleFormSubmit}>{children}</form>
+        ) : (
+          children
+        )}
       </div>
     </div>,
     document.body,

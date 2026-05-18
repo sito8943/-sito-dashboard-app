@@ -26,17 +26,16 @@ export const ExportDialog = (props: ExportDialogPropsType) => {
   } = props;
 
   return (
-    <Dialog {...rest} handleClose={handleClose}>
+    <Dialog {...rest} handleClose={handleClose} onSubmit={handleSubmit}>
       {children}
       {extraFields}
       <DialogActions
         primaryText={t("_accessibility:buttons.ok")}
         cancelText={t("_accessibility:buttons.cancel")}
-        onPrimaryClick={handleSubmit}
         onCancel={handleClose}
         isLoading={isLoading}
         disabled={isLoading}
-        primaryType="button"
+        primaryType="submit"
         containerClassName="mt-5"
         primaryName={t("_accessibility:buttons.ok")}
         primaryAriaLabel={t("_accessibility:ariaLabels.ok")}

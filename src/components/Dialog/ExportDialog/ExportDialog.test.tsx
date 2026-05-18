@@ -14,15 +14,29 @@ vi.mock("@sito/dashboard", () => ({
 }));
 
 vi.mock("components", () => ({
-  Dialog: ({ children, open }: { children: ReactNode; open?: boolean }) =>
-    open ? <div role="dialog">{children}</div> : null,
+  Dialog: ({
+    children,
+    open,
+    onSubmit,
+  }: {
+    children: ReactNode;
+    open?: boolean;
+    onSubmit?: (event?: React.BaseSyntheticEvent) => void | Promise<void>;
+  }) =>
+    open ? (
+      <div role="dialog">
+        {onSubmit ? <form onSubmit={onSubmit}>{children}</form> : children}
+      </div>
+    ) : null,
   DialogActions: ({
     onPrimaryClick,
     onCancel,
+    primaryType = "submit",
     extraActions,
   }: {
     onPrimaryClick?: () => void;
     onCancel: () => void;
+    primaryType?: "button" | "submit";
     extraActions?: Array<{
       id?: string | number;
       onClick?: () => void;
@@ -30,7 +44,7 @@ vi.mock("components", () => ({
     }>;
   }) => (
     <div>
-      <button type="button" onClick={onPrimaryClick}>
+      <button type={primaryType} onClick={onPrimaryClick}>
         ok
       </button>
       {(extraActions ?? []).map((action, index) => (

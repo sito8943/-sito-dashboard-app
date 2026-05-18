@@ -31,3 +31,19 @@
   --color-error: #fbfbfb;
   --breakpoint-xs: 28rem;
 }
+
+.animated {
+  @apply transition duration-300 ease-in-out;
+}
+
+:root[data-sito-motion="none"] .animated {
+  transition: none !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-sito-motion="always"]) .animated {
+    transition: none !important;
+    animation: none !important;
+  }
+}
