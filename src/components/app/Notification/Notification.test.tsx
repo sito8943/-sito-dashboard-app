@@ -11,7 +11,7 @@ vi.mock("@sito/dashboard", () => ({
     values.filter(Boolean).join(" "),
 }));
 
-vi.mock("../Buttons", () => ({
+vi.mock("../../ui/Buttons", () => ({
   AppIconButton: ({
     onClick,
     className,

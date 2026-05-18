@@ -73,6 +73,79 @@
   @apply m-auto;
 }
 
+.onboarding-main .step-title {
+  opacity: 0;
+  animation: onboarding-step-rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 30ms
+    forwards;
+}
+
+.onboarding-main .step-body {
+  opacity: 0;
+  animation: onboarding-step-rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 90ms
+    forwards;
+}
+
+.onboarding-main .step-content {
+  opacity: 0;
+  animation: onboarding-step-rise-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) 140ms
+    forwards;
+}
+
+.onboarding-main .step-actions > * {
+  opacity: 0;
+  animation: onboarding-step-pop-in 360ms ease-out forwards;
+}
+
+.onboarding-main .step-actions > *:nth-child(1) {
+  animation-delay: 180ms;
+}
+
+.onboarding-main .step-actions > *:nth-child(2) {
+  animation-delay: 230ms;
+}
+
+@keyframes onboarding-step-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes onboarding-step-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+:root[data-sito-motion="none"] .onboarding-main .step-title,
+:root[data-sito-motion="none"] .onboarding-main .step-body,
+:root[data-sito-motion="none"] .onboarding-main .step-content,
+:root[data-sito-motion="none"] .onboarding-main .step-actions > * {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-sito-motion="always"]) .onboarding-main .step-title,
+  :root:not([data-sito-motion="always"]) .onboarding-main .step-body,
+  :root:not([data-sito-motion="always"]) .onboarding-main .step-content,
+  :root:not([data-sito-motion="always"]) .onboarding-main .step-actions > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 @media (min-width: 28rem) {
   .onboarding-main {
     align-items: center;

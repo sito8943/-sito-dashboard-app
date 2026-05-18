@@ -29,6 +29,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
     onSkip,
     onSignIn,
     onStartAsGuest,
+    remountStepOnChange = false,
   } = props;
 
   const auth = useOptionalAuthContext();
@@ -62,21 +63,31 @@ export const Onboarding = (props: OnboardingPropsType) => {
   }, [auth, guestPath, navigate, onStartAsGuest]);
 
   const onboardingSteps = useMemo(() => {
-    return steps.map((step, i) => ({
-      id: i + 1,
-      label: "",
-      content: (
-        <Step
-          {...step}
-          final={i === steps.length - 1}
-          onClickNext={() => setCurrentStep((prev) => prev + 1)}
-          onSkip={handleSkip}
-          onStartAsGuest={handleStartAsGuest}
-          onSignIn={handleSignIn}
-        />
-      ),
-    }));
-  }, [handleSignIn, handleSkip, handleStartAsGuest, steps]);
+    return steps.map((step, i) => {
+      const id = i + 1;
+      return {
+        id,
+        label: "",
+        content: (
+          <Step
+            key={remountStepOnChange ? id : undefined}
+            {...step}
+            final={i === steps.length - 1}
+            onClickNext={() => setCurrentStep((prev) => prev + 1)}
+            onSkip={handleSkip}
+            onStartAsGuest={handleStartAsGuest}
+            onSignIn={handleSignIn}
+          />
+        ),
+      };
+    });
+  }, [
+    handleSignIn,
+    handleSkip,
+    handleStartAsGuest,
+    remountStepOnChange,
+    steps,
+  ]);
 
   return (
     <div className="onboarding-main">

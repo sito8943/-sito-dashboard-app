@@ -23,4 +23,11 @@ export type OnboardingPropsType = {
   onSkip?: () => void;
   onSignIn?: () => void;
   onStartAsGuest?: () => void;
+  /**
+   * When `true`, the active step panel is remounted on every step change so
+   * CSS entry animations (e.g. `big-appear` on the step container) restart.
+   * Defaults to `false` to preserve existing reconciliation behavior — opt in
+   * when consumers want each step to animate in from scratch.
+   */
+  remountStepOnChange?: boolean;
 };

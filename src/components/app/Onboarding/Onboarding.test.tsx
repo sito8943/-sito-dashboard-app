@@ -182,6 +182,39 @@ describe("Onboarding", () => {
     expect(setGuestModeMock).not.toHaveBeenCalled();
   });
 
+  it("keys the active step when remountStepOnChange is enabled", () => {
+    const { container } = render(
+      <Onboarding
+        remountStepOnChange
+        steps={[
+          {
+            title: "Welcome",
+            body: "Intro copy",
+            content: <span data-testid="step-content">step-1</span>,
+          },
+          {
+            title: "Finish",
+            body: "Done copy",
+            content: <span data-testid="step-content">step-2</span>,
+          },
+        ]}
+      />,
+    );
+
+    const firstStep = container.querySelector(".step-container");
+    expect(firstStep).not.toBeNull();
+    expect(screen.getByTestId("step-content").textContent).toBe("step-1");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.next" }),
+    );
+
+    const secondStep = container.querySelector(".step-container");
+    expect(secondStep).not.toBeNull();
+    expect(secondStep).not.toBe(firstStep);
+    expect(screen.getByTestId("step-content").textContent).toBe("step-2");
+  });
+
   it("starts as guest without auth context", () => {
     useOptionalAuthContextMock.mockReturnValue(undefined);
 

@@ -37,6 +37,26 @@ const imageSvg = encodeURIComponent(
 
 const stepImage = `data:image/svg+xml;charset=utf-8,${imageSvg}`;
 
+export const RemountStepOnChange: Story = {
+  args: {
+    remountStepOnChange: true,
+    steps: [
+      {
+        title: "Step one",
+        body: "Animations replay every step because the panel remounts.",
+      },
+      {
+        title: "Step two",
+        body: "Click Next to see the entry animation restart on this step.",
+      },
+      {
+        title: "Final step",
+        body: "Each transition fully remounts the active panel.",
+      },
+    ],
+  },
+};
+
 export const WithStepImages: Story = {
   args: {
     steps: [
