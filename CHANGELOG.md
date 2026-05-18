@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- New shared UI primitives migrated from `wallet` and `period-calendar` consumer apps (Phase 1 of the cross-app migration documented in `apps/dashboard-app-migration-wallet-period-calendar.md`):
+  - `PwaUpdateDialog` (component) — presentational PWA update prompt. Props: `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, plus optional `mobileFullScreen` and `containerClassName`. Source of `needRefresh` / update callback stays in the consumer (custom SW hook, `vite-plugin-pwa`, etc.).
+  - `NotFoundView` (view) — generic 404 screen. Props: `title`, `body`, `ctaLabel`, `ctaTo`, plus className overrides. Navigation uses `linkComponent` from `ConfigProvider`.
+  - `FeatureUnavailableView` (view) — generic feature-disabled fallback. Props: `title`, `body`, `ctaLabel`, `ctaTo`, optional `icon` (`IconDefinition`, default `faWarning`) and className overrides.
+  - `DashboardFooter` (layout) — copyright line + optional `ToTop`. Props: `copyrightText`, `year?`, `showToTop?`, `toTopProps?`, `bottomNavSpacing?` (adds `mb-16 sm:mb-0` for apps mounting `BottomNavigation`), `children?` for fully custom content, plus className overrides.
+  - `DashboardHeader` (layout) — combined `Drawer` + `Navbar` (+ optional `OfflineBanner`). Owns drawer open/close state internally. Generic over `MenuKeys`. Props: `menuMap`, `logo?`, `showOfflineBanner?`, `navbarProps?`.
+  - `AuthShell` (layout) — wrapper for auth routes. Renders `children` (typically `<Outlet />`) plus optional `Notification` portal. Error-boundary and authenticated-redirect logic stay in the consumer where route constants are known.
+  - `AppShell` (layout) — authenticated layout shell. Mounts header/content/footer/bottom-nav slots plus the global `Notification` portal. Props: `header?`, `footer?`, `bottomNavigation?`, `extras?` (for `Tooltip`, `Onboarding`, etc.), `withNotification?`, `className?`.
+- New `src/views/` and `src/layouts/` source folders with matching TypeScript path aliases (`views`, `views/*`, `layouts`, `layouts/*`) wired in `tsconfig.json` and `vite.config.ts`.
+
+### Documentation
+
+- Cut `AGENTS.md` from 1036 lines to 165 (~84% reduction). Removed code examples that duplicate `README.md`; preserved canonical agent rules, reference tables, and docs:check policy markers (provider order, IconButton contract, Node `.nvmrc` alignment, Base Library version).
+
 ## [0.0.77] - 2026-05-18
 
 ### Added

@@ -26,8 +26,10 @@
       "lib/*": ["./src/lib/*"],
       "hooks": ["./src/hooks/index"],
       "hooks/*": ["./src/hooks/*"],
-      "layouts/*": ["./layouts/*"],
-      "views/*": ["./views/*"]
+      "layouts": ["./src/layouts/index"],
+      "layouts/*": ["./src/layouts/*"],
+      "views": ["./src/views/index"],
+      "views/*": ["./src/views/*"]
     }
   },
   "include": ["src"],

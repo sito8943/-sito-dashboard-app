@@ -18,4 +18,5 @@ export * from "./Onboarding";
 export * from "./BottomNavigation";
 export * from "./Buttons";
 export * from "./Empty";
+export * from "./PwaUpdateDialog";
 export * from "./types";

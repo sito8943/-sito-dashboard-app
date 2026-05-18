@@ -13,6 +13,12 @@ export * from "./lib";
 // hooks
 export * from "./hooks";
 
+// layouts
+export * from "./layouts";
+
+// views
+export * from "./views";
+
 // @sito/dashboard
 export * from "@sito/dashboard";
 
