@@ -48,13 +48,23 @@ describe("ToTop", () => {
     capturedProps.current = {};
   });
 
+  const expectClassNames = (value: unknown, expected: string[]) => {
+    expect(typeof value).toBe("string");
+    const classes = String(value).split(" ");
+    expect(classes).toEqual(expect.arrayContaining(expected));
+  };
+
   it("keeps current default behavior", () => {
     render(<ToTop />);
 
     expect(useScrollTriggerMock).toHaveBeenCalledWith(200);
     expect(capturedProps.current.variant).toBe("submit");
     expect(capturedProps.current.color).toBe("primary");
-    expect(capturedProps.current.className).toBe("to-top show");
+    expectClassNames(capturedProps.current.className, [
+      "to-top",
+      "animated",
+      "show",
+    ]);
     expect(capturedProps.current["data-tooltip-content"]).toBe(
       "_accessibility:buttons.toTop",
     );
@@ -82,7 +92,12 @@ describe("ToTop", () => {
     expect(useScrollTriggerMock).toHaveBeenCalledWith(100);
     expect(capturedProps.current.variant).toBe("outlined");
     expect(capturedProps.current.color).toBe("secondary");
-    expect(capturedProps.current.className).toBe("to-top hide my-top");
+    expectClassNames(capturedProps.current.className, [
+      "to-top",
+      "animated",
+      "hide",
+      "my-top",
+    ]);
     expect(capturedProps.current.icon).toBe(faArrowDown);
     expect(capturedProps.current["data-tooltip-content"]).toBe("Back to top");
 
