@@ -4,6 +4,8 @@ import { useConfig } from "providers";
 
 import { NotFoundViewPropsType } from "./types";
 
+import "./styles.css";
+
 /**
  * Generic 404 view. Consumer provides text + CTA target.
  * Navigation uses `linkComponent` from `ConfigProvider`.
@@ -23,29 +25,17 @@ export const NotFoundView = (props: NotFoundViewPropsType) => {
   const { linkComponent: Link } = useConfig();
 
   return (
-    <main
-      className={classNames(
-        "w-full h-full flex flex-col items-center justify-center gap-6 p-4 text-center",
-        className,
-      )}
-    >
-      <h2
-        className={classNames(
-          "appear text-3xl max-xs:text-2xl !text-bg-error",
-          titleClassName,
-        )}
-      >
+    <main className={classNames("not-found-view", className)}>
+      <h2 className={classNames("appear not-found-view-title", titleClassName)}>
         {title}
       </h2>
-      <p
-        className={classNames("appear text-text-muted max-w-xl", bodyClassName)}
-      >
+      <p className={classNames("appear not-found-view-body", bodyClassName)}>
         {body}
       </p>
       <Link
         to={ctaTo}
         className={classNames(
-          "appear button primary submit !px-10",
+          "appear button primary submit not-found-view-cta",
           ctaClassName,
         )}
       >

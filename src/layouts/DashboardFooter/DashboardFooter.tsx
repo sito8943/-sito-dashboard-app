@@ -5,6 +5,8 @@ import { ToTop } from "components/ui/Buttons";
 import { DASHBOARD_FOOTER_CLASSNAMES } from "./constants";
 import { DashboardFooterPropsType } from "./types";
 
+import "./styles.css";
+
 /**
  * Shared dashboard footer: copyright line and optional `ToTop`.
  * Mount `bottomNavSpacing` when the app also renders `BottomNavigation`.

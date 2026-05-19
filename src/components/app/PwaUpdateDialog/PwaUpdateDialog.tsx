@@ -3,6 +3,8 @@ import { Dialog } from "../../ui/Dialog";
 
 import { PwaUpdateDialogPropsType } from "./types";
 
+import "./styles.css";
+
 /**
  * Presentational PWA update dialog. Source of `needRefresh` and update fn
  * stays in the consumer (custom SW hook, `vite-plugin-pwa`, etc.).
@@ -17,7 +19,7 @@ export const PwaUpdateDialog = (props: PwaUpdateDialogPropsType) => {
     dismissLabel,
     updateLabel,
     mobileFullScreen = false,
-    containerClassName = "!items-end pb-3",
+    containerClassName = "pwa-update-dialog-container",
   } = props;
 
   return (
@@ -28,8 +30,8 @@ export const PwaUpdateDialog = (props: PwaUpdateDialogPropsType) => {
       mobileFullScreen={mobileFullScreen}
       containerClassName={containerClassName}
     >
-      <p className="text-sm text-text-muted">{description}</p>
-      <div className="mt-5 flex items-center justify-end gap-2">
+      <p className="pwa-update-dialog-description">{description}</p>
+      <div className="pwa-update-dialog-actions">
         <Button type="button" variant="outlined" onClick={onDismiss}>
           {dismissLabel}
         </Button>
