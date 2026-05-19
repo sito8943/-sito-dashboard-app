@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Phase 2 of the cross-app auth migration (documented in `apps/dashboard-app-migration-wallet-period-calendar.md`). Consolidates the side-channel auth endpoints (password reset + email confirmation) that were duplicated in `wallet` (REST) and `period-calendar` (Supabase):
+  - `IAuthApiClient` (`src/lib/api/IAuthApiClient.ts`) — interface for `forgotPassword`, `resetPassword`, `resendConfirmEmail`, `confirmEmail`.
+  - `RestAuthApiClient` (`src/lib/api/RestAuthApiClient.ts`) — REST adapter. Accepts an existing `APIClient` instance (preferred — shares base URL, storage keys, refresh/retry) or builds one from `baseUrl`. Endpoint paths configurable via `options.endpoints`; optional `confirmEmailFallback` retried only on `404`.
+  - `SupabaseAuthApiClient` (`src/lib/api/SupabaseAuthApiClient.ts`) — Supabase adapter mapping the same DTOs onto `auth.resetPasswordForEmail` / `auth.resend` / `auth.verifyOtp` / `auth.setSession` + `auth.updateUser`. `confirmEmail` and `resetPassword` call `auth.signOut()` after verification so the transient recovery session does not persist.
+  - DTOs: `ForgotPasswordDto`, `ResetPasswordDto` (union of `{accessToken, refreshToken?, newPassword}` and `{tokenHash, type, newPassword}`), `ResendConfirmEmailDto`, `ConfirmEmailDto`, `AcceptedResponseDto`.
+- Shared auth URL/token helpers in `src/lib/auth/utils.ts`: `buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`. Read both query string and hash so Supabase recovery flows (hash fragments) and REST flows (query string) share one call site.
+- Canonical `AuthRouteQueryParam` and `AuthRouteQueryParamType` const maps in `src/lib/auth/types.ts` (`access_token`, `accessToken`, `refresh_token`, `token`, `token_hash`, `type`, `error`, `error_description` / `email`, `recovery`, `signup`).
+- Generic form payload types in `src/lib/auth/forms.ts`: `SignInFormType<TExtra>`, `SignUpFormType<TExtra>`, `UpdatePasswordFormType`, `RecoveryFormType`.
 - New generic `TopBanner` primitive in `components/ui/TopBanner`. Props: `visible?` (default `true`), `children`, `color?` (`"default" | "primary" | "secondary" | "tertiary" | "quaternary" | "info" | "success" | "warning" | "error"`, default `"default"`), `role?` (default `"status"`), `ariaLive?` (default `"polite"`), `className?`. Renders nothing when `visible={false}`. Color tokens map to the existing `--color-bg-*` / `--color-*` CSS variables (including `tertiary` and `quaternary` from `src/index.css`), aligning with the `Button` color contract.
 
 ### Changed
@@ -19,6 +27,8 @@ All notable changes to this project will be documented in this file.
 
 ### Documentation
 
+- `AGENTS.md`: added Phase 2 reference table and rules #36 (`IAuthApiClient` adapters) and #37 (shared auth URL/token helpers).
+- `docs/CONSUMER_GUIDE.md` §8.1: added `IAuthApiClient` adapters, URL/token helpers, and shared form types.
 - `AGENTS.md`: added rule #29 — new components must be placed under `components/ui/` or `components/app/` per coupling, with `app/` allowed to depend on `ui/` (not the reverse).
 - `docs/ARCHITECTURE_RULES.md`: documented the `components/ui/` vs `components/app/` split, the import direction rule, and the decision rule for new components.
 

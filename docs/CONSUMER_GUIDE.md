@@ -761,87 +761,17 @@ Note:
 - `useFormDialog` is state/core lifecycle only.
 - Use `usePostDialog` and `usePutDialog` for remote CRUD flows.
 
-#### Migration from legacy `useFormDialog` (`v0.0.54+`)
+#### Migration from legacy `useFormDialog` (removed in `v0.0.54`)
 
-Breaking changes:
+`useFormDialog` no longer accepts `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`. `useFormDialogLegacy` and `useEntityFormDialog` are no longer exported.
 
-- `useFormDialog` no longer accepts `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, or `formToDto`.
-- `useFormDialogLegacy` and `useEntityFormDialog` are no longer exported.
-
-Migration map:
+Map:
 
 - Legacy create (mutation-only) -> `usePostDialog`
 - Legacy edit (`getFunction` + mutation) -> `usePutDialog`
-- Local/state-only dialog -> `useFormDialog`
+- Local/state-only dialog -> `useFormDialog` (`mode: "state"`)
 
-Before:
-
-```tsx
-const createDialog = useFormDialog<
-  ProductDto,
-  CreateProductDto,
-  ProductDto,
-  ProductForm
->({
-  title: "Create product",
-  defaultValues: { name: "", price: 0 },
-  mutationFn: (dto) => api.products.insert(dto),
-  formToDto: (form) => ({ name: form.name, price: form.price }),
-  queryKey: ["products"],
-});
-```
-
-After:
-
-```tsx
-const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
-  title: "Create product",
-  defaultValues: { name: "", price: 0 },
-  mutationFn: (dto) => api.products.insert(dto),
-  formToDto: (form) => ({ name: form.name, price: form.price }),
-  queryKey: ["products"],
-});
-```
-
-Before:
-
-```tsx
-const editDialog = useFormDialog<
-  ProductDto,
-  UpdateProductDto,
-  ProductDto,
-  ProductForm
->({
-  title: "Edit product",
-  defaultValues: { name: "", price: 0 },
-  getFunction: (id) => api.products.getById(id),
-  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
-  mutationFn: (dto) => api.products.update(dto),
-  formToDto: (form) => ({ id: 0, ...form }),
-  queryKey: ["products"],
-});
-```
-
-After:
-
-```tsx
-const editDialog = usePutDialog<
-  ProductDto,
-  UpdateProductDto,
-  ProductDto,
-  ProductForm
->({
-  title: "Edit product",
-  defaultValues: { name: "", price: 0 },
-  getFunction: (id) => api.products.getById(id),
-  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
-  mutationFn: (dto) => api.products.update(dto),
-  formToDto: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
-  queryKey: ["products"],
-});
-```
-
-`useFormDialog` now supports `onError(error, context)` for core lifecycle failures (`submit`, `apply`, `clear`):
+`useFormDialog` supports `onError(error, context)` for core lifecycle failures (`submit`, `apply`, `clear`):
 
 ```tsx
 const filtersDialog = useFormDialog<ProductFilters>({
@@ -1032,6 +962,82 @@ const { account, logUser, logoutUser, isInGuestMode } = useAuth();
 ```
 
 When your login UI has a "remember me" option, pass `rememberMe` in the auth payload.
+
+#### 8.1.1 `IAuthApiClient`: password reset and email confirmation
+
+`AuthClient` covers the session endpoints (`login`, `register`, `refresh`,
+`logout`, `getSession`). The side-channel endpoints (forgot password, reset
+password, resend confirmation email, confirm email) live behind the
+`IAuthApiClient` interface so the same view code can drive either backend.
+
+Two adapters ship with the library:
+
+- `RestAuthApiClient` — hits the conventional `auth/password/*` and
+  `auth/email/confirm*` endpoints through an `APIClient` you provide. Endpoint
+  paths and an optional `confirmEmailFallback` (only retried on 404) are
+  configurable.
+- `SupabaseAuthApiClient` — maps the same DTOs onto
+  `supabase.auth.resetPasswordForEmail`, `auth.resend`, `auth.verifyOtp`,
+  and `auth.setSession` / `auth.updateUser` for the access-token reset path.
+
+```ts
+// REST backend
+import { APIClient, RestAuthApiClient } from "@sito/dashboard-app";
+
+const api = new APIClient(config.apiUrl, config.auth.user, false, undefined, {
+  rememberKey: config.auth.remember,
+  refreshTokenKey: config.auth.refreshTokenKey,
+  accessTokenExpiresAtKey: config.auth.accessTokenExpiresAtKey,
+});
+const authApi = new RestAuthApiClient(api, {
+  endpoints: { confirmEmailFallback: "auth/email/confirm/verify" },
+});
+
+// Supabase backend
+import { SupabaseAuthApiClient } from "@sito/dashboard-app";
+const authApi = new SupabaseAuthApiClient(supabase);
+```
+
+Both expose the same methods returning a normalized `IAuthApiClient` surface:
+
+```ts
+authApi.forgotPassword({ email, redirectTo });
+authApi.resetPassword({ tokenHash, type: "recovery", newPassword });
+authApi.resetPassword({ accessToken, refreshToken, newPassword });
+authApi.resendConfirmEmail({ email, redirectTo });
+authApi.confirmEmail({ tokenHash, type: "email" });
+```
+
+#### 8.1.2 Auth URL/token helpers
+
+Confirm-email and recovery flows decode tokens from either the query string or
+the hash fragment (Supabase puts recovery tokens in the hash). Use the shipped
+helpers instead of re-implementing the parsing:
+
+```ts
+import {
+  AuthRouteQueryParam,
+  buildAuthRedirectUrl,
+  extractAuthQueryParamFromLocation,
+  extractAuthSessionTokensFromLocation,
+  extractRecoveryAccessTokenFromLocation,
+  getAuthErrorMessage,
+  hasAuthErrorParamsInLocation,
+} from "@sito/dashboard-app";
+
+const tokenHash = extractAuthQueryParamFromLocation(
+  location.hash,
+  location.search,
+  AuthRouteQueryParam.tokenHash,
+);
+const redirectTo = buildAuthRedirectUrl("/auth/confirm-email", config.thisUrl);
+```
+
+#### 8.1.3 Shared form types
+
+`SignInFormType`, `SignUpFormType`, `UpdatePasswordFormType`, and
+`RecoveryFormType` are generic over a `TExtra` field set so consumers can add
+their own (e.g. `name`, `username`) without forking the type.
 
 ### 8.2 Notifications
 
