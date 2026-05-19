@@ -348,7 +348,7 @@ const [useCurrentAccount, setUseCurrentAccount] = useState(true);
 ```
 
 When pairing with `useImportDialog`, prefer the hook-managed flow via
-`defaultExtra` + `renderExtraFields` (see `RECIPES.md` §8). The hook merges the
+`defaultExtra` + `renderExtraFields` (see `RECIPES_FORMS.md` §4). The hook merges the
 extra values into the `mutationFn` payload as
 `{ items, override, ...extra }`.
 

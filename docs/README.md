@@ -8,5 +8,5 @@ Recommended files to copy/adapt in applications that consume `@sito/dashboard-ap
    Visual customization guide: theme variables, CSS classes, and safe overrides.
 3. `docs/TROUBLESHOOTING.md`
    Common issue diagnosis (providers, typing, styling, auth, routing).
-4. `docs/RECIPES.md`
-   Copy-ready recipes: app shell, CRUD, forms, import/export, offline fallback.
+4. `docs/RECIPES.md` (index) + `docs/RECIPES_LAYOUT.md` / `docs/RECIPES_DATA.md` / `docs/RECIPES_FORMS.md`
+   Copy-ready recipes split by theme: layout/providers, data/CRUD/exports, forms/dialogs/feedback.

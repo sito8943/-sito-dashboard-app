@@ -1,17 +1,19 @@
 # AGENTS.md — @sito/dashboard-app
 
 Agent guardrails for projects consuming **`@sito/dashboard-app`** (React 18 UI library on top of `@sito/dashboard`).
-Public usage examples live in `README.md`. This file is canonical for agent behavior; do not duplicate setup snippets here.
+Public usage examples live in `docs/CONSUMER_GUIDE.md` and the themed recipe files (`docs/RECIPES.md` is the index; recipes are split into `docs/RECIPES_LAYOUT.md`, `docs/RECIPES_DATA.md`, `docs/RECIPES_FORMS.md`). `README.md` is the entry point (install + doc index). This file is canonical for agent behavior; do not duplicate setup snippets here.
 
 ---
 
 ## Documentation Scope
 
-| Document     | Authority                                          |
-| ------------ | -------------------------------------------------- |
-| `README.md`  | Canonical for `@sito/dashboard-app` consumer usage |
-| `AGENTS.md`  | Canonical for agent behavior in this repo          |
-| `.sito/*.md` | Reference only (upstream `@sito/dashboard`)        |
+| Document                                                                                                | Authority                                                       |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `README.md`                                                                                             | Entry point — install, requirements, scripts, doc index         |
+| `docs/CONSUMER_GUIDE.md`                                                                                | Canonical for `@sito/dashboard-app` consumer usage and examples |
+| `docs/RECIPES.md` (index) + `docs/RECIPES_LAYOUT.md` / `docs/RECIPES_DATA.md` / `docs/RECIPES_FORMS.md` | Canonical for copy-ready integration recipes (split by theme)   |
+| `AGENTS.md`                                                                                             | Canonical for agent behavior in this repo                       |
+| `.sito/*.md`                                                                                            | Reference only (upstream `@sito/dashboard`)                     |
 
 Critical distinctions (override anything in `.sito/*`):
 
@@ -49,7 +51,7 @@ npm install \
   @fortawesome/react-fontawesome@0.2.3
 ```
 
-See `README.md` for: full provider setup, `AppProviders` composer, Supabase backend, component prop tables, hook signatures, `BaseClient` / `IndexedDBClient` / `SupabaseDataClient` extension, dialog/form/auth/notification examples, styling config.
+See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, Supabase backend, component prop tables, hook signatures, `BaseClient` / `IndexedDBClient` / `SupabaseDataClient` extension, dialog/form/auth/notification examples, styling config. See the themed recipe files for copy-ready snippets — `docs/RECIPES_LAYOUT.md` (providers, shells, fallback views, drawer), `docs/RECIPES_DATA.md` (CRUD, clients, IndexedDB, exports), `docs/RECIPES_FORMS.md` (forms, dialogs, tabs/onboarding, feedback, auth, errors). `docs/RECIPES.md` indexes them.
 
 ---
 
