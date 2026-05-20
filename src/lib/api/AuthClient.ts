@@ -8,6 +8,7 @@ import {
   SessionDto,
   SignOutDto,
 } from "../entities";
+import type { IAuthClient } from "./IAuthClient";
 import { Methods } from "./utils/services";
 import type { APIClientAuthConfig } from "./APIClient";
 
@@ -17,7 +18,7 @@ type AuthClientLogoutOptions = {
 };
 
 /** Auth-focused API client for login, refresh, logout and session endpoints. */
-export class AuthClient {
+export class AuthClient implements IAuthClient {
   api: APIClient;
 
   /**

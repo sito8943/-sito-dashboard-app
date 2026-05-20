@@ -392,6 +392,104 @@ export function PwaUpdate() {
 
 Library never imports `navigator.serviceWorker` or `virtual:pwa-register/react` — only the consumer.
 
+### 2.5 Legal & info pages (`LegalPage` / `LegalSection` / `LegalLinksList`)
+
+Composable primitives for `About`, `TermsAndConditions`, `PrivacyPolicy`, `CookiesPolicy`. Library is i18n-agnostic — resolve `<Trans>` / `t()` in the consumer and pass `ReactNode` for `title`, `intro`, and section bodies. Spread `richTextComponents` to extend the default `<Trans components>` map.
+
+```tsx
+import {
+  LegalLinksList,
+  LegalPage,
+  LegalSection,
+  richTextComponents,
+} from "@sito/dashboard-app";
+import { Trans, useTranslation } from "react-i18next";
+
+// `routes` is your app's local routes registry, e.g.:
+// export const routes = {
+//   termsAndConditions: "/legal/terms",
+//   privacyPolicy: "/legal/privacy",
+//   cookiesPolicy: "/legal/cookies",
+// };
+
+export function About() {
+  const { t } = useTranslation();
+
+  return (
+    <LegalPage
+      title={t("_pages:about.title")}
+      intro={
+        <Trans i18nKey="_pages:about.body" components={richTextComponents} />
+      }
+    >
+      <LegalSection title={t("_pages:about.legal.title")}>
+        <p>{t("_pages:about.legal.body")}</p>
+        <LegalLinksList
+          links={[
+            {
+              to: routes.termsAndConditions,
+              label: t("_pages:about.legal.links.terms"),
+            },
+            {
+              to: routes.privacyPolicy,
+              label: t("_pages:about.legal.links.privacy"),
+            },
+            {
+              to: routes.cookiesPolicy,
+              label: t("_pages:about.legal.links.cookies"),
+            },
+          ]}
+        />
+        <p className="text-sm text-text-muted">
+          {t("_pages:about.legal.updated")}
+        </p>
+      </LegalSection>
+    </LegalPage>
+  );
+}
+```
+
+Mapping a JSON array of sections (e.g. `TermsAndConditions`):
+
+```tsx
+type TermsSection = { title: string; body?: string };
+
+export function TermsAndConditions() {
+  const { t } = useTranslation();
+  const sections = t("_pages:termsAndConditions.sections", {
+    returnObjects: true,
+  }) as TermsSection[];
+
+  return (
+    <LegalPage
+      title={t("_pages:termsAndConditions.title")}
+      intro={
+        <Trans
+          i18nKey="_pages:termsAndConditions.body"
+          components={richTextComponents}
+        />
+      }
+    >
+      {sections.map((section, index) => (
+        <LegalSection key={index} title={section.title}>
+          <Trans
+            i18nKey={`_pages:termsAndConditions.sections.${index}.body`}
+            components={richTextComponents}
+          />
+        </LegalSection>
+      ))}
+    </LegalPage>
+  );
+}
+```
+
+Notes:
+
+- `LegalPage` has no `sections` prop on purpose. Compose with `LegalSection` directly so apps can interleave product-specific blocks (e.g. wallet's "How To" card) with shared legal/info cards.
+- `LegalLinksList` navigates via `linkComponent` from `ConfigProvider` — router-agnostic. Returns `null` when `links` is empty.
+- `richTextComponents` is a default map (`p`, `strong`, `em`, `ul`, `ol`, `li`, `a`, `code`). Spread to add tags: `<Trans components={{ ...richTextComponents, br: <br /> }} />`.
+- The library does NOT depend on `react-i18next`. Any equivalent rich-text/`t` solution works as long as the consumer hands `ReactNode` / `string` to the primitives.
+
 ## 3. Dynamic drawer children with `useDrawerMenu`
 
 ```tsx

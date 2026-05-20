@@ -204,6 +204,26 @@ const supabase = createClient(
 
 `useAuth` keeps the same API with `SupabaseAuthProvider`.
 
+Both providers compose the shared `useAuthSessionState` hook, which owns localStorage key resolution, `account` state, `clearStoredSession`, `isInGuestMode` / `setGuestMode`, and `logUser`. Each provider only adds its own `logoutUser` / `logUserFromLocal` (and, for Supabase, the `onAuthStateChange` subscription + auth-revision guard). If you need to build a custom auth provider against the same `AuthContext`:
+
+```tsx
+import { AuthContext, useAuthSessionState } from "@sito/dashboard-app";
+
+const CustomAuthProvider = ({ children }) => {
+  const {
+    account,
+    setAccount,
+    clearStoredSession,
+    isInGuestMode,
+    setGuestMode,
+    logUser,
+  } = useAuthSessionState();
+
+  // own logoutUser / logUserFromLocal against your backend...
+  // then expose { account, logUser, logoutUser, logUserFromLocal, isInGuestMode, setGuestMode }
+};
+```
+
 ## 3. Core Integration Rules
 
 1. Always import from `@sito/dashboard-app`.
@@ -247,435 +267,34 @@ const supabase = createClient(
 
 ## 5. Frequent Usage Examples
 
-### 5.1 `TabsLayout`: local state tabs
+Copy-ready snippets live in the themed recipe files. This guide is the reference for providers, props, hooks, clients, and auth — recipes show how to assemble them.
 
-```tsx
-import { useState } from "react";
-import { TabsLayout } from "@sito/dashboard-app";
-
-const tabs = [
-  { id: 1, label: "General", content: <div>General</div> },
-  { id: 2, label: "Security", content: <div>Security</div> },
-];
-
-export function SettingsTabs() {
-  const [tab, setTab] = useState(1);
-
-  return (
-    <TabsLayout
-      tabs={tabs}
-      currentTab={tab}
-      onTabChange={(id) => setTab(Number(id))}
-      useLinks={false}
-      tabButtonProps={{ variant: "outlined", color: "secondary" }}
-    />
-  );
-}
-```
-
-### 5.2 `Error`: use only one mode at a time
-
-```tsx
-import { Error } from "@sito/dashboard-app";
-
-<Error error={error} onRetry={() => refetch()} />;
-
-<Error>
-  <CustomErrorPanel />
-</Error>;
-```
-
-### 5.3 `PrettyGrid`: infinite scroll
-
-```tsx
-import { PrettyGrid, Loading } from "@sito/dashboard-app";
-
-<PrettyGrid<ProductDto>
-  data={products}
-  loading={isLoading}
-  renderComponent={(item) => <ProductCard item={item} />}
-  hasMore={hasMore}
-  loadingMore={isFetchingNextPage}
-  onLoadMore={fetchNextPage}
-  loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
-/>;
-```
-
-### 5.4 `ImportDialog`: custom preview
-
-```tsx
-import { ImportDialog } from "@sito/dashboard-app";
-
-<ImportDialog<ProductImportPreviewDto>
-  open={open}
-  title="Import products"
-  handleClose={close}
-  handleSubmit={submit}
-  fileProcessor={parseFile}
-  renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
-/>;
-```
-
-### 5.4.1 `ImportDialog`: extra fields (custom inputs)
-
-Use `extraFields` to render custom inputs (checkboxes, selects, text) between the
-preview and the footer actions. When the consumer owns the state, pass the node
-directly:
-
-```tsx
-import { useState } from "react";
-import { ImportDialog } from "@sito/dashboard-app";
-
-const [useCurrentAccount, setUseCurrentAccount] = useState(true);
-
-<ImportDialog<TransactionImportPreviewDto>
-  open={open}
-  title="Import transactions"
-  handleClose={close}
-  handleSubmit={() => submitImport({ useCurrentAccount, items: previewItems })}
-  fileProcessor={parseFile}
-  extraFields={
-    <label className="flex items-center gap-2">
-      <input
-        type="checkbox"
-        checked={useCurrentAccount}
-        onChange={(e) => setUseCurrentAccount(e.target.checked)}
-      />
-      <span>Use current account</span>
-    </label>
-  }
-/>;
-```
-
-When pairing with `useImportDialog`, prefer the hook-managed flow via
-`defaultExtra` + `renderExtraFields` (see `RECIPES_FORMS.md` §4). The hook merges the
-extra values into the `mutationFn` payload as
-`{ items, override, ...extra }`.
-
-### 5.4.2 `ExportDialog` / `useExportDialog`: optional export config
-
-Export flows are direct by default (`useExportAction` + `useExportActionMutate`).
-When an entity needs extra configuration before the request (date range, format,
-columns), swap to `useExportDialog` — same `action()` shape, so `Page`/`Actions`
-consume either without changes.
-
-```tsx
-import { ExportDialog, useExportDialog } from "@sito/dashboard-app";
-
-type ExportExtra = { from: string; to: string; format: "csv" | "xlsx" };
-
-const exportDialog = useExportDialog<TransactionDto, ExportExtra, Blob>({
-  entity: "transactions",
-  defaultExtra: { from: "", to: "", format: "csv" },
-  mutationFn: ({ from, to, format }) =>
-    api.transactions.exportRange({ from, to, format }),
-  renderExtraFields: ({ values, setValue }) => (
-    <div className="grid gap-2">
-      <input
-        type="date"
-        value={values.from}
-        onChange={(e) => setValue("from", e.target.value)}
-      />
-      <input
-        type="date"
-        value={values.to}
-        onChange={(e) => setValue("to", e.target.value)}
-      />
-      <select
-        value={values.format}
-        onChange={(e) => setValue("format", e.target.value as ExportExtra["format"])}
-      >
-        <option value="csv">CSV</option>
-        <option value="xlsx">XLSX</option>
-      </select>
-    </div>
-  ),
-});
-
-<Page exportAction={exportDialog.action} ... />
-<ExportDialog {...exportDialog} title="Export transactions" />
-```
-
-Opt out of the dialog by using `useExportAction` + `useExportActionMutate`
-directly — the action triggers the mutation without any modal.
-
-### 5.5 `useNavbar`: dynamic title and right slot
-
-```tsx
-import { useEffect } from "react";
-import { useNavbar } from "@sito/dashboard-app";
-
-export function ProductsPage() {
-  const { setTitle, setRightContent } = useNavbar();
-
-  useEffect(() => {
-    setTitle("Products");
-    setRightContent(<button>Export</button>);
-    return () => {
-      setTitle("");
-      setRightContent(null);
-    };
-  }, [setTitle, setRightContent]);
-
-  return <div>...</div>;
-}
-```
-
-### 5.6 Dialogs with `extraActions`
-
-```tsx
-import type { ButtonPropsType } from "@sito/dashboard-app";
-import { ConfirmationDialog, FormDialog } from "@sito/dashboard-app";
-
-const extraActions: ButtonPropsType[] = [
-  {
-    id: "save-draft",
-    type: "button",
-    variant: "outlined",
-    color: "secondary",
-    children: "Save draft",
-    onClick: () => saveDraft(),
-  },
-];
-
-<ConfirmationDialog
-  open={open}
-  title="Confirm change"
-  handleSubmit={confirm}
-  handleClose={close}
-  extraActions={extraActions}
-/>;
-
-<FormDialog<ProductForm> {...dialog} extraActions={extraActions}>
-  {/* fields */}
-</FormDialog>;
-```
-
-Use `type: "button"` in `FormDialog` extra actions unless you want them to submit the form.
-
-### 5.7 `BottomNavigation`: mobile nav with optional center action
-
-```tsx
-import {
-  BottomNavigation,
-  type BottomNavigationItemType,
-} from "@sito/dashboard-app";
-import {
-  faBox,
-  faHome,
-  faPlus,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-
-type BottomNavId = "home" | "products" | "profile";
-
-const items: BottomNavigationItemType<BottomNavId>[] = [
-  { id: "home", label: "Home", to: "/", icon: faHome, position: "left" },
-  {
-    id: "products",
-    label: "Products",
-    to: "/products",
-    icon: faBox,
-    position: "left",
-  },
-  {
-    id: "profile",
-    label: "Profile",
-    to: "/profile",
-    icon: faUser,
-    position: "right",
-  },
-];
-
-<BottomNavigation
-  items={items}
-  centerAction={{
-    icon: faPlus,
-    to: "/products/new",
-    ariaLabel: "Create product",
-  }}
-  isItemActive={(pathname, item) =>
-    item.id === "products"
-      ? pathname.startsWith("/products")
-      : pathname === item.to
-  }
-/>;
-```
-
-Dynamic center-action override from page scope:
-
-```tsx
-import {
-  BottomNavActionProvider,
-  BottomNavigation,
-  useRegisterBottomNavAction,
-  type BottomNavigationItemType,
-} from "@sito/dashboard-app";
-import { faTags } from "@fortawesome/free-solid-svg-icons";
-
-function CategoriesCenterAction() {
-  useRegisterBottomNavAction({
-    icon: faTags,
-    ariaLabel: "Create category",
-    to: "/categories/new",
-    color: "secondary",
-  });
-  return null;
-}
-
-<BottomNavActionProvider>
-  <CategoriesCenterAction />
-  <BottomNavigation items={items} centerAction={{ to: "/products/new" }} />
-</BottomNavActionProvider>;
-```
+| Task                                                          | Recipe                   |
+| ------------------------------------------------------------- | ------------------------ |
+| `TabsLayout` local state + onboarding flow                    | `RECIPES_FORMS.md` §5    |
+| `Error` single-mode + `Empty` / `SplashScreen` / `IconButton` | `RECIPES_FORMS.md` §7    |
+| `PrettyGrid` infinite scroll                                  | `RECIPES_DATA.md` §1.2   |
+| `ImportDialog` — `renderCustomPreview`                        | `RECIPES_FORMS.md` §4    |
+| `ImportDialog` — hook `defaultExtra` / `renderExtraFields`    | `RECIPES_FORMS.md` §4.1  |
+| `ImportDialog` — component-level `extraFields`                | `RECIPES_FORMS.md` §4.2  |
+| `ExportDialog` / `useExportDialog` config dialog              | `RECIPES_DATA.md` §4     |
+| `useNavbar` dynamic title and right slot                      | `RECIPES_FORMS.md` §6    |
+| Dialogs with `extraActions`                                   | `RECIPES_FORMS.md` §2    |
+| `BottomNavigation` (mobile, center action)                    | `RECIPES_LAYOUT.md` §2.1 |
+| `AppShell` / `DashboardHeader` / `DashboardFooter` layout     | `RECIPES_LAYOUT.md` §2   |
+| `AuthShell` for auth routes                                   | `RECIPES_LAYOUT.md` §2.2 |
+| `NotFoundView` / `FeatureUnavailableView`                     | `RECIPES_LAYOUT.md` §2.3 |
+| `PwaUpdateDialog`                                             | `RECIPES_LAYOUT.md` §2.4 |
+| `LegalPage` / `LegalSection` / `LegalLinksList`               | `RECIPES_LAYOUT.md` §2.5 |
+| `Onboarding` step animations (`remountStepOnChange`)          | `RECIPES_FORMS.md` §5    |
+| Notifications (`useNotification`)                             | `RECIPES_FORMS.md` §8    |
+| Auth (`useAuth`, `rememberMe`, guest mode)                    | `RECIPES_FORMS.md` §9    |
+| Error guards (`isValidationError` / `isHttpError`)            | `RECIPES_FORMS.md` §10   |
 
 Notes:
 
-- `BottomNavigation` relies on `ConfigProvider` routing primitives (`location`, `navigate`, `linkComponent`).
-- `hidden`/`disabled` in each item control visibility and interaction.
-- `centerAction.onClick` runs before optional `to` navigation; call `event.preventDefault()` to cancel navigation.
-- `BottomNavActionProvider` is optional. If mounted, `useRegisterBottomNavAction` lets active pages override center-action fields at runtime.
-
-### 5.8 `AppShell` / `DashboardHeader` / `DashboardFooter`: app layout shell
-
-Compose route content with the layout shells instead of hand-rolling header/footer wiring in every consumer. The standard providers (`ConfigProvider` etc.) must already be mounted (see §2).
-
-```tsx
-import {
-  AppShell,
-  AuthShell,
-  DashboardHeader,
-  DashboardFooter,
-  BottomNavigation,
-  PwaUpdateDialog,
-} from "@sito/dashboard-app";
-import { Tooltip } from "react-tooltip";
-
-function AppLayout() {
-  return (
-    <AppShell
-      header={<DashboardHeader menuMap={menuMap} showOfflineBanner />}
-      footer={<DashboardFooter copyrightText="© Acme Corp" bottomNavSpacing />}
-      bottomNavigation={
-        <BottomNavigation items={bottomItems} centerAction={centerAction} />
-      }
-      extras={
-        <>
-          <Tooltip id="tooltip" />
-          <PwaUpdateDialog
-            open={needRefresh}
-            onDismiss={dismissUpdate}
-            onUpdate={applyUpdate}
-            title="Update available"
-            description="A new version is ready."
-            dismissLabel="Later"
-            updateLabel="Update"
-          />
-        </>
-      }
-    >
-      <Outlet />
-    </AppShell>
-  );
-}
-
-function AuthLayout() {
-  return (
-    <AuthShell>
-      <Outlet />
-    </AuthShell>
-  );
-}
-```
-
-Slot order in `AppShell`: `header → children → footer → bottomNavigation → extras → Notification`. The built-in `Notification` portal renders last; opt out with `withNotification={false}` if you mount your own.
-
-`DashboardHeader` owns the drawer open/close state internally — pass only `menuMap`, optional `logo`, optional `showOfflineBanner`, and `navbarProps` (everything except `openDrawer`).
-
-`DashboardFooter` defaults `year` to the current year and renders `ToTop`. Toggle with `showToTop={false}` or pass `toTopProps` to customize. Set `bottomNavSpacing` when the app also mounts `BottomNavigation` so the footer keeps clear of the fixed bottom bar on mobile (`mb-16 sm:mb-0`).
-
-### 5.9 `NotFoundView` / `FeatureUnavailableView`: reusable fallback screens
-
-Both views consume `linkComponent` from `ConfigProvider` for the CTA, so navigation stays router-agnostic. Consumer provides text and the target route from its own `routes.ts` constants.
-
-```tsx
-import { NotFoundView, FeatureUnavailableView } from "@sito/dashboard-app";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { useTranslation } from "react-i18next";
-
-function NotFound() {
-  const { t } = useTranslation();
-  return (
-    <NotFoundView
-      title={t("_pages:notFound.title")}
-      body={t("_pages:notFound.body")}
-      ctaLabel={t("_pages:home.title")}
-      ctaTo={AppRoutes.Home}
-    />
-  );
-}
-
-function FeatureDisabled({ module }: { module: string }) {
-  const { t } = useTranslation();
-  return (
-    <FeatureUnavailableView
-      title={t("_pages:featureFlags.route.title")}
-      body={t("_pages:featureFlags.route.body", {
-        module: t(`_pages:featureFlags.modules.${module}`),
-      })}
-      ctaLabel={t("_pages:featureFlags.route.cta")}
-      ctaTo={AppRoutes.Home}
-      icon={faLock}
-    />
-  );
-}
-```
-
-`FeatureUnavailableView.icon` defaults to `faWarning`. All className overrides (`className`, `titleClassName`, `bodyClassName`, `ctaClassName`, plus `iconClassName` on `FeatureUnavailableView`) are merged onto the rendered nodes.
-
-### 5.10 `PwaUpdateDialog`: presentational PWA update prompt
-
-The dialog is fully decoupled from any service-worker source. The library does not import `navigator.serviceWorker` or `virtual:pwa-register/react` — consumers wire their own update hook (custom SW registration, `vite-plugin-pwa` via `useRegisterSW`, etc.) and pass the resulting state in:
-
-```tsx
-import { PwaUpdateDialog } from "@sito/dashboard-app";
-import { useRegisterSW } from "virtual:pwa-register/react"; // or your own SW hook
-
-function AppPwaUpdateDialog() {
-  const { t } = useTranslation();
-  const {
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW();
-
-  return (
-    <PwaUpdateDialog
-      open={needRefresh}
-      onDismiss={() => setNeedRefresh(false)}
-      onUpdate={() => updateServiceWorker(true)}
-      title={t("_pages:pwaUpdate.title")}
-      description={t("_pages:pwaUpdate.description")}
-      dismissLabel={t("_pages:pwaUpdate.actions.later")}
-      updateLabel={t("_pages:pwaUpdate.actions.update")}
-    />
-  );
-}
-```
-
-Mount it inside `AppShell.extras` (or anywhere above the route content). For a vanilla `navigator.serviceWorker` setup, swap `useRegisterSW` for a local hook exposing the same `needRefresh` / `apply` shape.
-
-### 5.11 `Onboarding`: opt-in step animations (`remountStepOnChange`)
-
-`Onboarding` ships with built-in entry animations (`onboarding-step-rise-in` + `onboarding-step-pop-in` with stagger on title/body/content/actions). By default the same `<Step>` tree is reconciled across steps, so the animation only plays on first mount. Set `remountStepOnChange={true}` to force a remount of the active step on every transition:
-
-```tsx
-<Onboarding remountStepOnChange steps={onboardingSteps} />
-```
-
-Animation gating follows `ConfigProvider.motion`:
-
-- `motion="none"` (or `:root[data-sito-motion="none"]`) disables the step animations.
-- `prefers-reduced-motion: reduce` disables them unless `motion="always"`.
+- Provider order, drawer/menu wiring, and shells live in `RECIPES_LAYOUT.md`. CRUD pages, entity clients, and exports live in `RECIPES_DATA.md`. Forms, dialogs, tabs/onboarding, navbar, feedback, notifications, and auth live in `RECIPES_FORMS.md`. `RECIPES.md` indexes all three.
+- `Onboarding` step animations are opt-in per-mount via `remountStepOnChange`. Default reconciles the step tree across step changes (no animation restart). Gated by `ConfigProvider.motion` and `prefers-reduced-motion`.
 
 ## 6. High-Level Hooks
 
@@ -962,6 +581,50 @@ const { account, logUser, logoutUser, isInGuestMode } = useAuth();
 ```
 
 When your login UI has a "remember me" option, pass `rememberMe` in the auth payload.
+
+#### 8.1.0 `AuthClient` vs `SupabaseAuthClient`: session endpoints
+
+The session endpoints (`login`, `refresh`, `register`, `getSession`, `logout`)
+have two adapters with the same surface:
+
+- `AuthClient` — REST. Hits `auth/sign-in`, `auth/sign-up`, `auth/refresh`,
+  `auth/sign-out`, `auth/session`. Backed by an internal `APIClient`.
+- `SupabaseAuthClient` — Supabase Auth. Maps `supabase.auth.signInWithPassword`
+  / `auth.refreshSession` / `auth.signUp` / `auth.getSession` / `auth.signOut`
+  onto the same `SessionDto` shape via `mapSupabaseSessionToSessionDto`.
+
+`SupabaseAuthClient` adds `signUp(data)` returning a discriminated union so
+callers can branch on email confirmation:
+
+```ts
+import { SupabaseAuthClient } from "@sito/dashboard-app";
+
+const auth = new SupabaseAuthClient(supabase, {
+  // optional
+  defaultSignUpRedirectTo: buildAuthRedirectUrl("/auth/confirm-email"),
+  mapperOptions: { defaultUsername: "guest" },
+  // sessionMapper: customMapper,  // overrides mapperOptions entirely
+});
+
+const result = await auth.signUp({
+  email,
+  password,
+  rPassword: password,
+  name: "Sito", // -> options.data.{name, username}
+  // username: "fallback",       // used when name is missing
+  // metadata: { plan: "pro" },  // replaces the default {name, username} payload
+  // redirectTo: ...,            // per-call override of defaultSignUpRedirectTo
+});
+
+if (result.status === "confirmation_required") {
+  // show "check your email" screen
+} else {
+  await logUser(result.session, rememberMe);
+}
+```
+
+`register()` keeps REST symmetry: it throws when Supabase requires
+confirmation. Call `signUp()` when the UI needs to handle that branch.
 
 #### 8.1.1 `IAuthApiClient`: password reset and email confirmation
 

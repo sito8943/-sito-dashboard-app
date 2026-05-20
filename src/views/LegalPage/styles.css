@@ -1,0 +1,37 @@
+@reference "../../index.css";
+
+.legal-page {
+  @apply py-10 px-5 gap-5 flex flex-col;
+}
+
+.legal-page-title {
+  @apply text-4xl max-xs:text-2xl;
+}
+
+.legal-page-intro {
+  @apply text-text mt-2;
+}
+
+.legal-section {
+  @apply bg-base p-5 rounded-2xl;
+}
+
+.legal-section-title {
+  @apply text-2xl max-sm:text-xl font-bold;
+}
+
+.legal-section-body {
+  @apply mt-2 text-text;
+}
+
+.legal-links-list {
+  @apply mt-4 list-disc list-inside space-y-1;
+}
+
+.legal-links-list-item {
+  @apply text-text;
+}
+
+.legal-links-list-link {
+  @apply underline font-bold!;
+}

@@ -1,17 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { AuthContext } from "providers/Auth";
+import { AuthContext, useAuthSessionState } from "providers/Auth";
 import type { SupabaseAuthProviderPropTypes } from "./types";
 import { useSupabase } from "./SupabaseContext";
 
-import {
-  fromLocal,
-  mapSupabaseSessionToSessionDto,
-  removeFromLocal,
-  SessionAccountDto,
-  SessionDto,
-  toLocal,
-} from "lib";
+import { mapSupabaseSessionToSessionDto, SessionDto } from "lib";
 
 const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
   const {
@@ -31,15 +24,22 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
     mapperRef.current = sessionMapper ?? mapSupabaseSessionToSessionDto;
   }, [sessionMapper]);
 
-  const [account, setAccount] = useState<SessionAccountDto>({});
-  const authRevisionRef = useRef(0);
+  const {
+    account,
+    setAccount,
+    clearStoredSession,
+    isInGuestMode,
+    setGuestMode,
+    logUser: logUserBase,
+  } = useAuthSessionState({
+    guestMode,
+    user,
+    remember,
+    refreshTokenKey,
+    accessTokenExpiresAtKey,
+  });
 
-  const clearStoredSession = useCallback(() => {
-    removeFromLocal(user);
-    removeFromLocal(remember);
-    removeFromLocal(refreshTokenKey);
-    removeFromLocal(accessTokenExpiresAtKey);
-  }, [accessTokenExpiresAtKey, refreshTokenKey, remember, user]);
+  const authRevisionRef = useRef(0);
 
   const bumpAuthRevision = useCallback(() => {
     authRevisionRef.current += 1;
@@ -49,54 +49,15 @@ const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
     bumpAuthRevision();
     setAccount({});
     clearStoredSession();
-  }, [bumpAuthRevision, clearStoredSession]);
-
-  const isInGuestMode = useCallback(() => {
-    return !!fromLocal(guestMode, "boolean") && account.token === undefined;
-  }, [account.token, guestMode]);
-
-  const setGuestMode = useCallback(
-    (value: boolean) => {
-      toLocal(guestMode, value);
-    },
-    [guestMode],
-  );
+  }, [bumpAuthRevision, clearStoredSession, setAccount]);
 
   const logUser = useCallback(
     (data: SessionDto, rememberMe?: boolean) => {
       if (!data) return;
-
       bumpAuthRevision();
-
-      const storedRemember = fromLocal(remember, "boolean");
-      const resolvedRemember =
-        rememberMe ??
-        (typeof storedRemember === "boolean" ? storedRemember : false);
-
-      setAccount(data);
-      removeFromLocal(guestMode);
-      toLocal(user, data.token);
-      toLocal(remember, resolvedRemember);
-
-      if (typeof data.refreshToken === "string" && data.refreshToken.length)
-        toLocal(refreshTokenKey, data.refreshToken);
-      else removeFromLocal(refreshTokenKey);
-
-      if (
-        typeof data.accessTokenExpiresAt === "string" &&
-        data.accessTokenExpiresAt.length
-      )
-        toLocal(accessTokenExpiresAtKey, data.accessTokenExpiresAt);
-      else removeFromLocal(accessTokenExpiresAtKey);
+      logUserBase(data, rememberMe);
     },
-    [
-      accessTokenExpiresAtKey,
-      bumpAuthRevision,
-      guestMode,
-      refreshTokenKey,
-      remember,
-      user,
-    ],
+    [bumpAuthRevision, logUserBase],
   );
 
   const logoutUser = useCallback(async () => {

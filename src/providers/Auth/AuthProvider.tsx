@@ -1,20 +1,15 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 
 // type
 import { AuthProviderPropTypes } from "./types";
 import { AuthContext } from "./authContext";
+import { useAuthSessionState } from "./useAuthSessionState";
 
 // hooks
 import { useManager } from "../useManager";
 
 // lib
-import {
-  toLocal,
-  removeFromLocal,
-  fromLocal,
-  SessionAccountDto,
-  SessionDto,
-} from "lib";
+import { fromLocal } from "lib";
 
 /**
  * Auth Provider
@@ -33,53 +28,20 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
 
   const manager = useManager();
 
-  const [account, setAccount] = useState<SessionAccountDto>({});
-
-  const clearStoredSession = useCallback(() => {
-    removeFromLocal(user);
-    removeFromLocal(remember);
-    removeFromLocal(refreshTokenKey);
-    removeFromLocal(accessTokenExpiresAtKey);
-  }, [accessTokenExpiresAtKey, refreshTokenKey, remember, user]);
-
-  const isInGuestMode = useCallback(() => {
-    return !!fromLocal(guestMode, "boolean") && account.token === undefined;
-  }, [account.token, guestMode]);
-
-  const setGuestMode = useCallback(
-    (value: boolean) => {
-      toLocal(guestMode, value);
-    },
-    [guestMode],
-  );
-
-  const logUser = useCallback(
-    (data: SessionDto, rememberMe?: boolean) => {
-      if (!data) return;
-
-      const storedRemember = fromLocal(remember, "boolean");
-      const resolvedRemember =
-        rememberMe ??
-        (typeof storedRemember === "boolean" ? storedRemember : false);
-
-      setAccount(data);
-      removeFromLocal(guestMode);
-      toLocal(user, data.token);
-      toLocal(remember, resolvedRemember);
-
-      if (typeof data.refreshToken === "string" && data.refreshToken.length)
-        toLocal(refreshTokenKey, data.refreshToken);
-      else removeFromLocal(refreshTokenKey);
-
-      if (
-        typeof data.accessTokenExpiresAt === "string" &&
-        data.accessTokenExpiresAt.length
-      )
-        toLocal(accessTokenExpiresAtKey, data.accessTokenExpiresAt);
-      else removeFromLocal(accessTokenExpiresAtKey);
-    },
-    [accessTokenExpiresAtKey, guestMode, refreshTokenKey, remember, user],
-  );
+  const {
+    account,
+    setAccount,
+    clearStoredSession,
+    isInGuestMode,
+    setGuestMode,
+    logUser,
+  } = useAuthSessionState({
+    guestMode,
+    user,
+    remember,
+    refreshTokenKey,
+    accessTokenExpiresAtKey,
+  });
 
   const logoutUser = useCallback(async () => {
     const accessToken =
@@ -106,6 +68,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     clearStoredSession,
     manager.Auth,
     refreshTokenKey,
+    setAccount,
     user,
   ]);
 

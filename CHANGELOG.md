@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- Phase 3 of the cross-app migration (legal/info pages). i18n-agnostic primitives migrated from `wallet` and `period-calendar` `views/Info/*`:
+
+  - `LegalPage` (`src/views/LegalPage/LegalPage.tsx`) — shell with `title`, optional `intro` slot, and `children` slot for composable cards. No `sections` prop — apps compose with `LegalSection` directly for full layout flexibility.
+  - `LegalSection` (`src/views/LegalPage/LegalSection.tsx`) — titled rounded-card primitive (`<article>` + `h3` + body slot). Used inside `LegalPage` (or anywhere) to mark up policy sections, "Legal links" blocks, "How To" cards, etc.
+  - `LegalLinksList` (`src/views/LegalPage/LegalLinksList.tsx`) — bulleted list of `{to, label}` links. Navigation routes through `linkComponent` from `ConfigProvider` so the list stays router-agnostic. Renders nothing when `links` is empty.
+  - `richTextComponents` (`src/views/LegalPage/richTextComponents.tsx`) — default styled component map (`p`, `strong`, `em`, `ul`, `ol`, `li`, `a`, `code`) to pass to `react-i18next` `<Trans components={...}>`. Library does NOT depend on `react-i18next`; this is just a styled ReactNode map. Spread or extend to add app-specific tags.
+  - Public CSS class names: `legal-page{,-title,-intro}`, `legal-section{,-title,-body}`, `legal-links-list{,-item,-link}`.
+  - 8 unit tests covering composition, intro toggling, empty link list, class-override merging.
+
+- Phase 2.6 of the cross-app auth migration: shared session-state hook `useAuthSessionState` (`src/providers/Auth/useAuthSessionState.ts`). Centralizes the storage-key resolution, `account` state, `clearStoredSession`, `isInGuestMode` / `setGuestMode`, and `logUser` behavior that `AuthProvider` (REST) and `SupabaseAuthProvider` previously duplicated. Both providers now compose this hook and only own their backend-specific `logoutUser` / `logUserFromLocal` (plus, for Supabase, the `authRevision` guard and `onAuthStateChange` subscription). Public API of both providers and `useAuth()` is unchanged; existing tests (9 + 5) continue to pass without modification. Exported from `@sito/dashboard-app` for consumers that want to build a custom auth provider on the same context shape.
+
+- Phase 2.5 of the cross-app auth migration: `SupabaseAuthClient` (`src/lib/api/SupabaseAuthClient.ts`) — Supabase Auth adapter mirroring `AuthClient` REST contract (`login` / `refresh` / `register` / `getSession` / `logout`) plus a richer `signUp` returning a discriminated `SupabaseSignUpResult` (`authenticated` with session, or `confirmation_required` with email). Wraps `supabase.auth.signInWithPassword` / `refreshSession` / `signUp` / `getSession` / `signOut` and maps payloads via `mapSupabaseSessionToSessionDto`. Constructor options: `sessionMapper` (full override), `mapperOptions` (defaults forwarded to default mapper), `defaultSignUpRedirectTo`. `signUp` resolves `user_metadata` from `data.metadata ?? { name, username }`, where `name` falls back through `data.name -> data.username -> data.email` (trimmed). `register()` keeps REST symmetry: throws on the confirmation-required branch — call `signUp()` directly when the UI needs to handle it. 15 new unit tests; consolidates the equivalent `PeriodCalendarAuthClient` from `period-calendar`.
+- `IAuthClient` interface (`src/lib/api/IAuthClient.ts`) — shared session-endpoint contract (`login` / `refresh` / `register` / `getSession` / `logout`) implemented by both `AuthClient` (REST) and `SupabaseAuthClient` (Supabase). `IManager.auth` is now typed as `IAuthClient` (supertype of `AuthClient` — backwards-compatible at the call-site level; consumers that read `.auth.api` directly should cast to the concrete `AuthClient` or pull `manager.Auth` and narrow).
+
 ## [0.0.78] - 2026-05-18
 
 ### Added

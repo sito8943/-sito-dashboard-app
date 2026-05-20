@@ -148,6 +148,24 @@ export function ProductActionsBar({ record }: { record: BaseEntityDto }) {
 }
 ```
 
+### 1.2 `PrettyGrid` infinite scroll
+
+```tsx
+import { Loading, PrettyGrid } from "@sito/dashboard-app";
+
+<PrettyGrid<ProductDto>
+  data={products}
+  loading={isLoading}
+  renderComponent={(item) => <ProductCard item={item} />}
+  hasMore={hasMore}
+  loadingMore={isFetchingNextPage}
+  onLoadMore={fetchNextPage}
+  loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
+/>;
+```
+
+Pair with `useInfiniteQuery` (or any pagination source). `loadMoreComponent` renders inside the in-view sentinel while `loadingMore` is `true`.
+
 ## 2. Entity clients (`BaseClient`), offline fallback (`IndexedDBClient`), and Supabase (`SupabaseDataClient`)
 
 ```tsx

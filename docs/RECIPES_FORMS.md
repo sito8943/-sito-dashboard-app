@@ -422,7 +422,38 @@ Notes:
 
 - Hook returns `extraFields` and spreads via `{...importDialog}`. Don't duplicate manually.
 - `defaultExtra` resets the form on close/submit.
-- For parent-owned state, use the component-level `extraFields` prop (see `CONSUMER_GUIDE.md` §5.4.1).
+- For parent-owned state, use the component-level `extraFields` prop (see §4.2).
+
+### 4.2 Component-level `extraFields` (parent-owned state)
+
+Use `extraFields` directly on `ImportDialog` when state lives in the consumer, not the hook. Inputs render between preview and footer actions.
+
+```tsx
+import { useState } from "react";
+import { ImportDialog } from "@sito/dashboard-app";
+
+const [useCurrentAccount, setUseCurrentAccount] = useState(true);
+
+<ImportDialog<TransactionImportPreviewDto>
+  open={open}
+  title="Import transactions"
+  handleClose={close}
+  handleSubmit={() => submitImport({ useCurrentAccount, items: previewItems })}
+  fileProcessor={parseFile}
+  extraFields={
+    <label className="flex items-center gap-2">
+      <input
+        type="checkbox"
+        checked={useCurrentAccount}
+        onChange={(e) => setUseCurrentAccount(e.target.checked)}
+      />
+      <span>Use current account</span>
+    </label>
+  }
+/>;
+```
+
+Prefer §4.1 (`defaultExtra` + `renderExtraFields`) when extras are part of the import payload — the hook merges them as `{ items, override, ...extra }`.
 
 ## 5. Tabs and onboarding flows (`TabsLayout` + `Onboarding`)
 
