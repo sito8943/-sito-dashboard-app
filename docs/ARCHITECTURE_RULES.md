@@ -65,6 +65,7 @@ FeatureName/
   utils.ts             # Reusable helper functions only
   types.ts             # Type aliases and interfaces only
   index.ts             # Public exports
+  styles.css           # Optional specific styles
 ```
 
 Rules:
@@ -78,6 +79,7 @@ Rules:
 - Keep support files as siblings of the hook/component they support.
 - If a hook/component grows, create its own folder and expose public API via `index.ts`.
 - Preserve existing public imports by re-exporting from local `index.ts` files.
+- In case of using tailwindcss define all classes on styles.css for better DX and use className utility function for merging classes
 
 ---
 

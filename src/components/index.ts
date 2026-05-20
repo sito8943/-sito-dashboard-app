@@ -16,6 +16,7 @@ export * from "./ui/TabsLayout";
 export * from "./ui/TopBanner";
 
 // app (high-level, provider/shell-coupled)
+export * from "./app/Auth";
 export * from "./app/BottomNavigation";
 export * from "./app/Drawer";
 export * from "./app/Navbar";

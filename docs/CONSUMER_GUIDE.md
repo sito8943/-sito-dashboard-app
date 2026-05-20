@@ -686,6 +686,8 @@ import {
   extractRecoveryAccessTokenFromLocation,
   getAuthErrorMessage,
   hasAuthErrorParamsInLocation,
+  resolveConfirmEmailDtoFromLocation,
+  resolveResetPasswordDtoFromLocation,
 } from "@sito/dashboard-app";
 
 const tokenHash = extractAuthQueryParamFromLocation(
@@ -694,9 +696,87 @@ const tokenHash = extractAuthQueryParamFromLocation(
   AuthRouteQueryParam.tokenHash,
 );
 const redirectTo = buildAuthRedirectUrl("/auth/confirm-email", config.thisUrl);
+
+const resetPayload = resolveResetPasswordDtoFromLocation(
+  location.hash,
+  location.search,
+  "new-password",
+);
+const confirmPayload = resolveConfirmEmailDtoFromLocation(
+  location.hash,
+  location.search,
+);
 ```
 
-#### 8.1.3 Shared form types
+#### 8.1.3 Auth visual shells and agnostic auth views
+
+Auth views are i18n-agnostic and route through `ConfigProvider` for location
+and navigation. Pass already-translated strings/React nodes plus app route
+constants; the library handles token parsing and DTO building.
+
+Reusable primitives:
+
+- `AuthScreenShell` — full-screen auth container with optional `logo`,
+  `headerExtra`, and `motion`.
+- `AuthFormShell` — prefab form layout with `text`, `password`, `checkbox`
+  fields and a per-field `render` escape hatch.
+- `AuthResultView` — result/success/error screen with optional loading and
+  primary/secondary actions.
+
+Flow helpers/hooks:
+
+- `resolveResetPasswordDtoFromLocation(hash, search, newPassword)`
+- `resolveConfirmEmailDtoFromLocation(hash, search)`
+- `useUpdatePasswordFlow({ authApi, location, ...callbacks })`
+- `useConfirmEmailFlow({ authApi, location, ...callbacks })`
+
+Concrete views:
+
+- `AuthUpdatePasswordView`
+- `AuthConfirmEmailSuccessView`
+- `AuthConfirmEmailErrorView`
+
+Example:
+
+```tsx
+import {
+  AuthConfirmEmailSuccessView,
+  AuthUpdatePasswordView,
+} from "@sito/dashboard-app";
+
+export function UpdatePasswordRoute() {
+  return (
+    <AuthUpdatePasswordView
+      authApi={manager.AuthApi}
+      title={t("_pages:auth.updatePassword.title")}
+      passwordLabel={t("_entities:user.password.label")}
+      confirmPasswordLabel={t("_entities:user.confirmPassword.label")}
+      submitLabel={t("_pages:auth.updatePassword.submit")}
+      signInQuestion={t("_pages:auth.updatePassword.toLogin.question")}
+      signInLabel={t("_pages:auth.updatePassword.toLogin.link")}
+      signInTo={AppRoutes.SignIn}
+      onInvalidToken={() => showErrorNotification({ message: invalidToken })}
+      onError={(error) => showErrorNotification({ message: mapError(error) })}
+    />
+  );
+}
+
+export function ConfirmEmailRoute() {
+  return (
+    <AuthConfirmEmailSuccessView
+      authApi={manager.AuthApi}
+      title={t("_pages:auth.confirmEmailSuccess.title")}
+      description={t("_pages:auth.confirmEmailSuccess.description")}
+      toSignInLabel={t("_pages:auth.confirmEmailSuccess.toSignIn")}
+      signInTo={AppRoutes.SignIn}
+      errorTo={AppRoutes.ConfirmEmailError}
+      successTo={AppRoutes.ConfirmEmailSuccess}
+    />
+  );
+}
+```
+
+#### 8.1.4 Shared form types
 
 `SignInFormType`, `SignUpFormType`, `UpdatePasswordFormType`, and
 `RecoveryFormType` are generic over a `TExtra` field set so consumers can add

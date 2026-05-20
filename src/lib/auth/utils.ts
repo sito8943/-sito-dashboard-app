@@ -1,4 +1,5 @@
-import { AuthRouteQueryParam } from "./types";
+import { AuthRouteQueryParam, AuthRouteQueryParamType } from "./types";
+import type { ConfirmEmailDto, ResetPasswordDto } from "../entities/auth";
 
 const recoveryAccessTokenParams = [
   AuthRouteQueryParam.accessToken,
@@ -102,6 +103,93 @@ export const hasAuthErrorParamsInLocation = (
     hashParams.has(AuthRouteQueryParam.error) ||
     hashParams.has(AuthRouteQueryParam.errorDescription)
   );
+};
+
+export const extractAuthTokenHashFromLocation = (
+  hash: string,
+  search: string,
+): string | null =>
+  extractAuthQueryParamFromLocation(
+    hash,
+    search,
+    AuthRouteQueryParam.tokenHash,
+  );
+
+export const extractAuthRouteTypeFromLocation = (
+  hash: string,
+  search: string,
+): string | null =>
+  extractAuthQueryParamFromLocation(hash, search, AuthRouteQueryParam.type);
+
+export const normalizeAuthRouteType = (value: string | null): string | null => {
+  const normalized = value?.trim().toLowerCase() ?? "";
+  return normalized.length > 0 ? normalized : null;
+};
+
+export const hasAuthTokenHashOrTypeParamsInLocation = (
+  hash: string,
+  search: string,
+): boolean =>
+  Boolean(
+    extractAuthTokenHashFromLocation(hash, search) ||
+      extractAuthRouteTypeFromLocation(hash, search),
+  );
+
+export const resolveResetPasswordDtoFromLocation = (
+  hash: string,
+  search: string,
+  newPassword: string,
+): ResetPasswordDto | null => {
+  if (hasAuthErrorParamsInLocation(hash, search)) return null;
+
+  const tokenHash = extractAuthTokenHashFromLocation(hash, search);
+  const tokenType = normalizeAuthRouteType(
+    extractAuthRouteTypeFromLocation(hash, search),
+  );
+
+  if (tokenHash) {
+    if (tokenType !== AuthRouteQueryParamType.recovery) return null;
+    return {
+      tokenHash,
+      type: tokenType,
+      newPassword,
+    };
+  }
+
+  const sessionTokens = extractAuthSessionTokensFromLocation(hash, search);
+  if (sessionTokens) {
+    return {
+      ...sessionTokens,
+      newPassword,
+    };
+  }
+
+  const accessToken = extractRecoveryAccessTokenFromLocation(hash, search);
+  if (!accessToken) return null;
+
+  return {
+    accessToken,
+    newPassword,
+  };
+};
+
+export const resolveConfirmEmailDtoFromLocation = (
+  hash: string,
+  search: string,
+): ConfirmEmailDto | null => {
+  if (hasAuthErrorParamsInLocation(hash, search)) return null;
+
+  const tokenHash = extractAuthTokenHashFromLocation(hash, search);
+  const tokenType = normalizeAuthRouteType(
+    extractAuthRouteTypeFromLocation(hash, search),
+  );
+
+  if (!tokenHash || tokenType !== AuthRouteQueryParamType.email) return null;
+
+  return {
+    tokenHash,
+    type: tokenType,
+  };
 };
 
 /** Safely reads `error.message` when present and a string. */

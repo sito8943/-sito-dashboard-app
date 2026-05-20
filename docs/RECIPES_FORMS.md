@@ -655,6 +655,162 @@ export function SignInForm() {
 }
 ```
 
+### 9.1 Agnostic auth views for reset password and confirm email
+
+Use the shared auth views when the app already has an `IAuthApiClient`
+(`RestAuthApiClient`, `SupabaseAuthApiClient`, or a compatible adapter). They
+read `location` and `navigate` from `ConfigProvider`, so no React Router
+dependency is required by the library. Text stays consumer-owned/i18n-agnostic.
+
+```tsx
+import {
+  AuthConfirmEmailErrorView,
+  AuthConfirmEmailSuccessView,
+  AuthUpdatePasswordView,
+  getAuthErrorMessage,
+  useNotification,
+} from "@sito/dashboard-app";
+
+import { AppRoutes } from "../lib/routes";
+import { useManager } from "../providers";
+
+export function UpdatePasswordRoute() {
+  const manager = useManager();
+  const { showErrorNotification, showSuccessNotification } = useNotification();
+
+  return (
+    <AuthUpdatePasswordView
+      authApi={manager.AuthApi}
+      title="Update password"
+      passwordLabel="Password"
+      confirmPasswordLabel="Confirm password"
+      passwordRequiredMessage="Password is required"
+      confirmPasswordRequiredMessage="Confirm your password"
+      passwordMismatchMessage="Passwords do not match"
+      submitLabel="Save password"
+      submitAriaLabel="Save password"
+      signInQuestion="Remember your password?"
+      signInLabel="Sign in"
+      signInTo={AppRoutes.SignIn}
+      onSuccess={() => showSuccessNotification({ message: "Password updated" })}
+      onInvalidToken={() =>
+        showErrorNotification({ message: "Recovery link is invalid" })
+      }
+      onPasswordMismatch={() =>
+        showErrorNotification({ message: "Passwords do not match" })
+      }
+      onError={(error) =>
+        showErrorNotification({
+          message: getAuthErrorMessage(error) || "Password update failed",
+        })
+      }
+    />
+  );
+}
+
+export function ConfirmEmailSuccessRoute() {
+  const manager = useManager();
+
+  return (
+    <AuthConfirmEmailSuccessView
+      authApi={manager.AuthApi}
+      title="Email confirmed"
+      description="Your account is ready."
+      verifyingLabel="Verifying email..."
+      toSignInLabel="Sign in"
+      toSignInAriaLabel="Go to sign in"
+      signInTo={AppRoutes.SignIn}
+      errorTo={AppRoutes.ConfirmEmailError}
+      successTo={AppRoutes.ConfirmEmailSuccess}
+    />
+  );
+}
+
+export function ConfirmEmailErrorRoute() {
+  return (
+    <AuthConfirmEmailErrorView
+      title="Confirmation failed"
+      description="The confirmation link is invalid or expired."
+      resendLabel="Request a new link"
+      resendAriaLabel="Request a new confirmation link"
+      toSignInLabel="Back to sign in"
+      toSignInAriaLabel="Back to sign in"
+      resendTo={AppRoutes.ForgotPassword}
+      signInTo={AppRoutes.SignIn}
+    />
+  );
+}
+```
+
+### 9.2 Auth form shell with prefab fields
+
+Use `AuthFormShell` when the screen-specific submit logic stays local but the
+visual form should match the shared auth layout.
+
+```tsx
+import { useForm } from "react-hook-form";
+import {
+  AuthFormShell,
+  Button,
+  type AuthFormFieldDefinitionType,
+} from "@sito/dashboard-app";
+
+type SignInForm = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
+
+export function SignInRoute() {
+  const { control, handleSubmit } = useForm<SignInForm>({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+  });
+
+  const fields: AuthFormFieldDefinitionType<SignInForm>[] = [
+    {
+      kind: "text",
+      type: "email",
+      name: "email",
+      label: "Email",
+      required: true,
+      rules: { required: "Email is required" },
+    },
+    {
+      kind: "password",
+      name: "password",
+      label: "Password",
+      required: true,
+      rules: { required: "Password is required" },
+    },
+    {
+      kind: "checkbox",
+      name: "rememberMe",
+      label: "Remember me",
+    },
+  ];
+
+  return (
+    <AuthFormShell
+      title="Sign in"
+      control={control}
+      fields={fields}
+      onSubmit={(event) => {
+        void handleSubmit((values) => signIn(values))(event);
+      }}
+      actions={
+        <Button type="submit" color="primary" variant="submit">
+          Sign in
+        </Button>
+      }
+    />
+  );
+}
+```
+
 ## 10. Error handling guards (`isValidationError`, `isHttpError`)
 
 ```tsx

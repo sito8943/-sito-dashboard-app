@@ -6,3 +6,4 @@ export * from "./queries";
 export * from "./mutate";
 export * from "./useScrollTrigger";
 export * from "./useOnlineStatus";
+export * from "./auth";

@@ -15,10 +15,12 @@ export type SignUpFormType<TExtra extends object = object> = {
   rPassword: string;
 } & TExtra;
 
-export type UpdatePasswordFormType = {
+export type PasswordConfirmationFormType = {
   password: string;
-  rPassword: string;
+  confirmPassword: string;
 };
+
+export type UpdatePasswordFormType = PasswordConfirmationFormType;
 
 export type RecoveryFormType = {
   email: string;
