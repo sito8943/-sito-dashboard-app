@@ -17,6 +17,11 @@ export interface LegalSectionPropsType {
   bodyClassName?: string;
 }
 
+export type LegalContentSectionType = {
+  title: string;
+  body: string;
+};
+
 export interface LegalLink {
   to: string;
   label: ReactNode;
