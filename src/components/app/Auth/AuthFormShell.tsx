@@ -39,7 +39,6 @@ export const AuthFormShell = <TFormType extends FieldValues>(
             control={control}
             name={fieldDefinition.name}
             rules={fieldDefinition.rules}
-            disabled={disabled || fieldDefinition.disabled}
             render={({ field, fieldState }) => {
               const fieldDisabled = Boolean(
                 disabled || fieldDefinition.disabled,

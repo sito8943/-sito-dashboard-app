@@ -234,36 +234,43 @@ const CustomAuthProvider = ({ children }) => {
 
 ## 4. Key Components and Props
 
-| Component                   | Key props                                                                                                                                                                        | Recommended usage                                                                 |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `Page<T>`                   | `title`, `actions`, `addOptions`, `filterOptions`, `queryKey`, `isLoading`                                                                                                       | CRUD layout with standard header/actions                                          |
-| `PageHeader<T>`             | `title`, `actions`, `showBackButton`                                                                                                                                             | Reusable page header with desktop/mobile actions                                  |
-| `FormContainer<TForm>`      | `handleSubmit`, `onSubmit`, `reset`, `isLoading`, `buttonEnd`, `onCancel`, `submitLabel`, `cancelLabel`, `submitDisabled`, `cancelDisabled`, `actionsClassName`, `renderActions` | Form wrapper with built-in or custom submit/cancel                                |
-| `ParagraphInput`            | `label`, `state`, `containerClassName`, `inputClassName`, `helperText`                                                                                                           | Textarea with state-aware styling                                                 |
-| `PasswordInput`             | `TextInputPropsType`                                                                                                                                                             | Password input with show/hide toggle                                              |
-| `TabsLayout`                | `tabs`, `defaultTab`, `currentTab`, `onTabChange`, `useLinks`, `tabButtonProps`                                                                                                  | Route tabs or local state tabs                                                    |
-| `Onboarding`                | `steps`                                                                                                                                                                          | Multi-step flow using controlled `TabsLayout`                                     |
-| `PrettyGrid<T>`             | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`                                                                                                 | Grid with empty state and optional infinite scroll                                |
-| `Error`                     | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                                                                                                         | Reusable error fallback                                                           |
-| `Dialog`                    | `open`, `title`, `handleClose`, `containerClassName`, `className`                                                                                                                | Base modal                                                                        |
-| `FormDialog<TForm>`         | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions                                 |
-| `ConfirmationDialog`        | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                                                                                                      | Basic confirmation flows                                                          |
-| `ImportDialog<TPreview>`    | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`, `extraFields`                                                                     | Import with preview + override + custom inputs                                    |
-| `ExportDialog`              | `handleSubmit`, `isLoading`, `extraFields`, `extraActions`                                                                                                                       | Optional export config modal (date range, format)                                 |
-| `Drawer<MenuKeys>`          | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                                                   |
-| `Navbar`                    | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                                                |
-| `BottomNavigation<TId>`     | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA                                  |
-| `ToTop`                     | `threshold`, `tooltip`, `scrollOnClick`, `className`                                                                                                                             | Floating scroll-to-top button                                                     |
-| `IconButton`                | `icon: IconDefinition` + visual props                                                                                                                                            | FontAwesome-only icon contract                                                    |
-| `TopBanner`                 | `visible`, `children`, `color` (`default`/`primary`/`secondary`/`tertiary`/`quaternary`/`info`/`success`/`warning`/`error`), `role`, `ariaLive`, `className`                     | Generic full-width banner (base for `OfflineBanner`)                              |
-| `OfflineBanner`             | `isOnline`, `message`, `className`                                                                                                                                               | Connectivity preset of `TopBanner` (warning, fixed)                               |
-| `PwaUpdateDialog`           | `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, `mobileFullScreen`, `containerClassName`                                                 | Presentational PWA update prompt (consumer owns SW hook)                          |
-| `AppShell`                  | `header`, `footer`, `bottomNavigation`, `extras`, `withNotification`, `className`                                                                                                | Authenticated route shell (header/content/footer/bottomNav/extras + Notification) |
-| `AuthShell`                 | `children`, `withNotification`, `className`                                                                                                                                      | Auth route wrapper (children + optional Notification)                             |
-| `DashboardHeader<MenuKeys>` | `menuMap`, `logo`, `showOfflineBanner`, `navbarProps`                                                                                                                            | Drawer + Navbar combo with internal drawer state                                  |
-| `DashboardFooter`           | `copyrightText`, `year`, `showToTop`, `toTopProps`, `bottomNavSpacing`, `children`, `className`, `textClassName`                                                                 | Copyright line + optional `ToTop`                                                 |
-| `NotFoundView`              | `title`, `body`, `ctaLabel`, `ctaTo`, `className`, `titleClassName`, `bodyClassName`, `ctaClassName`                                                                             | Generic 404 fallback (router-agnostic CTA)                                        |
-| `FeatureUnavailableView`    | `title`, `body`, `ctaLabel`, `ctaTo`, `icon`, `className`, `iconClassName`, `titleClassName`, `bodyClassName`, `ctaClassName`                                                    | Feature-disabled fallback (icon defaults to `faWarning`)                          |
+| Component                     | Key props                                                                                                                                                                        | Recommended usage                                                                 |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `Page<T>`                     | `title`, `actions`, `addOptions`, `filterOptions`, `queryKey`, `isLoading`                                                                                                       | CRUD layout with standard header/actions                                          |
+| `PageHeader<T>`               | `title`, `actions`, `showBackButton`                                                                                                                                             | Reusable page header with desktop/mobile actions                                  |
+| `FormContainer<TForm>`        | `handleSubmit`, `onSubmit`, `reset`, `isLoading`, `buttonEnd`, `onCancel`, `submitLabel`, `cancelLabel`, `submitDisabled`, `cancelDisabled`, `actionsClassName`, `renderActions` | Form wrapper with built-in or custom submit/cancel                                |
+| `ParagraphInput`              | `label`, `state`, `containerClassName`, `inputClassName`, `helperText`                                                                                                           | Textarea with state-aware styling                                                 |
+| `PasswordInput`               | `TextInputPropsType`                                                                                                                                                             | Password input with show/hide toggle                                              |
+| `TabsLayout`                  | `tabs`, `defaultTab`, `currentTab`, `onTabChange`, `useLinks`, `tabButtonProps`                                                                                                  | Route tabs or local state tabs                                                    |
+| `Onboarding`                  | `steps`                                                                                                                                                                          | Multi-step flow using controlled `TabsLayout`                                     |
+| `PrettyGrid<T>`               | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`                                                                                                 | Grid with empty state and optional infinite scroll                                |
+| `Error`                       | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                                                                                                         | Reusable error fallback                                                           |
+| `Dialog`                      | `open`, `title`, `handleClose`, `containerClassName`, `className`                                                                                                                | Base modal                                                                        |
+| `FormDialog<TForm>`           | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions                                 |
+| `ConfirmationDialog`          | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                                                                                                      | Basic confirmation flows                                                          |
+| `ImportDialog<TPreview>`      | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`, `extraFields`                                                                     | Import with preview + override + custom inputs                                    |
+| `ExportDialog`                | `handleSubmit`, `isLoading`, `extraFields`, `extraActions`                                                                                                                       | Optional export config modal (date range, format)                                 |
+| `Drawer<MenuKeys>`            | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                                                   |
+| `Navbar`                      | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                                                |
+| `BottomNavigation<TId>`       | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA                                  |
+| `ToTop`                       | `threshold`, `tooltip`, `scrollOnClick`, `className`                                                                                                                             | Floating scroll-to-top button                                                     |
+| `IconButton`                  | `icon: IconDefinition` + visual props                                                                                                                                            | FontAwesome-only icon contract                                                    |
+| `TopBanner`                   | `visible`, `children`, `color` (`default`/`primary`/`secondary`/`tertiary`/`quaternary`/`info`/`success`/`warning`/`error`), `role`, `ariaLive`, `className`                     | Generic full-width banner (base for `OfflineBanner`)                              |
+| `OfflineBanner`               | `isOnline`, `message`, `className`                                                                                                                                               | Connectivity preset of `TopBanner` (warning, fixed)                               |
+| `PwaUpdateDialog`             | `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, `mobileFullScreen`, `containerClassName`                                                 | Presentational PWA update prompt (consumer owns SW hook)                          |
+| `AppShell`                    | `header`, `footer`, `bottomNavigation`, `extras`, `withNotification`, `className`                                                                                                | Authenticated route shell (header/content/footer/bottomNav/extras + Notification) |
+| `AuthShell`                   | `children`, `withNotification`, `className`                                                                                                                                      | Auth route wrapper (children + optional Notification)                             |
+| `AuthSignInView`              | `title`, `emailLabel`, `passwordLabel`, `rememberLabel`, `onSubmit`, `onStartAsGuest`                                                                                            | Prefab sign-in route view                                                         |
+| `AuthSignUpView`              | `title`, `emailLabel`, `passwordLabel`, `confirmPasswordLabel`, `nameLabel`, `onSubmit`                                                                                          | Prefab sign-up route view                                                         |
+| `AuthRecoveryView`            | `title`, `description`, `emailLabel`, `submitLabel`, `statusMessage`, `onSubmit`, `onSecondaryAction`                                                                            | Prefab password recovery/request-confirmation view                                |
+| `AuthSignUpConfirmationView`  | `title`, `description`, `toSignInLabel`, `resendLabel`, `onSignIn`, `onResendConfirmEmail`                                                                                       | Prefab sign-up confirmation result view                                           |
+| `AuthUpdatePasswordView`      | `authApi`, `title`, `passwordLabel`, `confirmPasswordLabel`, `submitLabel`, `signInTo`                                                                                           | Prefab update-password route view                                                 |
+| `AuthConfirmEmailSuccessView` | `authApi`, `title`, `description`, `toSignInLabel`, `signInTo`, `errorTo`, `successTo`                                                                                           | Prefab email confirmation verification view                                       |
+| `AuthConfirmEmailErrorView`   | `title`, `description`, `resendLabel`, `toSignInLabel`, `resendTo`, `signInTo`                                                                                                   | Prefab email confirmation error view                                              |
+| `DashboardHeader<MenuKeys>`   | `menuMap`, `logo`, `showOfflineBanner`, `navbarProps`                                                                                                                            | Drawer + Navbar combo with internal drawer state                                  |
+| `DashboardFooter`             | `copyrightText`, `year`, `showToTop`, `toTopProps`, `bottomNavSpacing`, `children`, `className`, `textClassName`                                                                 | Copyright line + optional `ToTop`                                                 |
+| `NotFoundView`                | `title`, `body`, `ctaLabel`, `ctaTo`, `className`, `titleClassName`, `bodyClassName`, `ctaClassName`                                                                             | Generic 404 fallback (router-agnostic CTA)                                        |
+| `FeatureUnavailableView`      | `title`, `body`, `ctaLabel`, `ctaTo`, `icon`, `className`, `iconClassName`, `titleClassName`, `bodyClassName`, `ctaClassName`                                                    | Feature-disabled fallback (icon defaults to `faWarning`)                          |
 
 ## 5. Frequent Usage Examples
 
@@ -289,6 +296,7 @@ Copy-ready snippets live in the themed recipe files. This guide is the reference
 | `Onboarding` step animations (`remountStepOnChange`)          | `RECIPES_FORMS.md` §5    |
 | Notifications (`useNotification`)                             | `RECIPES_FORMS.md` §8    |
 | Auth (`useAuth`, `rememberMe`, guest mode)                    | `RECIPES_FORMS.md` §9    |
+| Prefab auth route views                                       | `RECIPES_FORMS.md` §9.1  |
 | Error guards (`isValidationError` / `isHttpError`)            | `RECIPES_FORMS.md` §10   |
 
 Notes:
@@ -732,22 +740,138 @@ Flow helpers/hooks:
 
 Concrete views:
 
+- `AuthSignInView`
+- `AuthSignUpView`
+- `AuthRecoveryView`
+- `AuthSignUpConfirmationView`
 - `AuthUpdatePasswordView`
 - `AuthConfirmEmailSuccessView`
 - `AuthConfirmEmailErrorView`
 
 Example:
 
+The example assumes app-owned `manager`, `authApi`, route constants,
+notifications, error mappers, and translation helpers are already in scope.
+
 ```tsx
 import {
   AuthConfirmEmailSuccessView,
+  AuthRecoveryView,
+  AuthSignInView,
+  AuthSignUpConfirmationView,
+  AuthSignUpView,
   AuthUpdatePasswordView,
+  buildAuthRedirectUrl,
+  useAuth,
+  useConfig,
 } from "@sito/dashboard-app";
+
+export function SignInRoute() {
+  const { logUser, setGuestMode } = useAuth();
+
+  return (
+    <AuthSignInView
+      title={t("_pages:auth.signIn.title")}
+      emailLabel={t("_entities:user.email.label")}
+      passwordLabel={t("_entities:user.password.label")}
+      rememberLabel={t("_pages:auth.signIn.rememberMe")}
+      submitLabel={t("_pages:auth.signIn.submit")}
+      signUpQuestion={t("_pages:auth.signIn.toSignUp.question")}
+      signUpLabel={t("_pages:auth.signIn.toSignUp.link")}
+      signUpTo={AppRoutes.SignUp}
+      recoveryQuestion={t("_pages:auth.signIn.toRecovery.question")}
+      recoveryLabel={t("_pages:auth.signIn.toRecovery.link")}
+      recoveryTo={AppRoutes.Recovery}
+      guestLabel={t("_pages:auth.signIn.guest")}
+      onSubmit={async (values) => {
+        const session = await manager.Auth.login(values);
+        logUser(session, values.rememberMe);
+      }}
+      onStartAsGuest={() => setGuestMode(true)}
+      onError={(error) => showErrorNotification({ message: mapError(error) })}
+    />
+  );
+}
+
+export function SignUpRoute() {
+  const { logUser } = useAuth();
+  const { navigate } = useConfig();
+
+  return (
+    <AuthSignUpView
+      title={t("_pages:auth.signUp.title")}
+      nameLabel={t("_entities:user.name.label")}
+      emailLabel={t("_entities:user.email.label")}
+      passwordLabel={t("_entities:user.password.label")}
+      confirmPasswordLabel={t("_entities:user.confirmPassword.label")}
+      passwordMismatchMessage={t("_pages:auth.signUp.passwordMismatch")}
+      submitLabel={t("_pages:auth.signUp.submit")}
+      signInQuestion={t("_pages:auth.signUp.toSignIn.question")}
+      signInLabel={t("_pages:auth.signUp.toSignIn.link")}
+      signInTo={AppRoutes.SignIn}
+      onSubmit={async ({ confirmPassword, ...values }) => {
+        const session = await manager.Auth.register({
+          ...values,
+          rPassword: confirmPassword,
+        });
+        logUser(session, false);
+      }}
+      onError={(error) => {
+        if (isEmailConfirmationRequired(error)) {
+          navigate(AppRoutes.SignUpConfirmation);
+          return;
+        }
+        showErrorNotification({ message: mapError(error) });
+      }}
+    />
+  );
+}
+
+export function RecoveryRoute() {
+  return (
+    <AuthRecoveryView
+      title={t("_pages:auth.recovery.title")}
+      description={t("_pages:auth.recovery.description")}
+      emailLabel={t("_entities:user.email.label")}
+      submitLabel={t("_pages:auth.recovery.submit")}
+      signInQuestion={t("_pages:auth.recovery.toSignIn.question")}
+      signInLabel={t("_pages:auth.recovery.toSignIn.link")}
+      signInTo={AppRoutes.SignIn}
+      onSubmit={(values) =>
+        authApi.forgotPassword({
+          ...values,
+          redirectTo: buildAuthRedirectUrl(AppRoutes.UpdatePassword),
+        })
+      }
+      onError={(error) => showErrorNotification({ message: mapError(error) })}
+    />
+  );
+}
+
+export function SignUpConfirmationRoute() {
+  const { navigate } = useConfig();
+
+  return (
+    <AuthSignUpConfirmationView
+      title={t("_pages:auth.signUpConfirmation.title")}
+      description={t("_pages:auth.signUpConfirmation.description")}
+      toSignInLabel={t("_pages:auth.signUpConfirmation.toSignIn")}
+      resendLabel={t("_pages:auth.signUpConfirmation.resend")}
+      onSignIn={() => navigate(AppRoutes.SignIn)}
+      onResendConfirmEmail={() =>
+        authApi.resendConfirmEmail({
+          email: pendingEmail,
+          redirectTo: buildAuthRedirectUrl(AppRoutes.ConfirmEmailSuccess),
+        })
+      }
+    />
+  );
+}
 
 export function UpdatePasswordRoute() {
   return (
     <AuthUpdatePasswordView
-      authApi={manager.AuthApi}
+      authApi={authApi}
       title={t("_pages:auth.updatePassword.title")}
       passwordLabel={t("_entities:user.password.label")}
       confirmPasswordLabel={t("_entities:user.confirmPassword.label")}
@@ -764,7 +888,7 @@ export function UpdatePasswordRoute() {
 export function ConfirmEmailRoute() {
   return (
     <AuthConfirmEmailSuccessView
-      authApi={manager.AuthApi}
+      authApi={authApi}
       title={t("_pages:auth.confirmEmailSuccess.title")}
       description={t("_pages:auth.confirmEmailSuccess.description")}
       toSignInLabel={t("_pages:auth.confirmEmailSuccess.toSignIn")}

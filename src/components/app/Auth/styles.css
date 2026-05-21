@@ -34,7 +34,7 @@
 }
 
 .auth-form-fields {
-  @apply flex w-full flex-col gap-2;
+  @apply flex w-full flex-col gap-4;
 }
 
 .auth-form-helper-links {

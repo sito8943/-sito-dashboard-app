@@ -655,12 +655,162 @@ export function SignInForm() {
 }
 ```
 
-### 9.1 Agnostic auth views for reset password and confirm email
+### 9.1 Prefab auth route views
 
-Use the shared auth views when the app already has an `IAuthApiClient`
-(`RestAuthApiClient`, `SupabaseAuthApiClient`, or a compatible adapter). They
-read `location` and `navigate` from `ConfigProvider`, so no React Router
-dependency is required by the library. Text stays consumer-owned/i18n-agnostic.
+Use the shared auth views when the screen layout should be library-owned but
+submission, notifications, redirects, and i18n stay consumer-owned. The views
+route through `ConfigProvider`, so no React Router dependency is required by
+the library.
+
+Session entry/registration views use the session-focused `manager.Auth`
+(`IAuthClient`) by default in this example. Password recovery and email
+confirmation views use an `IAuthApiClient` (`RestAuthApiClient`,
+`SupabaseAuthApiClient`, or a compatible adapter).
+
+```tsx
+import {
+  AuthRecoveryView,
+  AuthSignInView,
+  AuthSignUpConfirmationView,
+  AuthSignUpView,
+  buildAuthRedirectUrl,
+  getAuthErrorMessage,
+  useAuth,
+  useConfig,
+  useNotification,
+} from "@sito/dashboard-app";
+
+import { AppRoutes } from "../lib/routes";
+import { authApi } from "../lib/authApi";
+import { useManager } from "../providers";
+
+export function SignInRoute() {
+  const manager = useManager();
+  const { logUser, setGuestMode } = useAuth();
+  const { showErrorNotification } = useNotification();
+
+  return (
+    <AuthSignInView
+      title="Sign in"
+      emailLabel="Email"
+      passwordLabel="Password"
+      rememberLabel="Remember me"
+      submitLabel="Sign in"
+      signUpQuestion="Need an account?"
+      signUpLabel="Create one"
+      signUpTo={AppRoutes.SignUp}
+      recoveryQuestion="Forgot your password?"
+      recoveryLabel="Reset it"
+      recoveryTo={AppRoutes.Recovery}
+      guestLabel="Continue as guest"
+      onSubmit={async (values) => {
+        const session = await manager.Auth.login(values);
+        logUser(session, values.rememberMe);
+      }}
+      onStartAsGuest={() => setGuestMode(true)}
+      onError={(error) =>
+        showErrorNotification({
+          message: getAuthErrorMessage(error) || "Sign in failed",
+        })
+      }
+    />
+  );
+}
+
+export function SignUpRoute() {
+  const manager = useManager();
+  const { logUser } = useAuth();
+  const { navigate } = useConfig();
+  const { showErrorNotification } = useNotification();
+
+  return (
+    <AuthSignUpView
+      title="Create account"
+      nameLabel="Name"
+      emailLabel="Email"
+      passwordLabel="Password"
+      confirmPasswordLabel="Confirm password"
+      passwordMismatchMessage="Passwords do not match"
+      submitLabel="Create account"
+      signInQuestion="Already have an account?"
+      signInLabel="Sign in"
+      signInTo={AppRoutes.SignIn}
+      onSubmit={async ({ confirmPassword, ...values }) => {
+        const session = await manager.Auth.register({
+          ...values,
+          rPassword: confirmPassword,
+        });
+        logUser(session, false);
+      }}
+      onError={(error) => {
+        if (
+          error instanceof Error &&
+          error.message === "Email confirmation required"
+        ) {
+          navigate(AppRoutes.SignUpConfirmation);
+          return;
+        }
+
+        showErrorNotification({
+          message: getAuthErrorMessage(error) || "Sign up failed",
+        });
+      }}
+    />
+  );
+}
+
+export function RecoveryRoute() {
+  const { showErrorNotification, showSuccessNotification } = useNotification();
+
+  return (
+    <AuthRecoveryView
+      title="Recover password"
+      description="Enter your email and we will send a reset link."
+      emailLabel="Email"
+      submitLabel="Send reset link"
+      signInQuestion="Remember your password?"
+      signInLabel="Sign in"
+      signInTo={AppRoutes.SignIn}
+      onSubmit={async (values) => {
+        await authApi.forgotPassword({
+          ...values,
+          redirectTo: buildAuthRedirectUrl(AppRoutes.UpdatePassword),
+        });
+        showSuccessNotification({ message: "Reset email sent" });
+      }}
+      onError={(error) =>
+        showErrorNotification({
+          message: getAuthErrorMessage(error) || "Recovery failed",
+        })
+      }
+    />
+  );
+}
+
+export function SignUpConfirmationRoute({ email }: { email: string }) {
+  const { navigate } = useConfig();
+
+  return (
+    <AuthSignUpConfirmationView
+      title="Check your email"
+      description="Confirm your address before signing in."
+      toSignInLabel="Back to sign in"
+      resendLabel="Resend email"
+      onSignIn={() => navigate(AppRoutes.SignIn)}
+      onResendConfirmEmail={() =>
+        authApi.resendConfirmEmail({
+          email,
+          redirectTo: buildAuthRedirectUrl(AppRoutes.ConfirmEmailSuccess),
+        })
+      }
+    />
+  );
+}
+```
+
+Reset password and confirm-email verification views handle token parsing and
+DTO creation internally. Pass translated text, route constants, and the
+side-channel auth API adapter.
 
 ```tsx
 import {
@@ -671,16 +821,15 @@ import {
   useNotification,
 } from "@sito/dashboard-app";
 
+import { authApi } from "../lib/authApi";
 import { AppRoutes } from "../lib/routes";
-import { useManager } from "../providers";
 
 export function UpdatePasswordRoute() {
-  const manager = useManager();
   const { showErrorNotification, showSuccessNotification } = useNotification();
 
   return (
     <AuthUpdatePasswordView
-      authApi={manager.AuthApi}
+      authApi={authApi}
       title="Update password"
       passwordLabel="Password"
       confirmPasswordLabel="Confirm password"
@@ -709,11 +858,9 @@ export function UpdatePasswordRoute() {
 }
 
 export function ConfirmEmailSuccessRoute() {
-  const manager = useManager();
-
   return (
     <AuthConfirmEmailSuccessView
-      authApi={manager.AuthApi}
+      authApi={authApi}
       title="Email confirmed"
       description="Your account is ready."
       verifyingLabel="Verifying email..."
