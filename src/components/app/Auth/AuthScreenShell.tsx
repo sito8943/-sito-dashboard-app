@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { classNames } from "@sito/dashboard";
 
 import { AppIconButton } from "components";
@@ -69,7 +69,7 @@ export const AuthScreenShell = (props: AuthScreenShellPropsType) => {
               {shouldRenderBackButton && (
                 <AppIconButton
                   type="button"
-                  icon={faChevronLeft}
+                  icon={faArrowLeft}
                   className={classNames(
                     "auth-screen-back-button",
                     backButtonClassName,
