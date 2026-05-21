@@ -29,6 +29,14 @@
   @apply mt-1 w-full self-start;
 }
 
+.auth-form-description {
+  @apply w-full text-sm;
+}
+
+.auth-form-status-message {
+  @apply mb-1 w-full text-left text-sm;
+}
+
 .auth-form-helper-text {
   @apply ml-1;
 }

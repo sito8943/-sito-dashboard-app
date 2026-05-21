@@ -3,6 +3,8 @@ export * from "./FeatureUnavailableView";
 export * from "./LegalPage";
 export * from "./AuthSignInView";
 export * from "./AuthSignUpView";
+export * from "./AuthRecoveryView";
+export * from "./AuthSignUpConfirmationView";
 export * from "./AuthUpdatePasswordView";
 export * from "./AuthConfirmEmailSuccessView";
 export * from "./AuthConfirmEmailErrorView";
