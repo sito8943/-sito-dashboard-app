@@ -15,9 +15,7 @@ export const AuthConfirmEmailErrorView = (
     toSignInAriaLabel,
     resendTo,
     signInTo,
-    logo,
-    headerExtra,
-    motion,
+    ...screenProps
   } = props;
 
   const { navigate } = useConfig();
@@ -26,9 +24,7 @@ export const AuthConfirmEmailErrorView = (
     <AuthResultView
       title={title}
       description={description}
-      logo={logo}
-      headerExtra={headerExtra}
-      motion={motion}
+      {...screenProps}
       primaryAction={{
         children: resendLabel,
         ariaLabel: resendAriaLabel,

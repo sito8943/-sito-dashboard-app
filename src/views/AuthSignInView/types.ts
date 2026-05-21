@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
 import type { UseFormSetError } from "react-hook-form";
 
-import type { AuthScreenMotionType } from "components";
+import type {
+  AuthScreenBackButtonPropsType,
+  AuthScreenMotionType,
+} from "components";
 import type { AuthDto } from "lib";
 
 export type AuthSignInViewFormType = AuthDto<{
@@ -12,7 +15,7 @@ export type AuthSignInViewErrorContextType = {
   setError: UseFormSetError<AuthSignInViewFormType>;
 };
 
-export type AuthSignInViewPropsType = {
+export type AuthSignInViewPropsType = AuthScreenBackButtonPropsType & {
   title: ReactNode;
   emailLabel: ReactNode;
   passwordLabel: ReactNode;

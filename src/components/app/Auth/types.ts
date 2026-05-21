@@ -15,6 +15,14 @@ import type {
 
 export type AuthScreenMotionType = "none" | "blur" | "stagger";
 
+export type AuthScreenBackButtonPropsType = {
+  showBackButton?: boolean;
+  backTo?: string | number;
+  backButtonLabel?: string;
+  backButtonClassName?: string;
+  onBack?: () => void;
+};
+
 export type AuthScreenShellPropsType = {
   title?: ReactNode;
   logo?: ReactNode;
@@ -30,7 +38,7 @@ export type AuthScreenShellPropsType = {
   actionsClassName?: string;
   footerClassName?: string;
   formProps?: ComponentPropsWithoutRef<"form">;
-};
+} & AuthScreenBackButtonPropsType;
 
 export type AuthFormFieldRenderContextType<
   TFormType extends FieldValues,

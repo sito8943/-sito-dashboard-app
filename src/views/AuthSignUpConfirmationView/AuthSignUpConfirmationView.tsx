@@ -15,20 +15,16 @@ export const AuthSignUpConfirmationView = (
     resendLabel,
     resendAriaLabel,
     isResending = false,
-    logo,
-    headerExtra,
-    motion,
     onSignIn,
     onResendConfirmEmail,
+    ...screenProps
   } = props;
 
   return (
     <AuthResultView
       title={title}
       description={description}
-      logo={logo}
-      headerExtra={headerExtra}
-      motion={motion}
+      {...screenProps}
       actions={
         <>
           <Button

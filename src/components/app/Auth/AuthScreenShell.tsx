@@ -1,4 +1,9 @@
+import { useContext } from "react";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { classNames } from "@sito/dashboard";
+
+import { AppIconButton } from "components";
+import { ConfigContext } from "providers/ConfigContext";
 
 import type { AuthScreenShellPropsType } from "./types";
 
@@ -18,9 +23,28 @@ export const AuthScreenShell = (props: AuthScreenShellPropsType) => {
     footerClassName,
     titleClassName,
     headerClassName,
+    showBackButton,
+    backTo,
+    backButtonLabel = "Back",
+    backButtonClassName,
+    onBack,
     motion = "stagger",
     formProps,
   } = props;
+  const config = useContext(ConfigContext);
+  const hasBackTarget = backTo !== undefined;
+  const shouldRenderBackButton = Boolean(
+    (showBackButton || hasBackTarget || onBack) && (onBack || config),
+  );
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+      return;
+    }
+
+    config?.navigate(backTo ?? -1);
+  };
 
   const shellClassName = classNames(
     "auth-screen-shell",
@@ -33,18 +57,44 @@ export const AuthScreenShell = (props: AuthScreenShellPropsType) => {
 
   const content = (
     <>
-      {(logo || title || headerExtra) && (
+      {(shouldRenderBackButton || logo || title || headerExtra) && (
         <div
           className={classNames(
             "auth-screen-header auth-screen-motion-block auth-screen-motion-block-1",
             headerClassName,
           )}
         >
-          {logo}
-          {title && (
-            <h1 className={classNames("auth-screen-title", titleClassName)}>
-              {title}
-            </h1>
+          {(shouldRenderBackButton || logo || title) && (
+            <div className="auth-screen-heading">
+              {shouldRenderBackButton && (
+                <AppIconButton
+                  type="button"
+                  icon={faChevronLeft}
+                  className={classNames(
+                    "auth-screen-back-button",
+                    backButtonClassName,
+                  )}
+                  name={backButtonLabel}
+                  aria-label={backButtonLabel}
+                  onClick={handleBack}
+                />
+              )}
+              {(logo || title) && (
+                <div className="auth-screen-heading-content">
+                  {logo}
+                  {title && (
+                    <h1
+                      className={classNames(
+                        "auth-screen-title",
+                        titleClassName,
+                      )}
+                    >
+                      {title}
+                    </h1>
+                  )}
+                </div>
+              )}
+            </div>
           )}
           {headerExtra}
         </div>

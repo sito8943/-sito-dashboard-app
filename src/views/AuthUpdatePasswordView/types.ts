@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
 
 import type { IAuthApiClient } from "lib";
-import type { AuthScreenMotionType } from "components";
+import type {
+  AuthScreenBackButtonPropsType,
+  AuthScreenMotionType,
+} from "components";
 
-export type AuthUpdatePasswordViewPropsType = {
+export type AuthUpdatePasswordViewPropsType = AuthScreenBackButtonPropsType & {
   authApi: IAuthApiClient;
   title: ReactNode;
   passwordLabel: ReactNode;

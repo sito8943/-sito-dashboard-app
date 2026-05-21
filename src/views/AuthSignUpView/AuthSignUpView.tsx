@@ -26,15 +26,11 @@ export const AuthSignUpView = (props: AuthSignUpViewPropsType) => {
     signInTo,
     guestLabel,
     guestAriaLabel,
-    logo,
-    headerExtra,
-    motion,
-    titleClassName,
-    className,
     onSubmit,
     onStartAsGuest,
     onPasswordMismatch,
     onError,
+    ...screenProps
   } = props;
 
   const { linkComponent: Link } = useConfig();
@@ -193,11 +189,7 @@ export const AuthSignUpView = (props: AuthSignUpViewPropsType) => {
   return (
     <AuthFormShell
       title={title}
-      logo={logo}
-      headerExtra={headerExtra}
-      motion={motion}
-      titleClassName={titleClassName}
-      className={className}
+      {...screenProps}
       control={control}
       fields={fields}
       disabled={isSubmitting}

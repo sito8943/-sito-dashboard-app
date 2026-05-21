@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Loading } from "@sito/dashboard";
+import { Button, classNames, Loading } from "@sito/dashboard";
 
 import { AuthFormShell, type AuthFormFieldDefinitionType } from "components";
 import { useConfig } from "providers";
@@ -16,6 +16,8 @@ export const AuthRecoveryView = (props: AuthRecoveryViewPropsType) => {
     title,
     description,
     statusMessage,
+    statusMessageVariant = "default",
+    statusMessageClassName,
     emailLabel,
     submitLabel,
     emailRequiredMessage,
@@ -25,17 +27,14 @@ export const AuthRecoveryView = (props: AuthRecoveryViewPropsType) => {
     signInTo,
     secondaryActionLabel,
     secondaryActionAriaLabel,
-    logo,
-    headerExtra,
-    motion,
-    titleClassName,
-    className,
     onSubmit,
     onSecondaryAction,
     onError,
+    ...screenProps
   } = props;
 
   const { linkComponent: Link } = useConfig();
+  const { headerExtra, ...authScreenProps } = screenProps;
   const [loadingAction, setLoadingAction] =
     useState<AuthRecoveryViewActionType | null>(null);
 
@@ -89,7 +88,18 @@ export const AuthRecoveryView = (props: AuthRecoveryViewPropsType) => {
   const helperLinks = (
     <>
       {statusMessage && (
-        <p className="auth-form-status-message">{statusMessage}</p>
+        <p
+          className={classNames(
+            "auth-form-status-message",
+            statusMessageVariant === "success" &&
+              "auth-form-status-message--success",
+            statusMessageVariant === "error" &&
+              "auth-form-status-message--error",
+            statusMessageClassName,
+          )}
+        >
+          {statusMessage}
+        </p>
       )}
       {signInQuestion && signInLabel && signInTo && (
         <p className="auth-form-helper-text">
@@ -170,11 +180,8 @@ export const AuthRecoveryView = (props: AuthRecoveryViewPropsType) => {
   return (
     <AuthFormShell
       title={title}
-      logo={logo}
+      {...authScreenProps}
       headerExtra={renderedHeaderExtra}
-      motion={motion}
-      titleClassName={titleClassName}
-      className={className}
       control={control}
       fields={fields}
       disabled={isLoading}

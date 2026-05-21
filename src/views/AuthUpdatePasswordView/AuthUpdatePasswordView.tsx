@@ -25,14 +25,12 @@ export const AuthUpdatePasswordView = (
     signInQuestion,
     signInLabel,
     signInTo,
-    logo,
-    headerExtra,
-    motion,
     successRedirectDelayMs,
     onSuccess,
     onInvalidToken,
     onError,
     onPasswordMismatch,
+    ...screenProps
   } = props;
 
   const { location, navigate, linkComponent: Link } = useConfig();
@@ -141,9 +139,7 @@ export const AuthUpdatePasswordView = (
   return (
     <AuthFormShell
       title={title}
-      logo={logo}
-      headerExtra={headerExtra}
-      motion={motion}
+      {...screenProps}
       control={control}
       fields={fields}
       disabled={isSubmitting}

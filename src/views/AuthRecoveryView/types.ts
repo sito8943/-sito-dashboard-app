@@ -1,22 +1,32 @@
 import type { ReactNode } from "react";
 import type { UseFormSetError } from "react-hook-form";
 
-import type { AuthScreenMotionType } from "components";
+import type {
+  AuthScreenBackButtonPropsType,
+  AuthScreenMotionType,
+} from "components";
 import type { RecoveryFormType } from "lib";
 
 export type AuthRecoveryViewActionType = "submit" | "secondary";
+
+export type AuthRecoveryViewStatusMessageVariantType =
+  | "default"
+  | "success"
+  | "error";
 
 export type AuthRecoveryViewErrorContextType = {
   action: AuthRecoveryViewActionType;
   setError: UseFormSetError<RecoveryFormType>;
 };
 
-export type AuthRecoveryViewPropsType = {
+export type AuthRecoveryViewPropsType = AuthScreenBackButtonPropsType & {
   title: ReactNode;
   emailLabel: ReactNode;
   submitLabel: ReactNode;
   description?: ReactNode;
   statusMessage?: ReactNode;
+  statusMessageVariant?: AuthRecoveryViewStatusMessageVariantType;
+  statusMessageClassName?: string;
   emailRequiredMessage?: string;
   submitAriaLabel?: string;
   signInQuestion?: ReactNode;

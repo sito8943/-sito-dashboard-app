@@ -18,14 +18,12 @@ export const AuthConfirmEmailSuccessView = (
     signInTo,
     errorTo,
     successTo,
-    logo,
-    headerExtra,
-    motion,
     verifyingLabel,
     onSuccess,
     onInvalidToken,
     onError,
     onCleanUrl,
+    ...screenProps
   } = props;
 
   const { location, navigate } = useConfig();
@@ -70,9 +68,7 @@ export const AuthConfirmEmailSuccessView = (
     <AuthResultView
       title={title}
       description={description}
-      logo={logo}
-      headerExtra={headerExtra}
-      motion={motion}
+      {...screenProps}
       loading={isVerifying}
       loadingLabel={verifyingLabel}
       primaryAction={{
