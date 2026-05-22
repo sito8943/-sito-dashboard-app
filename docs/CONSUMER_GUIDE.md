@@ -339,6 +339,7 @@ For CRUD persistence, prefer wrappers:
 
 ```tsx
 import {
+  ConfirmationDialog,
   FormDialog,
   useFormDialog,
   usePostDialog,
@@ -362,6 +363,10 @@ const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
   mutationFn: (dto) => api.products.insert(dto),
   formToDto: (values) => ({ name: values.name, price: values.price }),
   queryKey: ["products"],
+  confirmation: {
+    title: "Confirm product creation",
+    message: "Create this product with the current form values?",
+  },
 });
 
 // 3) Edit dialog (PUT)
@@ -381,12 +386,22 @@ const editDialog = usePutDialog<
 });
 
 <FormDialog<ProductForm> {...createDialog}>{/* fields */}</FormDialog>;
+{
+  createDialog.confirmationProps ? (
+    <ConfirmationDialog {...createDialog.confirmationProps} />
+  ) : null;
+}
 ```
 
 Note:
 
 - `useFormDialog` is state/core lifecycle only.
 - Use `usePostDialog` and `usePutDialog` for remote CRUD flows.
+- `usePostDialog` and `usePutDialog` accept `confirmation` to pause submit,
+  show a `ConfirmationDialog`, then run the mutation only after confirmation.
+  Render `dialog.confirmationProps` next to the form dialog when this option is
+  set. `extraActions` can be passed through `confirmation` for secondary
+  buttons.
 
 #### Migration from legacy `useFormDialog` (removed in `v0.0.54`)
 

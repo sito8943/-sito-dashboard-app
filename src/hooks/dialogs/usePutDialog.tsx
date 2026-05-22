@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FieldValues } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useFormDialog } from "./useFormDialog";
+import { useFormDialogConfirmation } from "./useFormDialogConfirmation";
 import { UseFormDialogReturnType, UsePutDialogPropsType } from "./types";
 
 /**
@@ -35,6 +36,8 @@ export const usePutDialog = <
     getFunction,
     dtoToForm,
     title,
+    confirmation,
+    closeOnSubmit,
     ...coreProps
   } = props;
   const dtoToFormRef = useRef(dtoToForm);
@@ -47,11 +50,8 @@ export const usePutDialog = <
     mutationFn,
   });
 
-  const dialog = useFormDialog<TFormType, TMutationDto>({
-    ...coreProps,
-    mode: "entity",
-    title,
-    onSubmit: async (payload) => {
+  const runMutation = useCallback(
+    async (payload: TMutationDto) => {
       try {
         const result = await dialogFn.mutateAsync(payload);
         if (queryKey) {
@@ -65,12 +65,41 @@ export const usePutDialog = <
         throw error;
       }
     },
+    [dialogFn, onError, onSuccess, queryClient, queryKey],
+  );
+
+  const formCloseRef = useRef<() => void>();
+
+  const confirmationFlow = useFormDialogConfirmation<TMutationDto>({
+    confirmation,
+    runMutation,
+    onConfirmed: () => formCloseRef.current?.(),
+    isMutating: dialogFn.isPending,
+  });
+
+  const dialog = useFormDialog<TFormType, TMutationDto>({
+    ...coreProps,
+    mode: "entity",
+    title,
+    closeOnSubmit: confirmation ? false : closeOnSubmit,
+    onSubmit: async (payload) => {
+      if (confirmation) {
+        confirmationFlow.capture(payload);
+        return;
+      }
+      await runMutation(payload);
+    },
     formToDto: (data) => {
       const formToDtoMapper = formToDto;
       if (formToDtoMapper) return formToDtoMapper(data, entityRef.current);
       return data as unknown as TMutationDto;
     },
   });
+
+  useEffect(() => {
+    formCloseRef.current = dialog.handleClose;
+  }, [dialog.handleClose]);
+
   const { reset: resetForm } = dialog;
 
   const resolveQueryKey = queryKey || ["put-dialog", title];
@@ -107,5 +136,6 @@ export const usePutDialog = <
       dialogFn.isPending ||
       getByIdQuery.isFetching ||
       getByIdQuery.isLoading,
+    confirmationProps: confirmationFlow.confirmationProps,
   };
 };

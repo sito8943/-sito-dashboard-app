@@ -98,6 +98,7 @@ export function CreateProductForm() {
 import { useState } from "react";
 import { Controller } from "react-hook-form";
 import {
+  ConfirmationDialog,
   FormDialog,
   useFormDialog,
   usePostDialog,
@@ -161,6 +162,10 @@ export function ProductDialogs() {
     mutationFn: (dto) => api.products.insert(dto),
     formToDto: (form) => ({ name: form.name, price: form.price }),
     queryKey: ["products"],
+    confirmation: {
+      title: "Confirm product creation",
+      message: "Create this product with the current form values?",
+    },
   });
 
   const editDialog = usePutDialog<
@@ -176,6 +181,20 @@ export function ProductDialogs() {
     mutationFn: (dto) => api.products.update(dto),
     formToDto: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
     queryKey: ["products"],
+    confirmation: {
+      title: "Confirm product changes",
+      message: "Save these changes to the product?",
+      extraActions: [
+        {
+          id: "review-product",
+          type: "button",
+          variant: "outlined",
+          color: "secondary",
+          children: "Review",
+          onClick: () => openReviewPanel(),
+        },
+      ],
+    },
   });
 
   const extraActions: ButtonPropsType[] = [
@@ -226,12 +245,31 @@ export function ProductDialogs() {
           )}
         />
       </FormDialog>
+
+      {createDialog.confirmationProps ? (
+        <ConfirmationDialog {...createDialog.confirmationProps} />
+      ) : null}
+
+      {editDialog.confirmationProps ? (
+        <ConfirmationDialog {...editDialog.confirmationProps} />
+      ) : null}
     </>
   );
 }
 ```
 
 Storybook reference: see `Hooks/Dialogs/FormDialogs` -> `StateModeSetValuesOnOpen` and `StateModeReopenWithSubmittedValues`.
+
+`usePostDialog` and `usePutDialog` accept an optional `confirmation` config for
+mutations that need a final review step. The form dialog stays open while the
+confirmation dialog is open; the mutation runs only from the confirmation
+submit action. Render `dialog.confirmationProps` in a sibling
+`ConfirmationDialog`, and pass `confirmation.extraActions` when the confirmation
+footer needs secondary actions.
+
+For custom payload capture outside `usePostDialog` / `usePutDialog`, use
+`useFormDialogConfirmation<TPayload>` directly and render its
+`confirmationProps` with `ConfirmationDialog`.
 
 ## 3. Base dialog control with `useDialog` + `DialogActions`
 
