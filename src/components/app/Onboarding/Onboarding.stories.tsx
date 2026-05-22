@@ -1,5 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
+import {
+  faBolt,
+  faCircleQuestion,
+  faPaperPlane,
+  faStar,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { Onboarding } from "./Onboarding";
 
 const meta = {
@@ -77,6 +84,143 @@ export const WithStepImages: Story = {
         ),
         image: stepImage,
         alt: "Second onboarding step illustration",
+      },
+    ],
+  },
+};
+
+/**
+ * Three steps. Steps 2/3 surface the auto-wired Back button (icon-only on
+ * mobile, label on desktop).
+ */
+export const WithBackButton: Story = {
+  args: {
+    steps: [
+      {
+        title: "Step 1",
+        body: "First step — no Back button yet.",
+      },
+      {
+        title: "Step 2",
+        body: "Back button appears from the second step on.",
+      },
+      {
+        title: "Step 3",
+        body: "Final step still gets a Back button.",
+      },
+    ],
+  },
+};
+
+/**
+ * Override every default icon via the `icons` prop on `Onboarding`.
+ */
+export const CustomIcons: Story = {
+  args: {
+    icons: {
+      back: faXmark,
+      next: faPaperPlane,
+      skip: faCircleQuestion,
+      startAsGuest: faBolt,
+      signIn: faStar,
+    },
+    steps: [
+      {
+        title: "Step 1",
+        body: "Custom icons across all actions.",
+      },
+      {
+        title: "Step 2",
+        body: "Back button uses the override too.",
+      },
+    ],
+  },
+};
+
+/**
+ * `alwaysShowIcon` forces the icon visible on desktop (defaults hide it).
+ * Accepts boolean or per-action map.
+ */
+export const AlwaysShowIconDesktop: Story = {
+  args: {
+    alwaysShowIcon: true,
+    steps: [
+      {
+        title: "Step 1",
+        body: "On desktop the icon stays next to the label.",
+      },
+      {
+        title: "Step 2",
+        body: "Back/Skip/Next all show their icon at every breakpoint.",
+      },
+    ],
+  },
+};
+
+/**
+ * `alwaysHideLabel` collapses every button to icon-only. Button width auto.
+ */
+export const AlwaysHideLabel: Story = {
+  args: {
+    alwaysHideLabel: true,
+    steps: [
+      {
+        title: "Step 1",
+        body: "Icon-only buttons at every breakpoint.",
+      },
+      {
+        title: "Step 2",
+        body: "Same here.",
+      },
+    ],
+  },
+};
+
+/**
+ * `showLabelOnMobile` reveals the label on mobile. Per-action map keeps
+ * next/back icon-only while the central guest CTA shows its label.
+ */
+export const ShowGuestLabelOnMobile: Story = {
+  args: {
+    showLabelOnMobile: { startAsGuest: true },
+    steps: [
+      {
+        title: "Step 1",
+        body: "Mobile: next/back stay as icons.",
+      },
+      {
+        title: "Ready",
+        body: "Mobile: guest CTA shows its label, sign-in stays icon-only.",
+      },
+    ],
+  },
+};
+
+/**
+ * Per-step overrides — each step entry can carry its own `icons` / display
+ * flags. Merged on top of onboarding-level values per-action.
+ */
+export const PerStepOverrides: Story = {
+  args: {
+    // Onboarding-level baseline
+    alwaysShowIcon: { back: true, next: true },
+    icons: { next: faPaperPlane },
+    steps: [
+      {
+        title: "Step 1",
+        body: "Inherits onboarding-level icon + flag settings.",
+      },
+      {
+        // Step-level overrides
+        title: "Step 2 — overridden",
+        body: "This step uses showLabelOnMobile + a custom skip icon.",
+        showLabelOnMobile: true,
+        icons: { skip: faCircleQuestion },
+      },
+      {
+        title: "Final step",
+        body: "Last step collapses to icon-only for its CTAs.",
+        alwaysHideLabel: { startAsGuest: true, signIn: true },
       },
     ],
   },
