@@ -1,0 +1,13 @@
+@reference "../../index.css";
+
+.dashboard-footer {
+  @apply w-full bg-base flex items-center justify-center h-10 relative;
+}
+
+.dashboard-footer--bottom-nav-spacing {
+  @apply mb-16 sm:mb-0;
+}
+
+.dashboard-footer-text {
+  @apply text-sm text-text-muted;
+}

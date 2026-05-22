@@ -1,0 +1,159 @@
+@reference "../../../index.css";
+
+.auth-screen-root {
+  @apply flex min-h-screen w-full items-center justify-center px-4 py-6;
+}
+
+.auth-screen-shell {
+  @apply flex w-full max-w-110 flex-col items-start justify-start gap-2
+    rounded-3xl px-5 py-5 transition duration-300;
+}
+
+.auth-screen-header {
+  @apply mb-3 flex w-full flex-col items-start justify-start gap-5;
+}
+
+.auth-screen-heading {
+  @apply flex w-full items-center gap-2;
+}
+
+.auth-screen-heading-content {
+  @apply flex min-w-0 flex-1 flex-col items-start gap-5;
+}
+
+.auth-screen-back-button {
+  @apply -ml-2;
+}
+
+.auth-screen-title {
+  @apply mb-1 w-full text-2xl max-sm:text-xl;
+}
+
+.auth-screen-content {
+  @apply w-full;
+}
+
+.auth-form-fields {
+  @apply flex w-full flex-col gap-4;
+}
+
+.auth-form-helper-links {
+  @apply mt-1 w-full self-start;
+}
+
+.auth-form-description {
+  @apply w-full text-sm;
+}
+
+.auth-form-status-message {
+  @apply mb-1 w-full text-left text-sm;
+}
+
+.auth-form-status-message--success {
+  @apply text-bg-success;
+}
+
+.auth-form-status-message--error {
+  @apply text-bg-error;
+}
+
+.auth-form-helper-link {
+  @apply ml-1 text-left text-sm text-primary underline;
+}
+
+.auth-submit-button,
+.auth-action-button {
+  @apply px-8!;
+}
+
+.auth-loading {
+  @apply w-auto!;
+}
+
+.auth-loading-icon {
+  @apply w-6!;
+}
+
+.auth-screen-actions {
+  @apply mt-4 flex w-full gap-3 max-xs:flex-col;
+}
+
+.auth-screen-footer {
+  @apply w-full self-start;
+}
+
+.auth-result-description {
+  @apply mb-4 w-full;
+}
+
+.auth-result-loading {
+  @apply flex items-center gap-2;
+}
+
+.auth-screen-motion-blur,
+.auth-screen-motion-stagger {
+  animation: auth-screen-blur-appear 300ms ease-out both;
+}
+
+.auth-screen-motion-stagger .auth-screen-motion-block {
+  opacity: 0;
+  animation: auth-screen-stagger-appear 420ms ease-out both;
+}
+
+.auth-screen-motion-stagger .auth-screen-motion-block-1 {
+  animation-delay: 120ms;
+}
+
+.auth-screen-motion-stagger .auth-screen-motion-block-2 {
+  animation-delay: 220ms;
+}
+
+.auth-screen-motion-stagger .auth-screen-motion-block-3 {
+  animation-delay: 320ms;
+}
+
+.auth-screen-motion-stagger .auth-screen-motion-block-4 {
+  animation-delay: 400ms;
+}
+
+@keyframes auth-screen-blur-appear {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes auth-screen-stagger-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:root[data-sito-motion="none"] .auth-screen-motion,
+:root[data-sito-motion="none"] .auth-screen-motion-block {
+  animation: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-sito-motion="always"]) .auth-screen-motion,
+  :root:not([data-sito-motion="always"]) .auth-screen-motion-block {
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}

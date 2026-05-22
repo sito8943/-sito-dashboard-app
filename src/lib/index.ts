@@ -9,6 +9,9 @@ export * from "./entities";
 // api
 export * from "./api";
 
+// auth (helpers, route params, form types)
+export * from "./auth";
+
 // utils
 export * from "./utils";
 

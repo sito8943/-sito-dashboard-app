@@ -95,6 +95,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         else navigate(route);
       }}
       linkComponent={Link}
+      motion="auto"
     >
       <ManagerProvider manager={manager}>
         <AuthProvider
@@ -128,6 +129,7 @@ Optional capabilities:
 1. Disable auth: `auth={false}`
 2. Enable optional UI providers: `withNavbarProvider`, `withBottomNavActionProvider`
 3. Inject app-specific wrappers: `featureFlagsProvider`, `offlineSyncProvider`, `appWrapperProvider`
+4. Control library transitions globally with `config.motion`: `"auto"` (default), `"none"`, or `"always"`
 
 ```tsx
 import type { ReactNode } from "react";
@@ -157,6 +159,7 @@ function AppShell({ children }: { children: ReactNode }) {
           else navigate(route);
         },
         linkComponent: Link,
+        motion: "auto",
       }}
       manager={{ manager }}
       withNavbarProvider
@@ -167,6 +170,12 @@ function AppShell({ children }: { children: ReactNode }) {
   );
 }
 ```
+
+`motion` semantics:
+
+- `"auto"` respects `prefers-reduced-motion`.
+- `"none"` disables library transitions and animations.
+- `"always"` keeps library transitions enabled even when the OS/browser requests reduced motion.
 
 ### 2.1 Supabase providers (optional backend)
 
@@ -195,6 +204,26 @@ const supabase = createClient(
 
 `useAuth` keeps the same API with `SupabaseAuthProvider`.
 
+Both providers compose the shared `useAuthSessionState` hook, which owns localStorage key resolution, `account` state, `clearStoredSession`, `isInGuestMode` / `setGuestMode`, and `logUser`. Each provider only adds its own `logoutUser` / `logUserFromLocal` (and, for Supabase, the `onAuthStateChange` subscription + auth-revision guard). If you need to build a custom auth provider against the same `AuthContext`:
+
+```tsx
+import { AuthContext, useAuthSessionState } from "@sito/dashboard-app";
+
+const CustomAuthProvider = ({ children }) => {
+  const {
+    account,
+    setAccount,
+    clearStoredSession,
+    isInGuestMode,
+    setGuestMode,
+    logUser,
+  } = useAuthSessionState();
+
+  // own logoutUser / logUserFromLocal against your backend...
+  // then expose { account, logUser, logoutUser, logUserFromLocal, isInGuestMode, setGuestMode }
+};
+```
+
 ## 3. Core Integration Rules
 
 1. Always import from `@sito/dashboard-app`.
@@ -205,318 +234,75 @@ const supabase = createClient(
 
 ## 4. Key Components and Props
 
-| Component                | Key props                                                                                                                                                                        | Recommended usage                                  |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `Page<T>`                | `title`, `actions`, `addOptions`, `filterOptions`, `queryKey`, `isLoading`                                                                                                       | CRUD layout with standard header/actions           |
-| `PageHeader<T>`          | `title`, `actions`, `showBackButton`                                                                                                                                             | Reusable page header with desktop/mobile actions   |
-| `FormContainer<TForm>`   | `handleSubmit`, `onSubmit`, `reset`, `isLoading`, `buttonEnd`, `onCancel`, `submitLabel`, `cancelLabel`, `submitDisabled`, `cancelDisabled`, `actionsClassName`, `renderActions` | Form wrapper with built-in or custom submit/cancel |
-| `ParagraphInput`         | `label`, `state`, `containerClassName`, `inputClassName`, `helperText`                                                                                                           | Textarea with state-aware styling                  |
-| `PasswordInput`          | `TextInputPropsType`                                                                                                                                                             | Password input with show/hide toggle               |
-| `TabsLayout`             | `tabs`, `defaultTab`, `currentTab`, `onTabChange`, `useLinks`, `tabButtonProps`                                                                                                  | Route tabs or local state tabs                     |
-| `Onboarding`             | `steps`                                                                                                                                                                          | Multi-step flow using controlled `TabsLayout`      |
-| `PrettyGrid<T>`          | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`                                                                                                 | Grid with empty state and optional infinite scroll |
-| `Error`                  | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                                                                                                         | Reusable error fallback                            |
-| `Dialog`                 | `open`, `title`, `handleClose`, `containerClassName`, `className`                                                                                                                | Base modal                                         |
-| `FormDialog<TForm>`      | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions  |
-| `ConfirmationDialog`     | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                                                                                                      | Basic confirmation flows                           |
-| `ImportDialog<TPreview>` | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`, `extraFields`                                                                     | Import with preview + override + custom inputs     |
-| `ExportDialog`           | `handleSubmit`, `isLoading`, `extraFields`, `extraActions`                                                                                                                       | Optional export config modal (date range, format)  |
-| `Drawer<MenuKeys>`       | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                    |
-| `Navbar`                 | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                 |
-| `BottomNavigation<TId>`  | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA   |
-| `ToTop`                  | `threshold`, `tooltip`, `scrollOnClick`, `className`                                                                                                                             | Floating scroll-to-top button                      |
-| `IconButton`             | `icon: IconDefinition` + visual props                                                                                                                                            | FontAwesome-only icon contract                     |
+| Component                     | Key props                                                                                                                                                                        | Recommended usage                                                                 |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `Page<T>`                     | `title`, `actions`, `addOptions`, `filterOptions`, `queryKey`, `isLoading`                                                                                                       | CRUD layout with standard header/actions                                          |
+| `PageHeader<T>`               | `title`, `actions`, `showBackButton`                                                                                                                                             | Reusable page header with desktop/mobile actions                                  |
+| `FormContainer<TForm>`        | `handleSubmit`, `onSubmit`, `reset`, `isLoading`, `buttonEnd`, `onCancel`, `submitLabel`, `cancelLabel`, `submitDisabled`, `cancelDisabled`, `actionsClassName`, `renderActions` | Form wrapper with built-in or custom submit/cancel                                |
+| `ParagraphInput`              | `label`, `state`, `containerClassName`, `inputClassName`, `helperText`                                                                                                           | Textarea with state-aware styling                                                 |
+| `PasswordInput`               | `TextInputPropsType`                                                                                                                                                             | Password input with show/hide toggle                                              |
+| `TabsLayout`                  | `tabs`, `defaultTab`, `currentTab`, `onTabChange`, `useLinks`, `tabButtonProps`                                                                                                  | Route tabs or local state tabs                                                    |
+| `Onboarding`                  | `steps`                                                                                                                                                                          | Multi-step flow using controlled `TabsLayout`                                     |
+| `PrettyGrid<T>`               | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`                                                                                                 | Grid with empty state and optional infinite scroll                                |
+| `Error`                       | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                                                                                                         | Reusable error fallback                                                           |
+| `Dialog`                      | `open`, `title`, `handleClose`, `containerClassName`, `className`                                                                                                                | Base modal                                                                        |
+| `FormDialog<TForm>`           | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions                                 |
+| `ConfirmationDialog`          | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`                                                                                                      | Basic confirmation flows                                                          |
+| `ImportDialog<TPreview>`      | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`, `extraFields`                                                                     | Import with preview + override + custom inputs                                    |
+| `ExportDialog`                | `handleSubmit`, `isLoading`, `extraFields`, `extraActions`                                                                                                                       | Optional export config modal (date range, format)                                 |
+| `Drawer<MenuKeys>`            | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                                                   |
+| `Navbar`                      | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                                                |
+| `BottomNavigation<TId>`       | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA                                  |
+| `ToTop`                       | `threshold`, `tooltip`, `scrollOnClick`, `className`                                                                                                                             | Floating scroll-to-top button                                                     |
+| `IconButton`                  | `icon: IconDefinition` + visual props                                                                                                                                            | FontAwesome-only icon contract                                                    |
+| `TopBanner`                   | `visible`, `children`, `color` (`default`/`primary`/`secondary`/`tertiary`/`quaternary`/`info`/`success`/`warning`/`error`), `role`, `ariaLive`, `className`                     | Generic full-width banner (base for `OfflineBanner`)                              |
+| `OfflineBanner`               | `isOnline`, `message`, `className`                                                                                                                                               | Connectivity preset of `TopBanner` (warning, fixed)                               |
+| `PwaUpdateDialog`             | `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, `mobileFullScreen`, `containerClassName`                                                 | Presentational PWA update prompt (consumer owns SW hook)                          |
+| `AppShell`                    | `header`, `footer`, `bottomNavigation`, `extras`, `withNotification`, `className`                                                                                                | Authenticated route shell (header/content/footer/bottomNav/extras + Notification) |
+| `AuthShell`                   | `children`, `withNotification`, `className`                                                                                                                                      | Auth route wrapper (children + optional Notification)                             |
+| `AuthSignInView`              | `title`, `emailLabel`, `passwordLabel`, `rememberLabel`, `onSubmit`, `onStartAsGuest`                                                                                            | Prefab sign-in route view                                                         |
+| `AuthSignUpView`              | `title`, `emailLabel`, `passwordLabel`, `confirmPasswordLabel`, `nameLabel`, `onSubmit`                                                                                          | Prefab sign-up route view                                                         |
+| `AuthRecoveryView`            | `title`, `description`, `emailLabel`, `submitLabel`, `statusMessage`, `onSubmit`, `onSecondaryAction`                                                                            | Prefab password recovery/request-confirmation view                                |
+| `AuthSignUpConfirmationView`  | `title`, `description`, `toSignInLabel`, `resendLabel`, `onSignIn`, `onResendConfirmEmail`                                                                                       | Prefab sign-up confirmation result view                                           |
+| `AuthUpdatePasswordView`      | `authApi`, `title`, `passwordLabel`, `confirmPasswordLabel`, `submitLabel`, `signInTo`                                                                                           | Prefab update-password route view                                                 |
+| `AuthConfirmEmailSuccessView` | `authApi`, `title`, `description`, `toSignInLabel`, `signInTo`, `errorTo`, `successTo`                                                                                           | Prefab email confirmation verification view                                       |
+| `AuthConfirmEmailErrorView`   | `title`, `description`, `resendLabel`, `toSignInLabel`, `resendTo`, `signInTo`                                                                                                   | Prefab email confirmation error view                                              |
+| `DashboardHeader<MenuKeys>`   | `menuMap`, `logo`, `showOfflineBanner`, `navbarProps`                                                                                                                            | Drawer + Navbar combo with internal drawer state                                  |
+| `DashboardFooter`             | `copyrightText`, `year`, `showToTop`, `toTopProps`, `bottomNavSpacing`, `children`, `className`, `textClassName`                                                                 | Copyright line + optional `ToTop`                                                 |
+| `NotFoundView`                | `title`, `body`, `ctaLabel`, `ctaTo`, `className`, `titleClassName`, `bodyClassName`, `ctaClassName`                                                                             | Generic 404 fallback (router-agnostic CTA)                                        |
+| `FeatureUnavailableView`      | `title`, `body`, `ctaLabel`, `ctaTo`, `icon`, `className`, `iconClassName`, `titleClassName`, `bodyClassName`, `ctaClassName`                                                    | Feature-disabled fallback (icon defaults to `faWarning`)                          |
 
 ## 5. Frequent Usage Examples
 
-### 5.1 `TabsLayout`: local state tabs
+Copy-ready snippets live in the themed recipe files. This guide is the reference for providers, props, hooks, clients, and auth — recipes show how to assemble them.
 
-```tsx
-import { useState } from "react";
-import { TabsLayout } from "@sito/dashboard-app";
-
-const tabs = [
-  { id: 1, label: "General", content: <div>General</div> },
-  { id: 2, label: "Security", content: <div>Security</div> },
-];
-
-export function SettingsTabs() {
-  const [tab, setTab] = useState(1);
-
-  return (
-    <TabsLayout
-      tabs={tabs}
-      currentTab={tab}
-      onTabChange={(id) => setTab(Number(id))}
-      useLinks={false}
-      tabButtonProps={{ variant: "outlined", color: "secondary" }}
-    />
-  );
-}
-```
-
-### 5.2 `Error`: use only one mode at a time
-
-```tsx
-import { Error } from "@sito/dashboard-app";
-
-<Error error={error} onRetry={() => refetch()} />;
-
-<Error>
-  <CustomErrorPanel />
-</Error>;
-```
-
-### 5.3 `PrettyGrid`: infinite scroll
-
-```tsx
-import { PrettyGrid, Loading } from "@sito/dashboard-app";
-
-<PrettyGrid<ProductDto>
-  data={products}
-  loading={isLoading}
-  renderComponent={(item) => <ProductCard item={item} />}
-  hasMore={hasMore}
-  loadingMore={isFetchingNextPage}
-  onLoadMore={fetchNextPage}
-  loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
-/>;
-```
-
-### 5.4 `ImportDialog`: custom preview
-
-```tsx
-import { ImportDialog } from "@sito/dashboard-app";
-
-<ImportDialog<ProductImportPreviewDto>
-  open={open}
-  title="Import products"
-  handleClose={close}
-  handleSubmit={submit}
-  fileProcessor={parseFile}
-  renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
-/>;
-```
-
-### 5.4.1 `ImportDialog`: extra fields (custom inputs)
-
-Use `extraFields` to render custom inputs (checkboxes, selects, text) between the
-preview and the footer actions. When the consumer owns the state, pass the node
-directly:
-
-```tsx
-import { useState } from "react";
-import { ImportDialog } from "@sito/dashboard-app";
-
-const [useCurrentAccount, setUseCurrentAccount] = useState(true);
-
-<ImportDialog<TransactionImportPreviewDto>
-  open={open}
-  title="Import transactions"
-  handleClose={close}
-  handleSubmit={() => submitImport({ useCurrentAccount, items: previewItems })}
-  fileProcessor={parseFile}
-  extraFields={
-    <label className="flex items-center gap-2">
-      <input
-        type="checkbox"
-        checked={useCurrentAccount}
-        onChange={(e) => setUseCurrentAccount(e.target.checked)}
-      />
-      <span>Use current account</span>
-    </label>
-  }
-/>;
-```
-
-When pairing with `useImportDialog`, prefer the hook-managed flow via
-`defaultExtra` + `renderExtraFields` (see `RECIPES.md` §8). The hook merges the
-extra values into the `mutationFn` payload as
-`{ items, override, ...extra }`.
-
-### 5.4.2 `ExportDialog` / `useExportDialog`: optional export config
-
-Export flows are direct by default (`useExportAction` + `useExportActionMutate`).
-When an entity needs extra configuration before the request (date range, format,
-columns), swap to `useExportDialog` — same `action()` shape, so `Page`/`Actions`
-consume either without changes.
-
-```tsx
-import { ExportDialog, useExportDialog } from "@sito/dashboard-app";
-
-type ExportExtra = { from: string; to: string; format: "csv" | "xlsx" };
-
-const exportDialog = useExportDialog<TransactionDto, ExportExtra, Blob>({
-  entity: "transactions",
-  defaultExtra: { from: "", to: "", format: "csv" },
-  mutationFn: ({ from, to, format }) =>
-    api.transactions.exportRange({ from, to, format }),
-  renderExtraFields: ({ values, setValue }) => (
-    <div className="grid gap-2">
-      <input
-        type="date"
-        value={values.from}
-        onChange={(e) => setValue("from", e.target.value)}
-      />
-      <input
-        type="date"
-        value={values.to}
-        onChange={(e) => setValue("to", e.target.value)}
-      />
-      <select
-        value={values.format}
-        onChange={(e) => setValue("format", e.target.value as ExportExtra["format"])}
-      >
-        <option value="csv">CSV</option>
-        <option value="xlsx">XLSX</option>
-      </select>
-    </div>
-  ),
-});
-
-<Page exportAction={exportDialog.action} ... />
-<ExportDialog {...exportDialog} title="Export transactions" />
-```
-
-Opt out of the dialog by using `useExportAction` + `useExportActionMutate`
-directly — the action triggers the mutation without any modal.
-
-### 5.5 `useNavbar`: dynamic title and right slot
-
-```tsx
-import { useEffect } from "react";
-import { useNavbar } from "@sito/dashboard-app";
-
-export function ProductsPage() {
-  const { setTitle, setRightContent } = useNavbar();
-
-  useEffect(() => {
-    setTitle("Products");
-    setRightContent(<button>Export</button>);
-    return () => {
-      setTitle("");
-      setRightContent(null);
-    };
-  }, [setTitle, setRightContent]);
-
-  return <div>...</div>;
-}
-```
-
-### 5.6 Dialogs with `extraActions`
-
-```tsx
-import type { ButtonPropsType } from "@sito/dashboard-app";
-import { ConfirmationDialog, FormDialog } from "@sito/dashboard-app";
-
-const extraActions: ButtonPropsType[] = [
-  {
-    id: "save-draft",
-    type: "button",
-    variant: "outlined",
-    color: "secondary",
-    children: "Save draft",
-    onClick: () => saveDraft(),
-  },
-];
-
-<ConfirmationDialog
-  open={open}
-  title="Confirm change"
-  handleSubmit={confirm}
-  handleClose={close}
-  extraActions={extraActions}
-/>;
-
-<FormDialog<ProductForm> {...dialog} extraActions={extraActions}>
-  {/* fields */}
-</FormDialog>;
-```
-
-Use `type: "button"` in `FormDialog` extra actions unless you want them to submit the form.
-
-### 5.7 `BottomNavigation`: mobile nav with optional center action
-
-```tsx
-import {
-  BottomNavigation,
-  type BottomNavigationItemType,
-} from "@sito/dashboard-app";
-import {
-  faBox,
-  faHome,
-  faPlus,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-
-type BottomNavId = "home" | "products" | "profile";
-
-const items: BottomNavigationItemType<BottomNavId>[] = [
-  { id: "home", label: "Home", to: "/", icon: faHome, position: "left" },
-  {
-    id: "products",
-    label: "Products",
-    to: "/products",
-    icon: faBox,
-    position: "left",
-  },
-  {
-    id: "profile",
-    label: "Profile",
-    to: "/profile",
-    icon: faUser,
-    position: "right",
-  },
-];
-
-<BottomNavigation
-  items={items}
-  centerAction={{
-    icon: faPlus,
-    to: "/products/new",
-    ariaLabel: "Create product",
-  }}
-  isItemActive={(pathname, item) =>
-    item.id === "products"
-      ? pathname.startsWith("/products")
-      : pathname === item.to
-  }
-/>;
-```
-
-Dynamic center-action override from page scope:
-
-```tsx
-import {
-  BottomNavActionProvider,
-  BottomNavigation,
-  useRegisterBottomNavAction,
-  type BottomNavigationItemType,
-} from "@sito/dashboard-app";
-import { faTags } from "@fortawesome/free-solid-svg-icons";
-
-function CategoriesCenterAction() {
-  useRegisterBottomNavAction({
-    icon: faTags,
-    ariaLabel: "Create category",
-    to: "/categories/new",
-    color: "secondary",
-  });
-  return null;
-}
-
-<BottomNavActionProvider>
-  <CategoriesCenterAction />
-  <BottomNavigation items={items} centerAction={{ to: "/products/new" }} />
-</BottomNavActionProvider>;
-```
+| Task                                                          | Recipe                   |
+| ------------------------------------------------------------- | ------------------------ |
+| `TabsLayout` local state + onboarding flow                    | `RECIPES_FORMS.md` §5    |
+| `Error` single-mode + `Empty` / `SplashScreen` / `IconButton` | `RECIPES_FORMS.md` §7    |
+| `PrettyGrid` infinite scroll                                  | `RECIPES_DATA.md` §1.2   |
+| `ImportDialog` — `renderCustomPreview`                        | `RECIPES_FORMS.md` §4    |
+| `ImportDialog` — hook `defaultExtra` / `renderExtraFields`    | `RECIPES_FORMS.md` §4.1  |
+| `ImportDialog` — component-level `extraFields`                | `RECIPES_FORMS.md` §4.2  |
+| `ExportDialog` / `useExportDialog` config dialog              | `RECIPES_DATA.md` §4     |
+| `useNavbar` dynamic title and right slot                      | `RECIPES_FORMS.md` §6    |
+| Dialogs with `extraActions`                                   | `RECIPES_FORMS.md` §2    |
+| `BottomNavigation` (mobile, center action)                    | `RECIPES_LAYOUT.md` §2.1 |
+| `AppShell` / `DashboardHeader` / `DashboardFooter` layout     | `RECIPES_LAYOUT.md` §2   |
+| `AuthShell` for auth routes                                   | `RECIPES_LAYOUT.md` §2.2 |
+| `NotFoundView` / `FeatureUnavailableView`                     | `RECIPES_LAYOUT.md` §2.3 |
+| `PwaUpdateDialog`                                             | `RECIPES_LAYOUT.md` §2.4 |
+| `LegalPage` / `LegalSection` / `LegalLinksList`               | `RECIPES_LAYOUT.md` §2.5 |
+| `Onboarding` step animations (`remountStepOnChange`)          | `RECIPES_FORMS.md` §5    |
+| Notifications (`useNotification`)                             | `RECIPES_FORMS.md` §8    |
+| Auth (`useAuth`, `rememberMe`, guest mode)                    | `RECIPES_FORMS.md` §9    |
+| Prefab auth route views                                       | `RECIPES_FORMS.md` §9.1  |
+| Error guards (`isValidationError` / `isHttpError`)            | `RECIPES_FORMS.md` §10   |
 
 Notes:
 
-- `BottomNavigation` relies on `ConfigProvider` routing primitives (`location`, `navigate`, `linkComponent`).
-- `hidden`/`disabled` in each item control visibility and interaction.
-- `centerAction.onClick` runs before optional `to` navigation; call `event.preventDefault()` to cancel navigation.
-- `BottomNavActionProvider` is optional. If mounted, `useRegisterBottomNavAction` lets active pages override center-action fields at runtime.
+- Provider order, drawer/menu wiring, and shells live in `RECIPES_LAYOUT.md`. CRUD pages, entity clients, and exports live in `RECIPES_DATA.md`. Forms, dialogs, tabs/onboarding, navbar, feedback, notifications, and auth live in `RECIPES_FORMS.md`. `RECIPES.md` indexes all three.
+- `Onboarding` step animations are opt-in per-mount via `remountStepOnChange`. Default reconciles the step tree across step changes (no animation restart). Gated by `ConfigProvider.motion` and `prefers-reduced-motion`.
 
 ## 6. High-Level Hooks
 
@@ -553,6 +339,7 @@ For CRUD persistence, prefer wrappers:
 
 ```tsx
 import {
+  ConfirmationDialog,
   FormDialog,
   useFormDialog,
   usePostDialog,
@@ -576,6 +363,10 @@ const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
   mutationFn: (dto) => api.products.insert(dto),
   formToDto: (values) => ({ name: values.name, price: values.price }),
   queryKey: ["products"],
+  confirmation: {
+    title: "Confirm product creation",
+    message: "Create this product with the current form values?",
+  },
 });
 
 // 3) Edit dialog (PUT)
@@ -595,94 +386,34 @@ const editDialog = usePutDialog<
 });
 
 <FormDialog<ProductForm> {...createDialog}>{/* fields */}</FormDialog>;
+{
+  createDialog.confirmationProps ? (
+    <ConfirmationDialog {...createDialog.confirmationProps} />
+  ) : null;
+}
 ```
 
 Note:
 
 - `useFormDialog` is state/core lifecycle only.
 - Use `usePostDialog` and `usePutDialog` for remote CRUD flows.
+- `usePostDialog` and `usePutDialog` accept `confirmation` to pause submit,
+  show a `ConfirmationDialog`, then run the mutation only after confirmation.
+  Render `dialog.confirmationProps` next to the form dialog when this option is
+  set. `extraActions` can be passed through `confirmation` for secondary
+  buttons.
 
-#### Migration from legacy `useFormDialog` (`v0.0.54+`)
+#### Migration from legacy `useFormDialog` (removed in `v0.0.54`)
 
-Breaking changes:
+`useFormDialog` no longer accepts `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`. `useFormDialogLegacy` and `useEntityFormDialog` are no longer exported.
 
-- `useFormDialog` no longer accepts `mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, or `formToDto`.
-- `useFormDialogLegacy` and `useEntityFormDialog` are no longer exported.
-
-Migration map:
+Map:
 
 - Legacy create (mutation-only) -> `usePostDialog`
 - Legacy edit (`getFunction` + mutation) -> `usePutDialog`
-- Local/state-only dialog -> `useFormDialog`
+- Local/state-only dialog -> `useFormDialog` (`mode: "state"`)
 
-Before:
-
-```tsx
-const createDialog = useFormDialog<
-  ProductDto,
-  CreateProductDto,
-  ProductDto,
-  ProductForm
->({
-  title: "Create product",
-  defaultValues: { name: "", price: 0 },
-  mutationFn: (dto) => api.products.insert(dto),
-  formToDto: (form) => ({ name: form.name, price: form.price }),
-  queryKey: ["products"],
-});
-```
-
-After:
-
-```tsx
-const createDialog = usePostDialog<CreateProductDto, ProductDto, ProductForm>({
-  title: "Create product",
-  defaultValues: { name: "", price: 0 },
-  mutationFn: (dto) => api.products.insert(dto),
-  formToDto: (form) => ({ name: form.name, price: form.price }),
-  queryKey: ["products"],
-});
-```
-
-Before:
-
-```tsx
-const editDialog = useFormDialog<
-  ProductDto,
-  UpdateProductDto,
-  ProductDto,
-  ProductForm
->({
-  title: "Edit product",
-  defaultValues: { name: "", price: 0 },
-  getFunction: (id) => api.products.getById(id),
-  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
-  mutationFn: (dto) => api.products.update(dto),
-  formToDto: (form) => ({ id: 0, ...form }),
-  queryKey: ["products"],
-});
-```
-
-After:
-
-```tsx
-const editDialog = usePutDialog<
-  ProductDto,
-  UpdateProductDto,
-  ProductDto,
-  ProductForm
->({
-  title: "Edit product",
-  defaultValues: { name: "", price: 0 },
-  getFunction: (id) => api.products.getById(id),
-  dtoToForm: (dto) => ({ name: dto.name, price: dto.price }),
-  mutationFn: (dto) => api.products.update(dto),
-  formToDto: (form, dto) => ({ id: dto?.id ?? 0, ...form }),
-  queryKey: ["products"],
-});
-```
-
-`useFormDialog` now supports `onError(error, context)` for core lifecycle failures (`submit`, `apply`, `clear`):
+`useFormDialog` supports `onError(error, context)` for core lifecycle failures (`submit`, `apply`, `clear`):
 
 ```tsx
 const filtersDialog = useFormDialog<ProductFilters>({
@@ -873,6 +604,322 @@ const { account, logUser, logoutUser, isInGuestMode } = useAuth();
 ```
 
 When your login UI has a "remember me" option, pass `rememberMe` in the auth payload.
+
+#### 8.1.0 `AuthClient` vs `SupabaseAuthClient`: session endpoints
+
+The session endpoints (`login`, `refresh`, `register`, `getSession`, `logout`)
+have two adapters with the same surface:
+
+- `AuthClient` — REST. Hits `auth/sign-in`, `auth/sign-up`, `auth/refresh`,
+  `auth/sign-out`, `auth/session`. Backed by an internal `APIClient`.
+- `SupabaseAuthClient` — Supabase Auth. Maps `supabase.auth.signInWithPassword`
+  / `auth.refreshSession` / `auth.signUp` / `auth.getSession` / `auth.signOut`
+  onto the same `SessionDto` shape via `mapSupabaseSessionToSessionDto`.
+
+`SupabaseAuthClient` adds `signUp(data)` returning a discriminated union so
+callers can branch on email confirmation:
+
+```ts
+import { SupabaseAuthClient } from "@sito/dashboard-app";
+
+const auth = new SupabaseAuthClient(supabase, {
+  // optional
+  defaultSignUpRedirectTo: buildAuthRedirectUrl("/auth/confirm-email"),
+  mapperOptions: { defaultUsername: "guest" },
+  // sessionMapper: customMapper,  // overrides mapperOptions entirely
+});
+
+const result = await auth.signUp({
+  email,
+  password,
+  rPassword: password,
+  name: "Sito", // -> options.data.{name, username}
+  // username: "fallback",       // used when name is missing
+  // metadata: { plan: "pro" },  // replaces the default {name, username} payload
+  // redirectTo: ...,            // per-call override of defaultSignUpRedirectTo
+});
+
+if (result.status === "confirmation_required") {
+  // show "check your email" screen
+} else {
+  await logUser(result.session, rememberMe);
+}
+```
+
+`register()` keeps REST symmetry: it throws when Supabase requires
+confirmation. Call `signUp()` when the UI needs to handle that branch.
+
+#### 8.1.1 `IAuthApiClient`: password reset and email confirmation
+
+`AuthClient` covers the session endpoints (`login`, `register`, `refresh`,
+`logout`, `getSession`). The side-channel endpoints (forgot password, reset
+password, resend confirmation email, confirm email) live behind the
+`IAuthApiClient` interface so the same view code can drive either backend.
+
+Two adapters ship with the library:
+
+- `RestAuthApiClient` — hits the conventional `auth/password/*` and
+  `auth/email/confirm*` endpoints through an `APIClient` you provide. Endpoint
+  paths and an optional `confirmEmailFallback` (only retried on 404) are
+  configurable.
+- `SupabaseAuthApiClient` — maps the same DTOs onto
+  `supabase.auth.resetPasswordForEmail`, `auth.resend`, `auth.verifyOtp`,
+  and `auth.setSession` / `auth.updateUser` for the access-token reset path.
+
+```ts
+// REST backend
+import { APIClient, RestAuthApiClient } from "@sito/dashboard-app";
+
+const api = new APIClient(config.apiUrl, config.auth.user, false, undefined, {
+  rememberKey: config.auth.remember,
+  refreshTokenKey: config.auth.refreshTokenKey,
+  accessTokenExpiresAtKey: config.auth.accessTokenExpiresAtKey,
+});
+const authApi = new RestAuthApiClient(api, {
+  endpoints: { confirmEmailFallback: "auth/email/confirm/verify" },
+});
+
+// Supabase backend
+import { SupabaseAuthApiClient } from "@sito/dashboard-app";
+const authApi = new SupabaseAuthApiClient(supabase);
+```
+
+Both expose the same methods returning a normalized `IAuthApiClient` surface:
+
+```ts
+authApi.forgotPassword({ email, redirectTo });
+authApi.resetPassword({ tokenHash, type: "recovery", newPassword });
+authApi.resetPassword({ accessToken, refreshToken, newPassword });
+authApi.resendConfirmEmail({ email, redirectTo });
+authApi.confirmEmail({ tokenHash, type: "email" });
+```
+
+#### 8.1.2 Auth URL/token helpers
+
+Confirm-email and recovery flows decode tokens from either the query string or
+the hash fragment (Supabase puts recovery tokens in the hash). Use the shipped
+helpers instead of re-implementing the parsing:
+
+```ts
+import {
+  AuthRouteQueryParam,
+  buildAuthRedirectUrl,
+  extractAuthQueryParamFromLocation,
+  extractAuthSessionTokensFromLocation,
+  extractRecoveryAccessTokenFromLocation,
+  getAuthErrorMessage,
+  hasAuthErrorParamsInLocation,
+  resolveConfirmEmailDtoFromLocation,
+  resolveResetPasswordDtoFromLocation,
+} from "@sito/dashboard-app";
+
+const tokenHash = extractAuthQueryParamFromLocation(
+  location.hash,
+  location.search,
+  AuthRouteQueryParam.tokenHash,
+);
+const redirectTo = buildAuthRedirectUrl("/auth/confirm-email", config.thisUrl);
+
+const resetPayload = resolveResetPasswordDtoFromLocation(
+  location.hash,
+  location.search,
+  "new-password",
+);
+const confirmPayload = resolveConfirmEmailDtoFromLocation(
+  location.hash,
+  location.search,
+);
+```
+
+#### 8.1.3 Auth visual shells and agnostic auth views
+
+Auth views are i18n-agnostic and route through `ConfigProvider` for location
+and navigation. Pass already-translated strings/React nodes plus app route
+constants; the library handles token parsing and DTO building.
+
+Reusable primitives:
+
+- `AuthScreenShell` — full-screen auth container with optional `logo`,
+  `headerExtra`, and `motion`.
+- `AuthFormShell` — prefab form layout with `text`, `password`, `checkbox`
+  fields and a per-field `render` escape hatch.
+- `AuthResultView` — result/success/error screen with optional loading and
+  primary/secondary actions.
+
+Flow helpers/hooks:
+
+- `resolveResetPasswordDtoFromLocation(hash, search, newPassword)`
+- `resolveConfirmEmailDtoFromLocation(hash, search)`
+- `useUpdatePasswordFlow({ authApi, location, ...callbacks })`
+- `useConfirmEmailFlow({ authApi, location, ...callbacks })`
+
+Concrete views:
+
+- `AuthSignInView`
+- `AuthSignUpView`
+- `AuthRecoveryView`
+- `AuthSignUpConfirmationView`
+- `AuthUpdatePasswordView`
+- `AuthConfirmEmailSuccessView`
+- `AuthConfirmEmailErrorView`
+
+Example:
+
+The example assumes app-owned `manager`, `authApi`, route constants,
+notifications, error mappers, and translation helpers are already in scope.
+
+```tsx
+import {
+  AuthConfirmEmailSuccessView,
+  AuthRecoveryView,
+  AuthSignInView,
+  AuthSignUpConfirmationView,
+  AuthSignUpView,
+  AuthUpdatePasswordView,
+  buildAuthRedirectUrl,
+  useAuth,
+  useConfig,
+} from "@sito/dashboard-app";
+
+export function SignInRoute() {
+  const { logUser, setGuestMode } = useAuth();
+
+  return (
+    <AuthSignInView
+      title={t("_pages:auth.signIn.title")}
+      emailLabel={t("_entities:user.email.label")}
+      passwordLabel={t("_entities:user.password.label")}
+      rememberLabel={t("_pages:auth.signIn.rememberMe")}
+      submitLabel={t("_pages:auth.signIn.submit")}
+      signUpQuestion={t("_pages:auth.signIn.toSignUp.question")}
+      signUpLabel={t("_pages:auth.signIn.toSignUp.link")}
+      signUpTo={AppRoutes.SignUp}
+      recoveryQuestion={t("_pages:auth.signIn.toRecovery.question")}
+      recoveryLabel={t("_pages:auth.signIn.toRecovery.link")}
+      recoveryTo={AppRoutes.Recovery}
+      guestLabel={t("_pages:auth.signIn.guest")}
+      onSubmit={async (values) => {
+        const session = await manager.Auth.login(values);
+        logUser(session, values.rememberMe);
+      }}
+      onStartAsGuest={() => setGuestMode(true)}
+      onError={(error) => showErrorNotification({ message: mapError(error) })}
+    />
+  );
+}
+
+export function SignUpRoute() {
+  const { logUser } = useAuth();
+  const { navigate } = useConfig();
+
+  return (
+    <AuthSignUpView
+      title={t("_pages:auth.signUp.title")}
+      nameLabel={t("_entities:user.name.label")}
+      emailLabel={t("_entities:user.email.label")}
+      passwordLabel={t("_entities:user.password.label")}
+      confirmPasswordLabel={t("_entities:user.confirmPassword.label")}
+      passwordMismatchMessage={t("_pages:auth.signUp.passwordMismatch")}
+      submitLabel={t("_pages:auth.signUp.submit")}
+      signInQuestion={t("_pages:auth.signUp.toSignIn.question")}
+      signInLabel={t("_pages:auth.signUp.toSignIn.link")}
+      signInTo={AppRoutes.SignIn}
+      onSubmit={async ({ confirmPassword, ...values }) => {
+        const session = await manager.Auth.register({
+          ...values,
+          rPassword: confirmPassword,
+        });
+        logUser(session, false);
+      }}
+      onError={(error) => {
+        if (isEmailConfirmationRequired(error)) {
+          navigate(AppRoutes.SignUpConfirmation);
+          return;
+        }
+        showErrorNotification({ message: mapError(error) });
+      }}
+    />
+  );
+}
+
+export function RecoveryRoute() {
+  return (
+    <AuthRecoveryView
+      title={t("_pages:auth.recovery.title")}
+      description={t("_pages:auth.recovery.description")}
+      emailLabel={t("_entities:user.email.label")}
+      submitLabel={t("_pages:auth.recovery.submit")}
+      signInQuestion={t("_pages:auth.recovery.toSignIn.question")}
+      signInLabel={t("_pages:auth.recovery.toSignIn.link")}
+      signInTo={AppRoutes.SignIn}
+      onSubmit={(values) =>
+        authApi.forgotPassword({
+          ...values,
+          redirectTo: buildAuthRedirectUrl(AppRoutes.UpdatePassword),
+        })
+      }
+      onError={(error) => showErrorNotification({ message: mapError(error) })}
+    />
+  );
+}
+
+export function SignUpConfirmationRoute() {
+  const { navigate } = useConfig();
+
+  return (
+    <AuthSignUpConfirmationView
+      title={t("_pages:auth.signUpConfirmation.title")}
+      description={t("_pages:auth.signUpConfirmation.description")}
+      toSignInLabel={t("_pages:auth.signUpConfirmation.toSignIn")}
+      resendLabel={t("_pages:auth.signUpConfirmation.resend")}
+      onSignIn={() => navigate(AppRoutes.SignIn)}
+      onResendConfirmEmail={() =>
+        authApi.resendConfirmEmail({
+          email: pendingEmail,
+          redirectTo: buildAuthRedirectUrl(AppRoutes.ConfirmEmailSuccess),
+        })
+      }
+    />
+  );
+}
+
+export function UpdatePasswordRoute() {
+  return (
+    <AuthUpdatePasswordView
+      authApi={authApi}
+      title={t("_pages:auth.updatePassword.title")}
+      passwordLabel={t("_entities:user.password.label")}
+      confirmPasswordLabel={t("_entities:user.confirmPassword.label")}
+      submitLabel={t("_pages:auth.updatePassword.submit")}
+      signInQuestion={t("_pages:auth.updatePassword.toLogin.question")}
+      signInLabel={t("_pages:auth.updatePassword.toLogin.link")}
+      signInTo={AppRoutes.SignIn}
+      onInvalidToken={() => showErrorNotification({ message: invalidToken })}
+      onError={(error) => showErrorNotification({ message: mapError(error) })}
+    />
+  );
+}
+
+export function ConfirmEmailRoute() {
+  return (
+    <AuthConfirmEmailSuccessView
+      authApi={authApi}
+      title={t("_pages:auth.confirmEmailSuccess.title")}
+      description={t("_pages:auth.confirmEmailSuccess.description")}
+      toSignInLabel={t("_pages:auth.confirmEmailSuccess.toSignIn")}
+      signInTo={AppRoutes.SignIn}
+      errorTo={AppRoutes.ConfirmEmailError}
+      successTo={AppRoutes.ConfirmEmailSuccess}
+    />
+  );
+}
+```
+
+#### 8.1.4 Shared form types
+
+`SignInFormType`, `SignUpFormType`, `UpdatePasswordFormType`, and
+`RecoveryFormType` are generic over a `TExtra` field set so consumers can add
+their own (e.g. `name`, `username`) without forking the type.
 
 ### 8.2 Notifications
 

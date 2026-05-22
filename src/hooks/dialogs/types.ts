@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { MutationFunction, QueryKey } from "@tanstack/react-query";
 import {
   Control,
@@ -17,7 +18,11 @@ import { ActionType } from "@sito/dashboard";
 // types
 import { BaseEntityDto, ValidationError } from "lib";
 import { UseBaseFormProps, UseConfirmationPropsType } from "../forms";
-import { FormDialogPropsType } from "components";
+import {
+  ButtonPropsType,
+  ConfirmationDialogPropsType,
+  FormDialogPropsType,
+} from "components";
 
 export type FormDialogMode = "entity" | "state";
 
@@ -128,6 +133,25 @@ export interface OpenFormDialogParamsType<TFormType extends FieldValues> {
   values?: DefaultValues<TFormType>;
 }
 
+export interface FormDialogConfirmationConfig {
+  title: string;
+  message: ReactNode;
+  extraActions?: ButtonPropsType[];
+}
+
+export interface UseFormDialogConfirmationOptions<TMutationDto> {
+  confirmation?: FormDialogConfirmationConfig;
+  runMutation: (payload: TMutationDto) => Promise<void>;
+  onConfirmed?: () => void;
+  isMutating: boolean;
+}
+
+export interface UseFormDialogConfirmationReturn<TMutationDto> {
+  isEnabled: boolean;
+  capture: (payload: TMutationDto) => void;
+  confirmationProps?: ConfirmationDialogPropsType;
+}
+
 export interface UseFormDialogReturnType<TFormType extends FieldValues>
   extends TriggerFormDialogPropsType<TFormType> {
   mode: FormDialogMode;
@@ -135,6 +159,7 @@ export interface UseFormDialogReturnType<TFormType extends FieldValues>
   isSubmitting: boolean;
   onApply: () => Promise<void>;
   onClear: () => Promise<void>;
+  confirmationProps?: ConfirmationDialogPropsType;
 }
 
 export interface UseActionDialog<
@@ -155,6 +180,7 @@ export interface UsePostDialogPropsType<
     > {
   mutationFn: MutationFunction<TMutationOutputDto, TMutationDto>;
   queryKey?: QueryKey;
+  confirmation?: FormDialogConfirmationConfig;
 }
 
 export interface UsePutDialogPropsType<

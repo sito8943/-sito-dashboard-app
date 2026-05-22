@@ -1,5 +1,5 @@
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { ReactNode } from "react";
+import type { ElementType, ReactNode } from "react";
 import type { SessionAccountDto } from "../entities/auth";
 
 /**
@@ -75,6 +75,11 @@ export type FeatureEnabledFn<FeatureKey extends string> = (
   key: FeatureKey,
 ) => boolean;
 
+export type FeatureDependencyMap<
+  PageId extends string,
+  FeatureKey extends string,
+> = Partial<Record<PageId, FeatureKey>>;
+
 export type BottomNavItemType<PageId extends string = string> = {
   id: string;
   page: PageId;
@@ -82,6 +87,59 @@ export type BottomNavItemType<PageId extends string = string> = {
   icon: IconDefinition;
   position: "left" | "right";
 };
+
+export type RouteComponentRegistryType<
+  RouteKey extends string = string,
+  Component extends ElementType = ElementType,
+> = Record<RouteKey, Component>;
+
+export type RouteComponentKeyType<Registry extends RouteComponentRegistryType> =
+  keyof Registry & string;
+
+export function defineRouteComponents<
+  const Registry extends RouteComponentRegistryType,
+>(registry: Registry): Registry {
+  return registry;
+}
+
+const joinRoutePath = (basePath: string, path: string): string => {
+  if (!basePath) return path;
+  if (!path) return basePath;
+
+  const normalizedBase = basePath.replace(/\/$/, "");
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  return `${normalizedBase}${normalizedPath}`;
+};
+
+const isFeatureDependencyEnabled = <
+  PageId extends string,
+  FeatureKey extends string,
+>(
+  page: PageId | undefined,
+  isFeatureEnabled: FeatureEnabledFn<FeatureKey>,
+  dependencies: FeatureDependencyMap<PageId, FeatureKey>,
+): boolean => {
+  if (!page) return true;
+
+  const dependency = dependencies[page];
+  if (!dependency) return true;
+
+  return isFeatureEnabled(dependency);
+};
+
+export function filterNavigationByFeatureFlags<
+  Item extends { page?: string },
+  FeatureKey extends string,
+>(
+  items: Item[],
+  isFeatureEnabled: FeatureEnabledFn<FeatureKey>,
+  dependencies: FeatureDependencyMap<NonNullable<Item["page"]>, FeatureKey>,
+): Item[] {
+  return items.filter((item) =>
+    isFeatureDependencyEnabled(item.page, isFeatureEnabled, dependencies),
+  );
+}
 
 /**
  * Filters menu entries based on optional feature-flag dependencies by page id.
@@ -96,18 +154,9 @@ export function filterMenuByFeatureFlags<
 >(
   items: Item[],
   isFeatureEnabled: FeatureEnabledFn<FeatureKey>,
-  dependencies: Partial<Record<NonNullable<Item["page"]>, FeatureKey>>,
+  dependencies: FeatureDependencyMap<NonNullable<Item["page"]>, FeatureKey>,
 ): Item[] {
-  return items.filter((item) => {
-    const page = item.page;
-
-    if (!page) return true;
-
-    const dependency = dependencies[page as NonNullable<Item["page"]>];
-    if (!dependency) return true;
-
-    return isFeatureEnabled(dependency);
-  });
+  return filterNavigationByFeatureFlags(items, isFeatureEnabled, dependencies);
 }
 
 /**
@@ -138,4 +187,119 @@ export function normalizeMenuDividers<Item extends { type?: string }>(
   }
 
   return normalized;
+}
+
+export function filterSitemapByFeatureFlags<
+  PageId extends string,
+  FeatureKey extends string,
+>(
+  routes: ViewPageType<PageId>[],
+  isFeatureEnabled: FeatureEnabledFn<FeatureKey>,
+  dependencies: FeatureDependencyMap<PageId, FeatureKey>,
+): ViewPageType<PageId>[] {
+  return routes
+    .filter((route) =>
+      isFeatureDependencyEnabled(route.key, isFeatureEnabled, dependencies),
+    )
+    .map((route) => ({
+      ...route,
+      children: route.children
+        ? filterSitemapByFeatureFlags(
+            route.children,
+            isFeatureEnabled,
+            dependencies,
+          )
+        : undefined,
+    }));
+}
+
+export function filterSitemapByAccess<PageId extends string>(
+  routes: ViewPageType<PageId>[],
+  account?: SessionAccountDto,
+): ViewPageType<PageId>[] {
+  return routes
+    .filter((route) => {
+      if (!route.access) return true;
+      return route.access(account);
+    })
+    .map((route) => ({
+      ...route,
+      children: route.children
+        ? filterSitemapByAccess(route.children, account)
+        : undefined,
+    }));
+}
+
+export function filterSitemap<PageId extends string, FeatureKey extends string>(
+  routes: ViewPageType<PageId>[],
+  isFeatureEnabled: FeatureEnabledFn<FeatureKey>,
+  dependencies: FeatureDependencyMap<PageId, FeatureKey>,
+  account?: SessionAccountDto,
+): ViewPageType<PageId>[] {
+  return filterSitemapByAccess(
+    filterSitemapByFeatureFlags(routes, isFeatureEnabled, dependencies),
+    account,
+  );
+}
+
+export function createPathMap<PageId extends string>(
+  routes: ViewPageType<PageId>[],
+  basePath = "",
+): Record<PageId, string> {
+  const entries = routes.flatMap((route) => {
+    const fullPath = joinRoutePath(basePath, route.path);
+    const children = route.children
+      ? Object.entries(createPathMap(route.children, fullPath))
+      : [];
+
+    return [[route.key, fullPath], ...children] as [PageId, string][];
+  });
+
+  return Object.fromEntries(entries) as Record<PageId, string>;
+}
+
+export function findPathInSitemap<PageId extends string>(
+  routes: ViewPageType<PageId>[],
+  targetPageId: PageId,
+  basePath = "",
+): string | undefined {
+  for (const route of routes) {
+    const fullPath = joinRoutePath(basePath, route.path);
+
+    if (route.key === targetPageId) return fullPath;
+
+    if (route.children) {
+      const childPath = findPathInSitemap(
+        route.children,
+        targetPageId,
+        fullPath,
+      );
+
+      if (childPath) return childPath;
+    }
+  }
+
+  return undefined;
+}
+
+export function flattenSitemap<PageId extends string>(
+  routes: ViewPageType<PageId>[],
+  getName: (page: ViewPageType<PageId>) => string,
+  basePath = "",
+): NamedViewPageType<PageId>[] {
+  return routes.flatMap((route) => {
+    const fullPath = joinRoutePath(basePath, route.path);
+    const { children, ...routeWithoutChildren } = route;
+    const namedPage: NamedViewPageType<PageId> = {
+      ...routeWithoutChildren,
+      path: fullPath,
+      name: getName(route),
+    };
+
+    const childPages = children
+      ? flattenSitemap(children, getName, fullPath)
+      : [];
+
+    return [namedPage, ...childPages];
+  });
 }

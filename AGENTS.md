@@ -1,26 +1,25 @@
 # AGENTS.md — @sito/dashboard-app
 
-Guidelines for AI agents working on projects that consume **`@sito/dashboard-app`**.
-This library is a React UI component library built on top of `@sito/dashboard`, providing prefab components, hooks, API utilities, and providers for building dashboard applications.
+Agent guardrails for projects consuming **`@sito/dashboard-app`** (React 18 UI library on top of `@sito/dashboard`).
+Public usage examples live in `docs/CONSUMER_GUIDE.md` and the themed recipe files (`docs/RECIPES.md` is the index; recipes are split into `docs/RECIPES_LAYOUT.md`, `docs/RECIPES_DATA.md`, `docs/RECIPES_FORMS.md`). `README.md` is the entry point (install + doc index). This file is canonical for agent behavior; do not duplicate setup snippets here.
 
 ---
 
 ## Documentation Scope
 
-Use documentation by purpose:
+| Document                                                                                                | Authority                                                       |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `README.md`                                                                                             | Entry point — install, requirements, scripts, doc index         |
+| `docs/CONSUMER_GUIDE.md`                                                                                | Canonical for `@sito/dashboard-app` consumer usage and examples |
+| `docs/RECIPES.md` (index) + `docs/RECIPES_LAYOUT.md` / `docs/RECIPES_DATA.md` / `docs/RECIPES_FORMS.md` | Canonical for copy-ready integration recipes (split by theme)   |
+| `AGENTS.md`                                                                                             | Canonical for agent behavior in this repo                       |
+| `.sito/*.md`                                                                                            | Reference only (upstream `@sito/dashboard`)                     |
 
-| Document     | Purpose                                           | Authority level                                    |
-| ------------ | ------------------------------------------------- | -------------------------------------------------- |
-| `README.md`  | Public integration docs for consumers             | Canonical for `@sito/dashboard-app` usage          |
-| `AGENTS.md`  | Agent rules and implementation guardrails         | Canonical for agent behavior in this repo          |
-| `.sito/*.md` | Internal upstream reference for `@sito/dashboard` | Reference only (not canonical for app integration) |
+Critical distinctions (override anything in `.sito/*`):
 
-Critical distinction:
-
-- For `@sito/dashboard-app`, provider setup is `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` is used); this can be wired manually or through `AppProviders` / `createAppProviders`.
-- `@sito/dashboard-app` is browser-only and **not SSR-compatible** as a package integration target.
-- `IconButton` in this package is overridden and expects `icon: IconDefinition`.
-- Upstream examples in `.sito/*` may use `@sito/dashboard` patterns (for example `IconButton` with React nodes) and must not override this file's rules.
+- Provider order: `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` used). Manual or via `AppProviders` / `createAppProviders`.
+- Browser-only. **Not SSR-compatible.**
+- `IconButton` is overridden — expects `icon: IconDefinition` (FontAwesome), not a React node.
 
 ---
 
@@ -37,15 +36,7 @@ Critical distinction:
 | Server State | TanStack React Query | 5.x     |
 | Base Library | @sito/dashboard      | ^0.0.82 |
 
----
-
-## Installation
-
-```bash
-npm install @sito/dashboard-app
-```
-
-All peer dependencies **must** be installed in the consumer project:
+Peer install (consumer project):
 
 ```bash
 npm install \
@@ -60,658 +51,36 @@ npm install \
   @fortawesome/react-fontawesome@0.2.3
 ```
 
+See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, Supabase backend, component prop tables, hook signatures, `BaseClient` / `IndexedDBClient` / `SupabaseDataClient` extension, dialog/form/auth/notification examples, styling config. See the themed recipe files for copy-ready snippets — `docs/RECIPES_LAYOUT.md` (providers, shells, fallback views, drawer), `docs/RECIPES_DATA.md` (CRUD, clients, IndexedDB, exports), `docs/RECIPES_FORMS.md` (forms, dialogs, tabs/onboarding, feedback, auth, errors). `docs/RECIPES.md` indexes them.
+
 ---
 
-## Provider Setup
-
-Wrap the application root with the required providers **in this order**.
-Include `NavbarProvider` when your app renders `Navbar` or uses `useNavbar`.
-
-```tsx
-import {
-  ConfigProvider,
-  ManagerProvider,
-  AuthProvider,
-  NotificationProvider,
-  DrawerMenuProvider,
-  NavbarProvider,
-  IManager,
-} from "@sito/dashboard-app";
-import { QueryClient } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
-const authStorageKeys = {
-  user: "user",
-  remember: "remember",
-  refreshTokenKey: "refreshToken",
-  accessTokenExpiresAtKey: "accessTokenExpiresAt",
-};
-
-const manager = new IManager(
-  import.meta.env.VITE_API_URL,
-  authStorageKeys.user,
-  {
-    rememberKey: authStorageKeys.remember,
-    refreshTokenKey: authStorageKeys.refreshTokenKey,
-    accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
-  },
-);
-
-function App() {
-  return (
-    <ConfigProvider
-      location={window.location}
-      navigate={(route) => {
-        /* router navigate */
-      }}
-      linkComponent={MyLinkComponent}
-      motion="auto"
-    >
-      <ManagerProvider manager={manager} queryClient={queryClient}>
-        <AuthProvider
-          user={authStorageKeys.user}
-          remember={authStorageKeys.remember}
-          refreshTokenKey={authStorageKeys.refreshTokenKey}
-          accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
-        >
-          <NotificationProvider>
-            <DrawerMenuProvider>
-              <NavbarProvider>{/* app routes */}</NavbarProvider>
-            </DrawerMenuProvider>
-          </NotificationProvider>
-        </AuthProvider>
-      </ManagerProvider>
-    </ConfigProvider>
-  );
-}
-```
-
-If your app wraps providers in custom components, keep the same effective order:
-`ManagerProvider` must stay above `AuthProvider`.
-`NavbarProvider` is optional unless you use `Navbar` or `useNavbar`.
-
-### Provider composer (`AppProviders` / `createAppProviders`)
-
-Use the built-in composer when apps share the same provider wiring:
-
-- Base order is preserved automatically (`ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider`).
-- `auth={false}` disables auth wiring when needed.
-- `withNavbarProvider` and `withBottomNavActionProvider` enable optional UI providers.
-- `featureFlagsProvider`, `offlineSyncProvider`, and `appWrapperProvider` inject app-specific wrappers without coupling domain logic into this package.
-- `config.motion` controls library transitions globally: `"auto"` (default), `"none"`, or `"always"`.
+## Reference Tables
 
 ### Provider responsibilities
 
-| Provider               | Purpose                                                                                                                                               |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ConfigProvider`       | Injects router `location`, `navigate`, `linkComponent`, optional `searchComponent`, and global `motion` preference                                    |
-| `ManagerProvider`      | Injects the API manager (`IManager`) consumed by hooks and components                                                                                 |
-| `AuthProvider`         | Manages auth session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`) and exposes `account`, `logUser`, `logoutUser`, `logUserFromLocal` |
-| `NotificationProvider` | Global toast notification system                                                                                                                      |
-| `DrawerMenuProvider`   | Dynamic drawer menu state                                                                                                                             |
-| `NavbarProvider`       | Optional provider for dynamic navbar state: `title`, `setTitle`, `rightContent`, `setRightContent`; required only when using `Navbar` or `useNavbar`  |
-
----
-
-## Component Architecture
-
-### Import pattern
-
-Always import from the root package. Never import from internal paths:
-
-```tsx
-// ✅ correct
-import { Page, PageHeader, Actions, FormContainer } from "@sito/dashboard-app";
-
-// ❌ wrong — internal paths are not part of the public API
-import { Page } from "@sito/dashboard-app/src/components/Page/Page";
-```
-
-### Available components
-
-| Component                                | Description                                                                                                                                                                                               |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Page`                                   | Generic page layout with entity management (list, delete, restore, import/export)                                                                                                                         |
-| `PageHeader`                             | Page title + action bar                                                                                                                                                                                   |
-| `Action` / `Actions` / `ActionsDropdown` | Action primitives re-exported from `@sito/dashboard`                                                                                                                                                      |
-| `FormContainer`                          | Form wrapper that integrates react-hook-form submit/reset buttons                                                                                                                                         |
-| `ParagraphInput`                         | Textarea input with label, state, and helper text                                                                                                                                                         |
-| `PasswordInput`                          | Password input with show/hide toggle                                                                                                                                                                      |
-| `Navbar`                                 | Application navigation bar                                                                                                                                                                                |
-| `Drawer`                                 | Side drawer navigation                                                                                                                                                                                    |
-| `Notification`                           | Toast notification component                                                                                                                                                                              |
-| `Onboarding`                             | Multi-step onboarding flow built on top of a controlled `TabsLayout`; each step accepts `title`, `body`, optional `content`, and optional `image`/`alt`                                                   |
-| `TabsLayout`                             | Tabbed page layout; supports uncontrolled (`defaultTab`) and controlled (`currentTab` + `onTabChange`) usage, uses links by default, and can switch to buttons with `useLinks={false}` + `tabButtonProps` |
-| `PrettyGrid`                             | Data grid/table                                                                                                                                                                                           |
-| `Empty`                                  | Empty state placeholder                                                                                                                                                                                   |
-| `Error`                                  | Error display with default icon/message/retry or fully custom content via `children`                                                                                                                      |
-| `Loading` / `SplashScreen`               | Loading indicators                                                                                                                                                                                        |
-| `IconButton`                             | FontAwesome-based icon button (overrides `@sito/dashboard`'s version)                                                                                                                                     |
-| `ToTop`                                  | Floating scroll-to-top button; customizable threshold, target coordinates, icon, tooltip, and click behavior                                                                                              |
-| `ImportDialog`                           | Import flow modal with file input, preview, override, optional `extraFields`, and footer `extraActions`                                                                                                   |
-| `ExportDialog`                           | Optional export-config modal with `extraFields` slot; pair with `useExportDialog` for hook-managed state                                                                                                  |
-
----
-
-### `Error` component patterns
-
-Use default mode for common fallback UI:
-
-```tsx
-<Error error={error} onRetry={() => refetch()} />
-```
-
-Use `children` only when you need fully custom content:
-
-```tsx
-<Error>
-  <CustomErrorPanel />
-</Error>
-```
-
-Do not mix default props (`error`, `message`, `onRetry`, etc.) with `children` in the same usage.
-
-### `TabsLayout` links vs buttons
-
-By default, tabs render with your router `linkComponent` (`useLinks = true`).
-For non-routing tab switches, disable links:
-
-```tsx
-<TabsLayout
-  useLinks={false}
-  tabButtonProps={{ variant: "outlined", color: "secondary" }}
-  tabs={tabs}
-/>
-```
-
-`tabButtonProps` customizes each tab button when `useLinks` is `false`. Its `onClick` and `children` are controlled internally by `TabsLayout`.
-
-### `TabsLayout` controlled vs uncontrolled state
-
-Use `defaultTab` when `TabsLayout` owns its own active state and you only need an initial selection.
-Use `currentTab` + `onTabChange` when the parent owns the active tab state, such as onboarding flows, wizards, or any tab UI that advances programmatically.
-
-```tsx
-const [step, setStep] = useState(1);
-
-<TabsLayout
-  currentTab={step}
-  onTabChange={(id) => setStep(Number(id))}
-  useLinks={false}
-  tabs={tabs}
-/>;
-```
-
-`Onboarding` already uses the controlled pattern internally so its next-step transitions remain in sync with the rendered tab content.
-
-### `Onboarding` step content
-
-`Onboarding` no longer reads step copy from internal translation keys.
-Pass each step as structured content from the consumer:
-
-```tsx
-<Onboarding
-  steps={[
-    {
-      title: "Welcome",
-      body: "This flow explains the main features.",
-    },
-    {
-      title: "Set up your workspace",
-      body: "You can inject extra UI below the body when needed.",
-      content: <WorkspaceChecklist />,
-      image: "/images/onboarding-workspace.png",
-      alt: "Workspace setup preview",
-    },
-  ]}
-/>
-```
-
-Use `content` for extra custom UI below the body.
-Handle any step-level i18n in the consumer app before passing `title`, `body`, or `content`.
-
-### `ImportDialog` custom preview
-
-`ImportDialog` supports optional custom preview rendering through `renderCustomPreview`.
-When provided, it receives current `previewItems` (`items?: EntityDto[] | null`) and replaces the default JSON preview.
-When omitted, default preview behavior stays unchanged.
-
-```tsx
-<ImportDialog<ProductImportPreviewDto>
-  open={open}
-  title="Import products"
-  handleClose={close}
-  handleSubmit={submit}
-  fileProcessor={parseFile}
-  renderCustomPreview={(items) => <ProductsPreviewTable items={items ?? []} />}
-/>
-```
-
-`useImportDialog` also accepts and forwards `renderCustomPreview`:
-
-```tsx
-const importDialog = useImportDialog<ProductDto, ProductImportPreviewDto>({
-  queryKey: ["products"],
-  entity: "products",
-  mutationFn: api.products.import,
-  fileProcessor: parseFile,
-  renderCustomPreview: (items) => <ProductsPreviewTable items={items ?? []} />,
-});
-```
-
-### `ImportDialog` extra fields
-
-`ImportDialog` supports an optional `extraFields: ReactNode` slot rendered between
-the preview and `DialogActions`. Use it for custom inputs (checkboxes, selects,
-notes) that complement the import payload. State for those inputs can be owned
-by the consumer or by the hook.
-
-```tsx
-<ImportDialog<TransactionImportPreviewDto>
-  open={open}
-  title="Import transactions"
-  handleClose={close}
-  handleSubmit={submit}
-  fileProcessor={parseFile}
-  extraFields={
-    <label>
-      <input
-        type="checkbox"
-        checked={useCurrentAccount}
-        onChange={(e) => setUseCurrentAccount(e.target.checked)}
-      />
-      Use current account
-    </label>
-  }
-/>
-```
-
-`useImportDialog` exposes a hook-managed flow through an optional `TExtra`
-generic, `defaultExtra`, and `renderExtraFields`. The hook merges the extra
-values into the mutation payload as `{ items, override, ...extra }` and resets
-them on close/submit. The returned `extraFields` is wired automatically when
-spreading the hook result into `ImportDialog`.
-
-```tsx
-type ExtraImport = { useCurrentAccount: boolean };
-
-const importDialog = useImportDialog<
-  TransactionDto,
-  TransactionImportPreviewDto,
-  ExtraImport
->({
-  queryKey: ["transactions"],
-  entity: "transactions",
-  fileProcessor: parseFile,
-  defaultExtra: { useCurrentAccount: true },
-  mutationFn: ({ items, override, useCurrentAccount }) =>
-    api.transactions.import({
-      items,
-      override,
-      accountId: useCurrentAccount ? currentAccountId : null,
-    }),
-  renderExtraFields: ({ values, setValue }) => (
-    <label>
-      <input
-        type="checkbox"
-        checked={values.useCurrentAccount}
-        onChange={(e) => setValue("useCurrentAccount", e.target.checked)}
-      />
-      Use current account
-    </label>
-  ),
-});
-
-<ImportDialog<TransactionImportPreviewDto> {...importDialog} />;
-```
-
-Notes:
-
-- Prefer `useImportDialog` + `renderExtraFields` when the inputs are part of the
-  import flow — payload typing, reset and slot wiring are handled by the hook.
-- Use the component-level `extraFields` only when the inputs live in
-  consumer-owned state and do not affect the mutation payload.
-
-### `ExportDialog` / `useExportDialog`
-
-Export flows have two modes:
-
-- **Direct (no dialog)**: `useExportAction` + `useExportActionMutate` — click
-  triggers the mutation immediately. Use this when the entity does not need
-  extra configuration before export.
-- **With config dialog**: `useExportDialog` + `ExportDialog` — click opens a
-  modal that collects extra config (date range, format, columns), then submits
-  to `mutationFn(extra)`.
-
-Both hooks return an `action()` factory with the same `ActionType` shape, so
-`Page`/`Actions`/`PrettyGrid` consume either without changes.
-
-`useExportDialog<EntityDto, TExtra, TOutput>`:
-
-- `entity: string` — used for the dialog title translation key.
-- `mutationFn: (extra: TExtra) => Promise<TOutput>` — receives the extra form
-  values directly. Returns whatever the backend produces (Blob, URL, void).
-- `defaultExtra?: TExtra` — initial value, also used to reset on close/submit.
-- `renderExtraFields?: ({ values, setValue, setValues }) => ReactNode` — hook-
-  managed render prop; the returned node is wired into `ExportDialog` via the
-  `extraFields` slot when spreading the hook result.
-- `onSuccess?`, `onError?` — optional callbacks for post-export work
-  (download trigger, query invalidation, notifications).
-
-```tsx
-import { ExportDialog, useExportDialog } from "@sito/dashboard-app";
-
-type ExportExtra = { from: string; to: string; format: "csv" | "xlsx" };
-
-const exportDialog = useExportDialog<TransactionDto, ExportExtra, Blob>({
-  entity: "transactions",
-  defaultExtra: { from: "", to: "", format: "csv" },
-  mutationFn: ({ from, to, format }) =>
-    api.transactions.exportRange({ from, to, format }),
-  renderExtraFields: ({ values, setValue }) => (
-    <div className="grid gap-2">
-      <input
-        type="date"
-        value={values.from}
-        onChange={(e) => setValue("from", e.target.value)}
-      />
-      <input
-        type="date"
-        value={values.to}
-        onChange={(e) => setValue("to", e.target.value)}
-      />
-      <select
-        value={values.format}
-        onChange={(e) =>
-          setValue("format", e.target.value as ExportExtra["format"])
-        }
-      >
-        <option value="csv">CSV</option>
-        <option value="xlsx">XLSX</option>
-      </select>
-    </div>
-  ),
-});
-
-<Page<TransactionDto> title="Transactions" actions={[exportDialog.action()]} />;
-<ExportDialog {...exportDialog} title="Export transactions" />;
-```
-
-Notes:
-
-- `useExportDialog` does not invalidate any query — export does not mutate
-  server state. If your backend changes state on export, do it in `onSuccess`.
-- The hook does not auto-trigger downloads. Handle the file in `onSuccess`
-  (e.g. anchor click with the Blob) or have `mutationFn` perform the download
-  side-effect itself.
-- Opt out anytime: drop `useExportDialog` and go back to `useExportAction` +
-  `useExportActionMutate` for entities that don't need a dialog.
-
-### `PrettyGrid` infinite scroll
-
-`PrettyGrid` now supports optional infinite-scroll loading with `IntersectionObserver`.
-Existing usage without these props remains unchanged.
-
-```tsx
-<PrettyGrid<ProductDto>
-  data={products}
-  loading={isLoading}
-  renderComponent={(item) => <ProductCard item={item} />}
-  hasMore={hasMore}
-  loadingMore={isFetchingNextPage}
-  onLoadMore={fetchNextPage}
-  loadMoreComponent={<Loading className="!w-auto" loaderClass="w-5 h-5" />}
-/>
-```
-
-Defaults:
-
-- `hasMore = false`
-- `loadingMore = false`
-- `loadMoreComponent = null`
-- `observerRootMargin = "0px 0px 200px 0px"`
-- `observerThreshold = 0`
-
-### `ToTop` customization
-
-`ToTop` keeps current defaults and now supports optional customization:
-
-- `threshold?: number` (default `200`)
-- `scrollTop?: number` / `scrollLeft?: number` (defaults `0`, `0`)
-- `icon?: IconDefinition`
-- `tooltip?: string`
-- `scrollOnClick?: boolean` (default `true`)
-- `onClick?: () => void`
-- plus regular `IconButton` visual props (`variant`, `color`, `className`, etc.)
-
-```tsx
-<ToTop
-  threshold={120}
-  tooltip="Back to top"
-  variant="outlined"
-  color="secondary"
-  className="right-8 bottom-8"
-/>
-```
-
----
-
-## TypeScript Rules
-
-### Generics are required — do not use `any`
-
-The library is fully generic. Always supply type parameters:
-
-```tsx
-// ✅ correct
-const page = <Page<MyEntityDto> ... />;
-
-// ❌ wrong
-const page = <Page ... />;  // loses type safety
-```
-
-### Extend base DTOs for entity types
-
-```ts
-import {
-  BaseEntityDto,
-  BaseCommonEntityDto,
-  BaseFilterDto,
-  DeleteDto,
-  ImportPreviewDto,
-} from "@sito/dashboard-app";
-
-interface ProductDto extends BaseEntityDto {
-  name: string;
-  price: number;
-}
-
-interface ProductFilterDto extends BaseFilterDto {
-  category?: string;
-}
-```
-
-### Use `Omit` / `Pick` for prop extension
-
-```ts
-import type { TextInputPropsType } from "@sito/dashboard-app";
-
-interface MyInputProps
-  extends Pick<TextInputPropsType, "label" | "state" | "containerClassName"> {
-  customProp: string;
-}
-```
-
-### Use type guards for error handling
-
-```ts
-import { isValidationError, isHttpError } from "@sito/dashboard-app";
-
-if (isValidationError(error)) {
-  // handle field-level validation errors
-}
-
-if (isHttpError(error)) {
-  // handle HTTP errors
-}
-```
-
----
-
-## Hook Patterns
-
-### Action hooks
-
-Action hooks return a single `action` object for use with `Actions` or `PrettyGrid`. All optional props have sensible defaults so only `onClick` is required in common cases:
-
-```tsx
-import {
-  useDeleteAction,
-  useEditAction,
-  useRestoreAction,
-  useExportAction,
-  useImportAction,
-} from "@sito/dashboard-app";
-
-function MyPage() {
-  const { action: deleteAction } = useDeleteAction({
-    onClick: (ids) => softDelete(ids),
-  });
-
-  const { action: editAction } = useEditAction({
-    onClick: (id) => openEditDialog(id),
-  });
-
-  return <Actions actions={[editAction(record), deleteAction(record)]} />;
-}
-```
-
-#### Default values per hook
-
-| Hook               | `sticky` | `multiple` | `id`        | `icon`             | `tooltip`       |
-| ------------------ | -------- | ---------- | ----------- | ------------------ | --------------- |
-| `useDeleteAction`  | `true`   | `true`     | `"delete"`  | `faTrash`          | auto-translated |
-| `useEditAction`    | `true`   | —          | `"edit"`    | `faPencil`         | auto-translated |
-| `useRestoreAction` | `true`   | `false`    | `"restore"` | `faRotateLeft`     | auto-translated |
-| `useExportAction`  | —        | —          | `"export"`  | `faCloudArrowDown` | auto-translated |
-| `useImportAction`  | —        | —          | `"import"`  | `faCloudUpload`    | auto-translated |
-
-All hooks also default `hidden = false` and `disabled = false`. Override any prop to customize behavior.
-
-````
-
-### Navbar hook
-
-Use `useNavbar` to set the page title or inject content into the navbar's right slot from any child component:
-
-```tsx
-import { useNavbar } from "@sito/dashboard-app";
-
-function ProductsPage() {
-  const { setTitle, setRightContent } = useNavbar();
-
-  useEffect(() => {
-    setTitle("Products");
-    setRightContent(<MyRightSlotContent />);
-    return () => {
-      setTitle("");
-      setRightContent(null);
-    };
-  }, [setTitle, setRightContent]);
-}
-````
-
-`NavbarProvider` must wrap `Navbar` in the component tree for this to work.
-
-### Dialog hooks
-
-```tsx
-import {
-  useDeleteDialog,
-  useFormDialog,
-  usePostDialog,
-  usePutDialog,
-  useImportDialog,
-  useRestoreDialog,
-} from "@sito/dashboard-app";
-
-const deleteDialog = useDeleteDialog({
-  queryKey: ["products"],
-  mutationFn: (ids) => api.products.softDelete(ids),
-});
-```
-
-Use `useFormDialog` for local/state-only dialogs (filters, settings).
-For CRUD persistence flows, prefer:
-
-- `usePostDialog` for create
-- `usePutDialog` for edit
-
-### Form hooks
-
-```tsx
-import { useMutationForm } from "@sito/dashboard-app";
-
-const formProps = useMutationForm<
-  ProductDto,
-  CreateProductDto,
-  ProductDto,
-  ProductFormValues
->({
-  defaultValues: { name: "", price: 0 },
-  mutationFn: (data) => api.products.insert(data),
-  queryKey: ["products"],
-  onSuccess: () => closeDialog(),
-});
-
-// Pass directly to FormContainer
-return <FormContainer {...formProps}>{/* inputs */}</FormContainer>;
-```
-
-### Query / mutation hooks
-
-```tsx
-import { useExportActionMutate } from "@sito/dashboard-app";
-
-const exportProducts = useExportActionMutate<ProductDto[], "products", Error>({
-  entity: "products",
-  mutationFn: () => api.products.export(),
-  onSuccessMessage: "Export generated",
-});
-```
-
----
-
-## API Client Patterns
-
-### Extend `BaseClient` for each entity
-
-```ts
-import {
-  BaseClient,
-  BaseEntityDto,
-  BaseCommonEntityDto,
-  BaseFilterDto,
-  DeleteDto,
-  ImportPreviewDto,
-} from "@sito/dashboard-app";
-
-class ProductsClient extends BaseClient<
-  "products", // table name
-  ProductDto,
-  ProductCommonDto,
-  CreateProductDto,
-  UpdateProductDto, // must extend DeleteDto
-  ProductFilterDto,
-  ProductImportPreviewDto
-> {
-  constructor(baseUrl: string) {
-    super("products", baseUrl);
-  }
-}
-```
-
-### `BaseClient` provides these methods out of the box
+| Provider               | Purpose                                                                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `ConfigProvider`       | Router `location`, `navigate`, `linkComponent`, optional `searchComponent`, global `motion` (`auto`/`none`/`always`)        |
+| `ManagerProvider`      | API manager (`IManager`); mounts `QueryClientProvider` internally                                                           |
+| `AuthProvider`         | Session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`); exposes `account`, `logUser`, `logoutUser`, etc.     |
+| `NotificationProvider` | Toast system                                                                                                                |
+| `DrawerMenuProvider`   | Drawer menu state                                                                                                           |
+| `NavbarProvider`       | Optional dynamic navbar (`title`, `setTitle`, `rightContent`, `setRightContent`) — required when using `Navbar`/`useNavbar` |
+
+### Action hook defaults
+
+| Hook               | `sticky` | `multiple` | `id`        | `icon`             |
+| ------------------ | -------- | ---------- | ----------- | ------------------ |
+| `useDeleteAction`  | `true`   | `true`     | `"delete"`  | `faTrash`          |
+| `useEditAction`    | `true`   | —          | `"edit"`    | `faPencil`         |
+| `useRestoreAction` | `true`   | `false`    | `"restore"` | `faRotateLeft`     |
+| `useExportAction`  | —        | —          | `"export"`  | `faCloudArrowDown` |
+| `useImportAction`  | —        | —          | `"import"`  | `faCloudUpload`    |
+
+All: `hidden = false`, `disabled = false`, tooltip auto-translated. Only `onClick` is required in common cases.
+
+### `BaseClient` methods
 
 | Method       | Signature                                                 |
 | ------------ | --------------------------------------------------------- |
@@ -725,312 +94,137 @@ class ProductsClient extends BaseClient<
 | `export`     | `(filters?) => Promise<TDto[]>`                           |
 | `import`     | `(data: ImportDto<TImportPreviewDto>) => Promise<number>` |
 
-### Built-in auth refresh behavior (secured clients)
+Auth refresh/retry is centralized in `APIClient`/`BaseClient`: pre-flight refresh on near-expiry, single retry on `401`, in-flight mutex, clears local keys on failure. Do not reimplement in consumer apps.
 
-`APIClient` and `BaseClient` now include centralized refresh behavior for protected requests:
+### Dialog hook choice
 
-- Before a secured request, if `accessTokenExpiresAt` is expired (or about to expire), it refreshes once before sending the request.
-- If a secured request returns `401`, it tries one refresh attempt and retries the request exactly once.
-- Concurrent requests share a single in-flight refresh operation (mutex), preventing parallel refresh calls.
-- If refresh fails, local auth storage is cleared (`user`, `remember`, `refreshToken`, `accessTokenExpiresAt`).
-- Legacy fallback is preserved: if `refreshToken` or `accessTokenExpiresAt` is missing, requests behave as before.
+- `useFormDialog` — local/state-only (filters, settings); supports `openDialog({ values })` hydration + core `onError({ phase, values })`.
+- `usePostDialog` — create flow.
+- `usePutDialog` — edit flow (requires `getFunction` + `dtoToForm` + `formToDto(form, dto)`).
+- `useDeleteDialog`, `useRestoreDialog`, `useImportDialog`, `useExportDialog` — purpose-specific.
 
-You can customize auth storage keys centrally through `IManager`/`BaseClient` via
-`APIClientAuthConfig`. Use one shared source of truth and pass it to both
-`IManager` and `AuthProvider`.
+Legacy entity-coupled `useFormDialog` (`mutationFn`, `queryKey`, `getFunction`, `dtoToForm`, `formToDto`) and aliases (`useFormDialogLegacy`, `useEntityFormDialog`) were removed in v0.0.54.
 
-```ts
-import { IManager } from "@sito/dashboard-app";
+### Export flows
 
-const authStorageKeys = {
-  user: "user",
-  remember: "remember",
-  refreshTokenKey: "refreshToken",
-  accessTokenExpiresAtKey: "accessTokenExpiresAt",
-};
+- Direct (no dialog): `useExportAction` + `useExportActionMutate`.
+- Config dialog: `useExportDialog` + `ExportDialog` (`defaultExtra` + `renderExtraFields`).
+- Same `action()` shape — `Page`/`Actions`/`PrettyGrid` consume either.
+- `useExportDialog` does not invalidate queries, does not auto-trigger downloads. Handle in `onSuccess` or inside `mutationFn`.
 
-const manager = new IManager(
-  import.meta.env.VITE_API_URL,
-  authStorageKeys.user,
-  {
-    rememberKey: authStorageKeys.remember,
-    refreshTokenKey: authStorageKeys.refreshTokenKey,
-    accessTokenExpiresAtKey: authStorageKeys.accessTokenExpiresAtKey,
-  },
-);
-```
+### Import extension points
 
----
+- Component `extraFields` slot — consumer-owned state, no payload coupling.
+- Hook `defaultExtra` + `renderExtraFields` — payload merged as `{ items, override, ...extra }`; type `mutationFn` as `ImportDto<TPreview> & TExtra`. Prefer this when inputs are part of the import payload.
+- `renderCustomPreview(items)` — replaces default JSON preview.
 
-## Offline / IndexedDB Client
+### IndexedDB constraints
 
-`IndexedDBClient` is a drop-in offline alternative to `BaseClient`. It mirrors the same generic shape and CRUD/export/import capabilities, but persists data in the browser's IndexedDB instead of calling a remote API.
+- Browser-only. Never instantiate in SSR/Node.
+- `update(value)` is primary; legacy `update(id, value)` is temporary compat.
+- Filtering uses **exact equality**. `deletedAt` is `Date | null`.
+- `softDeleteScope`: `"ACTIVE"` | `"DELETED"` | `"ALL"`.
+- `import` with `override: false` => `store.add` (throws on dup); `override: true` => `store.put` (upsert).
+- Multiple clients can share a `dbName` — internal registry + open-lock handle shared-schema creation and concurrent opens. Effective version is `max(registered, current)`.
 
-### When to use
-
-Use it when the app must remain functional without network access — offline-capable dashboards, PWAs, or field apps. The typical pattern is to swap clients based on connectivity:
+### Error type guards
 
 ```ts
-import { BaseClient, IndexedDBClient } from "@sito/dashboard-app";
-
-const client = navigator.onLine
-  ? new ProductsClient(apiUrl) // remote REST
-  : new ProductsIndexedDBClient(); // local IndexedDB
+import { isValidationError, isHttpError } from "@sito/dashboard-app";
 ```
 
-### Constructor
+### Phase 1 shared shells (consumer apps)
 
-```ts
-new IndexedDBClient(table: Tables, dbName: string, version?: number)
-```
+Migrated from `wallet` / `period-calendar` consumer apps; use these instead of forking local copies.
 
-| Param     | Description                                                       |
-| --------- | ----------------------------------------------------------------- |
-| `table`   | Object store name (equivalent to the table/route in `BaseClient`) |
-| `dbName`  | IndexedDB database name — use one shared name per app             |
-| `version` | Schema version — bump when adding new stores (default `1`)        |
+| Export                   | Folder                               | Purpose                                                                                                                                                                            |
+| ------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AppShell`               | `src/layouts/AppShell`               | Authenticated route shell. Slots: `header`, `children`, `footer`, `bottomNavigation`, `extras`. Built-in `Notification` portal (opt out via `withNotification={false}`).           |
+| `AuthShell`              | `src/layouts/AuthShell`              | Auth route wrapper. Renders `children` + optional `Notification`. Redirect/error-boundary logic stays in the consumer.                                                             |
+| `DashboardHeader`        | `src/layouts/DashboardHeader`        | `Drawer` + `Navbar` combo. Owns drawer state internally. Generic over `MenuKeys`. Optional `OfflineBanner`.                                                                        |
+| `DashboardFooter`        | `src/layouts/DashboardFooter`        | Copyright line + optional `ToTop`. `bottomNavSpacing` for apps mounting `BottomNavigation`. Accepts `children` for full custom content.                                            |
+| `NotFoundView`           | `src/views/NotFoundView`             | Generic 404 fallback. CTA via `linkComponent` from `ConfigProvider` — consumer supplies `ctaTo` from its own `routes.ts`.                                                          |
+| `FeatureUnavailableView` | `src/views/FeatureUnavailableView`   | Generic feature-disabled fallback. Icon defaults to `faWarning`; overridable.                                                                                                      |
+| `PwaUpdateDialog`        | `src/components/app/PwaUpdateDialog` | Presentational PWA update prompt. Library does NOT import `navigator.serviceWorker` or `virtual:pwa-register/react` — consumer wires its own SW hook and passes `open`/`onUpdate`. |
 
-The object store is created automatically with `keyPath: "id"` and `autoIncrement: true` on first open.
+### Phase 2 shared auth surface (consumer apps)
 
-### Extending for a specific entity
+Migrated from `wallet` (REST) and `period-calendar` (Supabase) consumer apps; use these instead of forking local clients/utils.
 
-```ts
-import { IndexedDBClient } from "@sito/dashboard-app";
+| Export                      | Folder                              | Purpose                                                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SupabaseAuthClient`        | `src/lib/api/SupabaseAuthClient.ts` | Supabase Auth adapter mirroring `AuthClient` REST contract (`login`/`refresh`/`register`/`getSession`/`logout`) plus `signUp` returning `SupabaseSignUpResult` (`authenticated` \| `confirmation_required`). Options: `sessionMapper`, `mapperOptions`, `defaultSignUpRedirectTo`.                                                                                                                  |
+| `IAuthApiClient`            | `src/lib/api/IAuthApiClient.ts`     | Interface for the side-channel auth endpoints (`forgotPassword`, `resetPassword`, `resendConfirmEmail`, `confirmEmail`).                                                                                                                                                                                                                                                                            |
+| `RestAuthApiClient`         | `src/lib/api/`                      | REST adapter. Accepts an `APIClient` instance (preferred) or a `baseUrl`. Endpoint paths and optional `confirmEmailFallback` (404-only retry) are configurable.                                                                                                                                                                                                                                     |
+| `SupabaseAuthApiClient`     | `src/lib/api/`                      | Supabase adapter. Maps DTOs onto `auth.resetPasswordForEmail` / `auth.resend` / `auth.verifyOtp` / `auth.setSession` + `auth.updateUser` for the access-token reset.                                                                                                                                                                                                                                |
+| Auth helpers                | `src/lib/auth/utils.ts`             | `buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`. Read both query string and hash.                                                                                                                                                              |
+| `AuthRouteQueryParam(Type)` | `src/lib/auth/types.ts`             | Canonical query/hash param keys (`access_token`, `accessToken`, `refresh_token`, `token`, `token_hash`, `type`, `error`, `error_description`) + type values (`email`, `recovery`, `signup`).                                                                                                                                                                                                        |
+| Form types                  | `src/lib/auth/forms.ts`             | `SignInFormType<TExtra>`, `SignUpFormType<TExtra>`, `UpdatePasswordFormType`, `RecoveryFormType`.                                                                                                                                                                                                                                                                                                   |
+| DTOs                        | `src/lib/entities/auth/`            | `ForgotPasswordDto`, `ResetPasswordDto` (union: access-token + optional refresh-token, or token-hash + type), `ResendConfirmEmailDto`, `ConfirmEmailDto`, `AcceptedResponseDto`.                                                                                                                                                                                                                    |
+| `useAuthSessionState`       | `src/providers/Auth/`               | Shared session-state hook composed by `AuthProvider` (REST) and `SupabaseAuthProvider`. Centralizes storage-key resolution, `account` state, `clearStoredSession`, `isInGuestMode` / `setGuestMode`, and `logUser`. Returns `{ account, setAccount, storageKeys, clearStoredSession, isInGuestMode, setGuestMode, logUser }`. Reuse when building a custom auth provider on the same `AuthContext`. |
 
-class ProductsIndexedDBClient extends IndexedDBClient<
-  "products",
-  ProductDto,
-  ProductCommonDto,
-  CreateProductDto,
-  UpdateProductDto,
-  ProductFilterDto,
-  ProductImportPreviewDto
-> {
-  constructor() {
-    super("products", "my-app-db");
-  }
-}
-```
+### Phase 3 shared legal/info primitives (consumer apps)
 
-### Reacting to connectivity changes at runtime
+Migrated from `wallet` / `period-calendar` `views/Info/*`. Composable, i18n-agnostic — consumer resolves `<Trans>` / `t()` and passes ReactNode in.
 
-```ts
-useEffect(() => {
-  const goOnline = () => setClient(new ProductsClient(apiUrl));
-  const goOffline = () => setClient(new ProductsIndexedDBClient());
-  window.addEventListener("online", goOnline);
-  window.addEventListener("offline", goOffline);
-  return () => {
-    window.removeEventListener("online", goOnline);
-    window.removeEventListener("offline", goOffline);
-  };
-}, []);
-```
+| Export               | Folder                 | Purpose                                                                                                                                                                                                 |
+| -------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LegalPage`          | `src/views/LegalPage/` | Page shell. Slots: `title`, optional `intro`, `children`. No `sections` prop — compose with `LegalSection` for flexibility.                                                                             |
+| `LegalSection`       | `src/views/LegalPage/` | Titled rounded-card primitive (`<article>` + `h3` + body slot). Use inside `LegalPage` for policy sections, "Legal links" blocks, or anywhere a titled card is needed.                                  |
+| `LegalLinksList`     | `src/views/LegalPage/` | Bulleted list of `{to, label}` links. Routes through `linkComponent` from `ConfigProvider`. Returns `null` when `links` is empty.                                                                       |
+| `richTextComponents` | `src/views/LegalPage/` | Styled ReactNode map (`p`, `strong`, `em`, `ul`, `ol`, `li`, `a`, `code`) for `react-i18next` `<Trans components={...}>`. Library has zero `react-i18next` coupling — this is just a default style map. |
 
-### Constraints
+### Onboarding step animations
 
-- Browser-only: do not instantiate in SSR or Node environments.
-- `update(value)` is the primary contract (aligned with `BaseClient.update(value)`).
-- Backward compatibility is preserved temporarily for legacy `update(id, value)` calls.
-- Filtering in `get` / `export` / `commonGet` uses **exact equality** on each filter key.
-- `deletedAt` remains a date filter (`Date | null`) for exact date filtering.
-- Use `softDeleteScope` for trash filtering:
-  - `"ACTIVE"` => only active rows (`deletedAt` null/undefined)
-  - `"DELETED"` => only deleted rows (`deletedAt` not null/undefined)
-  - `"ALL"` => include both active and deleted rows
-- `import` with `override: false` uses `store.add` (throws on duplicate key); `override: true` uses `store.put` (upsert).
-- Keep consumer-facing behavior aligned with your `BaseClient` implementation; do not couple UI code to raw IndexedDB details.
-- Multiple clients may share the same `dbName` (one store per client). Each instance registers its `table` in an internal registry, so opening one client will not drop stores registered by other clients.
-- Concurrent `open()` calls are serialized per `dbName` through an internal lock; parallel CRUD across sibling clients is safe.
-- The effective open version is `max(registered versions, current db version)`; when a registered store is missing, the version is bumped once and all registered stores are created in a single `onupgradeneeded` pass.
-
----
-
-## Styling Rules
-
-### Use Tailwind utilities from the consumer side
-
-Tailwind is a peer dependency and the library exports CSS classes. In the consumer project:
-
-- Configure `darkMode: 'class'` in `tailwind.config`
-- Disable `preflight` to avoid conflicts: `corePlugins: { preflight: false }`
-- Scan library source if needed: `content: ["./node_modules/@sito/dashboard-app/dist/**/*.js"]`
-
-### State-aware utility functions
-
-Use the utilities from `@sito/dashboard` (re-exported from this library) for dynamic class names:
-
-```tsx
-import { State, inputStateClassName, labelStateClassName } from "@sito/dashboard-app";
-
-<input className={`text-input ${inputStateClassName(State.error)}`} />
-<label className={`text-input-label ${labelStateClassName(State.error)}`} />
-```
-
-### CSS class conventions
-
-- Layout classes follow BEM-like naming: `form-container`, `form-actions`, `text-input`, `text-input-label`
-- State modifiers come from utility functions, not raw strings
-- Use `peer` modifier pattern for floating label inputs
-
----
-
-## Notification System
-
-```tsx
-import { useNotification } from "@sito/dashboard-app";
-
-function MyComponent() {
-  const {
-    showSuccessNotification,
-    showErrorNotification,
-    showStackNotifications,
-  } = useNotification();
-
-  const handleAction = async () => {
-    try {
-      await doSomething();
-      showSuccessNotification({ message: "Done!" });
-    } catch (error) {
-      showErrorNotification({ message: "Something went wrong." });
-    }
-  };
-}
-```
-
----
-
-## Auth Patterns
-
-```tsx
-import { useAuth } from "@sito/dashboard-app";
-
-function MyComponent() {
-  const { account, logUser, logoutUser, isInGuestMode } = useAuth();
-
-  if (isInGuestMode()) return <GuestView />;
-  return <UserView user={account} />;
-}
-```
-
-Sign-in payload supports `rememberMe`:
-
-```ts
-import type { AuthDto } from "@sito/dashboard-app";
-
-const credentials: AuthDto = {
-  email: "user@mail.com",
-  password: "secret",
-  rememberMe: true,
-};
-```
-
-`SessionDto` now includes refresh metadata:
-
-```ts
-import type { SessionDto } from "@sito/dashboard-app";
-// includes: id, username, email, token, refreshToken?, accessTokenExpiresAt?
-```
-
-`AuthProvider` supports configurable storage keys (defaults shown). These values
-must match the auth config used by `IManager`/`BaseClient`:
-
-```tsx
-const authStorageKeys = {
-  user: "user",
-  remember: "remember",
-  refreshTokenKey: "refreshToken",
-  accessTokenExpiresAtKey: "accessTokenExpiresAt",
-};
-
-<AuthProvider
-  user={authStorageKeys.user}
-  remember={authStorageKeys.remember}
-  refreshTokenKey={authStorageKeys.refreshTokenKey}
-  accessTokenExpiresAtKey={authStorageKeys.accessTokenExpiresAtKey}
->
-  {children}
-</AuthProvider>;
-```
-
-When calling `logUser`, pass `rememberMe` from sign-in form when available:
-
-```tsx
-logUser(sessionDto, formValues.rememberMe);
-```
-
----
-
-## Routing Integration
-
-The library is router-agnostic. Provide your router primitives via `ConfigProvider`:
-
-```tsx
-// React Router v6
-import { useLocation, useNavigate, Link } from "react-router-dom";
-
-<ConfigProvider
-  location={useLocation()}
-  navigate={(route) => {
-    if (typeof route === "number") navigate(route);
-    else navigate(route);
-  }}
-  linkComponent={Link}
-  motion="auto"
-/>;
-```
-
-`motion` semantics:
-
-- `"auto"` respects `prefers-reduced-motion`.
-- `"none"` disables library transitions and animations.
-- `"always"` keeps library transitions enabled even when the OS/browser requests reduced motion.
-
----
-
-## Internationalization
-
-The library uses an internal i18n system (`useTranslation` from `@sito/dashboard`).
-Namespace keys used internally:
-
-- `_accessibility:buttons.submit` / `_accessibility:buttons.cancel`
-- `_accessibility:actions.retry`
-- `_accessibility:errors.unknownError`
-- `_accessibility:ariaLabels.*`
-- `_pages:common.actions.*`
-
-Consumer projects must provide translations for these namespaces.
-`Onboarding` step copy (`title`, `body`, `content`) is consumer-provided and is not read from `_pages:onboarding.*`.
+- Lib ships `onboarding-step-rise-in` + `onboarding-step-pop-in` keyframes with stagger (title 30ms / body 90ms / content 140ms / actions 180–230ms) in `src/components/app/Onboarding/styles.css`.
+- Default reconciliation reuses the `<Step>` tree across step changes — animations only play on first mount.
+- Opt into per-step remount via `<Onboarding remountStepOnChange />`.
+- Gated by `ConfigProvider.motion`: disabled on `:root[data-sito-motion="none"]` and under `prefers-reduced-motion: reduce` unless `motion="always"`.
 
 ---
 
 ## Agent Rules
 
-1. **Always install peer dependencies.** Missing peers cause silent runtime failures.
-2. **Always wrap with all required providers** in the correct order (see Provider Setup).
-3. **Never import from internal paths** — only from `"@sito/dashboard-app"`.
-4. **Always supply generic type parameters** — never use bare components or hooks without types when entity types are available.
-5. **Extend base DTOs** (`BaseEntityDto`, `BaseFilterDto`, etc.) for all entity types.
-6. **Extend `BaseClient`** for each API resource rather than writing raw fetch calls.
-7. **Use `isValidationError` / `isHttpError`** type guards in error handling.
-8. **Use provided hooks** (`useDeleteAction`, `useMutationForm`, etc.) rather than reimplementing their logic.
-9. **Use `useNotification`** for all user-facing success/error feedback — do not use `alert` or console-only logging.
-10. **Respect the styling system** — use `State` enum and `*StateClassName` utilities for stateful inputs; do not override with inline styles.
-11. **Do not add `any` types** — the library is fully typed; if types seem missing, check for the correct DTO or utility type.
-12. **`IconButton` is overridden** — the export from this library wraps FontAwesome and expects `icon: IconDefinition`, not a React node.
-13. **Use `IndexedDBClient` as offline fallback** — when building offline-capable features, extend `IndexedDBClient` instead of writing custom storage logic. Keep its consumer-facing behavior aligned with your `BaseClient` implementation, and never instantiate it in SSR/Node contexts. When multiple entity clients belong to the same logical database, reuse the same `dbName` across them; the internal registry + open-lock handle shared-schema creation and concurrent opens.
-14. **Sign-in should send `rememberMe` when the UI exposes a remember option.**
-15. **Do not implement ad-hoc token refresh in consumer apps** — rely on the centralized refresh/retry behavior in `APIClient`/`BaseClient`.
-16. **Keep auth storage key config aligned** — if custom keys are used in `AuthProvider`, configure the same keys in manager/client auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
-17. **Use `Error` in one mode at a time** — either default props (`error/message/icon/retry`) or `children` for custom content.
-18. **Use `TabsLayout` navigation mode intentionally** — keep default links for route-driven tabs; use `useLinks={false}` (+ `tabButtonProps`) for local state tabs.
-19. **Use `TabsLayout` as a controlled component when the parent owns step state** — prefer `currentTab` + `onTabChange` for onboarding, wizard, or programmatic flows; reserve `defaultTab` for uncontrolled initial selection.
-20. **Use structured `Onboarding` steps** — pass `title`, `body`, and optional `content`/`image`/`alt`; do not rely on internal `_pages:onboarding.*` translation keys.
-21. **Use `ImportDialog`/`useImportDialog` extension points instead of forking** — prefer `renderCustomPreview` for custom preview UI, and `extraFields` (component) / `defaultExtra` + `renderExtraFields` (hook) for custom inputs. When using the hook, type the mutation payload as `ImportDto<TPreview> & TExtra` and let the hook merge `{ items, override, ...extra }` automatically.
-22. **Use `PrettyGrid` infinite scroll props instead of local grid forks** — `hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, and observer options are the official extension points.
-23. **Use `ToTop` customization props for positioning/behavior** — avoid ad-hoc wrappers when `threshold`, target coordinates, tooltip, icon, and click control are sufficient.
-24. **Prefer `IndexedDBClient.update(value)` in new code** — keep `(id, value)` only for temporary backward compatibility.
-25. **Keep documented runtime version aligned with `.nvmrc`** when writing setup instructions for this repository.
-26. **Run `npm run docs:check` after documentation edits** to validate policy markers, links, and cross-doc consistency.
-27. **Do not document or propose SSR integration for this package** — `@sito/dashboard-app` is client-side/browser-only.
-28. **Pick the right export flow** — for entities without extra configuration, use `useExportAction` + `useExportActionMutate` (direct mutation). For entities that need extra config before export, use `useExportDialog` + `ExportDialog` (`defaultExtra` + `renderExtraFields`). Both hooks expose the same `action()` shape, so `Page`/`Actions`/`PrettyGrid` consume either interchangeably. `useExportDialog` does not invalidate queries and does not auto-trigger downloads — handle those in `onSuccess` or inside `mutationFn`.
+1. **Install all peer deps.** Missing peers fail silently at runtime.
+2. **Wrap with all required providers in order** (see Critical distinctions).
+3. **Import only from `"@sito/dashboard-app"`.** Never from internal paths.
+4. **Always supply generic type parameters** for components/hooks when entity types exist.
+5. **Extend base DTOs** (`BaseEntityDto`, `BaseFilterDto`, `BaseCommonEntityDto`, `DeleteDto`, `ImportPreviewDto`).
+6. **Extend `BaseClient`** per API resource. No raw fetch.
+7. **Use `isValidationError` / `isHttpError`** for error branching.
+8. **Use provided hooks** (`useDeleteAction`, `useMutationForm`, dialog hooks) instead of reimplementing.
+9. **Use `useNotification`** for user feedback. No `alert` / console-only.
+10. **Use `State` + `*StateClassName` utilities** for stateful inputs. No inline style overrides.
+11. **No `any`.** Library is fully typed — find the right DTO/utility.
+12. **`IconButton` expects `icon: IconDefinition`** (not React node) — diverges from upstream `@sito/dashboard`.
+13. **Use `IndexedDBClient` for offline fallback.** Reuse same `dbName` across related entity clients. Never in SSR/Node.
+14. **Send `rememberMe` from sign-in** when the UI exposes a remember option.
+15. **No ad-hoc token refresh.** Rely on centralized `APIClient`/`BaseClient` refresh/retry.
+16. **Align auth storage keys** between `AuthProvider` and `IManager`/`BaseClient` auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
+17. **`Error` is single-mode.** Default props (`error`/`message`/`icon`/`onRetry`) OR `children` — never both.
+18. **`TabsLayout` link mode intentional.** Links for routes; `useLinks={false}` + `tabButtonProps` for local state.
+19. **`TabsLayout` controlled (`currentTab` + `onTabChange`)** when parent owns step state (onboarding, wizards). `defaultTab` only for uncontrolled initial selection.
+20. **`Onboarding` steps are structured** (`title`, `body`, optional `content`/`image`/`alt`). No `_pages:onboarding.*` keys. Resolve i18n consumer-side.
+21. **Use `ImportDialog` extension points** (`renderCustomPreview`, hook `defaultExtra`/`renderExtraFields`, component `extraFields`). No forks.
+22. **Use `PrettyGrid` infinite scroll props** (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options). No grid forks.
+23. **Use `ToTop` customization props** (`threshold`, target coords, `tooltip`, `icon`, `scrollOnClick`, `onClick`). No ad-hoc wrappers.
+24. **Prefer `IndexedDBClient.update(value)`** in new code. `(id, value)` only for legacy compat.
+25. **Keep Node version aligned with `.nvmrc`** in setup docs.
+26. **Run `npm run docs:check`** after doc edits.
+27. **Never document or propose SSR** for this package.
+28. **Pick the right export flow** — direct (`useExportAction`) vs config dialog (`useExportDialog`). Both return the same `action()` shape. `useExportDialog` doesn't invalidate queries or auto-download.
+29. **Place new components by tier** under `src/components/`:
+    - `ui/` — generic primitives. No provider/domain coupling. May only depend on other `ui/` siblings.
+    - `app/` — high-level/shell pieces coupled to providers, routing, or domain (e.g. `Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`).
+    - `app/` may import from `ui/`. `ui/` must NOT import from `app/`. Public surface stays the same — re-export through `src/components/index.ts`.
+30. **Place page-level screens** under `src/views/` (e.g. `NotFoundView`, `FeatureUnavailableView`) and **shared layout shells** under `src/layouts/` (e.g. `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`). Each follows the §7 feature folder convention (`FeatureName.tsx` + `types.ts` + `index.ts` + optional `constants.ts`/`utils.ts`).
+31. **Use `AppShell` / `AuthShell` instead of bespoke layout wrappers.** Mount providers via `AppProviders`, then compose routes with these shells. `AppShell` slots: `header` / `children` / `footer` / `bottomNavigation` / `extras` (Tooltip/Onboarding/PwaUpdateDialog) — in that render order — plus the built-in `Notification` portal. Opt out with `withNotification={false}` only when mounting your own.
+32. **Use `DashboardHeader` / `DashboardFooter` instead of forking app-local header/footer files.** Drawer open/close state lives inside `DashboardHeader`. Set `bottomNavSpacing` on `DashboardFooter` when also mounting `BottomNavigation`.
+33. **Use `NotFoundView` / `FeatureUnavailableView` for 404 / feature-off fallbacks.** Pass `ctaTo` from the consumer's `routes.ts` constants — never hardcode. CTA navigation goes through `linkComponent` from `ConfigProvider`, so they stay router-agnostic.
+34. **`PwaUpdateDialog` is presentational only.** Library never imports `navigator.serviceWorker` or `virtual:pwa-register/react`. Consumer owns the SW source (`useServiceWorkerUpdate` custom hook, `vite-plugin-pwa`'s `useRegisterSW`, etc.) and passes `open` / `onDismiss` / `onUpdate` plus consumer-side i18n strings.
+35. **`Onboarding` step animations are opt-in per-mount.** Default reuses the step tree (no animation restart between steps). Set `remountStepOnChange={true}` for wizard-like flows where each step should animate in from scratch. Library provides the keyframes (`onboarding-step-rise-in`/`onboarding-step-pop-in`); do NOT redeclare them in consumer CSS.
+36. **Use `IAuthApiClient` adapters for password reset / email confirmation.** Pick `RestAuthApiClient` (REST APIs) or `SupabaseAuthApiClient` (Supabase) — do not hand-roll the endpoints in consumer apps. `RestAuthApiClient` accepts an existing `APIClient` so storage keys and refresh/retry stay aligned with the rest of the app's data clients. Use `confirmEmailFallback` only as a transitional shim for backends mid-migration.
+
+36b. **Use `AuthClient` (REST) or `SupabaseAuthClient` for session endpoints** (login / refresh / register / getSession / logout). Do not subclass them just to swap a session mapper — pass `sessionMapper` (or `mapperOptions`) to `SupabaseAuthClient`'s constructor. When email confirmation is required, call `signUp(data)` and discriminate on `result.status`; `register()` throws on the confirmation-required branch. 37. **Use shipped auth URL/token helpers** (`buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`) instead of re-implementing query/hash parsing per app. They read both search and hash so Supabase recovery flows (hash-fragment tokens) and REST flows (query-string tokens) share one call site.
+
+38. **Compose legal/info pages with `LegalPage` + `LegalSection` + `LegalLinksList`** instead of forking the shell HTML/CSS. `LegalPage` is i18n-agnostic — resolve `<Trans>` / `t()` in the consumer and pass `ReactNode` for `title` / `intro` / section bodies. Use `richTextComponents` as the default component map for `<Trans>` and spread to extend (`{ ...richTextComponents, br: <br /> }`). Sections are children, not a `sections` prop — apps can interleave product-specific blocks (e.g. wallet's `HowToSection`) with shared `LegalSection` cards. `LegalLinksList` routes through `linkComponent` from `ConfigProvider` — pass `{to, label}` items from the consumer's `routes.ts`.

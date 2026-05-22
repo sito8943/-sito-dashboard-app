@@ -1,0 +1,21 @@
+@reference "../../index.css";
+
+.feature-unavailable-view {
+  @apply w-full h-full flex flex-col items-center justify-center gap-6 px-4 text-center;
+}
+
+.feature-unavailable-view-icon {
+  @apply text-5xl text-warning;
+}
+
+.feature-unavailable-view-title {
+  @apply text-3xl max-xs:text-2xl;
+}
+
+.feature-unavailable-view-body {
+  @apply text-text-muted max-w-xl;
+}
+
+.feature-unavailable-view-cta {
+  @apply !px-10;
+}

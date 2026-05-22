@@ -63,6 +63,17 @@ Create a theme CSS file and load it after the library styles.
 }
 ```
 
+## 2.1 Motion control and shared animation utility
+
+Library transitions use a shared `.animated` utility class.
+`ConfigProvider` controls that behavior globally through `motion?: "auto" | "none" | "always"`.
+
+- `"auto"` respects `prefers-reduced-motion`.
+- `"none"` disables library transitions and animations by applying `data-sito-motion="none"` at the document root.
+- `"always"` keeps library transitions enabled even when the OS/browser requests reduced motion.
+
+Use `motion="auto"` unless you have a clear product reason to force or disable motion.
+
 ## 3. Safe extension points via `className` props
 
 | Area             | Extension point                                                                         |
@@ -85,6 +96,7 @@ Create a theme CSS file and load it after the library styles.
 
 ### 4.1 Buttons and helpers
 
+- `.animated`
 - `.to-top`, `.to-top.show`, `.to-top.hide`
 - `.page-fab`
 - `.password-icon`
@@ -129,6 +141,10 @@ Create a theme CSS file and load it after the library styles.
 - `.header`, `.navbar-title`, `.navbar-left`, `.navbar-right`, `.navbar-menu`
 - `.tabs-layout-main`, `.tabs-container`, `.tab`
 - `.onboarding-main`, `.step-container`, `.step-title`, `.step-body`, `.step-content`, `.step-actions`, `.step-button`
+- `.big-appear` (entry animation hook used by `Onboarding` step container)
+- Onboarding step keyframes (defined by the library, gated by `data-sito-motion` / `prefers-reduced-motion`):
+  - `@keyframes onboarding-step-rise-in` — used by `.step-title` (30ms delay), `.step-body` (90ms), `.step-content` (140ms). Duration 420ms, `cubic-bezier(0.2, 0.8, 0.2, 1)`.
+  - `@keyframes onboarding-step-pop-in` — used by `.step-actions > *:nth-child(1)` (180ms delay) and `:nth-child(2)` (230ms). Duration 360ms, `ease-out`.
 
 ### 4.6 Feedback and states
 
@@ -146,6 +162,67 @@ Create a theme CSS file and load it after the library styles.
 - `.form-paragraph-container`
 - `.pretty-grid-main`, `.pretty-grid-item`, `.pretty-grid-load-more`
 
+### 4.8 Phase 1 shells and views (`AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`, `NotFoundView`, `FeatureUnavailableView`, `PwaUpdateDialog`)
+
+Layout shells (only the wrappers — internal slots use their own component classes):
+
+- `.app-shell`
+- `.auth-shell`
+
+`DashboardHeader` does not emit a wrapper class — it composes `Drawer` + `Navbar` + optional `OfflineBanner`. Use those component classes (§4.2, §4.5, §4.6) to target it.
+
+`DashboardFooter`:
+
+- `.dashboard-footer`
+- `.dashboard-footer--bottom-nav-spacing` (applied when `bottomNavSpacing={true}`; adds `mb-16 sm:mb-0`)
+- `.dashboard-footer-text` (default copyright paragraph)
+
+`NotFoundView`:
+
+- `.not-found-view` (root `<main>`)
+- `.not-found-view-title`
+- `.not-found-view-body`
+- `.not-found-view-cta`
+- Title, body, and CTA also carry the project `appear` class for the entry animation.
+
+`FeatureUnavailableView`:
+
+- `.feature-unavailable-view` (root `<main>`)
+- `.feature-unavailable-view-icon`
+- `.feature-unavailable-view-title`
+- `.feature-unavailable-view-body`
+- `.feature-unavailable-view-cta`
+
+`PwaUpdateDialog`:
+
+- `.pwa-update-dialog-container` (default value of `containerClassName`; passed to `Dialog`)
+- `.pwa-update-dialog-description`
+- `.pwa-update-dialog-actions`
+
+Override examples:
+
+```css
+/* Tighter footer spacing */
+.dashboard-footer {
+  height: 2.25rem;
+}
+
+/* Custom 404 title color */
+.not-found-view-title {
+  color: var(--color-bg-warning);
+}
+
+/* PWA dialog placement on desktop */
+@media (min-width: 48rem) {
+  .pwa-update-dialog-container {
+    align-items: center !important;
+    padding-bottom: 0;
+  }
+}
+```
+
+Class names are stable contracts: components compose these names with the consumer-supplied `className` overrides (e.g. `titleClassName`, `bodyClassName`, `ctaClassName`), so targeted CSS overrides remain backwards-compatible.
+
 ## 5. Class override examples
 
 ```css
@@ -153,6 +230,12 @@ Create a theme CSS file and load it after the library styles.
 .page-header,
 .header {
   backdrop-filter: saturate(120%) blur(8px);
+}
+
+/* Disable every library animation utility explicitly */
+:root[data-sito-motion="none"] .animated {
+  transition: none !important;
+  animation: none !important;
 }
 
 /* Dialog */

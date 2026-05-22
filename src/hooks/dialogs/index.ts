@@ -1,6 +1,7 @@
 export * from "./useDeleteDialog";
 export * from "./useDialog";
 export * from "./useFormDialog";
+export * from "./useFormDialogConfirmation";
 export * from "./usePostDialog";
 export * from "./usePutDialog";
 export * from "./useRestoreDialog";

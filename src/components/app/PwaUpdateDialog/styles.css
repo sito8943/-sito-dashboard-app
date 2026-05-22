@@ -1,0 +1,13 @@
+@reference "../../../index.css";
+
+.pwa-update-dialog-container {
+  @apply !items-end pb-3;
+}
+
+.pwa-update-dialog-description {
+  @apply text-sm text-text-muted;
+}
+
+.pwa-update-dialog-actions {
+  @apply mt-5 flex items-center justify-end gap-2;
+}

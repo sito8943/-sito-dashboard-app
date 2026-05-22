@@ -17,8 +17,8 @@ export default defineConfig(() => {
         providers: resolve(srcPath, "providers"),
         lib: resolve(srcPath, "lib"),
         hooks: resolve(srcPath, "hooks"),
-        layouts: resolve(__dirname, "layouts"),
-        views: resolve(__dirname, "views"),
+        layouts: resolve(srcPath, "layouts"),
+        views: resolve(srcPath, "views"),
       },
     },
     plugins: [

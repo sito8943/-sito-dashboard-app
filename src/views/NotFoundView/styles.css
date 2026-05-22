@@ -1,0 +1,17 @@
+@reference "../../index.css";
+
+.not-found-view {
+  @apply w-full h-full flex flex-col items-center justify-center gap-6 p-4 text-center;
+}
+
+.not-found-view-title {
+  @apply text-3xl max-xs:text-2xl !text-bg-error;
+}
+
+.not-found-view-body {
+  @apply text-text-muted max-w-xl;
+}
+
+.not-found-view-cta {
+  @apply !px-10;
+}

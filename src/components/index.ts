@@ -3,19 +3,27 @@ export type {
   ActionPropsType,
   ActionsContainerPropsType,
 } from "@sito/dashboard";
-export * from "./Form";
-export * from "./Dialog";
-export * from "./Drawer";
-export * from "./Error";
-export * from "./Page";
-export * from "./PrettyGrid";
-export * from "./Navbar";
-export * from "./Notification";
-export * from "./Loading";
-export * from "./OfflineBanner";
-export * from "./TabsLayout";
-export * from "./Onboarding";
-export * from "./BottomNavigation";
-export * from "./Buttons";
-export * from "./Empty";
+
+// ui (generic primitives — no app/provider coupling)
+export * from "./ui/Buttons";
+export * from "./ui/Dialog";
+export * from "./ui/Empty";
+export * from "./ui/Error";
+export * from "./ui/Form";
+export * from "./ui/Loading";
+export * from "./ui/PrettyGrid";
+export * from "./ui/TabsLayout";
+export * from "./ui/TopBanner";
+
+// app (high-level, provider/shell-coupled)
+export * from "./app/Auth";
+export * from "./app/BottomNavigation";
+export * from "./app/Drawer";
+export * from "./app/Navbar";
+export * from "./app/Notification";
+export * from "./app/OfflineBanner";
+export * from "./app/Onboarding";
+export * from "./app/Page";
+export * from "./app/PwaUpdateDialog";
+
 export * from "./types";

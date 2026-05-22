@@ -1,5 +1,0 @@
-@reference "../../index.css";
-
-.offline-banner {
-  @apply w-full text-center px-4 py-2 text-sm font-medium bg-bg-warning text-warning;
-}

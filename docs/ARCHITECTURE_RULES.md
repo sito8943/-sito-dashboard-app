@@ -30,7 +30,9 @@ Use this project structure as the default organization:
 ```txt
 src/
   providers/      # App/domain providers and context wiring
-  components/     # Reusable global components
+  components/     # Reusable global components, split by tier (see below)
+    ui/          # Generic primitives — no provider/domain coupling
+    app/         # High-level shell pieces coupled to providers/routing/domain
   views/          # Route/page-level screens
   layouts/        # Shared layout shells used by views
   hooks/          # Reusable custom hooks
@@ -43,6 +45,10 @@ src/
 Notes:
 
 - `components/` is for shared/global UI blocks, not route-specific page composition.
+- `components/ui/` holds generic primitives (`Buttons`, `Dialog`, `Form`, `Loading`, `Empty`, `Error`, `PrettyGrid`, `TabsLayout`, `TopBanner`, …). They must NOT import from `components/app/` or from any provider/domain module.
+- `components/app/` holds high-level pieces coupled to providers, routing, or domain (`Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`, …). They MAY import from `components/ui/`.
+- Public surface stays unchanged: re-export both tiers from `src/components/index.ts`. Consumers never reach into `ui/`/`app/` directly.
+- Decision rule when adding a new component: if it depends only on props + styles, place it in `ui/`; if it depends on a provider, routing primitive, or domain hook, place it in `app/`.
 - `views/` should focus on screen composition and orchestration.
 - `layouts/` should hold reusable structures shared between multiple views.
 
@@ -59,6 +65,7 @@ FeatureName/
   utils.ts             # Reusable helper functions only
   types.ts             # Type aliases and interfaces only
   index.ts             # Public exports
+  styles.css           # Optional specific styles
 ```
 
 Rules:
@@ -72,6 +79,7 @@ Rules:
 - Keep support files as siblings of the hook/component they support.
 - If a hook/component grows, create its own folder and expose public API via `index.ts`.
 - Preserve existing public imports by re-exporting from local `index.ts` files.
+- In case of using tailwindcss define all classes on styles.css for better DX and use className utility function for merging classes
 
 ---
 
