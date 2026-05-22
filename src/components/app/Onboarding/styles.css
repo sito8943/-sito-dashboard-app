@@ -60,7 +60,6 @@
   @apply flex items-center justify-center;
   width: 100%;
   gap: 0.75rem;
-  flex-wrap: wrap;
 }
 
 .step-button {
@@ -175,4 +174,10 @@
   .step-container {
     gap: 1.5rem;
   }
+}
+
+.onboarding-tab-main
+  .onboarding-tab-container
+  .button.submit.primary.tab.active {
+  @apply bg-secondary;
 }

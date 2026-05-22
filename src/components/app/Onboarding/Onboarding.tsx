@@ -96,6 +96,8 @@ export const Onboarding = (props: OnboardingPropsType) => {
         onTabChange={(id) => setCurrentStep(Number(id))}
         tabs={onboardingSteps}
         useLinks={false}
+        className="onboarding-tab-main"
+        tabsContainerClassName="onboarding-tab-container"
       />
     </div>
   );
