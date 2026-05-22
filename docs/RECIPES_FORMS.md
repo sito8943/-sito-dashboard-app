@@ -681,6 +681,25 @@ export function FeedbackExamples({
     <>
       <Empty message="No records found" />
 
+      {/* Multiple call-to-actions (array form, v0.0.79+) */}
+      <Empty
+        message="No records found"
+        action={[
+          {
+            id: "create",
+            tooltip: "Create item",
+            icon: faPlus,
+            onClick: () => {},
+          },
+          {
+            id: "import",
+            tooltip: "Import items",
+            icon: faCloudUpload,
+            onClick: () => {},
+          },
+        ]}
+      />
+
       <IconButton
         type="button"
         icon={faRotateRight}
