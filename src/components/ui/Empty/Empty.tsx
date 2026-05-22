@@ -30,10 +30,12 @@ export const Empty = <TRow extends BaseEntityDto>(
     <div className="empty-container">
       {iconProps && <FontAwesomeIcon {...iconProps} />}
       <p {...messageProps}>{message}</p>
-      {action &&
-        (Array.isArray(action) ? action : [action]).map((a) => (
-          <Action key={a.id} showTooltips={false} showText {...a} />
-        ))}
+      <div className="flex gap-2 flex-wrap items-center justify-center">
+        {action &&
+          (Array.isArray(action) ? action : [action]).map((a) => (
+            <Action key={a.id} showTooltips={false} showText {...a} />
+          ))}
+      </div>
     </div>
   );
 };
