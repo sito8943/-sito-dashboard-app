@@ -10,6 +10,7 @@ export type OnboardingStepType = {
 
 export type StepPropsType = OnboardingStepType & {
   onClickNext: () => void;
+  onClickBack?: () => void;
   onSkip: () => void;
   onStartAsGuest: () => void;
   onSignIn: () => void;

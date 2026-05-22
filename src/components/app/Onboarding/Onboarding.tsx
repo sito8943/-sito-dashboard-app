@@ -74,6 +74,9 @@ export const Onboarding = (props: OnboardingPropsType) => {
             {...step}
             final={i === steps.length - 1}
             onClickNext={() => setCurrentStep((prev) => prev + 1)}
+            onClickBack={
+              i > 0 ? () => setCurrentStep((prev) => prev - 1) : undefined
+            }
             onSkip={handleSkip}
             onStartAsGuest={handleStartAsGuest}
             onSignIn={handleSignIn}

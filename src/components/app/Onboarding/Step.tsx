@@ -18,6 +18,7 @@ export const Step = (props: StepPropsType) => {
     body,
     content,
     onClickNext,
+    onClickBack,
     onSkip,
     onStartAsGuest,
     onSignIn,
@@ -35,6 +36,17 @@ export const Step = (props: StepPropsType) => {
       {body != null && <div className="step-body">{body}</div>}
       {content != null && <div className="step-content">{content}</div>}
       <div className="step-actions">
+        {onClickBack && (
+          <Button
+            color="primary"
+            className="step-button"
+            variant="outlined"
+            onClick={() => onClickBack()}
+            aria-label={t("_accessibility:buttons.back")}
+          >
+            {t("_accessibility:buttons.back")}
+          </Button>
+        )}
         {!final ? (
           <>
             <Button
