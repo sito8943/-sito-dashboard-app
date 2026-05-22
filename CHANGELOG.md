@@ -2,37 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.0.78] - 2026-05-22
 
 ### Added
 
-- Phase 3 of the cross-app migration (legal/info pages). i18n-agnostic primitives migrated from `wallet` and `period-calendar` `views/Info/*`:
-
-  - `LegalPage` (`src/views/LegalPage/LegalPage.tsx`) — shell with `title`, optional `intro` slot, and `children` slot for composable cards. No `sections` prop — apps compose with `LegalSection` directly for full layout flexibility.
-  - `LegalSection` (`src/views/LegalPage/LegalSection.tsx`) — titled rounded-card primitive (`<article>` + `h3` + body slot). Used inside `LegalPage` (or anywhere) to mark up policy sections, "Legal links" blocks, "How To" cards, etc.
-  - `LegalLinksList` (`src/views/LegalPage/LegalLinksList.tsx`) — bulleted list of `{to, label}` links. Navigation routes through `linkComponent` from `ConfigProvider` so the list stays router-agnostic. Renders nothing when `links` is empty.
-  - `richTextComponents` (`src/views/LegalPage/richTextComponents.tsx`) — default styled component map (`p`, `strong`, `em`, `ul`, `ol`, `li`, `a`, `code`) to pass to `react-i18next` `<Trans components={...}>`. Library does NOT depend on `react-i18next`; this is just a styled ReactNode map. Spread or extend to add app-specific tags.
+- Phase 1 of the cross-app migration: shared app/layout primitives migrated from `wallet` and `period-calendar`:
+  - `PwaUpdateDialog` (component) - presentational PWA update prompt. Consumers keep ownership of `needRefresh` / service-worker wiring and pass `open`, `onDismiss`, and `onUpdate`.
+  - `NotFoundView` and `FeatureUnavailableView` (views) - generic fallback screens routed through `linkComponent` from `ConfigProvider`.
+  - `DashboardFooter` and `DashboardHeader` (layouts) - shared authenticated app chrome. `DashboardHeader` owns drawer open/close state internally; `DashboardFooter` supports `ToTop` and bottom-nav spacing.
+  - `AuthShell` and `AppShell` (layouts) - shared route shells with optional built-in `Notification` portal.
+- New `src/views/` and `src/layouts/` source folders with matching TypeScript path aliases (`views`, `views/*`, `layouts`, `layouts/*`) wired in `tsconfig.json` and `vite.config.ts`.
+- `Onboarding` gains optional `remountStepOnChange?: boolean` (default `false`). When `true`, the active step panel is remounted on every step change so CSS entry animations restart.
+- `Onboarding` step entry animations now ship from the library (`src/components/app/Onboarding/styles.css`) through `onboarding-step-rise-in` and `onboarding-step-pop-in`, with `ConfigProvider.motion` and `prefers-reduced-motion` support.
+- New generic `TopBanner` primitive in `components/ui/TopBanner`. Props: `visible?`, `children`, `color?`, `role?`, `ariaLive?`, and `className?`. Renders nothing when `visible={false}` and maps color tokens to the existing CSS variables.
+- Phase 2 of the cross-app auth migration: shared side-channel auth endpoint adapters and DTOs:
+  - `IAuthApiClient` for `forgotPassword`, `resetPassword`, `resendConfirmEmail`, and `confirmEmail`.
+  - `RestAuthApiClient` for REST backends, accepting an existing `APIClient` instance or a `baseUrl`.
+  - `SupabaseAuthApiClient` for Supabase password-reset and email-confirmation flows.
+  - `ForgotPasswordDto`, `ResetPasswordDto`, `ResendConfirmEmailDto`, `ConfirmEmailDto`, and `AcceptedResponseDto`.
+- Shared auth URL/token helpers in `src/lib/auth/utils.ts`: `buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`, and the resolver helpers for confirmation/password-reset DTOs.
+- Canonical `AuthRouteQueryParam` and `AuthRouteQueryParamType` const maps in `src/lib/auth/types.ts`.
+- Generic form payload types in `src/lib/auth/forms.ts`: `SignInFormType<TExtra>`, `SignUpFormType<TExtra>`, `UpdatePasswordFormType`, and `RecoveryFormType`.
+- Phase 2.5 of the cross-app auth migration: `SupabaseAuthClient`, a Supabase Auth adapter mirroring the `AuthClient` REST contract (`login`, `refresh`, `register`, `getSession`, `logout`) plus `signUp()` returning a discriminated `SupabaseSignUpResult`.
+- `IAuthClient` interface for the shared session-endpoint contract implemented by both `AuthClient` and `SupabaseAuthClient`. `IManager.auth` is now typed as `IAuthClient`.
+- Phase 2.6 of the cross-app auth migration: shared session-state hook `useAuthSessionState`, now composed by both `AuthProvider` and `SupabaseAuthProvider` to centralize storage-key resolution, account state, guest-mode state, stored-session cleanup, and `logUser`.
+- Shared auth UI components in `components/app/Auth`: `AuthScreenShell`, `AuthFormShell`, and `AuthResultView`.
+- Shared auth views exported from `src/views`: `AuthSignInView`, `AuthSignUpView`, `AuthRecoveryView`, `AuthSignUpConfirmationView`, `AuthUpdatePasswordView`, `AuthConfirmEmailSuccessView`, and `AuthConfirmEmailErrorView`.
+- Auth flow hooks in `src/hooks/auth`: `useUpdatePasswordFlow` and `useConfirmEmailFlow`, plus shared auth-flow status types/constants.
+- `useFormDialogConfirmation` and `confirmation` support for `usePostDialog` / `usePutDialog`, allowing create/edit form dialogs to pause a mutation behind a `ConfirmationDialog`.
+- Phase 3 of the cross-app migration: i18n-agnostic legal/info primitives migrated from `wallet` and `period-calendar` `views/Info/*`:
+  - `LegalPage` (`src/views/LegalPage/LegalPage.tsx`) - shell with `title`, optional `intro` slot, and `children` slot for composable cards. No `sections` prop; apps compose with `LegalSection` directly.
+  - `LegalSection` (`src/views/LegalPage/LegalSection.tsx`) - titled rounded-card primitive (`<article>` + `h3` + body slot).
+  - `LegalLinksList` (`src/views/LegalPage/LegalLinksList.tsx`) - bulleted list of `{to, label}` links. Navigation routes through `linkComponent` from `ConfigProvider`. Renders nothing when `links` is empty.
+  - `richTextComponents` (`src/views/LegalPage/richTextComponents.tsx`) - default styled component map (`p`, `strong`, `em`, `ul`, `ol`, `li`, `a`, `code`) to pass to `react-i18next` `<Trans components={...}>`. Library does not depend on `react-i18next`.
   - Public CSS class names: `legal-page{,-title,-intro}`, `legal-section{,-title,-body}`, `legal-links-list{,-item,-link}`.
-  - 8 unit tests covering composition, intro toggling, empty link list, class-override merging.
-
-- Phase 2.6 of the cross-app auth migration: shared session-state hook `useAuthSessionState` (`src/providers/Auth/useAuthSessionState.ts`). Centralizes the storage-key resolution, `account` state, `clearStoredSession`, `isInGuestMode` / `setGuestMode`, and `logUser` behavior that `AuthProvider` (REST) and `SupabaseAuthProvider` previously duplicated. Both providers now compose this hook and only own their backend-specific `logoutUser` / `logUserFromLocal` (plus, for Supabase, the `authRevision` guard and `onAuthStateChange` subscription). Public API of both providers and `useAuth()` is unchanged; existing tests (9 + 5) continue to pass without modification. Exported from `@sito/dashboard-app` for consumers that want to build a custom auth provider on the same context shape.
-
-- Phase 2.5 of the cross-app auth migration: `SupabaseAuthClient` (`src/lib/api/SupabaseAuthClient.ts`) — Supabase Auth adapter mirroring `AuthClient` REST contract (`login` / `refresh` / `register` / `getSession` / `logout`) plus a richer `signUp` returning a discriminated `SupabaseSignUpResult` (`authenticated` with session, or `confirmation_required` with email). Wraps `supabase.auth.signInWithPassword` / `refreshSession` / `signUp` / `getSession` / `signOut` and maps payloads via `mapSupabaseSessionToSessionDto`. Constructor options: `sessionMapper` (full override), `mapperOptions` (defaults forwarded to default mapper), `defaultSignUpRedirectTo`. `signUp` resolves `user_metadata` from `data.metadata ?? { name, username }`, where `name` falls back through `data.name -> data.username -> data.email` (trimmed). `register()` keeps REST symmetry: throws on the confirmation-required branch — call `signUp()` directly when the UI needs to handle it. 15 new unit tests; consolidates the equivalent `PeriodCalendarAuthClient` from `period-calendar`.
-- `IAuthClient` interface (`src/lib/api/IAuthClient.ts`) — shared session-endpoint contract (`login` / `refresh` / `register` / `getSession` / `logout`) implemented by both `AuthClient` (REST) and `SupabaseAuthClient` (Supabase). `IManager.auth` is now typed as `IAuthClient` (supertype of `AuthClient` — backwards-compatible at the call-site level; consumers that read `.auth.api` directly should cast to the concrete `AuthClient` or pull `manager.Auth` and narrow).
-
-## [0.0.78] - 2026-05-18
-
-### Added
-
-- Phase 2 of the cross-app auth migration (documented in `apps/dashboard-app-migration-wallet-period-calendar.md`). Consolidates the side-channel auth endpoints (password reset + email confirmation) that were duplicated in `wallet` (REST) and `period-calendar` (Supabase):
-  - `IAuthApiClient` (`src/lib/api/IAuthApiClient.ts`) — interface for `forgotPassword`, `resetPassword`, `resendConfirmEmail`, `confirmEmail`.
-  - `RestAuthApiClient` (`src/lib/api/RestAuthApiClient.ts`) — REST adapter. Accepts an existing `APIClient` instance (preferred — shares base URL, storage keys, refresh/retry) or builds one from `baseUrl`. Endpoint paths configurable via `options.endpoints`; optional `confirmEmailFallback` retried only on `404`.
-  - `SupabaseAuthApiClient` (`src/lib/api/SupabaseAuthApiClient.ts`) — Supabase adapter mapping the same DTOs onto `auth.resetPasswordForEmail` / `auth.resend` / `auth.verifyOtp` / `auth.setSession` + `auth.updateUser`. `confirmEmail` and `resetPassword` call `auth.signOut()` after verification so the transient recovery session does not persist.
-  - DTOs: `ForgotPasswordDto`, `ResetPasswordDto` (union of `{accessToken, refreshToken?, newPassword}` and `{tokenHash, type, newPassword}`), `ResendConfirmEmailDto`, `ConfirmEmailDto`, `AcceptedResponseDto`.
-- Shared auth URL/token helpers in `src/lib/auth/utils.ts`: `buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`. Read both query string and hash so Supabase recovery flows (hash fragments) and REST flows (query string) share one call site.
-- Canonical `AuthRouteQueryParam` and `AuthRouteQueryParamType` const maps in `src/lib/auth/types.ts` (`access_token`, `accessToken`, `refresh_token`, `token`, `token_hash`, `type`, `error`, `error_description` / `email`, `recovery`, `signup`).
-- Generic form payload types in `src/lib/auth/forms.ts`: `SignInFormType<TExtra>`, `SignUpFormType<TExtra>`, `UpdatePasswordFormType`, `RecoveryFormType`.
-- New generic `TopBanner` primitive in `components/ui/TopBanner`. Props: `visible?` (default `true`), `children`, `color?` (`"default" | "primary" | "secondary" | "tertiary" | "quaternary" | "info" | "success" | "warning" | "error"`, default `"default"`), `role?` (default `"status"`), `ariaLive?` (default `"polite"`), `className?`. Renders nothing when `visible={false}`. Color tokens map to the existing `--color-bg-*` / `--color-*` CSS variables (including `tertiary` and `quaternary` from `src/index.css`), aligning with the `Button` color contract.
 
 ### Changed
 
@@ -42,35 +45,14 @@ All notable changes to this project will be documented in this file.
   - Moves are pure relocations done with `git mv` (history preserved). Public exports from `@sito/dashboard-app` are unchanged — consumers do not need code changes.
   - Internal path-alias imports (`components/X`) were rewritten to `components/ui/X` or `components/app/X`. CSS `@reference` paths were bumped by one level accordingly.
 - Refactored `OfflineBanner` to compose `TopBanner` instead of duplicating banner markup/styles. `OfflineBanner` is intentionally a predefined preset of `TopBanner` — its color is hardcoded to `warning` and not exposed as a prop. Public API stays the same as before (`isOnline?`, `message?`, `className?`). The internal `offline-banner` class was removed; the rendered banner now uses `top-banner` + `top-banner--warning`. For ad-hoc banners with different colors, use `TopBanner` directly.
-
-### Documentation
-
-- `AGENTS.md`: added Phase 2 reference table and rules #36 (`IAuthApiClient` adapters) and #37 (shared auth URL/token helpers).
-- `docs/CONSUMER_GUIDE.md` §8.1: added `IAuthApiClient` adapters, URL/token helpers, and shared form types.
-- `AGENTS.md`: added rule #29 — new components must be placed under `components/ui/` or `components/app/` per coupling, with `app/` allowed to depend on `ui/` (not the reverse).
-- `docs/ARCHITECTURE_RULES.md`: documented the `components/ui/` vs `components/app/` split, the import direction rule, and the decision rule for new components.
-
-### Added
-
-- New shared UI primitives migrated from `wallet` and `period-calendar` consumer apps (Phase 1 of the cross-app migration documented in `apps/dashboard-app-migration-wallet-period-calendar.md`):
-  - `PwaUpdateDialog` (component) — presentational PWA update prompt. Props: `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, plus optional `mobileFullScreen` and `containerClassName`. Source of `needRefresh` / update callback stays in the consumer (custom SW hook, `vite-plugin-pwa`, etc.).
-  - `NotFoundView` (view) — generic 404 screen. Props: `title`, `body`, `ctaLabel`, `ctaTo`, plus className overrides. Navigation uses `linkComponent` from `ConfigProvider`.
-  - `FeatureUnavailableView` (view) — generic feature-disabled fallback. Props: `title`, `body`, `ctaLabel`, `ctaTo`, optional `icon` (`IconDefinition`, default `faWarning`) and className overrides.
-  - `DashboardFooter` (layout) — copyright line + optional `ToTop`. Props: `copyrightText`, `year?`, `showToTop?`, `toTopProps?`, `bottomNavSpacing?` (adds `mb-16 sm:mb-0` for apps mounting `BottomNavigation`), `children?` for fully custom content, plus className overrides.
-  - `DashboardHeader` (layout) — combined `Drawer` + `Navbar` (+ optional `OfflineBanner`). Owns drawer open/close state internally. Generic over `MenuKeys`. Props: `menuMap`, `logo?`, `showOfflineBanner?`, `navbarProps?`.
-  - `AuthShell` (layout) — wrapper for auth routes. Renders `children` (typically `<Outlet />`) plus optional `Notification` portal. Error-boundary and authenticated-redirect logic stay in the consumer where route constants are known.
-  - `AppShell` (layout) — authenticated layout shell. Mounts header/content/footer/bottom-nav slots plus the global `Notification` portal. Props: `header?`, `footer?`, `bottomNavigation?`, `extras?` (for `Tooltip`, `Onboarding`, etc.), `withNotification?`, `className?`.
-- New `src/views/` and `src/layouts/` source folders with matching TypeScript path aliases (`views`, `views/*`, `layouts`, `layouts/*`) wired in `tsconfig.json` and `vite.config.ts`.
-- `Onboarding` gains optional `remountStepOnChange?: boolean` (default `false`). When `true`, the active step panel is remounted on every step change so CSS entry animations (`big-appear` on `step-container`) restart. Unblocks consumer apps (`wallet`, `period-calendar`) that previously kept local wrappers forcing remount with `key={stepId}`. New Storybook scenario `Components/Onboarding/Onboarding/RemountStepOnChange` and matching unit test verify the active step DOM node differs across step transitions.
-- `Onboarding` step entry animations now ship from the library (`src/components/app/Onboarding/styles.css`). Title/body/content rise in with `onboarding-step-rise-in` (420ms, stagger 30ms / 90ms / 140ms) and step actions pop in with `onboarding-step-pop-in` (360ms, stagger 180ms / 230ms). Previously duplicated as `onboarding-rise-in` / `onboarding-pop-in` in `wallet/src/index.css` and `motion-rise-in` / `motion-pop-in` in `period-calendar/src/index.css`. Respects `ConfigProvider.motion`: disabled when `:root[data-sito-motion="none"]` and under `prefers-reduced-motion: reduce` unless `:root[data-sito-motion="always"]` overrides. Consumer apps can drop their local copies in a follow-up.
-
-### Changed
-
 - Phase 1 migrated components now use local `styles.css` files (per `docs/ARCHITECTURE_RULES.md`) instead of inline Tailwind utility strings. New semantic class names: `pwa-update-dialog-{container,description,actions}`, `not-found-view{,-title,-body,-cta}`, `feature-unavailable-view{,-icon,-title,-body,-cta}`, `dashboard-footer{,--bottom-nav-spacing,-text}`. Project classes (`appear`, `button`, `primary`, `submit`) remain composed at the JSX site since they are not Tailwind utilities. `DASHBOARD_FOOTER_CLASSNAMES` in `constants.ts` now maps to the new semantic class names; public component API and default `containerClassName` behavior are preserved (`DashboardHeader`, `AuthShell`, `AppShell` had no inline Tailwind to extract).
 
 ### Documentation
 
-- Cut `AGENTS.md` from 1036 lines to 165 (~84% reduction). Removed code examples that duplicate `README.md`; preserved canonical agent rules, reference tables, and docs:check policy markers (provider order, IconButton contract, Node `.nvmrc` alignment, Base Library version).
+- Cut `AGENTS.md` from 1036 lines to roughly 230 (~78% reduction). Removed code examples that duplicate `README.md`; preserved canonical agent rules, reference tables, and docs:check policy markers (provider order, IconButton contract, Node `.nvmrc` alignment, Base Library version).
+- Split recipe documentation into `docs/RECIPES.md` as an index plus `docs/RECIPES_LAYOUT.md`, `docs/RECIPES_DATA.md`, and `docs/RECIPES_FORMS.md`.
+- Added Phase 1/2/3 cross-app migration guidance across `AGENTS.md`, `README.md`, `docs/CONSUMER_GUIDE.md`, `docs/ARCHITECTURE_RULES.md`, `docs/THEME_AND_CSS.md`, and `docs/TROUBLESHOOTING.md`.
+- Documented the `components/ui/` vs `components/app/` split, shared auth adapters/helpers, shared auth views, legal/info primitives, app/layout shells, onboarding animations, and PWA update dialog ownership boundaries.
 
 ## [0.0.77] - 2026-05-18
 
