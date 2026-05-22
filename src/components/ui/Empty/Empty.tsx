@@ -30,7 +30,10 @@ export const Empty = <TRow extends BaseEntityDto>(
     <div className="empty-container">
       {iconProps && <FontAwesomeIcon {...iconProps} />}
       <p {...messageProps}>{message}</p>
-      {action && <Action showTooltips={false} showText {...action} />}
+      {action &&
+        (Array.isArray(action) ? action : [action]).map((a) => (
+          <Action key={a.id} showTooltips={false} showText {...a} />
+        ))}
     </div>
   );
 };

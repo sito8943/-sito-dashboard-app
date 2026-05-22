@@ -13,6 +13,6 @@ export type EmptyPropsType<TRow extends BaseEntityDto> = {
     HTMLAttributes<HTMLParagraphElement>,
     HTMLParagraphElement
   >;
-  action?: ActionType<TRow>;
+  action?: ActionType<TRow> | ActionType<TRow>[];
   iconProps?: FontAwesomeIconProps;
 };
