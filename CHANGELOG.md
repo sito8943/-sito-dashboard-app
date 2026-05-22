@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- `Onboarding` / `Step` now expose `onClickBack` on non-first steps and render a Back button (FontAwesome `faArrowLeft`).
+- `Onboarding` / `Step` accept `icons` (`{ back?, next?, skip?, startAsGuest?, signIn? }` overrides; defaults: `faArrowLeft`, `faArrowRight`, `faForward`, `faUserSecret`, `faRightToBracket`), plus display flags `alwaysShowIcon`, `alwaysHideLabel`, and `showLabelOnMobile`. Each flag accepts `boolean` (applies to all actions) or a per-action map (e.g. `showLabelOnMobile={{ startAsGuest: true }}` keeps next/back icon-only on mobile while showing the guest CTA label). Default responsive: icon-only below `28rem`, label-only above; icon-only buttons have auto width.
+- Each entry in `Onboarding.steps` can also carry `icons`, `alwaysShowIcon`, `alwaysHideLabel`, and `showLabelOnMobile` to override the onboarding-level defaults on a per-step basis. Per-step values are merged on top of onboarding-level values per-action (step wins for the keys it defines; missing keys inherit).
+
 ## [0.0.78] - 2026-05-22
 
 ### Added

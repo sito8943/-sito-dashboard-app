@@ -16,6 +16,9 @@ import "./styles.css";
 // types
 import { OnboardingPropsType } from "./types";
 
+// utils
+import { mergeOnboardingFlag, mergeOnboardingIcons } from "./utils";
+
 /**
  * Renders the onboarding flow using controlled TabsLayout steps.
  * @param props - Onboarding props.
@@ -30,6 +33,10 @@ export const Onboarding = (props: OnboardingPropsType) => {
     onSignIn,
     onStartAsGuest,
     remountStepOnChange = false,
+    icons,
+    alwaysShowIcon,
+    alwaysHideLabel,
+    showLabelOnMobile,
   } = props;
 
   const auth = useOptionalAuthContext();
@@ -65,13 +72,20 @@ export const Onboarding = (props: OnboardingPropsType) => {
   const onboardingSteps = useMemo(() => {
     return steps.map((step, i) => {
       const id = i + 1;
+      const {
+        icons: stepIcons,
+        alwaysShowIcon: stepAlwaysShowIcon,
+        alwaysHideLabel: stepAlwaysHideLabel,
+        showLabelOnMobile: stepShowLabelOnMobile,
+        ...stepRest
+      } = step;
       return {
         id,
         label: "",
         content: (
           <Step
             key={remountStepOnChange ? id : undefined}
-            {...step}
+            {...stepRest}
             final={i === steps.length - 1}
             onClickNext={() => setCurrentStep((prev) => prev + 1)}
             onClickBack={
@@ -80,6 +94,19 @@ export const Onboarding = (props: OnboardingPropsType) => {
             onSkip={handleSkip}
             onStartAsGuest={handleStartAsGuest}
             onSignIn={handleSignIn}
+            icons={mergeOnboardingIcons(icons, stepIcons)}
+            alwaysShowIcon={mergeOnboardingFlag(
+              alwaysShowIcon,
+              stepAlwaysShowIcon,
+            )}
+            alwaysHideLabel={mergeOnboardingFlag(
+              alwaysHideLabel,
+              stepAlwaysHideLabel,
+            )}
+            showLabelOnMobile={mergeOnboardingFlag(
+              showLabelOnMobile,
+              stepShowLabelOnMobile,
+            )}
           />
         ),
       };
@@ -90,6 +117,10 @@ export const Onboarding = (props: OnboardingPropsType) => {
     handleStartAsGuest,
     remountStepOnChange,
     steps,
+    icons,
+    alwaysShowIcon,
+    alwaysHideLabel,
+    showLabelOnMobile,
   ]);
 
   return (

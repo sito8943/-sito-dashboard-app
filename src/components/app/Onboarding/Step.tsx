@@ -1,8 +1,14 @@
 import { useTranslation } from "@sito/dashboard";
 
-// types
-import { StepPropsType } from "./types";
+// components
 import { Button } from "../../ui/Buttons";
+import { StepButtonContent } from "./StepButtonContent";
+
+// types
+import { OnboardingActionKey, StepPropsType } from "./types";
+
+// utils
+import { buildStepButtonClassName, resolveOnboardingIcon } from "./utils";
 
 // styles
 import "./styles.css";
@@ -25,9 +31,24 @@ export const Step = (props: StepPropsType) => {
     image = "",
     alt = "",
     final = false,
+    icons,
+    alwaysShowIcon,
+    alwaysHideLabel,
+    showLabelOnMobile,
   } = props;
 
   const { t } = useTranslation();
+
+  const iconFor = (action: OnboardingActionKey) =>
+    resolveOnboardingIcon(icons, action);
+
+  const classFor = (action: OnboardingActionKey) =>
+    buildStepButtonClassName(
+      action,
+      alwaysShowIcon,
+      alwaysHideLabel,
+      showLabelOnMobile,
+    );
 
   return (
     <div className="big-appear step-container">
@@ -39,54 +60,69 @@ export const Step = (props: StepPropsType) => {
         {onClickBack && (
           <Button
             color="primary"
-            className="step-button"
+            className={classFor("back")}
             variant="outlined"
             onClick={() => onClickBack()}
             aria-label={t("_accessibility:buttons.back")}
           >
-            {t("_accessibility:buttons.back")}
+            <StepButtonContent
+              icon={iconFor("back")}
+              label={t("_accessibility:buttons.back")}
+            />
           </Button>
         )}
         {!final ? (
           <>
             <Button
               color="primary"
-              className="step-button"
+              className={classFor("skip")}
               variant="outlined"
               onClick={onSkip}
               aria-label={t("_accessibility:ariaLabels.skip")}
             >
-              {t("_accessibility:buttons.skip")}
+              <StepButtonContent
+                icon={iconFor("skip")}
+                label={t("_accessibility:buttons.skip")}
+              />
             </Button>
             <Button
               color="primary"
-              className="step-button"
+              className={classFor("next")}
               variant="outlined"
               onClick={() => onClickNext()}
               aria-label={t("_accessibility:ariaLabels.next")}
             >
-              {t("_accessibility:buttons.next")}
+              <StepButtonContent
+                icon={iconFor("next")}
+                label={t("_accessibility:buttons.next")}
+              />
             </Button>
           </>
         ) : (
           <>
             <Button
               color="primary"
-              className="step-button"
+              className={classFor("startAsGuest")}
               variant="outlined"
               onClick={onStartAsGuest}
               aria-label={t("_accessibility:ariaLabels.start")}
             >
-              {t("_accessibility:buttons.startAsGuest")}
+              <StepButtonContent
+                icon={iconFor("startAsGuest")}
+                label={t("_accessibility:buttons.startAsGuest")}
+              />
             </Button>
             <Button
               color="primary"
               variant="submit"
-              className="step-button"
+              className={classFor("signIn")}
               aria-label={t("_accessibility:ariaLabels.start")}
               onClick={onSignIn}
             >
-              {t("_accessibility:buttons.signIn")}
+              <StepButtonContent
+                icon={iconFor("signIn")}
+                label={t("_accessibility:buttons.signIn")}
+              />
             </Button>
           </>
         )}

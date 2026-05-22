@@ -181,6 +181,15 @@ Migrated from `wallet` / `period-calendar` `views/Info/*`. Composable, i18n-agno
 - Opt into per-step remount via `<Onboarding remountStepOnChange />`.
 - Gated by `ConfigProvider.motion`: disabled on `:root[data-sito-motion="none"]` and under `prefers-reduced-motion: reduce` unless `motion="always"`.
 
+### Onboarding action buttons
+
+- Non-first steps get a Back button automatically (decrements step). `Step` exposes `onClickBack?` for custom wiring.
+- Each action button renders a FontAwesome icon + label. Defaults: `back=faArrowLeft`, `next=faArrowRight`, `skip=faForward`, `startAsGuest=faUserSecret`, `signIn=faRightToBracket`.
+- Override per-action via `<Onboarding icons={{ back, next, skip, startAsGuest, signIn }} />`. Same prop available on `Step`.
+- Default responsive: icon-only below `28rem` (auto width), label-only at/above (min-width 10rem).
+- Three display flags — `alwaysShowIcon`, `alwaysHideLabel`, `showLabelOnMobile` — accept `boolean` (applies to every action) or a per-action map (`{ back?, next?, skip?, startAsGuest?, signIn? }`). Use the map form for granular layouts, e.g. `showLabelOnMobile={{ startAsGuest: true }}` keeps next/back icon-only on mobile while letting the central guest CTA show its label. `alwaysHideLabel` wins over the other two when both apply to the same action.
+- All four onboarding-level controls (`icons` + the three flags) can also be set per-step on each `steps[]` entry. Per-step values are merged on top of onboarding-level values per-action — step keys win for what they define, missing keys inherit from the onboarding-level value (boolean inheritance expands a boolean base into a per-key default).
+
 ---
 
 ## Agent Rules
