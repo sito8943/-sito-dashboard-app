@@ -51,7 +51,7 @@ npm install \
   @fortawesome/react-fontawesome@0.2.3
 ```
 
-See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, Supabase backend, component prop tables, hook signatures, `BaseClient` / `IndexedDBClient` / `SupabaseDataClient` extension, dialog/form/auth/notification examples, styling config. See the themed recipe files for copy-ready snippets — `docs/RECIPES_LAYOUT.md` (providers, shells, fallback views, drawer), `docs/RECIPES_DATA.md` (CRUD, clients, IndexedDB, exports), `docs/RECIPES_FORMS.md` (forms, dialogs, tabs/onboarding, feedback, auth, errors). `docs/RECIPES.md` indexes them.
+See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, Supabase backend, component prop tables, hook signatures, `BaseClient` / `SupabaseDataClient` extension, dialog/form/auth/notification examples, styling config. See the themed recipe files for copy-ready snippets — `docs/RECIPES_LAYOUT.md` (providers, shells, fallback views, drawer), `docs/RECIPES_DATA.md` (CRUD, clients, exports), `docs/RECIPES_FORMS.md` (forms, dialogs, tabs/onboarding, feedback, auth, errors). `docs/RECIPES.md` indexes them.
 
 ---
 
@@ -117,15 +117,6 @@ Legacy entity-coupled `useFormDialog` (`mutationFn`, `queryKey`, `getFunction`, 
 - Component `extraFields` slot — consumer-owned state, no payload coupling.
 - Hook `defaultExtra` + `renderExtraFields` — payload merged as `{ items, override, ...extra }`; type `mutationFn` as `ImportDto<TPreview> & TExtra`. Prefer this when inputs are part of the import payload.
 - `renderCustomPreview(items)` — replaces default JSON preview.
-
-### IndexedDB constraints
-
-- Browser-only. Never instantiate in SSR/Node.
-- `update(value)` is primary; legacy `update(id, value)` is temporary compat.
-- Filtering uses **exact equality**. `deletedAt` is `Date | null`.
-- `softDeleteScope`: `"ACTIVE"` | `"DELETED"` | `"ALL"`.
-- `import` with `override: false` => `store.add` (throws on dup); `override: true` => `store.put` (upsert).
-- Multiple clients can share a `dbName` — internal registry + open-lock handle shared-schema creation and concurrent opens. Effective version is `max(registered, current)`.
 
 ### Error type guards
 
@@ -206,34 +197,34 @@ Migrated from `wallet` / `period-calendar` `views/Info/*`. Composable, i18n-agno
 10. **Use `State` + `*StateClassName` utilities** for stateful inputs. No inline style overrides.
 11. **No `any`.** Library is fully typed — find the right DTO/utility.
 12. **`IconButton` expects `icon: IconDefinition`** (not React node) — diverges from upstream `@sito/dashboard`.
-13. **Use `IndexedDBClient` for offline fallback.** Reuse same `dbName` across related entity clients. Never in SSR/Node.
-14. **Send `rememberMe` from sign-in** when the UI exposes a remember option.
-15. **No ad-hoc token refresh.** Rely on centralized `APIClient`/`BaseClient` refresh/retry.
-16. **Align auth storage keys** between `AuthProvider` and `IManager`/`BaseClient` auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
-17. **`Error` is single-mode.** Default props (`error`/`message`/`icon`/`onRetry`) OR `children` — never both.
-18. **`TabsLayout` link mode intentional.** Links for routes; `useLinks={false}` + `tabButtonProps` for local state.
-19. **`TabsLayout` controlled (`currentTab` + `onTabChange`)** when parent owns step state (onboarding, wizards). `defaultTab` only for uncontrolled initial selection.
-20. **`Onboarding` steps are structured** (`title`, `body`, optional `content`/`image`/`alt`). No `_pages:onboarding.*` keys. Resolve i18n consumer-side.
-21. **Use `ImportDialog` extension points** (`renderCustomPreview`, hook `defaultExtra`/`renderExtraFields`, component `extraFields`). No forks.
-22. **Use `PrettyGrid` infinite scroll props** (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options). No grid forks.
-23. **Use `ToTop` customization props** (`threshold`, target coords, `tooltip`, `icon`, `scrollOnClick`, `onClick`). No ad-hoc wrappers.
-24. **Prefer `IndexedDBClient.update(value)`** in new code. `(id, value)` only for legacy compat.
-25. **Keep Node version aligned with `.nvmrc`** in setup docs.
-26. **Run `npm run docs:check`** after doc edits.
-27. **Never document or propose SSR** for this package.
-28. **Pick the right export flow** — direct (`useExportAction`) vs config dialog (`useExportDialog`). Both return the same `action()` shape. `useExportDialog` doesn't invalidate queries or auto-download.
-29. **Place new components by tier** under `src/components/`:
+13. **Send `rememberMe` from sign-in** when the UI exposes a remember option.
+14. **No ad-hoc token refresh.** Rely on centralized `APIClient`/`BaseClient` refresh/retry.
+15. **Align auth storage keys** between `AuthProvider` and `IManager`/`BaseClient` auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
+16. **`Error` is single-mode.** Default props (`error`/`message`/`icon`/`onRetry`) OR `children` — never both.
+17. **`TabsLayout` link mode intentional.** Links for routes; `useLinks={false}` + `tabButtonProps` for local state.
+18. **`TabsLayout` controlled (`currentTab` + `onTabChange`)** when parent owns step state (onboarding, wizards). `defaultTab` only for uncontrolled initial selection.
+19. **`Onboarding` steps are structured** (`title`, `body`, optional `content`/`image`/`alt`). No `_pages:onboarding.*` keys. Resolve i18n consumer-side.
+20. **Use `ImportDialog` extension points** (`renderCustomPreview`, hook `defaultExtra`/`renderExtraFields`, component `extraFields`). No forks.
+21. **Use `PrettyGrid` infinite scroll props** (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options). No grid forks.
+22. **Use `ToTop` customization props** (`threshold`, target coords, `tooltip`, `icon`, `scrollOnClick`, `onClick`). No ad-hoc wrappers.
+23. **Keep Node version aligned with `.nvmrc`** in setup docs.
+24. **Run `npm run docs:check`** after doc edits.
+25. **Never document or propose SSR** for this package.
+26. **Pick the right export flow** — direct (`useExportAction`) vs config dialog (`useExportDialog`). Both return the same `action()` shape. `useExportDialog` doesn't invalidate queries or auto-download.
+27. **Place new components by tier** under `src/components/`:
     - `ui/` — generic primitives. No provider/domain coupling. May only depend on other `ui/` siblings.
     - `app/` — high-level/shell pieces coupled to providers, routing, or domain (e.g. `Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`).
     - `app/` may import from `ui/`. `ui/` must NOT import from `app/`. Public surface stays the same — re-export through `src/components/index.ts`.
-30. **Place page-level screens** under `src/views/` (e.g. `NotFoundView`, `FeatureUnavailableView`) and **shared layout shells** under `src/layouts/` (e.g. `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`). Each follows the §7 feature folder convention (`FeatureName.tsx` + `types.ts` + `index.ts` + optional `constants.ts`/`utils.ts`).
-31. **Use `AppShell` / `AuthShell` instead of bespoke layout wrappers.** Mount providers via `AppProviders`, then compose routes with these shells. `AppShell` slots: `header` / `children` / `footer` / `bottomNavigation` / `extras` (Tooltip/Onboarding/PwaUpdateDialog) — in that render order — plus the built-in `Notification` portal. Opt out with `withNotification={false}` only when mounting your own.
-32. **Use `DashboardHeader` / `DashboardFooter` instead of forking app-local header/footer files.** Drawer open/close state lives inside `DashboardHeader`. Set `bottomNavSpacing` on `DashboardFooter` when also mounting `BottomNavigation`.
-33. **Use `NotFoundView` / `FeatureUnavailableView` for 404 / feature-off fallbacks.** Pass `ctaTo` from the consumer's `routes.ts` constants — never hardcode. CTA navigation goes through `linkComponent` from `ConfigProvider`, so they stay router-agnostic.
-34. **`PwaUpdateDialog` is presentational only.** Library never imports `navigator.serviceWorker` or `virtual:pwa-register/react`. Consumer owns the SW source (`useServiceWorkerUpdate` custom hook, `vite-plugin-pwa`'s `useRegisterSW`, etc.) and passes `open` / `onDismiss` / `onUpdate` plus consumer-side i18n strings.
-35. **`Onboarding` step animations are opt-in per-mount.** Default reuses the step tree (no animation restart between steps). Set `remountStepOnChange={true}` for wizard-like flows where each step should animate in from scratch. Library provides the keyframes (`onboarding-step-rise-in`/`onboarding-step-pop-in`); do NOT redeclare them in consumer CSS.
-36. **Use `IAuthApiClient` adapters for password reset / email confirmation.** Pick `RestAuthApiClient` (REST APIs) or `SupabaseAuthApiClient` (Supabase) — do not hand-roll the endpoints in consumer apps. `RestAuthApiClient` accepts an existing `APIClient` so storage keys and refresh/retry stay aligned with the rest of the app's data clients. Use `confirmEmailFallback` only as a transitional shim for backends mid-migration.
+28. **Place page-level screens** under `src/views/` (e.g. `NotFoundView`, `FeatureUnavailableView`) and **shared layout shells** under `src/layouts/` (e.g. `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`). Each follows the §7 feature folder convention (`FeatureName.tsx` + `types.ts` + `index.ts` + optional `constants.ts`/`utils.ts`).
+29. **Use `AppShell` / `AuthShell` instead of bespoke layout wrappers.** Mount providers via `AppProviders`, then compose routes with these shells. `AppShell` slots: `header` / `children` / `footer` / `bottomNavigation` / `extras` (Tooltip/Onboarding/PwaUpdateDialog) — in that render order — plus the built-in `Notification` portal. Opt out with `withNotification={false}` only when mounting your own.
+30. **Use `DashboardHeader` / `DashboardFooter` instead of forking app-local header/footer files.** Drawer open/close state lives inside `DashboardHeader`. Set `bottomNavSpacing` on `DashboardFooter` when also mounting `BottomNavigation`.
+31. **Use `NotFoundView` / `FeatureUnavailableView` for 404 / feature-off fallbacks.** Pass `ctaTo` from the consumer's `routes.ts` constants — never hardcode. CTA navigation goes through `linkComponent` from `ConfigProvider`, so they stay router-agnostic.
+32. **`PwaUpdateDialog` is presentational only.** Library never imports `navigator.serviceWorker` or `virtual:pwa-register/react`. Consumer owns the SW source (`useServiceWorkerUpdate` custom hook, `vite-plugin-pwa`'s `useRegisterSW`, etc.) and passes `open` / `onDismiss` / `onUpdate` plus consumer-side i18n strings.
+33. **`Onboarding` step animations are opt-in per-mount.** Default reuses the step tree (no animation restart between steps). Set `remountStepOnChange={true}` for wizard-like flows where each step should animate in from scratch. Library provides the keyframes (`onboarding-step-rise-in`/`onboarding-step-pop-in`); do NOT redeclare them in consumer CSS.
+34. **Use `IAuthApiClient` adapters for password reset / email confirmation.** Pick `RestAuthApiClient` (REST APIs) or `SupabaseAuthApiClient` (Supabase) — do not hand-roll the endpoints in consumer apps. `RestAuthApiClient` accepts an existing `APIClient` so storage keys and refresh/retry stay aligned with the rest of the app's data clients. Use `confirmEmailFallback` only as a transitional shim for backends mid-migration.
 
-36b. **Use `AuthClient` (REST) or `SupabaseAuthClient` for session endpoints** (login / refresh / register / getSession / logout). Do not subclass them just to swap a session mapper — pass `sessionMapper` (or `mapperOptions`) to `SupabaseAuthClient`'s constructor. When email confirmation is required, call `signUp(data)` and discriminate on `result.status`; `register()` throws on the confirmation-required branch. 37. **Use shipped auth URL/token helpers** (`buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`) instead of re-implementing query/hash parsing per app. They read both search and hash so Supabase recovery flows (hash-fragment tokens) and REST flows (query-string tokens) share one call site.
+35. **Use `AuthClient` (REST) or `SupabaseAuthClient` for session endpoints** (login / refresh / register / getSession / logout). Do not subclass them just to swap a session mapper — pass `sessionMapper` (or `mapperOptions`) to `SupabaseAuthClient`'s constructor. When email confirmation is required, call `signUp(data)` and discriminate on `result.status`; `register()` throws on the confirmation-required branch.
 
-38. **Compose legal/info pages with `LegalPage` + `LegalSection` + `LegalLinksList`** instead of forking the shell HTML/CSS. `LegalPage` is i18n-agnostic — resolve `<Trans>` / `t()` in the consumer and pass `ReactNode` for `title` / `intro` / section bodies. Use `richTextComponents` as the default component map for `<Trans>` and spread to extend (`{ ...richTextComponents, br: <br /> }`). Sections are children, not a `sections` prop — apps can interleave product-specific blocks (e.g. wallet's `HowToSection`) with shared `LegalSection` cards. `LegalLinksList` routes through `linkComponent` from `ConfigProvider` — pass `{to, label}` items from the consumer's `routes.ts`.
+36. **Use shipped auth URL/token helpers** (`buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`) instead of re-implementing query/hash parsing per app. They read both search and hash so Supabase recovery flows (hash-fragment tokens) and REST flows (query-string tokens) share one call site.
+
+37. **Compose legal/info pages with `LegalPage` + `LegalSection` + `LegalLinksList`** instead of forking the shell HTML/CSS. `LegalPage` is i18n-agnostic — resolve `<Trans>` / `t()` in the consumer and pass `ReactNode` for `title` / `intro` / section bodies. Use `richTextComponents` as the default component map for `<Trans>` and spread to extend (`{ ...richTextComponents, br: <br /> }`). Sections are children, not a `sections` prop — apps can interleave product-specific blocks (e.g. wallet's `HowToSection`) with shared `LegalSection` cards. `LegalLinksList` routes through `linkComponent` from `ConfigProvider` — pass `{to, label}` items from the consumer's `routes.ts`.

@@ -11,7 +11,7 @@
 | `docs/CONSUMER_GUIDE.md`             | Consumer apps                 | Providers, components, props, hooks, API clients          |
 | `docs/RECIPES.md` (+ split files)    | Consumer apps                 | Index of themed recipe files (layout/data/forms)          |
 | `docs/RECIPES_LAYOUT.md`             | Consumer apps                 | Providers, app/auth shells, fallback views, PWA, drawer   |
-| `docs/RECIPES_DATA.md`               | Consumer apps                 | CRUD, entity clients, IndexedDB, exports                  |
+| `docs/RECIPES_DATA.md`               | Consumer apps                 | CRUD, entity clients, exports                             |
 | `docs/RECIPES_FORMS.md`              | Consumer apps                 | Forms, dialogs, tabs/onboarding, feedback, auth, errors   |
 | `docs/THEME_AND_CSS.md`              | Consumer apps                 | CSS tokens, theme variables, safe overrides               |
 | `docs/TROUBLESHOOTING.md`            | Consumer apps                 | Common provider/typing/styling/auth/routing issues        |
@@ -74,7 +74,7 @@ npm install @supabase/supabase-js@2.100.0
 ## Quick start
 
 1. Wrap your app with providers in canonical order (or use `AppProviders` / `createAppProviders`).
-2. Extend `BaseClient` (or `IndexedDBClient` / `SupabaseDataClient`) per API resource.
+2. Extend `BaseClient` (or `SupabaseDataClient`) per API resource.
 3. Compose pages with `AppShell` + `DashboardHeader` + `DashboardFooter` + `Page` + dialog/form hooks.
 
 Detailed setup, examples, and prop tables live in:
@@ -94,7 +94,7 @@ Detailed setup, examples, and prop tables live in:
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, `PwaUpdateDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`, `TopBanner`
 - Hooks: `useFormDialog`, `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm`, `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — action hooks ship with default `sticky`, `multiple`, `id`, `icon`, `tooltip`; only `onClick` is required.
-- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `IndexedDBClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, `normalizeMenuDividers`.
+- Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, `normalizeMenuDividers`.
 
 ## Local development
 

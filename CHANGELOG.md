@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Removed
+
+- `IndexedDBClient` and its public re-export. The offline-storage client, its test suite, and the related store-registry / open-lock helpers were dropped from the package. Consumers relying on offline persistence must provide their own browser-storage client (extending `BaseClient`-style contracts as needed).
+- `IndexedDBClient` sections from `docs/CONSUMER_GUIDE.md`, `docs/RECIPES_DATA.md`, and `docs/TROUBLESHOOTING.md`; matching rules from `AGENTS.md` / `CLAUDE.md`.
+- `clearIndexedDB` test setup helper (no longer needed by the test suite).
+
 ## [0.0.79] - 2026-05-23
 
 ### Added

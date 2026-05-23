@@ -1,6 +1,6 @@
 # Data & CRUD Recipes for `@sito/dashboard-app`
 
-CRUD pages, entity clients (`BaseClient` / `IndexedDBClient` / `SupabaseDataClient`), exports.
+CRUD pages, entity clients (`BaseClient` / `SupabaseDataClient`), exports.
 
 ## 1. CRUD page with `Page`, `PageHeader`, `PrettyGrid`, and action hooks
 
@@ -166,12 +166,11 @@ import { Loading, PrettyGrid } from "@sito/dashboard-app";
 
 Pair with `useInfiniteQuery` (or any pagination source). `loadMoreComponent` renders inside the in-view sentinel while `loadingMore` is `true`.
 
-## 2. Entity clients (`BaseClient`), offline fallback (`IndexedDBClient`), and Supabase (`SupabaseDataClient`)
+## 2. Entity clients (`BaseClient`) and Supabase (`SupabaseDataClient`)
 
 ```tsx
 import {
   BaseClient,
-  IndexedDBClient,
   SupabaseDataClient,
   type BaseCommonEntityDto,
   type BaseEntityDto,
@@ -220,20 +219,6 @@ class ProductsClient extends BaseClient<
   }
 }
 
-class ProductsIndexedDBClient extends IndexedDBClient<
-  "products",
-  ProductDto,
-  ProductCommonDto,
-  ProductCreateDto,
-  ProductUpdateDto,
-  ProductFilterDto,
-  ProductImportPreviewDto
-> {
-  constructor() {
-    super("products", "my-app-db");
-  }
-}
-
 class ProductsSupabaseClient extends SupabaseDataClient<
   "products",
   ProductDto,
@@ -248,57 +233,8 @@ class ProductsSupabaseClient extends SupabaseDataClient<
   }
 }
 
-export const productsClient = navigator.onLine
-  ? new ProductsClient(import.meta.env.VITE_API_URL)
-  : new ProductsIndexedDBClient();
+export const productsClient = new ProductsClient(import.meta.env.VITE_API_URL);
 ```
-
-### 2.1 Sharing a `dbName` across multiple `IndexedDBClient` instances
-
-Construct clients with the same `dbName` when they belong to one logical DB. Internal registry tracks every `table`; opens serialize per `dbName` so concurrent CRUD is safe and no registered store gets dropped by later opens.
-
-```ts
-class UsersIndexedDBClient extends IndexedDBClient<
-  "users",
-  UserDto,
-  UserCommonDto,
-  UserCreateDto,
-  UserUpdateDto,
-  UserFilterDto,
-  UserImportPreviewDto
-> {
-  constructor() {
-    super("users", "my-app-db");
-  }
-}
-
-class AccountsIndexedDBClient extends IndexedDBClient<
-  "accounts",
-  AccountDto,
-  AccountCommonDto,
-  AccountCreateDto,
-  AccountUpdateDto,
-  AccountFilterDto,
-  AccountImportPreviewDto
-> {
-  constructor() {
-    super("accounts", "my-app-db");
-  }
-}
-
-const users = new UsersIndexedDBClient();
-const accounts = new AccountsIndexedDBClient();
-
-await Promise.all([
-  users.insert({ name: "Alice", email: "alice@test.com" }),
-  accounts.insert({ userId: 1, balance: 100 }),
-]);
-```
-
-Notes:
-
-- Effective open version = `max(registered versions, current db version)`. Missing registered store at open bumps version once and creates all registered stores in one `onupgradeneeded` pass.
-- Registering a new store post-existing DB is supported — next `open()` upgrades transparently.
 
 ## 3. Ready-to-use export action with `useExportActionMutate`
 

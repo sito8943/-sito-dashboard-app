@@ -9,6 +9,5 @@ export * from "./RestAuthApiClient";
 export * from "./SupabaseAuthApiClient";
 export * from "./SupabaseAuthClient";
 export * from "./BaseClient";
-export * from "./IndexedDBClient";
 export * from "./SupabaseDataClient";
 export * from "./supabaseAuth";

@@ -531,46 +531,7 @@ class ProductsClient extends BaseClient<
 }
 ```
 
-### 7.2 Offline fallback with `IndexedDBClient`
-
-```ts
-import { IndexedDBClient } from "@sito/dashboard-app";
-
-class ProductsIndexedDBClient extends IndexedDBClient<
-  "products",
-  ProductDto,
-  ProductCommonDto,
-  Omit<ProductDto, "id" | "createdAt" | "updatedAt" | "deletedAt">,
-  ProductUpdateDto,
-  ProductFilterDto,
-  ImportPreviewDto
-> {
-  constructor() {
-    super("products", "my-app-db");
-  }
-}
-```
-
-Multiple entity clients may share a single `dbName` to co-locate related stores (for example `users`, `accounts`, `transactions`) in one IndexedDB database. Each instance registers its `table` internally, so:
-
-- Opening a new client no longer drops stores registered by other clients for the same `dbName`.
-- Concurrent `open()` calls are serialized per `dbName` through an internal lock.
-- When a registered store is missing, the schema version is bumped once and every registered store is (re)created in a single `onupgradeneeded` pass.
-
-```ts
-// All three live under "my-app-db" and can be used concurrently.
-const users = new UsersIndexedDBClient();
-const accounts = new AccountsIndexedDBClient();
-const transactions = new TransactionsIndexedDBClient();
-
-await Promise.all([
-  users.insert({ name: "Alice", email: "alice@test.com" }),
-  accounts.insert({ userId: 1, balance: 100 }),
-  transactions.insert({ accountId: 1, amount: 10, description: "Coffee" }),
-]);
-```
-
-### 7.3 Supabase client with `SupabaseDataClient`
+### 7.2 Supabase client with `SupabaseDataClient`
 
 ```ts
 import { SupabaseDataClient } from "@sito/dashboard-app";

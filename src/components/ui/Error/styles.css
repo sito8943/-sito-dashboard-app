@@ -12,6 +12,6 @@
   @apply text-text text-center;
 }
 
-.error-retry:hover {
-  @apply text-hover-primary;
+.error-retry {
+  @apply hover:text-hover-primary;
 }

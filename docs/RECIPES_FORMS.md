@@ -1162,5 +1162,4 @@ export function RelativeDateBadge({ createdAt }: { createdAt: Date }) {
 3. Always pass generics for entity-driven components and hooks.
 4. Reuse official extension points (`extraActions`, `renderCustomPreview`, `tabButtonProps`) before forking components.
 5. Keep auth storage keys aligned between `AuthProvider` and `IManager`/client auth config.
-6. Prefer `update(value)` in `IndexedDBClient` consumers; keep `(id, value)` only for transitional code.
-7. Prefer `useExportActionMutate` for export flows to keep loading and notifications consistent.
+6. Prefer `useExportActionMutate` for export flows to keep loading and notifications consistent.
