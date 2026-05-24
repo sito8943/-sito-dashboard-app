@@ -23,7 +23,7 @@ Important:
 
 - `@sito/dashboard-app` is **not SSR-compatible**. Browser-only.
 - For auth-enabled apps, use `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when needed; `BottomNavActionProvider` optional for dynamic mobile center actions).
-- `Drawer` and `Onboarding` run without `AuthProvider` (guest-mode UI defaults).
+- `Drawer` and `Onboarding` run without `AuthProvider`; guest entry is owned by `Onboarding`.
 - `IconButton` differs by package:
   - `@sito/dashboard`: `icon` accepts a React node.
   - `@sito/dashboard-app`: `icon?: IconDefinition` (FontAwesome wrapper export).

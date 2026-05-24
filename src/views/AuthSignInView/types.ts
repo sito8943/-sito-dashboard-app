@@ -30,14 +30,11 @@ export type AuthSignInViewPropsType = AuthScreenBackButtonPropsType & {
   recoveryQuestion?: ReactNode;
   recoveryLabel?: ReactNode;
   recoveryTo?: string;
-  guestLabel?: ReactNode;
-  guestAriaLabel?: string;
   logo?: ReactNode;
   headerExtra?: ReactNode;
   motion?: AuthScreenMotionType;
   titleClassName?: string;
   className?: string;
   onSubmit: (values: AuthSignInViewFormType) => Promise<void> | void;
-  onStartAsGuest?: () => void;
   onError?: (error: unknown, context: AuthSignInViewErrorContextType) => void;
 };

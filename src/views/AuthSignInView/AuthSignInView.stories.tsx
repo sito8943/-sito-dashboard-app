@@ -46,10 +46,7 @@ const meta = {
     recoveryQuestion: "Forgot your password?",
     recoveryLabel: "Recover account",
     recoveryTo: "/auth/recovery",
-    guestLabel: "Continue as guest",
-    guestAriaLabel: "Continue as guest",
     onSubmit: async () => {},
-    onStartAsGuest: () => {},
   },
 } satisfies Meta<typeof AuthSignInView>;
 
@@ -57,14 +54,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};
-
-export const WithoutGuestMode: Story = {
-  args: {
-    guestLabel: undefined,
-    guestAriaLabel: undefined,
-    onStartAsGuest: undefined,
-  },
-};
 
 export const WithBackButton: Story = {
   args: {

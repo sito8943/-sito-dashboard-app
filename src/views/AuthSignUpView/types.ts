@@ -33,15 +33,12 @@ export type AuthSignUpViewPropsType = AuthScreenBackButtonPropsType & {
   signInQuestion?: ReactNode;
   signInLabel?: ReactNode;
   signInTo?: string;
-  guestLabel?: ReactNode;
-  guestAriaLabel?: string;
   logo?: ReactNode;
   headerExtra?: ReactNode;
   motion?: AuthScreenMotionType;
   titleClassName?: string;
   className?: string;
   onSubmit: (values: AuthSignUpViewFormType) => Promise<void> | void;
-  onStartAsGuest?: () => void;
   onPasswordMismatch?: () => void;
   onError?: (error: unknown, context: AuthSignUpViewErrorContextType) => void;
 };

@@ -753,14 +753,13 @@ export function SaveButton() {
 }
 ```
 
-## 9. Auth patterns with `useAuth` (`rememberMe`, guest mode)
+## 9. Auth patterns with `useAuth` (`rememberMe`, session restore/logout)
 
 ```tsx
 import { useAuth, type AuthDto } from "@sito/dashboard-app";
 
 export function SignInForm() {
-  const { logUser, logUserFromLocal, logoutUser, isInGuestMode, setGuestMode } =
-    useAuth();
+  const { logUser, logUserFromLocal, logoutUser } = useAuth();
 
   const onLogin = async () => {
     const credentials: AuthDto = {
@@ -784,10 +783,6 @@ export function SignInForm() {
       <button type="button" onClick={() => logoutUser()}>
         Logout
       </button>
-      <button type="button" onClick={() => setGuestMode(true)}>
-        Continue as guest
-      </button>
-      <p>{isInGuestMode() ? "Guest mode" : "User mode"}</p>
     </div>
   );
 }
@@ -824,7 +819,7 @@ import { useManager } from "../providers";
 
 export function SignInRoute() {
   const manager = useManager();
-  const { logUser, setGuestMode } = useAuth();
+  const { logUser } = useAuth();
   const { showErrorNotification } = useNotification();
 
   return (
@@ -840,12 +835,10 @@ export function SignInRoute() {
       recoveryQuestion="Forgot your password?"
       recoveryLabel="Reset it"
       recoveryTo={AppRoutes.Recovery}
-      guestLabel="Continue as guest"
       onSubmit={async (values) => {
         const session = await manager.Auth.login(values);
         logUser(session, values.rememberMe);
       }}
-      onStartAsGuest={() => setGuestMode(true)}
       onError={(error) =>
         showErrorNotification({
           message: getAuthErrorMessage(error) || "Sign in failed",

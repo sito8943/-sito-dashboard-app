@@ -204,23 +204,18 @@ const supabase = createClient(
 
 `useAuth` keeps the same API with `SupabaseAuthProvider`.
 
-Both providers compose the shared `useAuthSessionState` hook, which owns localStorage key resolution, `account` state, `clearStoredSession`, `isInGuestMode` / `setGuestMode`, and `logUser`. Each provider only adds its own `logoutUser` / `logUserFromLocal` (and, for Supabase, the `onAuthStateChange` subscription + auth-revision guard). If you need to build a custom auth provider against the same `AuthContext`:
+Both providers compose the shared `useAuthSessionState` hook, which owns localStorage key resolution, `account` state, `clearStoredSession`, onboarding guest-state helpers, and `logUser`. Each provider only adds its own `logoutUser` / `logUserFromLocal` (and, for Supabase, the `onAuthStateChange` subscription + auth-revision guard). If you need to build a custom auth provider against the same `AuthContext`:
 
 ```tsx
 import { AuthContext, useAuthSessionState } from "@sito/dashboard-app";
 
 const CustomAuthProvider = ({ children }) => {
-  const {
-    account,
-    setAccount,
-    clearStoredSession,
-    isInGuestMode,
-    setGuestMode,
-    logUser,
-  } = useAuthSessionState();
+  const sessionState = useAuthSessionState();
+  const { account, setAccount, clearStoredSession, logUser } = sessionState;
 
   // own logoutUser / logUserFromLocal against your backend...
-  // then expose { account, logUser, logoutUser, logUserFromLocal, isInGuestMode, setGuestMode }
+  // then expose the full AuthContext value.
+  // Guest entry should still be initiated from Onboarding, not auth forms.
 };
 ```
 
@@ -260,7 +255,7 @@ const CustomAuthProvider = ({ children }) => {
 | `PwaUpdateDialog`             | `open`, `onDismiss`, `onUpdate`, `title`, `description`, `dismissLabel`, `updateLabel`, `mobileFullScreen`, `containerClassName`                                                 | Presentational PWA update prompt (consumer owns SW hook)                                                                                                            |
 | `AppShell`                    | `header`, `footer`, `bottomNavigation`, `extras`, `withNotification`, `className`                                                                                                | Authenticated route shell (header/content/footer/bottomNav/extras + Notification)                                                                                   |
 | `AuthShell`                   | `children`, `withNotification`, `className`                                                                                                                                      | Auth route wrapper (children + optional Notification)                                                                                                               |
-| `AuthSignInView`              | `title`, `emailLabel`, `passwordLabel`, `rememberLabel`, `onSubmit`, `onStartAsGuest`                                                                                            | Prefab sign-in route view                                                                                                                                           |
+| `AuthSignInView`              | `title`, `emailLabel`, `passwordLabel`, `rememberLabel`, `onSubmit`                                                                                                              | Prefab sign-in route view                                                                                                                                           |
 | `AuthSignUpView`              | `title`, `emailLabel`, `passwordLabel`, `confirmPasswordLabel`, `nameLabel`, `onSubmit`                                                                                          | Prefab sign-up route view                                                                                                                                           |
 | `AuthRecoveryView`            | `title`, `description`, `emailLabel`, `submitLabel`, `statusMessage`, `onSubmit`, `onSecondaryAction`                                                                            | Prefab password recovery/request-confirmation view                                                                                                                  |
 | `AuthSignUpConfirmationView`  | `title`, `description`, `toSignInLabel`, `resendLabel`, `onSignIn`, `onResendConfirmEmail`                                                                                       | Prefab sign-up confirmation result view                                                                                                                             |
@@ -296,7 +291,7 @@ Copy-ready snippets live in the themed recipe files. This guide is the reference
 | `Onboarding` step animations (`remountStepOnChange`)          | `RECIPES_FORMS.md` §5    |
 | `Onboarding` Back button + per-action icon/display flags      | `RECIPES_FORMS.md` §5.1  |
 | Notifications (`useNotification`)                             | `RECIPES_FORMS.md` §8    |
-| Auth (`useAuth`, `rememberMe`, guest mode)                    | `RECIPES_FORMS.md` §9    |
+| Auth (`useAuth`, `rememberMe`, session restore/logout)        | `RECIPES_FORMS.md` §9    |
 | Prefab auth route views                                       | `RECIPES_FORMS.md` §9.1  |
 | Error guards (`isValidationError` / `isHttpError`)            | `RECIPES_FORMS.md` §10   |
 
@@ -565,7 +560,7 @@ Optional `SupabaseDataClient` options:
 ```tsx
 import { useAuth } from "@sito/dashboard-app";
 
-const { account, logUser, logoutUser, isInGuestMode } = useAuth();
+const { account, logUser, logoutUser } = useAuth();
 ```
 
 When your login UI has a "remember me" option, pass `rememberMe` in the auth payload.
@@ -747,7 +742,7 @@ import {
 } from "@sito/dashboard-app";
 
 export function SignInRoute() {
-  const { logUser, setGuestMode } = useAuth();
+  const { logUser } = useAuth();
 
   return (
     <AuthSignInView
@@ -762,12 +757,10 @@ export function SignInRoute() {
       recoveryQuestion={t("_pages:auth.signIn.toRecovery.question")}
       recoveryLabel={t("_pages:auth.signIn.toRecovery.link")}
       recoveryTo={AppRoutes.Recovery}
-      guestLabel={t("_pages:auth.signIn.guest")}
       onSubmit={async (values) => {
         const session = await manager.Auth.login(values);
         logUser(session, values.rememberMe);
       }}
-      onStartAsGuest={() => setGuestMode(true)}
       onError={(error) => showErrorNotification({ message: mapError(error) })}
     />
   );
