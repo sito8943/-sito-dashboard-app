@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.80] - 2026-05-25
+
+### Added
+
+- `Onboarding` now supports horizontal swipe gestures via `@use-gesture/react`: swipe left advances, swipe right goes back, and navigation is clamped to the first/last step.
+- `Onboarding` / `Step` now accept `alwaysHideIcon` as a boolean or per-action map. It forces label-only action buttons at every breakpoint, including mobile.
+- Each entry in `Onboarding.steps` can also carry `alwaysHideIcon`, merged with the onboarding-level value using the existing per-action flag semantics.
+
+### Changed
+
+- `AuthSignInView` and `AuthSignUpView` no longer expose guest-mode actions (`guestLabel`, `guestAriaLabel`, `onStartAsGuest`). Guest entry is now owned by `Onboarding`.
+
+### Documentation
+
+- Updated onboarding recipes, consumer guide entries, and Storybook stories for `alwaysHideIcon` and horizontal swipe behavior.
+- Updated prefab auth examples to remove guest-mode actions from sign-in/sign-up routes.
+
 ## [0.0.79] - 2026-05-24
 
 ### Added
