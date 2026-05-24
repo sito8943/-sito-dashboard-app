@@ -5,6 +5,7 @@
   padding: 0.75rem;
   overflow-y: auto;
   align-items: flex-start;
+  touch-action: pan-y;
 }
 
 .onboarding-main .tabs-layout-main {
@@ -83,6 +84,10 @@
 
 .step-button--show-label-mobile .step-button-label {
   display: inline;
+}
+
+.step-button--hide-icon .step-button-icon {
+  display: none !important;
 }
 
 .step-button--hide-label .step-button-label {

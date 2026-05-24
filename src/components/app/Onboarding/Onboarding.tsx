@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useDrag } from "@use-gesture/react";
 
 // components
 import { TabsLayout } from "../../ui/TabsLayout";
@@ -35,6 +36,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
     remountStepOnChange = false,
     icons,
     alwaysShowIcon,
+    alwaysHideIcon,
     alwaysHideLabel,
     showLabelOnMobile,
   } = props;
@@ -43,6 +45,37 @@ export const Onboarding = (props: OnboardingPropsType) => {
   const { navigate } = useConfig();
 
   const [currentStep, setCurrentStep] = useState(1);
+  const maxStep = Math.max(steps.length, 1);
+
+  const goToNextStep = useCallback(() => {
+    setCurrentStep((prev) => Math.min(prev + 1, maxStep));
+  }, [maxStep]);
+
+  const goToPreviousStep = useCallback(() => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  }, []);
+
+  const bindSwipe = useDrag(
+    ({ swipe: [swipeX] }) => {
+      if (swipeX < 0) {
+        goToNextStep();
+        return;
+      }
+
+      if (swipeX > 0) {
+        goToPreviousStep();
+      }
+    },
+    {
+      axis: "x",
+      filterTaps: true,
+      swipe: {
+        distance: 50,
+        duration: 500,
+        velocity: 0.2,
+      },
+    },
+  );
 
   const handleSkip = useCallback(() => {
     if (onSkip) {
@@ -75,6 +108,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
       const {
         icons: stepIcons,
         alwaysShowIcon: stepAlwaysShowIcon,
+        alwaysHideIcon: stepAlwaysHideIcon,
         alwaysHideLabel: stepAlwaysHideLabel,
         showLabelOnMobile: stepShowLabelOnMobile,
         ...stepRest
@@ -87,10 +121,8 @@ export const Onboarding = (props: OnboardingPropsType) => {
             key={remountStepOnChange ? id : undefined}
             {...stepRest}
             final={i === steps.length - 1}
-            onClickNext={() => setCurrentStep((prev) => prev + 1)}
-            onClickBack={
-              i > 0 ? () => setCurrentStep((prev) => prev - 1) : undefined
-            }
+            onClickNext={goToNextStep}
+            onClickBack={i > 0 ? goToPreviousStep : undefined}
             onSkip={handleSkip}
             onStartAsGuest={handleStartAsGuest}
             onSignIn={handleSignIn}
@@ -98,6 +130,10 @@ export const Onboarding = (props: OnboardingPropsType) => {
             alwaysShowIcon={mergeOnboardingFlag(
               alwaysShowIcon,
               stepAlwaysShowIcon,
+            )}
+            alwaysHideIcon={mergeOnboardingFlag(
+              alwaysHideIcon,
+              stepAlwaysHideIcon,
             )}
             alwaysHideLabel={mergeOnboardingFlag(
               alwaysHideLabel,
@@ -115,16 +151,19 @@ export const Onboarding = (props: OnboardingPropsType) => {
     handleSignIn,
     handleSkip,
     handleStartAsGuest,
+    goToNextStep,
+    goToPreviousStep,
     remountStepOnChange,
     steps,
     icons,
     alwaysShowIcon,
+    alwaysHideIcon,
     alwaysHideLabel,
     showLabelOnMobile,
   ]);
 
   return (
-    <div className="onboarding-main">
+    <div className="onboarding-main" {...bindSwipe()}>
       <TabsLayout
         currentTab={currentStep}
         onTabChange={(id) => setCurrentStep(Number(id))}

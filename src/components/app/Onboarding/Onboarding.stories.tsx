@@ -177,6 +177,25 @@ export const AlwaysHideLabel: Story = {
 };
 
 /**
+ * `alwaysHideIcon` forces label-only buttons at every breakpoint.
+ */
+export const AlwaysHideIcon: Story = {
+  args: {
+    alwaysHideIcon: true,
+    steps: [
+      {
+        title: "Step 1",
+        body: "Label-only buttons at every breakpoint.",
+      },
+      {
+        title: "Step 2",
+        body: "Mobile labels stay visible because icons are hidden.",
+      },
+    ],
+  },
+};
+
+/**
  * `showLabelOnMobile` reveals the label on mobile. Per-action map keeps
  * next/back icon-only while the central guest CTA shows its label.
  */
@@ -204,6 +223,7 @@ export const PerStepOverrides: Story = {
   args: {
     // Onboarding-level baseline
     alwaysShowIcon: { back: true, next: true },
+    alwaysHideIcon: { skip: true },
     icons: { next: faPaperPlane },
     steps: [
       {

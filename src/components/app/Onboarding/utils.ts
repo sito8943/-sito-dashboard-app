@@ -80,18 +80,22 @@ export const resolveOnboardingIcon = (
 export const buildStepButtonClassName = (
   action: OnboardingActionKey,
   alwaysShowIcon: OnboardingActionFlagType | undefined,
+  alwaysHideIcon: OnboardingActionFlagType | undefined,
   alwaysHideLabel: OnboardingActionFlagType | undefined,
   showLabelOnMobile: OnboardingActionFlagType | undefined,
 ): string => {
   const hideLabel = resolveOnboardingFlag(alwaysHideLabel, action);
+  const hideIcon = !hideLabel && resolveOnboardingFlag(alwaysHideIcon, action);
   const showLabelMobile =
-    !hideLabel && resolveOnboardingFlag(showLabelOnMobile, action);
+    !hideLabel &&
+    (hideIcon || resolveOnboardingFlag(showLabelOnMobile, action));
   const showIconDesktop =
-    !hideLabel && resolveOnboardingFlag(alwaysShowIcon, action);
+    !hideLabel && !hideIcon && resolveOnboardingFlag(alwaysShowIcon, action);
   return [
     "step-button",
     showLabelMobile ? "step-button--show-label-mobile" : "",
     showIconDesktop ? "step-button--show-icon-desktop" : "",
+    hideIcon ? "step-button--hide-icon" : "",
     hideLabel ? "step-button--hide-label" : "",
   ]
     .filter(Boolean)

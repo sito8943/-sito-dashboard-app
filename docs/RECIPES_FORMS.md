@@ -544,6 +544,8 @@ export function WelcomeOnboarding() {
 
 `remountStepOnChange` opt-in (default `false`). Set `true` for wizard flows where each step replays entry animation (`onboarding-step-rise-in` title/body/content stagger 30/90/140ms; `onboarding-step-pop-in` actions stagger 180/230ms). Gated by `ConfigProvider.motion` and `prefers-reduced-motion`.
 
+Horizontal swipe is built in: swipe left advances, swipe right goes back, and navigation is clamped to the first/last step.
+
 ### 5.1 Onboarding Back button, icons, and per-action display flags
 
 `Onboarding` auto-renders a Back button on every step except the first (decrements the active step). When composing `Step` standalone, pass `onClickBack` to enable it. Each action button renders a FontAwesome icon next to its label:
@@ -558,16 +560,17 @@ export function WelcomeOnboarding() {
 
 Default responsive layout: icon-only below `28rem` (auto width), label-only at `>=28rem` (min-width `10rem`).
 
-Three display flags + `icons` override the defaults. Each accepts a `boolean` (applies to every action) or `Partial<Record<actionKey, boolean>>` for per-action granularity:
+Four display flags + `icons` override the defaults. Each accepts a `boolean` (applies to every action) or `Partial<Record<actionKey, boolean>>` for per-action granularity:
 
 | Prop                | Effect                                                                                 |
 | ------------------- | -------------------------------------------------------------------------------------- |
 | `icons`             | Override the FontAwesome icon for any subset of actions                                |
 | `alwaysShowIcon`    | Force icon visible on desktop (mobile already shows it)                                |
+| `alwaysHideIcon`    | Force icon hidden at every breakpoint (label-only); label is also shown on mobile      |
 | `alwaysHideLabel`   | Force label hidden at every breakpoint (icon-only); button width collapses to auto     |
 | `showLabelOnMobile` | Render the label on mobile (default mobile is icon-only); button width expands to 100% |
 
-`alwaysHideLabel` wins when it conflicts with the other two on the same action.
+`alwaysHideLabel` wins when it conflicts with icon display on the same action.
 
 ```tsx
 import {
@@ -594,14 +597,24 @@ import { Onboarding } from "@sito/dashboard-app";
     { title: "Step 2", body: "..." },
   ]}
 />;
+
+// Hide icons everywhere and show labels on mobile too.
+<Onboarding
+  alwaysHideIcon
+  steps={[
+    { title: "Step 1", body: "..." },
+    { title: "Step 2", body: "..." },
+  ]}
+/>;
 ```
 
-The same four controls can be set per-step on each `steps[]` entry. Step values are merged on top of onboarding-level values per-action — step keys win, missing keys inherit. When the onboarding-level value is a `boolean` and the step value is a map, missing step keys inherit the boolean.
+The same five controls can be set per-step on each `steps[]` entry. Step values are merged on top of onboarding-level values per-action — step keys win, missing keys inherit. When the onboarding-level value is a `boolean` and the step value is a map, missing step keys inherit the boolean.
 
 ```tsx
 <Onboarding
   // baseline applied to every step
   alwaysShowIcon={{ back: true, next: true }}
+  alwaysHideIcon={{ skip: true }}
   icons={{ next: faPaperPlane }}
   steps={[
     {
@@ -623,7 +636,7 @@ The same four controls can be set per-step on each `steps[]` entry. Step values 
 />
 ```
 
-When composing `Step` standalone (outside `Onboarding`), the same `icons`, `alwaysShowIcon`, `alwaysHideLabel`, and `showLabelOnMobile` props are available, plus `onClickBack` to render the Back button.
+When composing `Step` standalone (outside `Onboarding`), the same `icons`, `alwaysShowIcon`, `alwaysHideIcon`, `alwaysHideLabel`, and `showLabelOnMobile` props are available, plus `onClickBack` to render the Back button.
 
 ## 6. Dynamic navbar title/slot with `useNavbar`
 

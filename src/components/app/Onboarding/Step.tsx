@@ -33,6 +33,7 @@ export const Step = (props: StepPropsType) => {
     final = false,
     icons,
     alwaysShowIcon,
+    alwaysHideIcon,
     alwaysHideLabel,
     showLabelOnMobile,
   } = props;
@@ -46,6 +47,7 @@ export const Step = (props: StepPropsType) => {
     buildStepButtonClassName(
       action,
       alwaysShowIcon,
+      alwaysHideIcon,
       alwaysHideLabel,
       showLabelOnMobile,
     );

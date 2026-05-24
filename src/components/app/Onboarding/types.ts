@@ -26,6 +26,10 @@ export type OnboardingStepType = {
   /**
    * Per-step override. Same merge semantics as `alwaysShowIcon`.
    */
+  alwaysHideIcon?: OnboardingActionFlagType;
+  /**
+   * Per-step override. Same merge semantics as `alwaysShowIcon`.
+   */
   alwaysHideLabel?: OnboardingActionFlagType;
   /**
    * Per-step override. Same merge semantics as `alwaysShowIcon`.
@@ -70,6 +74,11 @@ export type StepPropsType = OnboardingStepType & {
    */
   alwaysShowIcon?: OnboardingActionFlagType;
   /**
+   * Force the action icon hidden at every breakpoint (label-only). Boolean
+   * applies to every action; pass a per-action map for granularity.
+   */
+  alwaysHideIcon?: OnboardingActionFlagType;
+  /**
    * Force the action label hidden at every breakpoint (icon-only). Boolean
    * applies to every action; pass a per-action map for granularity.
    */
@@ -98,6 +107,11 @@ export type OnboardingPropsType = {
    * Force the action icon visible on desktop. Boolean or per-action map.
    */
   alwaysShowIcon?: OnboardingActionFlagType;
+  /**
+   * Force the action icon hidden at every breakpoint. Boolean or per-action
+   * map.
+   */
+  alwaysHideIcon?: OnboardingActionFlagType;
   /**
    * Force the action label hidden at every breakpoint. Boolean or per-action
    * map.
