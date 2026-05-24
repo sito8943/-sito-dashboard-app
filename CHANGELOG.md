@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.79] - 2026-05-24
+
+### Added
+
+- `Onboarding` / `Step` now expose `onClickBack` on non-first steps and render a Back button (FontAwesome `faArrowLeft`).
+- `Onboarding` / `Step` accept `icons` (`{ back?, next?, skip?, startAsGuest?, signIn? }` overrides; defaults: `faArrowLeft`, `faArrowRight`, `faForward`, `faUserSecret`, `faRightToBracket`), plus display flags `alwaysShowIcon`, `alwaysHideLabel`, and `showLabelOnMobile`. Each flag accepts `boolean` (applies to all actions) or a per-action map (e.g. `showLabelOnMobile={{ startAsGuest: true }}` keeps next/back icon-only on mobile while showing the guest CTA label). Default responsive: icon-only below `28rem`, label-only above; icon-only buttons have auto width.
+- Each entry in `Onboarding.steps` can also carry `icons`, `alwaysShowIcon`, `alwaysHideLabel`, and `showLabelOnMobile` to override the onboarding-level defaults on a per-step basis. Per-step values are merged on top of onboarding-level values per-action (step wins for the keys it defines; missing keys inherit).
+
+### Changed
+
+- `Empty.action` now accepts `ActionType<TRow> | ActionType<TRow>[]`. Passing an array renders one `Action` per entry (keyed by `id`) in declaration order. Single-action usage is unchanged (backward compatible).
+
+### Removed
+
+- `IndexedDBClient` and its public re-export. The offline-storage client, its test suite, and the related store-registry / open-lock helpers were dropped from the package. Consumers relying on offline persistence must provide their own browser-storage client (extending `BaseClient`-style contracts as needed).
+- `IndexedDBClient` sections from `docs/CONSUMER_GUIDE.md`, `docs/RECIPES_DATA.md`, and `docs/TROUBLESHOOTING.md`; matching rules from `AGENTS.md` / `CLAUDE.md`.
+- `clearIndexedDB` test setup helper (no longer needed by the test suite).
+
 ## [0.0.78] - 2026-05-22
 
 ### Added

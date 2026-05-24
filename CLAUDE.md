@@ -26,5 +26,4 @@ When a change affects the public API or documented behavior:
 - keep `ImportDialog` docs aligned with `renderCustomPreview` support (component + `useImportDialog` passthrough) and with `extraFields` (component) + `defaultExtra`/`renderExtraFields` (hook). Hook merges extra values into `mutationFn` payload as `{ items, override, ...extra }`.
 - keep `ExportDialog`/`useExportDialog` docs aligned with the two export modes: direct via `useExportAction` + `useExportActionMutate`, or dialog-based via `useExportDialog` + `ExportDialog`. Both return the same `action()` shape; `useExportDialog` does not invalidate queries nor auto-trigger downloads.
 - keep `PrettyGrid` docs aligned with optional infinite-scroll props (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options)
-- keep `IndexedDBClient` docs aligned with `update(value)` as primary contract, temporary `(id, value)` compatibility, and `deletedAt: Date | null` + `softDeleteScope` filtering semantics
 - keep `ToTop` docs aligned with customization props (`threshold`, target coordinates, icon, tooltip, and click behavior)

@@ -1,4 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import {
+  faCircleQuestion,
+  faPaperPlane,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
 import { Step } from "./Step";
 
 const imageSvg = encodeURIComponent(
@@ -45,5 +50,82 @@ export const FinalStep: Story = {
     final: true,
     title: "Ready",
     body: "You can start as guest or sign in.",
+  },
+};
+
+/**
+ * Back button is rendered when `onClickBack` is provided. Defaults to
+ * `faArrowLeft`.
+ */
+export const WithBackButton: Story = {
+  args: {
+    onClickBack: () => {},
+  },
+};
+
+/**
+ * Override per-action icons via the `icons` prop.
+ */
+export const CustomIcons: Story = {
+  args: {
+    onClickBack: () => {},
+    icons: {
+      skip: faCircleQuestion,
+      next: faPaperPlane,
+      back: faStar,
+    },
+  },
+};
+
+/**
+ * Force icon visible on desktop (default desktop is label-only).
+ */
+export const AlwaysShowIconDesktop: Story = {
+  args: {
+    onClickBack: () => {},
+    alwaysShowIcon: true,
+  },
+};
+
+/**
+ * Icon-only at every breakpoint. Button width collapses to auto.
+ */
+export const AlwaysHideLabel: Story = {
+  args: {
+    onClickBack: () => {},
+    alwaysHideLabel: true,
+  },
+};
+
+/**
+ * Show every button label on mobile (default mobile is icon-only).
+ */
+export const ShowLabelOnMobile: Story = {
+  args: {
+    onClickBack: () => {},
+    showLabelOnMobile: true,
+  },
+};
+
+/**
+ * Per-action map: keep next/back as icons on mobile but show the skip label.
+ */
+export const PerActionFlags: Story = {
+  args: {
+    onClickBack: () => {},
+    showLabelOnMobile: { skip: true },
+  },
+};
+
+/**
+ * Final step with icon-only guest CTA and label-only sign-in.
+ */
+export const FinalStepMixedActions: Story = {
+  args: {
+    final: true,
+    title: "Ready",
+    body: "Guest CTA shows icon only; sign-in keeps the label.",
+    alwaysHideLabel: { startAsGuest: true },
+    alwaysShowIcon: { signIn: true },
   },
 };
