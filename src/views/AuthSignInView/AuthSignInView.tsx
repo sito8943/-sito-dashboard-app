@@ -23,10 +23,7 @@ export const AuthSignInView = (props: AuthSignInViewPropsType) => {
     recoveryQuestion,
     recoveryLabel,
     recoveryTo,
-    guestLabel,
-    guestAriaLabel,
     onSubmit,
-    onStartAsGuest,
     onError,
     ...screenProps
   } = props;
@@ -141,27 +138,9 @@ export const AuthSignInView = (props: AuthSignInViewPropsType) => {
           )}
           {submitLabel}
         </Button>
-        {guestLabel && onStartAsGuest && (
-          <Button
-            type="button"
-            variant="outlined"
-            disabled={isSubmitting}
-            onClick={onStartAsGuest}
-            aria-label={guestAriaLabel}
-          >
-            {guestLabel}
-          </Button>
-        )}
       </>
     ),
-    [
-      guestAriaLabel,
-      guestLabel,
-      isSubmitting,
-      onStartAsGuest,
-      submitAriaLabel,
-      submitLabel,
-    ],
+    [isSubmitting, submitAriaLabel, submitLabel],
   );
 
   return (

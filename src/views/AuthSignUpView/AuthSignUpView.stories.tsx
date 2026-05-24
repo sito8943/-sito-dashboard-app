@@ -47,10 +47,7 @@ const meta = {
     signInQuestion: "Already have an account?",
     signInLabel: "Sign in",
     signInTo: "/auth/sign-in",
-    guestLabel: "Continue as guest",
-    guestAriaLabel: "Continue as guest",
     onSubmit: async () => {},
-    onStartAsGuest: () => {},
   },
 } satisfies Meta<typeof AuthSignUpView>;
 

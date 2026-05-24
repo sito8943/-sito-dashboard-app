@@ -1,15 +1,26 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Onboarding } from "./Onboarding";
 
-const { navigateMock, setGuestModeMock, useOptionalAuthContextMock } =
-  vi.hoisted(() => ({
-    navigateMock: vi.fn(),
-    setGuestModeMock: vi.fn(),
-    useOptionalAuthContextMock: vi.fn(),
-  }));
+type TestDragState = {
+  swipe: [number, number];
+};
+
+type TestDragHandler = (state: TestDragState) => void;
+
+const {
+  dragHandlers,
+  navigateMock,
+  setGuestModeMock,
+  useOptionalAuthContextMock,
+} = vi.hoisted(() => ({
+  dragHandlers: [] as TestDragHandler[],
+  navigateMock: vi.fn(),
+  setGuestModeMock: vi.fn(),
+  useOptionalAuthContextMock: vi.fn(),
+}));
 
 type MockButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
@@ -33,6 +44,13 @@ vi.mock("@sito/dashboard", () => ({
     classes.filter(Boolean).join(" "),
 }));
 
+vi.mock("@use-gesture/react", () => ({
+  useDrag: (handler: TestDragHandler) => {
+    dragHandlers.push(handler);
+    return () => ({ "data-swipe-enabled": "true" });
+  },
+}));
+
 vi.mock("providers", () => ({
   useOptionalAuthContext: () => useOptionalAuthContextMock(),
   useConfig: () => ({
@@ -47,6 +65,7 @@ vi.mock("providers", () => ({
 
 describe("Onboarding", () => {
   beforeEach(() => {
+    dragHandlers.length = 0;
     navigateMock.mockReset();
     setGuestModeMock.mockReset();
     useOptionalAuthContextMock.mockReturnValue({
@@ -105,6 +124,46 @@ describe("Onboarding", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText("_accessibility:buttons.signIn"),
+    ).toBeInTheDocument();
+  });
+
+  it("advances and goes back with horizontal swipe gestures", () => {
+    render(
+      <Onboarding
+        steps={[
+          {
+            title: "Welcome",
+            body: "Intro copy",
+          },
+          {
+            title: "Details",
+            body: "Middle copy",
+          },
+          {
+            title: "Finish",
+            body: "Done copy",
+          },
+        ]}
+      />,
+    );
+
+    const handler = dragHandlers.at(-1);
+    expect(handler).toBeDefined();
+
+    act(() => {
+      handler?.({ swipe: [-1, 0] });
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "Details" }),
+    ).toBeInTheDocument();
+
+    act(() => {
+      handler?.({ swipe: [1, 0] });
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "Welcome" }),
     ).toBeInTheDocument();
   });
 
@@ -180,6 +239,42 @@ describe("Onboarding", () => {
     expect(onSignIn).toHaveBeenCalledTimes(1);
     expect(navigateMock).not.toHaveBeenCalled();
     expect(setGuestModeMock).not.toHaveBeenCalled();
+  });
+
+  it("applies alwaysHideIcon globally and per step", () => {
+    render(
+      <Onboarding
+        alwaysHideIcon={{ skip: true }}
+        steps={[
+          {
+            title: "Welcome",
+            body: "Intro copy",
+          },
+          {
+            title: "Finish",
+            body: "Done copy",
+            alwaysHideIcon: true,
+          },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.skip" }),
+    ).toHaveClass("step-button--hide-icon");
+    expect(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.next" }),
+    ).not.toHaveClass("step-button--hide-icon");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "_accessibility:ariaLabels.next" }),
+    );
+
+    for (const action of screen.getAllByRole("button", {
+      name: "_accessibility:ariaLabels.start",
+    })) {
+      expect(action).toHaveClass("step-button--hide-icon");
+    }
   });
 
   it("keys the active step when remountStepOnChange is enabled", () => {

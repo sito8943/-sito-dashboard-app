@@ -98,6 +98,16 @@ export const AlwaysHideLabel: Story = {
 };
 
 /**
+ * Label-only at every breakpoint, including mobile.
+ */
+export const AlwaysHideIcon: Story = {
+  args: {
+    onClickBack: () => {},
+    alwaysHideIcon: true,
+  },
+};
+
+/**
  * Show every button label on mobile (default mobile is icon-only).
  */
 export const ShowLabelOnMobile: Story = {
@@ -126,6 +136,6 @@ export const FinalStepMixedActions: Story = {
     title: "Ready",
     body: "Guest CTA shows icon only; sign-in keeps the label.",
     alwaysHideLabel: { startAsGuest: true },
-    alwaysShowIcon: { signIn: true },
+    alwaysHideIcon: { signIn: true },
   },
 };

@@ -24,10 +24,7 @@ export const AuthSignUpView = (props: AuthSignUpViewPropsType) => {
     signInQuestion,
     signInLabel,
     signInTo,
-    guestLabel,
-    guestAriaLabel,
     onSubmit,
-    onStartAsGuest,
     onPasswordMismatch,
     onError,
     ...screenProps
@@ -163,27 +160,9 @@ export const AuthSignUpView = (props: AuthSignUpViewPropsType) => {
           )}
           {submitLabel}
         </Button>
-        {guestLabel && onStartAsGuest && (
-          <Button
-            type="button"
-            variant="outlined"
-            disabled={isSubmitting}
-            onClick={onStartAsGuest}
-            aria-label={guestAriaLabel}
-          >
-            {guestLabel}
-          </Button>
-        )}
       </>
     ),
-    [
-      guestAriaLabel,
-      guestLabel,
-      isSubmitting,
-      onStartAsGuest,
-      submitAriaLabel,
-      submitLabel,
-    ],
+    [isSubmitting, submitAriaLabel, submitLabel],
   );
 
   return (
