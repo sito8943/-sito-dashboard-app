@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.82] - 2026-05-26
+
+### Added
+
+- `Dialog` now accepts `closeOnBackdropClick?: boolean` (default `false`). When enabled, clicking the backdrop outside the modal content calls `handleClose`.
+
+### Changed
+
+- Base `Dialog` behavior no longer closes on outside click unless `closeOnBackdropClick` is explicitly enabled.
+
+### Documentation
+
+- Updated the consumer guide, form/dialog recipes, and theme/CSS notes to document `closeOnBackdropClick` and its default behavior.
+
 ## [0.0.80] - 2026-05-25
 
 ### Added

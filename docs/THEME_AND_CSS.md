@@ -80,7 +80,7 @@ Use `motion="auto"` unless you have a clear product reason to force or disable m
 | ---------------- | --------------------------------------------------------------------------------------- |
 | `TabsLayout`     | `className`, `tabsContainerClassName`, `tabButtonProps.className`                       |
 | `PrettyGrid`     | `className`, `itemClassName`, `loadMoreComponent`                                       |
-| `Dialog`         | `containerClassName`, `className`, `animationClass`                                     |
+| `Dialog`         | `containerClassName`, `className`, `animationClass`, `closeOnBackdropClick`             |
 | `DialogActions`  | `containerClassName`, `primaryClassName`                                                |
 | `Error`          | `className`, `messageProps.className`, `retryButtonProps.className`                     |
 | `Empty`          | `messageProps.className`                                                                |
