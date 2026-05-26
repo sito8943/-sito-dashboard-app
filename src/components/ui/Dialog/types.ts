@@ -16,6 +16,7 @@ export type DialogPropsType = {
   title: string;
   children?: ReactNode;
   handleClose: () => void;
+  closeOnBackdropClick?: boolean;
   onSubmit?: DialogSubmitHandler;
   mobileFullScreen?: boolean;
   containerClassName?: string;

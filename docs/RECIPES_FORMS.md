@@ -285,7 +285,12 @@ export function RawDialogExample() {
         Open
       </button>
 
-      <Dialog open={open} title="Quick dialog" handleClose={handleClose}>
+      <Dialog
+        open={open}
+        title="Quick dialog"
+        handleClose={handleClose}
+        closeOnBackdropClick
+      >
         <p>Body content</p>
         <DialogActions
           primaryText="Confirm"
@@ -307,6 +312,8 @@ export function RawDialogExample() {
   );
 }
 ```
+
+`Dialog` does not close on backdrop click unless `closeOnBackdropClick={true}` is provided. Keep the default when outside clicks would risk discarding work.
 
 ## 4. Import flows with `ImportDialog` / `useImportDialog`
 

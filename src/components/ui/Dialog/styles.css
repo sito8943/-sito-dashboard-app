@@ -17,15 +17,11 @@
 }
 
 .dialog {
-  @apply flex flex-col relative xs:min-w-90 max-xs:min-w-5/6 bg-base p-5 border;
-}
-
-.dialog-framed {
-  @apply rounded-2xl border-border;
+  @apply flex flex-col relative xs:min-w-90 max-xs:min-w-5/6 bg-base p-5 rounded-2xl border-border border;
 }
 
 .dialog-mobile-full-screen {
-  @apply max-[28rem]:w-screen max-[28rem]:h-screen;
+  @apply max-sm:border-none max-sm:border-0 max-sm:rounded-none max-sm:w-screen max-sm:h-screen;
 }
 
 .dialog.opened {

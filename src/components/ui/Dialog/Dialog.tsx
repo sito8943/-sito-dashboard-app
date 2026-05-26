@@ -30,6 +30,7 @@ export const Dialog = (props: DialogPropsType) => {
     title,
     children,
     handleClose,
+    closeOnBackdropClick = false,
     onSubmit,
     open = false,
     mobileFullScreen = false,
@@ -54,9 +55,9 @@ export const Dialog = (props: DialogPropsType) => {
 
   const bigHandleClose = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
-      if (e.target === e.currentTarget) handleClose();
+      if (closeOnBackdropClick && e.target === e.currentTarget) handleClose();
     },
-    [handleClose],
+    [closeOnBackdropClick, handleClose],
   );
 
   const handleFormSubmit = useCallback(
