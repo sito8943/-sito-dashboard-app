@@ -86,6 +86,7 @@ const meta = {
   args: {
     title: "Example Dialog",
     open: true,
+    closeOnBackdropClick: false,
     mobileFullScreen: false,
   },
 } satisfies Meta<typeof Dialog>;
@@ -109,6 +110,16 @@ export const MobileFullScreen: Story = {
   },
   parameters: {
     viewport: { defaultViewport: "mobile1" },
+  },
+  render: Basic.render,
+};
+
+export const CloseOnBackdropClick: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    closeOnBackdropClick: true,
+    title: "Dialog with closeOnBackdropClick",
   },
   render: Basic.render,
 };

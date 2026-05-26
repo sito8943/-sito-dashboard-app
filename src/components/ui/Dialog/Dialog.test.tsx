@@ -54,7 +54,7 @@ describe("Dialog", () => {
     expect(handleClose).toHaveBeenCalledOnce();
   });
 
-  it("closes only when backdrop is clicked", () => {
+  it("does not close when backdrop is clicked by default", () => {
     const handleClose = vi.fn();
 
     render(
@@ -65,6 +65,27 @@ describe("Dialog", () => {
 
     fireEvent.click(screen.getByText("Dialog body"));
     expect(handleClose).not.toHaveBeenCalled();
+
+    const backdrop = document.body.querySelector(".dialog-backdrop");
+    expect(backdrop).toBeInTheDocument();
+    if (backdrop) fireEvent.click(backdrop);
+
+    expect(handleClose).not.toHaveBeenCalled();
+  });
+
+  it("closes when backdrop is clicked and closeOnBackdropClick is enabled", () => {
+    const handleClose = vi.fn();
+
+    render(
+      <Dialog
+        open
+        title="Confirm"
+        handleClose={handleClose}
+        closeOnBackdropClick
+      >
+        <p>Dialog body</p>
+      </Dialog>,
+    );
 
     const backdrop = document.body.querySelector(".dialog-backdrop");
     expect(backdrop).toBeInTheDocument();
