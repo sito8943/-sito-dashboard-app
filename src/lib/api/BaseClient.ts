@@ -32,13 +32,15 @@ export class BaseClient<
   TGetByIdDto = TDto,
 > {
   table: Tables;
+  /** @deprecated Use `api` request-level `authMode` overrides instead. */
   secured: boolean;
   api: APIClient;
   /**
    * @param table - Resource table/endpoint name.
    * @param baseUrl - API base URL.
    * @param userKey - Storage key for user session data.
-   * @param secured - Whether this client requires auth headers.
+   * @param secured - Deprecated. Sets the default auth mode for this client.
+   * Prefer request-level `authMode` overrides on `api`.
    * @param authConfig - Custom auth storage key configuration.
    */
   constructor(
@@ -49,6 +51,7 @@ export class BaseClient<
     authConfig: APIClientAuthConfig = {},
   ) {
     this.table = table;
+    /** @deprecated Use `api` request-level `authMode` overrides instead. */
     this.secured = secured;
     this.api = new APIClient(baseUrl, userKey, secured, undefined, authConfig);
   }

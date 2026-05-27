@@ -77,7 +77,7 @@ export class RestSessionAuthClient implements IAuthClient {
       AUTH_CLIENT_ENDPOINTS.session,
       Methods.GET,
       undefined,
-      this.api.defaultTokenAcquirer(),
+      { authMode: "access-token" },
     );
   }
 }

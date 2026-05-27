@@ -131,6 +131,63 @@ describe("APIClient", () => {
     );
   });
 
+  it("allows opting out of access-token auth per request", async () => {
+    localStorage.setItem("user", "token-abc");
+    makeRequestMock.mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+    const result = await client.doQuery<{ ok: boolean }>(
+      "/users",
+      Methods.GET,
+      undefined,
+      {
+        authMode: "none",
+        requestConfig: { "X-App": "dashboard" },
+      },
+    );
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenCalledWith(
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { "X-App": "dashboard" },
+      undefined,
+    );
+  });
+
+  it("allows opting into access-token auth on a non-secured client", async () => {
+    localStorage.setItem("user", "token-abc");
+    makeRequestMock.mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test", "user", false);
+    const result = await client.doQuery<{ ok: boolean }>(
+      "/users",
+      Methods.GET,
+      undefined,
+      {
+        authMode: "access-token",
+      },
+    );
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenCalledWith(
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer token-abc" },
+      undefined,
+    );
+  });
+
   it("throws on doQuery when request returns error", async () => {
     makeRequestMock.mockResolvedValue({
       data: null,
@@ -195,6 +252,57 @@ describe("APIClient", () => {
     expect(localStorage.getItem("refreshToken")).toBe("refresh-token-2");
     expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
       "2035-01-01T00:00:00.000Z",
+    );
+  });
+
+  it("refreshes access token when a non-secured client opts into access-token mode", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "new-access-token",
+          refreshToken: "refresh-token-2",
+          accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test", "user", false);
+    const result = await client.doQuery<{ ok: boolean }>(
+      "/session",
+      Methods.GET,
+      undefined,
+      { authMode: "access-token" },
+    );
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      1,
+      "https://api.test/auth/refresh",
+      Methods.POST,
+      { refreshToken: "refresh-token-1" },
+      undefined,
+      expect.any(Function),
+    );
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      2,
+      "https://api.test/session",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer new-access-token" },
+      undefined,
     );
   });
 

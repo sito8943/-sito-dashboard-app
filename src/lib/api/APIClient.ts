@@ -19,7 +19,11 @@ import {
   SessionDto,
   toLocal,
 } from "lib";
-import { APIClientAuthConfig } from "./types";
+import {
+  APIClientAuthConfig,
+  APIClientAuthMode,
+  APIClientRequestOptions,
+} from "./types";
 
 // utils
 import { parseQueries } from "./utils";
@@ -36,6 +40,8 @@ export class APIClient {
   accessTokenExpiresAtKey: string;
   refreshEndpoint: string;
   refreshExpirySkewMs: number;
+  defaultAuthMode: APIClientAuthMode;
+  /** @deprecated Use per-request `authMode` instead. */
   secured: boolean;
   tokenAcquirer!: (useCookie?: boolean) => RequestConfig | undefined;
   static refreshInFlight: Map<string, Promise<void>> = new Map();
@@ -43,7 +49,8 @@ export class APIClient {
   /**
    * @param baseUrl the base url of the server
    * @param userKey the local storage user key
-   * @param secured if the api client requires token
+   * @param secured - Deprecated. Sets the default auth mode for requests when
+   * no per-request `authMode` override is provided.
    * @param tokenAcquirer custom token acquirer
    */
   constructor(
@@ -54,6 +61,8 @@ export class APIClient {
     authConfig: APIClientAuthConfig = {},
   ) {
     this.baseUrl = baseUrl;
+    this.defaultAuthMode = secured ? "access-token" : "none";
+    /** @deprecated Use per-request `authMode` instead. */
     this.secured = secured;
     this.userKey = userKey;
     this.rememberKey = authConfig.rememberKey ?? "remember";
@@ -236,10 +245,37 @@ export class APIClient {
     return headers;
   }
 
+  private isAPIClientRequestOptions(
+    config?: RequestConfig | APIClientRequestOptions,
+  ): config is APIClientRequestOptions {
+    return (
+      typeof config === "object" &&
+      config !== null &&
+      ("authMode" in config || "requestConfig" in config)
+    );
+  }
+
+  private resolveAuthMode(
+    config?: RequestConfig | APIClientRequestOptions,
+  ): APIClientAuthMode {
+    if (!this.isAPIClientRequestOptions(config) || !config.authMode)
+      return this.defaultAuthMode;
+    return config.authMode;
+  }
+
+  private resolveRequestConfig(
+    config?: RequestConfig | APIClientRequestOptions,
+  ): RequestConfig | undefined {
+    if (!this.isAPIClientRequestOptions(config)) return config;
+    return config.requestConfig;
+  }
+
   private mergeRequestConfig(
+    authMode: APIClientAuthMode,
     config?: RequestConfig,
   ): RequestConfig | undefined {
-    const securedConfig = this.secured ? this.tokenAcquirer() : undefined;
+    const securedConfig =
+      authMode === "access-token" ? this.tokenAcquirer() : undefined;
     const securedOptions = this.toRequestOptions(securedConfig);
     const customOptions = this.toRequestOptions(config);
 
@@ -264,27 +300,32 @@ export class APIClient {
     endpoint: string,
     method: Methods,
     body?: TBody,
+    authMode: APIClientAuthMode = this.defaultAuthMode,
     requestConfig?: RequestConfig,
     responseValidator?: ResponseValidator<TResponse>,
   ) {
-    if (this.secured && this.shouldRefreshBeforeRequest())
+    if (authMode === "access-token" && this.shouldRefreshBeforeRequest())
       await this.refreshAccessTokenWithMutex();
 
     let response = await makeRequest<TBody, TResponse>(
       this.buildUrl(endpoint),
       method,
       body,
-      this.mergeRequestConfig(requestConfig),
+      this.mergeRequestConfig(authMode, requestConfig),
       responseValidator,
     );
 
-    if (this.secured && response.status === 401 && this.canRefresh()) {
+    if (
+      authMode === "access-token" &&
+      response.status === 401 &&
+      this.canRefresh()
+    ) {
       await this.refreshAccessTokenWithMutex();
       response = await makeRequest<TBody, TResponse>(
         this.buildUrl(endpoint),
         method,
         body,
-        this.mergeRequestConfig(requestConfig),
+        this.mergeRequestConfig(authMode, requestConfig),
         responseValidator,
       );
     }
@@ -296,8 +337,10 @@ export class APIClient {
     endpoint: string,
     method = Methods.GET,
     body?: TBody,
-    requestConfig?: RequestConfig,
+    requestConfig?: RequestConfig | APIClientRequestOptions,
   ) {
+    const authMode = this.resolveAuthMode(requestConfig);
+    const resolvedRequestConfig = this.resolveRequestConfig(requestConfig);
     const {
       data: result,
       status,
@@ -306,7 +349,8 @@ export class APIClient {
       endpoint,
       method,
       body,
-      requestConfig,
+      authMode,
+      resolvedRequestConfig,
     );
 
     if (error || status < 200 || status >= 300)
@@ -330,8 +374,11 @@ export class APIClient {
     endpoint: string,
     query?: QueryParam<TDto>,
     filters?: TFilter,
+    options?: APIClientRequestOptions,
   ) {
     const builtUrl = parseQueries<TDto, TFilter>(endpoint, query, filters);
+    const authMode = this.resolveAuthMode(options);
+    const requestConfig = this.resolveRequestConfig(options);
 
     const {
       data: result,
@@ -340,6 +387,9 @@ export class APIClient {
     } = await this.makeRequestWithRefresh<QueryResult<TDto>>(
       builtUrl,
       Methods.GET,
+      undefined,
+      authMode,
+      requestConfig,
     );
     if (error || status < 200 || status >= 300 || !result)
       throw (
@@ -361,7 +411,10 @@ export class APIClient {
   async patch<TDto, TUpdateDto>(
     endpoint: string,
     data: TUpdateDto,
+    options?: APIClientRequestOptions,
   ): Promise<TDto> {
+    const authMode = this.resolveAuthMode(options);
+    const requestConfig = this.resolveRequestConfig(options);
     const {
       error,
       data: result,
@@ -370,6 +423,8 @@ export class APIClient {
       endpoint,
       Methods.PATCH,
       data,
+      authMode,
+      requestConfig,
     );
 
     if (error || result === null || result === undefined)
@@ -388,7 +443,13 @@ export class APIClient {
    * @param  data - value to insert
    * @returns delete result
    */
-  async delete(endpoint: string, data: number[]) {
+  async delete(
+    endpoint: string,
+    data: number[],
+    options?: APIClientRequestOptions,
+  ) {
+    const authMode = this.resolveAuthMode(options);
+    const requestConfig = this.resolveRequestConfig(options);
     const {
       error,
       data: result,
@@ -397,6 +458,8 @@ export class APIClient {
       endpoint,
       Methods.DELETE,
       data,
+      authMode,
+      requestConfig,
     );
 
     if (error || result === null || result === undefined)
@@ -416,7 +479,13 @@ export class APIClient {
    * @param  data - value to insert
    * @returns inserted item
    */
-  async post<TDto, TAddDto>(endpoint: string, data: TAddDto): Promise<TDto> {
+  async post<TDto, TAddDto>(
+    endpoint: string,
+    data: TAddDto,
+    options?: APIClientRequestOptions,
+  ): Promise<TDto> {
+    const authMode = this.resolveAuthMode(options);
+    const requestConfig = this.resolveRequestConfig(options);
     const {
       error,
       data: result,
@@ -425,6 +494,8 @@ export class APIClient {
       endpoint,
       Methods.POST,
       data,
+      authMode,
+      requestConfig,
     );
 
     if (error || result === null || result === undefined)

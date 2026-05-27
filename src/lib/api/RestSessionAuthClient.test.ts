@@ -73,13 +73,8 @@ describe("RestSessionAuthClient", () => {
     );
   });
 
-  it("getSession uses default token acquirer header", async () => {
+  it("getSession opts into access-token auth mode", async () => {
     const client = new RestSessionAuthClient("https://api.test/");
-    const defaultTokenAcquirerSpy = vi
-      .spyOn(client.api, "defaultTokenAcquirer")
-      .mockReturnValue({
-        Authorization: "Bearer jwt-token",
-      });
     const doQuerySpy = vi
       .spyOn(client.api, "doQuery")
       .mockResolvedValue(session);
@@ -87,14 +82,11 @@ describe("RestSessionAuthClient", () => {
     const result = await client.getSession();
 
     expect(result).toEqual(session);
-    expect(defaultTokenAcquirerSpy).toHaveBeenCalledOnce();
     expect(doQuerySpy).toHaveBeenCalledWith(
       "auth/session",
       Methods.GET,
       undefined,
-      {
-        Authorization: "Bearer jwt-token",
-      },
+      { authMode: "access-token" },
     );
   });
 });
