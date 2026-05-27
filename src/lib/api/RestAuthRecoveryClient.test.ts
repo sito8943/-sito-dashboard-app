@@ -1,17 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { APIClient } from "./APIClient";
-import { RestAuthApiClient } from "./RestAuthApiClient";
+import { RestAuthRecoveryClient } from "./RestAuthApiClient";
 import { Methods } from "./utils/services";
 
 const makeClient = () => {
   const api = new APIClient("https://api.test/", "user", false);
-  const client = new RestAuthApiClient(api);
+  const client = new RestAuthRecoveryClient(api);
   const spy = vi.spyOn(api, "doQuery").mockResolvedValue(undefined);
   return { client, api, spy };
 };
 
-describe("RestAuthApiClient", () => {
+describe("RestAuthRecoveryClient", () => {
   it("forgotPassword posts to default endpoint", async () => {
     const { client, spy } = makeClient();
     spy.mockResolvedValueOnce({ accepted: true, message: "ok" });
@@ -82,7 +82,7 @@ describe("RestAuthApiClient", () => {
 
   it("confirmEmail falls back on 404 when configured", async () => {
     const api = new APIClient("https://api.test/", "user", false);
-    const client = new RestAuthApiClient(api, {
+    const client = new RestAuthRecoveryClient(api, {
       endpoints: { confirmEmailFallback: "auth/email/confirm/verify" },
     });
     const spy = vi
@@ -106,7 +106,7 @@ describe("RestAuthApiClient", () => {
 
   it("confirmEmail does not fall back on non-404", async () => {
     const api = new APIClient("https://api.test/", "user", false);
-    const client = new RestAuthApiClient(api, {
+    const client = new RestAuthRecoveryClient(api, {
       endpoints: { confirmEmailFallback: "auth/email/confirm/verify" },
     });
     const error = { status: 500, message: "Server" };
@@ -119,7 +119,7 @@ describe("RestAuthApiClient", () => {
 
   it("respects custom endpoint overrides", async () => {
     const api = new APIClient("https://api.test/", "user", false);
-    const client = new RestAuthApiClient(api, {
+    const client = new RestAuthRecoveryClient(api, {
       endpoints: {
         forgotPassword: "v2/auth/forgot",
         resetPassword: "v2/auth/reset",
@@ -147,7 +147,7 @@ describe("RestAuthApiClient", () => {
   });
 
   it("legacy constructor (baseUrl) builds its own APIClient", async () => {
-    const client = new RestAuthApiClient("https://api.test/");
+    const client = new RestAuthRecoveryClient("https://api.test/");
     // @ts-expect-error access private for assertion
     expect(client.api).toBeInstanceOf(APIClient);
   });

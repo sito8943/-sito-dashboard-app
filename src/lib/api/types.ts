@@ -1,5 +1,6 @@
 // @sito/dashboard
 import { SortOrder } from "@sito/dashboard";
+import type { RequestConfig } from "./utils/services";
 
 export type APIError = {
   kind: string;
@@ -26,4 +27,19 @@ export type QueryParam<TDto> = {
 export type RangeValue<T> = {
   start: T;
   end: T;
+};
+
+export type APIClientAuthConfig = {
+  rememberKey?: string;
+  refreshTokenKey?: string;
+  accessTokenExpiresAtKey?: string;
+  refreshEndpoint?: string;
+  refreshExpirySkewMs?: number;
+};
+
+export type APIClientAuthMode = "none" | "access-token";
+
+export type APIClientRequestOptions = {
+  authMode?: APIClientAuthMode;
+  requestConfig?: RequestConfig;
 };

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.83] - 2026-05-27
+
+### Added
+
+- `APIClient` now supports request-level auth control through `authMode?: "none" | "access-token"` and `requestConfig?: RequestConfig`, exposed via the new `APIClientRequestOptions` / `APIClientAuthMode` types.
+
+### Changed
+
+- Fixed REST session rehydration so `RestSessionAuthClient.getSession()` opts into the access-token refresh/retry flow instead of validating the current access token directly. When the access token is expired but the refresh token is still valid, session rehydration now refreshes and retries before failing.
+- `APIClient` now resolves auth behavior per request. The constructor `secured` flag is still supported as a backward-compatible default, but is now deprecated in favor of request-level `authMode`.
+- `BaseClient.secured` and the `secured` constructor parameter are now deprecated for the same reason: auth behavior should move toward request-level overrides on `api`.
+
+### Documentation
+
+- Updated the auth/client naming guidance and consumer docs to prefer `RestSessionAuthClient` and `RestAuthRecoveryClient`, while keeping `AuthClient` and `RestAuthApiClient` as backward-compatible aliases.
+
 ## [0.0.82] - 2026-05-26
 
 ### Added

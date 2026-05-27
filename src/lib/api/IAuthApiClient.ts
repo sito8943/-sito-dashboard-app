@@ -8,9 +8,9 @@ import type {
 
 /**
  * Auth side-channel endpoints (password reset, email confirmation) not covered
- * by the session-focused {@link AuthClient}. Implemented per backend:
- * {@link RestAuthApiClient} for REST APIs and {@link SupabaseAuthApiClient}
- * for Supabase Auth.
+ * by the session-focused {@link RestSessionAuthClient}. Implemented per
+ * backend: {@link RestAuthRecoveryClient} for REST APIs and
+ * {@link SupabaseAuthApiClient} for Supabase Auth.
  */
 export interface IAuthApiClient {
   forgotPassword(data: ForgotPasswordDto): Promise<AcceptedResponseDto | void>;

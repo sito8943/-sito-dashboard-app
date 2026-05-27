@@ -566,16 +566,20 @@ const { account, logUser, logoutUser } = useAuth();
 
 When your login UI has a "remember me" option, pass `rememberMe` in the auth payload.
 
-#### 8.1.0 `AuthClient` vs `SupabaseAuthClient`: session endpoints
+#### 8.1.0 `RestSessionAuthClient` vs `SupabaseAuthClient`: session endpoints
 
 The session endpoints (`login`, `refresh`, `register`, `getSession`, `logout`)
 have two adapters with the same surface:
 
-- `AuthClient` — REST. Hits `auth/sign-in`, `auth/sign-up`, `auth/refresh`,
-  `auth/sign-out`, `auth/session`. Backed by an internal `APIClient`.
+- `RestSessionAuthClient` — REST. Hits `auth/sign-in`, `auth/sign-up`,
+  `auth/refresh`, `auth/sign-out`, `auth/session`. Backed by an internal
+  `APIClient`.
 - `SupabaseAuthClient` — Supabase Auth. Maps `supabase.auth.signInWithPassword`
   / `auth.refreshSession` / `auth.signUp` / `auth.getSession` / `auth.signOut`
   onto the same `SessionDto` shape via `mapSupabaseSessionToSessionDto`.
+
+`AuthClient` remains exported as a backward-compatible alias of
+`RestSessionAuthClient`.
 
 `SupabaseAuthClient` adds `signUp(data)` returning a discriminated union so
 callers can branch on email confirmation:
@@ -612,14 +616,15 @@ confirmation. Call `signUp()` when the UI needs to handle that branch.
 
 #### 8.1.1 `IAuthApiClient`: password reset and email confirmation
 
-`AuthClient` covers the session endpoints (`login`, `register`, `refresh`,
-`logout`, `getSession`). The side-channel endpoints (forgot password, reset
-password, resend confirmation email, confirm email) live behind the
-`IAuthApiClient` interface so the same view code can drive either backend.
+`RestSessionAuthClient` covers the session endpoints (`login`, `register`,
+`refresh`, `logout`, `getSession`). The side-channel endpoints (forgot
+password, reset password, resend confirmation email, confirm email) live
+behind the `IAuthApiClient` interface so the same view code can drive either
+backend.
 
 Two adapters ship with the library:
 
-- `RestAuthApiClient` — hits the conventional `auth/password/*` and
+- `RestAuthRecoveryClient` — hits the conventional `auth/password/*` and
   `auth/email/confirm*` endpoints through an `APIClient` you provide. Endpoint
   paths and an optional `confirmEmailFallback` (only retried on 404) are
   configurable.
@@ -627,16 +632,19 @@ Two adapters ship with the library:
   `supabase.auth.resetPasswordForEmail`, `auth.resend`, `auth.verifyOtp`,
   and `auth.setSession` / `auth.updateUser` for the access-token reset path.
 
+`RestAuthApiClient` remains exported as a backward-compatible alias of
+`RestAuthRecoveryClient`.
+
 ```ts
 // REST backend
-import { APIClient, RestAuthApiClient } from "@sito/dashboard-app";
+import { APIClient, RestAuthRecoveryClient } from "@sito/dashboard-app";
 
 const api = new APIClient(config.apiUrl, config.auth.user, false, undefined, {
   rememberKey: config.auth.remember,
   refreshTokenKey: config.auth.refreshTokenKey,
   accessTokenExpiresAtKey: config.auth.accessTokenExpiresAtKey,
 });
-const authApi = new RestAuthApiClient(api, {
+const authApi = new RestAuthRecoveryClient(api, {
   endpoints: { confirmEmailFallback: "auth/email/confirm/verify" },
 });
 

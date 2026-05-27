@@ -1,24 +1,20 @@
-import { APIClient } from "./APIClient";
+import { APIClient } from "../APIClient";
 
-// entities
 import {
   AuthDto,
   RefreshDto,
   RegisterDto,
   SessionDto,
   SignOutDto,
-} from "../entities";
-import type { IAuthClient } from "./IAuthClient";
-import { Methods } from "./utils/services";
-import type { APIClientAuthConfig } from "./APIClient";
+} from "../../entities";
+import type { APIClientAuthConfig } from "../types";
+import type { IAuthClient } from "../IAuthClient";
+import { Methods } from "../utils/services";
+import { AUTH_CLIENT_ENDPOINTS } from "./constants";
+import type { RestSessionAuthClientLogoutOptions } from "./types";
 
-type AuthClientLogoutOptions = {
-  accessToken?: string;
-  refreshToken?: string;
-};
-
-/** Auth-focused API client for login, refresh, logout and session endpoints. */
-export class AuthClient implements IAuthClient {
+/** REST session auth client for login, refresh, logout and session endpoints. */
+export class RestSessionAuthClient implements IAuthClient {
   api: APIClient;
 
   /**
@@ -35,26 +31,22 @@ export class AuthClient implements IAuthClient {
   }
 
   async login(data: AuthDto) {
-    const endpoint = "auth/sign-in";
-    const body = data;
     return await this.api.doQuery<SessionDto, AuthDto>(
-      endpoint,
-      Methods.POST,
-      body,
-    );
-  }
-
-  async refresh(data: RefreshDto) {
-    const endpoint = "auth/refresh";
-    return await this.api.doQuery<SessionDto, RefreshDto>(
-      endpoint,
+      AUTH_CLIENT_ENDPOINTS.login,
       Methods.POST,
       data,
     );
   }
 
-  async logout(options?: AuthClientLogoutOptions) {
-    const endpoint = "auth/sign-out";
+  async refresh(data: RefreshDto) {
+    return await this.api.doQuery<SessionDto, RefreshDto>(
+      AUTH_CLIENT_ENDPOINTS.refresh,
+      Methods.POST,
+      data,
+    );
+  }
+
+  async logout(options?: RestSessionAuthClientLogoutOptions) {
     const header = options?.accessToken
       ? {
           Authorization: `Bearer ${options.accessToken}`,
@@ -65,7 +57,7 @@ export class AuthClient implements IAuthClient {
       : undefined;
 
     return await this.api.doQuery<void, SignOutDto | undefined>(
-      endpoint,
+      AUTH_CLIENT_ENDPOINTS.logout,
       Methods.POST,
       body,
       header,
@@ -73,22 +65,21 @@ export class AuthClient implements IAuthClient {
   }
 
   async register(userData: RegisterDto) {
-    const endpoint = "auth/sign-up";
     return await this.api.doQuery<SessionDto, RegisterDto>(
-      endpoint,
+      AUTH_CLIENT_ENDPOINTS.register,
       Methods.POST,
       userData,
     );
   }
 
   async getSession() {
-    const endpoint = "auth/session";
-
     return await this.api.doQuery<SessionDto>(
-      endpoint,
+      AUTH_CLIENT_ENDPOINTS.session,
       Methods.GET,
       undefined,
-      this.api.defaultTokenAcquirer(),
+      { authMode: "access-token" },
     );
   }
 }
+
+export { RestSessionAuthClient as AuthClient };

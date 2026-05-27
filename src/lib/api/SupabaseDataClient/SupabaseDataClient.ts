@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { QueryParam, QueryResult } from "./types";
+import type { QueryParam, QueryResult } from "../types";
 
 import {
   BaseCommonEntityDto,
@@ -9,88 +9,22 @@ import {
   DeleteDto,
   ImportDto,
   ImportPreviewDto,
-  SoftDeleteScope,
 } from "lib";
 
-type SupabaseErrorLike = {
-  message: string;
-};
-
-type SupabaseArrayResponse<TRow> = {
-  data: TRow[] | null;
-  error: SupabaseErrorLike | null;
-  count?: number | null;
-  status?: number;
-  statusText?: string;
-};
-
-type SupabaseSingleResponse<TRow> = {
-  data: TRow | null;
-  error: SupabaseErrorLike | null;
-  status?: number;
-  statusText?: string;
-};
-
-type RangeFilterValue = {
-  start?: unknown;
-  end?: unknown;
-};
-
-type FilterBuilder<TBuilder> = {
-  eq: (column: string, value: unknown) => TBuilder;
-  in: (column: string, values: unknown[]) => TBuilder;
-  gte: (column: string, value: unknown) => TBuilder;
-  lte: (column: string, value: unknown) => TBuilder;
-  is: (column: string, value: null) => TBuilder;
-  not: (column: string, operator: string, value: unknown) => TBuilder;
-};
-
-export type SupabaseDataClientOptions<
-  TDto,
-  TCommonDto,
-  TAddDto,
-  TUpdateDto,
-  TImportPreviewDto,
-  TRow extends Record<string, unknown>,
-  TCommonRow extends Record<string, unknown> = TRow,
-> = {
-  idColumn?: keyof TRow & string;
-  deletedAtColumn?: keyof TRow & string;
-  defaultSortColumn?: keyof TRow & string;
-  mapRowToDto?: (row: TRow) => TDto;
-  mapRowToCommonDto?: (row: TCommonRow) => TCommonDto;
-  mapAddDtoToRow?: (value: TAddDto) => Partial<TRow>;
-  mapUpdateDtoToRow?: (value: TUpdateDto) => Partial<TRow>;
-  mapImportPreviewToRow?: (value: TImportPreviewDto) => Partial<TRow>;
-  nowFactory?: () => Date;
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === "object" && value !== null;
-};
-
-const hasRangeShape = (value: unknown): value is RangeFilterValue => {
-  if (!isRecord(value)) return false;
-  return "start" in value || "end" in value;
-};
-
-const isDefined = <T>(value: T | undefined): value is T => value !== undefined;
-
-const normalizeScalarValue = (value: unknown): unknown => {
-  if (value instanceof Date) return value.toISOString();
-  return value;
-};
-
-const resolveSoftDeleteScope = (
-  value: unknown,
-): SoftDeleteScope | undefined => {
-  if (typeof value !== "string") return undefined;
-  const normalized = value.trim().toUpperCase();
-  if (normalized === "ACTIVE") return "ACTIVE";
-  if (normalized === "DELETED") return "DELETED";
-  if (normalized === "ALL") return "ALL";
-  return undefined;
-};
+import type {
+  FilterBuilder,
+  SupabaseArrayResponse,
+  SupabaseDataClientOptions,
+  SupabaseErrorLike,
+  SupabaseSingleResponse,
+} from "./types";
+import {
+  hasRangeShape,
+  isDefined,
+  isRecord,
+  normalizeScalarValue,
+  resolveSoftDeleteScope,
+} from "./utils";
 
 /** Generic Supabase data client aligned with BaseClient behavior. */
 export class SupabaseDataClient<
