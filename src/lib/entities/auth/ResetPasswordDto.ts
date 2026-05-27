@@ -8,6 +8,7 @@ export type ResetPasswordByTokenHashDto = {
   tokenHash: string;
   type: string;
   newPassword: string;
+  refreshToken?: string;
 };
 
 export type ResetPasswordDto =
