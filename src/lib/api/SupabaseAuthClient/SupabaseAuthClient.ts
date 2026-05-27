@@ -24,9 +24,9 @@ import type {
 import { resolveSupabaseSignUpMetadata, trimOrUndefined } from "./utils";
 
 /**
- * Supabase Auth adapter mirroring the {@link AuthClient} REST contract
- * (`login` / `refresh` / `register` / `getSession` / `logout`) plus a richer
- * `signUp` that exposes the confirmation-required path.
+ * Supabase Auth adapter mirroring the {@link RestSessionAuthClient} REST
+ * contract (`login` / `refresh` / `register` / `getSession` / `logout`) plus
+ * a richer `signUp` that exposes the confirmation-required path.
  *
  * Maps Supabase `Session` payloads into {@link SessionDto} via
  * {@link mapSupabaseSessionToSessionDto} (override with `options.sessionMapper`).

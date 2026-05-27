@@ -1,11 +1,12 @@
-import { AuthClient } from "./AuthClient";
+import { RestSessionAuthClient } from "./AuthClient";
 import type { APIClientAuthConfig } from "./types";
 import type { IAuthClient } from "./IAuthClient";
 
 /** Root manager that exposes domain API clients for consumers. */
 export class IManager {
   /**
-   * Session-focused auth client. Defaults to the REST {@link AuthClient};
+   * Session-focused auth client. Defaults to the REST
+   * {@link RestSessionAuthClient};
    * subclasses (e.g. Supabase managers) may swap in any {@link IAuthClient}
    * implementation.
    */
@@ -21,7 +22,7 @@ export class IManager {
     userKey?: string,
     authConfig: APIClientAuthConfig = {},
   ) {
-    this.auth = new AuthClient(baseUrl, userKey, authConfig);
+    this.auth = new RestSessionAuthClient(baseUrl, userKey, authConfig);
   }
 
   /**

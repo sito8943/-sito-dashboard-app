@@ -1,7 +1,7 @@
 import { DEFAULT_REST_AUTH_API_CLIENT_ENDPOINTS } from "./constants";
 import type {
-  ResolvedRestAuthApiClientEndpoints,
-  RestAuthApiClientOptions,
+  ResolvedRestAuthRecoveryClientEndpoints,
+  RestAuthRecoveryClientOptions,
 } from "./types";
 
 export const hasHttpStatus = (error: unknown, status: number): boolean => {
@@ -11,8 +11,8 @@ export const hasHttpStatus = (error: unknown, status: number): boolean => {
 };
 
 export const resolveRestAuthApiClientEndpoints = (
-  options?: RestAuthApiClientOptions,
-): ResolvedRestAuthApiClientEndpoints => ({
+  options?: RestAuthRecoveryClientOptions,
+): ResolvedRestAuthRecoveryClientEndpoints => ({
   ...DEFAULT_REST_AUTH_API_CLIENT_ENDPOINTS,
   ...options?.endpoints,
 });

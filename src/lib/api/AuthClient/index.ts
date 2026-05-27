@@ -1,2 +1,2 @@
-export * from "./AuthClient";
+export * from "./RestSessionAuthClient";
 export * from "./types";

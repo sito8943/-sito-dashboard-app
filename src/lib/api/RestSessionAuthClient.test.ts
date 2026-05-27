@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { AuthClient } from "./AuthClient";
+import { RestSessionAuthClient } from "./AuthClient";
 import { Methods } from "./utils/services";
 import type { SessionDto } from "../entities";
 
@@ -13,9 +13,9 @@ const session: SessionDto = {
   accessTokenExpiresAt: "2030-01-01T00:00:00.000Z",
 };
 
-describe("AuthClient", () => {
+describe("RestSessionAuthClient", () => {
   it("login forwards rememberMe in sign-in payload", async () => {
-    const client = new AuthClient("https://api.test/");
+    const client = new RestSessionAuthClient("https://api.test/");
     const doQuerySpy = vi
       .spyOn(client.api, "doQuery")
       .mockResolvedValue(session);
@@ -35,7 +35,7 @@ describe("AuthClient", () => {
   });
 
   it("refresh calls auth/refresh endpoint", async () => {
-    const client = new AuthClient("https://api.test/");
+    const client = new RestSessionAuthClient("https://api.test/");
     const doQuerySpy = vi
       .spyOn(client.api, "doQuery")
       .mockResolvedValue(session);
@@ -51,7 +51,7 @@ describe("AuthClient", () => {
   });
 
   it("logout sends authorization and optional refresh token", async () => {
-    const client = new AuthClient("https://api.test/");
+    const client = new RestSessionAuthClient("https://api.test/");
     const doQuerySpy = vi
       .spyOn(client.api, "doQuery")
       .mockResolvedValue(undefined);
@@ -74,7 +74,7 @@ describe("AuthClient", () => {
   });
 
   it("getSession uses default token acquirer header", async () => {
-    const client = new AuthClient("https://api.test/");
+    const client = new RestSessionAuthClient("https://api.test/");
     const defaultTokenAcquirerSpy = vi
       .spyOn(client.api, "defaultTokenAcquirer")
       .mockReturnValue({

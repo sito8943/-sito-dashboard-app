@@ -11,10 +11,10 @@ import type { APIClientAuthConfig } from "../types";
 import type { IAuthClient } from "../IAuthClient";
 import { Methods } from "../utils/services";
 import { AUTH_CLIENT_ENDPOINTS } from "./constants";
-import type { AuthClientLogoutOptions } from "./types";
+import type { RestSessionAuthClientLogoutOptions } from "./types";
 
-/** Auth-focused API client for login, refresh, logout and session endpoints. */
-export class AuthClient implements IAuthClient {
+/** REST session auth client for login, refresh, logout and session endpoints. */
+export class RestSessionAuthClient implements IAuthClient {
   api: APIClient;
 
   /**
@@ -46,7 +46,7 @@ export class AuthClient implements IAuthClient {
     );
   }
 
-  async logout(options?: AuthClientLogoutOptions) {
+  async logout(options?: RestSessionAuthClientLogoutOptions) {
     const header = options?.accessToken
       ? {
           Authorization: `Bearer ${options.accessToken}`,
@@ -81,3 +81,5 @@ export class AuthClient implements IAuthClient {
     );
   }
 }
+
+export { RestSessionAuthClient as AuthClient };

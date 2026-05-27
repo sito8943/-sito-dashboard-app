@@ -817,7 +817,7 @@ the library.
 
 Session entry/registration views use the session-focused `manager.Auth`
 (`IAuthClient`) by default in this example. Password recovery and email
-confirmation views use an `IAuthApiClient` (`RestAuthApiClient`,
+confirmation views use an `IAuthApiClient` (`RestAuthRecoveryClient`,
 `SupabaseAuthApiClient`, or a compatible adapter).
 
 ```tsx

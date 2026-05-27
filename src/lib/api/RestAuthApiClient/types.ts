@@ -1,4 +1,4 @@
-export type RestAuthApiClientEndpoints = {
+export type RestAuthRecoveryClientEndpoints = {
   forgotPassword?: string;
   resetPassword?: string;
   resendConfirmEmail?: string;
@@ -10,12 +10,17 @@ export type RestAuthApiClientEndpoints = {
   confirmEmailFallback?: string;
 };
 
-export type RestAuthApiClientOptions = {
-  endpoints?: RestAuthApiClientEndpoints;
+export type RestAuthRecoveryClientOptions = {
+  endpoints?: RestAuthRecoveryClientEndpoints;
 };
 
-export type ResolvedRestAuthApiClientEndpoints = Required<
-  Omit<RestAuthApiClientEndpoints, "confirmEmailFallback">
+export type ResolvedRestAuthRecoveryClientEndpoints = Required<
+  Omit<RestAuthRecoveryClientEndpoints, "confirmEmailFallback">
 > & {
   confirmEmailFallback?: string;
 };
+
+export type RestAuthApiClientEndpoints = RestAuthRecoveryClientEndpoints;
+export type RestAuthApiClientOptions = RestAuthRecoveryClientOptions;
+export type ResolvedRestAuthApiClientEndpoints =
+  ResolvedRestAuthRecoveryClientEndpoints;

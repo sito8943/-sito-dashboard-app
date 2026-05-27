@@ -1,2 +1,2 @@
-export * from "./RestAuthApiClient";
+export * from "./RestAuthRecoveryClient";
 export * from "./types";

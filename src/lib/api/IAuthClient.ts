@@ -1,9 +1,9 @@
 import type { AuthDto, RefreshDto, RegisterDto, SessionDto } from "../entities";
 
 /**
- * Session-focused auth contract shared by {@link AuthClient} (REST) and
- * {@link SupabaseAuthClient} (Supabase). Backed by `IManager.auth` so the
- * same call sites work with either backend.
+ * Session-focused auth contract shared by {@link RestSessionAuthClient}
+ * (REST) and {@link SupabaseAuthClient} (Supabase). Backed by `IManager.auth`
+ * so the same call sites work with either backend.
  *
  * `logout` accepts no required argument — adapters that need extra context
  * (e.g. REST `accessToken` / `refreshToken` header) widen via an optional

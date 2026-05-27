@@ -10,8 +10,8 @@ import type { APIClientAuthConfig } from "../types";
 import type { IAuthApiClient } from "../IAuthApiClient";
 import { Methods } from "../utils/services";
 import type {
-  ResolvedRestAuthApiClientEndpoints,
-  RestAuthApiClientOptions,
+  ResolvedRestAuthRecoveryClientEndpoints,
+  RestAuthRecoveryClientOptions,
 } from "./types";
 import { hasHttpStatus, resolveRestAuthApiClientEndpoints } from "./utils";
 
@@ -22,27 +22,27 @@ import { hasHttpStatus, resolveRestAuthApiClientEndpoints } from "./utils";
  * Pass an existing `APIClient` instance to share base URL, storage keys and
  * the centralized refresh/retry. Override endpoint paths via `options.endpoints`.
  */
-export class RestAuthApiClient implements IAuthApiClient {
+export class RestAuthRecoveryClient implements IAuthApiClient {
   private readonly api: APIClient;
-  private readonly endpoints: ResolvedRestAuthApiClientEndpoints;
+  private readonly endpoints: ResolvedRestAuthRecoveryClientEndpoints;
 
-  constructor(api: APIClient, options?: RestAuthApiClientOptions);
+  constructor(api: APIClient, options?: RestAuthRecoveryClientOptions);
   constructor(
     baseUrl: string,
     userKey?: string,
     authConfig?: APIClientAuthConfig,
-    options?: RestAuthApiClientOptions,
+    options?: RestAuthRecoveryClientOptions,
   );
   constructor(
     apiOrBaseUrl: APIClient | string,
-    userKeyOrOptions?: string | RestAuthApiClientOptions,
+    userKeyOrOptions?: string | RestAuthRecoveryClientOptions,
     authConfig: APIClientAuthConfig = {},
-    options?: RestAuthApiClientOptions,
+    options?: RestAuthRecoveryClientOptions,
   ) {
     if (apiOrBaseUrl instanceof APIClient) {
       this.api = apiOrBaseUrl;
       this.endpoints = resolveRestAuthApiClientEndpoints(
-        userKeyOrOptions as RestAuthApiClientOptions | undefined,
+        userKeyOrOptions as RestAuthRecoveryClientOptions | undefined,
       );
       return;
     }
@@ -98,3 +98,5 @@ export class RestAuthApiClient implements IAuthApiClient {
     }
   }
 }
+
+export { RestAuthRecoveryClient as RestAuthApiClient };
