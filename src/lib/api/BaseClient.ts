@@ -1,6 +1,6 @@
 // api client
 import { APIClient } from "./APIClient";
-import type { APIClientAuthConfig } from "./APIClient";
+import type { APIClientAuthConfig } from "./types";
 
 // types
 import { QueryParam } from "./types";

@@ -1,5 +1,5 @@
 import { AuthClient } from "./AuthClient";
-import type { APIClientAuthConfig } from "./APIClient";
+import type { APIClientAuthConfig } from "./types";
 import type { IAuthClient } from "./IAuthClient";
 
 /** Root manager that exposes domain API clients for consumers. */

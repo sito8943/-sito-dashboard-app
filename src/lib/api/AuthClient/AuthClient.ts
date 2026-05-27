@@ -7,7 +7,7 @@ import {
   SessionDto,
   SignOutDto,
 } from "../../entities";
-import type { APIClientAuthConfig } from "../APIClient";
+import type { APIClientAuthConfig } from "../types";
 import type { IAuthClient } from "../IAuthClient";
 import { Methods } from "../utils/services";
 import { AUTH_CLIENT_ENDPOINTS } from "./constants";

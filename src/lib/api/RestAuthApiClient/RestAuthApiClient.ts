@@ -6,7 +6,7 @@ import type {
   ResetPasswordDto,
 } from "../../entities";
 import { APIClient } from "../APIClient";
-import type { APIClientAuthConfig } from "../APIClient";
+import type { APIClientAuthConfig } from "../types";
 import type { IAuthApiClient } from "../IAuthApiClient";
 import { Methods } from "../utils/services";
 import type {
