@@ -4,39 +4,16 @@ import type {
   ForgotPasswordDto,
   ResendConfirmEmailDto,
   ResetPasswordDto,
-} from "../entities";
-import { APIClient, APIClientAuthConfig } from "./APIClient";
-import type { IAuthApiClient } from "./IAuthApiClient";
-import { Methods } from "./utils/services";
-
-export type RestAuthApiClientEndpoints = {
-  forgotPassword?: string;
-  resetPassword?: string;
-  resendConfirmEmail?: string;
-  confirmEmail?: string;
-  /**
-   * Optional fallback for legacy backends that still expose
-   * `/confirm/verify` while `/confirm` is migrating. Used only on 404.
-   */
-  confirmEmailFallback?: string;
-};
-
-export type RestAuthApiClientOptions = {
-  endpoints?: RestAuthApiClientEndpoints;
-};
-
-const DEFAULT_ENDPOINTS = {
-  forgotPassword: "auth/password/forgot",
-  resetPassword: "auth/password/reset",
-  resendConfirmEmail: "auth/email/confirm/resend",
-  confirmEmail: "auth/email/confirm",
-} as const;
-
-const hasHttpStatus = (error: unknown, status: number): boolean => {
-  if (typeof error !== "object" || error === null) return false;
-  if (!("status" in error)) return false;
-  return (error as { status?: unknown }).status === status;
-};
+} from "../../entities";
+import { APIClient } from "../APIClient";
+import type { APIClientAuthConfig } from "../APIClient";
+import type { IAuthApiClient } from "../IAuthApiClient";
+import { Methods } from "../utils/services";
+import type {
+  ResolvedRestAuthApiClientEndpoints,
+  RestAuthApiClientOptions,
+} from "./types";
+import { hasHttpStatus, resolveRestAuthApiClientEndpoints } from "./utils";
 
 /**
  * REST adapter for {@link IAuthApiClient}. Wraps an {@link APIClient} and
@@ -47,11 +24,7 @@ const hasHttpStatus = (error: unknown, status: number): boolean => {
  */
 export class RestAuthApiClient implements IAuthApiClient {
   private readonly api: APIClient;
-  private readonly endpoints: Required<
-    Omit<RestAuthApiClientEndpoints, "confirmEmailFallback">
-  > & {
-    confirmEmailFallback?: string;
-  };
+  private readonly endpoints: ResolvedRestAuthApiClientEndpoints;
 
   constructor(api: APIClient, options?: RestAuthApiClientOptions);
   constructor(
@@ -68,19 +41,21 @@ export class RestAuthApiClient implements IAuthApiClient {
   ) {
     if (apiOrBaseUrl instanceof APIClient) {
       this.api = apiOrBaseUrl;
-      const opts = (userKeyOrOptions as RestAuthApiClientOptions) ?? {};
-      this.endpoints = { ...DEFAULT_ENDPOINTS, ...opts.endpoints };
-    } else {
-      const userKey = (userKeyOrOptions as string | undefined) ?? "user";
-      this.api = new APIClient(
-        apiOrBaseUrl,
-        userKey,
-        false,
-        undefined,
-        authConfig,
+      this.endpoints = resolveRestAuthApiClientEndpoints(
+        userKeyOrOptions as RestAuthApiClientOptions | undefined,
       );
-      this.endpoints = { ...DEFAULT_ENDPOINTS, ...options?.endpoints };
+      return;
     }
+
+    const userKey = (userKeyOrOptions as string | undefined) ?? "user";
+    this.api = new APIClient(
+      apiOrBaseUrl,
+      userKey,
+      false,
+      undefined,
+      authConfig,
+    );
+    this.endpoints = resolveRestAuthApiClientEndpoints(options);
   }
 
   async forgotPassword(data: ForgotPasswordDto): Promise<AcceptedResponseDto> {
