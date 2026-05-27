@@ -27,3 +27,11 @@ export type RangeValue<T> = {
   start: T;
   end: T;
 };
+
+export type APIClientAuthConfig = {
+  rememberKey?: string;
+  refreshTokenKey?: string;
+  accessTokenExpiresAtKey?: string;
+  refreshEndpoint?: string;
+  refreshExpirySkewMs?: number;
+};

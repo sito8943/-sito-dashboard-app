@@ -19,17 +19,10 @@ import {
   SessionDto,
   toLocal,
 } from "lib";
+import { APIClientAuthConfig } from "./types";
 
 // utils
 import { parseQueries } from "./utils";
-
-export type APIClientAuthConfig = {
-  rememberKey?: string;
-  refreshTokenKey?: string;
-  accessTokenExpiresAtKey?: string;
-  refreshEndpoint?: string;
-  refreshExpirySkewMs?: number;
-};
 
 /**
  * @class APIClient

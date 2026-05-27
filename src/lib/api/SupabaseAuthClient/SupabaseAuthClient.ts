@@ -1,45 +1,27 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { AuthDto, RefreshDto, RegisterDto, SessionDto } from "../entities";
-import type { IAuthClient } from "./IAuthClient";
+import type {
+  AuthDto,
+  RefreshDto,
+  RegisterDto,
+  SessionDto,
+} from "../../entities";
+import type { IAuthClient } from "../IAuthClient";
 import {
   mapSupabaseSessionToSessionDto,
   type SupabaseSessionMapper,
-  type SupabaseSessionMapperOptions,
-} from "./supabaseAuth";
-
-export type SupabaseRegisterExtra = {
-  name?: string;
-  username?: string;
-  redirectTo?: string;
-  metadata?: Record<string, unknown>;
-};
-
-export type SupabaseRegisterDto<TExtra extends object = object> = RegisterDto<
-  SupabaseRegisterExtra & TExtra
->;
-
-export type SupabaseSignUpResult =
-  | { status: "authenticated"; session: SessionDto }
-  | { status: "confirmation_required"; email: string };
-
-export type SupabaseAuthClientOptions = {
-  /** Custom `Session -> SessionDto` mapper. Defaults to {@link mapSupabaseSessionToSessionDto}. */
-  sessionMapper?: SupabaseSessionMapper;
-  /** Defaults forwarded to the default mapper. Ignored when `sessionMapper` is provided. */
-  mapperOptions?: SupabaseSessionMapperOptions;
-  /**
-   * Default `emailRedirectTo` used by `signUp` when the call does not provide one.
-   * Useful when the consumer always sends users to the same confirm-email screen.
-   */
-  defaultSignUpRedirectTo?: string;
-};
-
-const trimOrUndefined = (value: string | undefined): string | undefined => {
-  if (!value) return undefined;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-};
+} from "../supabaseAuth";
+import {
+  AUTHENTICATED_SESSION_NOT_FOUND_ERROR,
+  EMAIL_CONFIRMATION_REQUIRED_ERROR,
+  NO_ACTIVE_SESSION_ERROR,
+} from "./constants";
+import type {
+  SupabaseAuthClientOptions,
+  SupabaseRegisterDto,
+  SupabaseSignUpResult,
+} from "./types";
+import { resolveSupabaseSignUpMetadata, trimOrUndefined } from "./utils";
 
 /**
  * Supabase Auth adapter mirroring the {@link AuthClient} REST contract
@@ -65,11 +47,12 @@ export class SupabaseAuthClient implements IAuthClient {
     this.defaultSignUpRedirectTo = options.defaultSignUpRedirectTo;
     if (options.sessionMapper) {
       this.sessionMapper = options.sessionMapper;
-    } else {
-      const mapperOptions = options.mapperOptions;
-      this.sessionMapper = (session) =>
-        mapSupabaseSessionToSessionDto(session, mapperOptions);
+      return;
     }
+
+    const mapperOptions = options.mapperOptions;
+    this.sessionMapper = (session) =>
+      mapSupabaseSessionToSessionDto(session, mapperOptions);
   }
 
   async login(data: AuthDto): Promise<SessionDto> {
@@ -79,7 +62,8 @@ export class SupabaseAuthClient implements IAuthClient {
         password: data.password,
       });
     if (error) throw error;
-    if (!authData.session) throw new Error("Authenticated session not found");
+    if (!authData.session)
+      throw new Error(AUTHENTICATED_SESSION_NOT_FOUND_ERROR);
     return this.sessionMapper(authData.session);
   }
 
@@ -88,14 +72,15 @@ export class SupabaseAuthClient implements IAuthClient {
       refresh_token: data.refreshToken,
     });
     if (error) throw error;
-    if (!authData.session) throw new Error("Authenticated session not found");
+    if (!authData.session)
+      throw new Error(AUTHENTICATED_SESSION_NOT_FOUND_ERROR);
     return this.sessionMapper(authData.session);
   }
 
   async getSession(): Promise<SessionDto> {
     const { data, error } = await this.supabase.auth.getSession();
     if (error) throw error;
-    if (!data.session) throw new Error("No active session");
+    if (!data.session) throw new Error(NO_ACTIVE_SESSION_ERROR);
     return this.sessionMapper(data.session);
   }
 
@@ -112,7 +97,7 @@ export class SupabaseAuthClient implements IAuthClient {
   async register(data: RegisterDto): Promise<SessionDto> {
     const result = await this.signUp(data as SupabaseRegisterDto);
     if (result.status !== "authenticated") {
-      throw new Error("Email confirmation required");
+      throw new Error(EMAIL_CONFIRMATION_REQUIRED_ERROR);
     }
     return result.session;
   }
@@ -127,16 +112,9 @@ export class SupabaseAuthClient implements IAuthClient {
    * Provide `data.metadata` to override the whole payload.
    */
   async signUp(data: SupabaseRegisterDto): Promise<SupabaseSignUpResult> {
-    const trimmedName = trimOrUndefined(data.name);
-    const trimmedUsername = trimOrUndefined(data.username);
-    const trimmedEmail = data.email.trim();
-    const resolvedName = trimmedName ?? trimmedUsername ?? trimmedEmail;
     const redirectTo =
       trimOrUndefined(data.redirectTo) ?? this.defaultSignUpRedirectTo;
-    const metadata = data.metadata ?? {
-      name: resolvedName,
-      username: resolvedName,
-    };
+    const metadata = resolveSupabaseSignUpMetadata(data);
 
     const { data: authData, error } = await this.supabase.auth.signUp({
       email: data.email,
