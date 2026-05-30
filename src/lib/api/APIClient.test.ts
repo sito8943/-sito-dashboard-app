@@ -30,6 +30,7 @@ describe("APIClient", () => {
   afterEach(() => {
     makeRequestMock.mockReset();
     APIClient.refreshInFlight.clear();
+    APIClient.refreshCooldowns.clear();
   });
 
   it("creates auth header from local storage token", () => {
@@ -451,7 +452,7 @@ describe("APIClient", () => {
     expect(refreshCalls).toHaveLength(1);
   });
 
-  it("clears local session when refresh fails", async () => {
+  it("clears local session when refresh fails definitively", async () => {
     localStorage.setItem("user", "expired-access-token");
     localStorage.setItem("refreshToken", "refresh-token-1");
     localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
@@ -473,6 +474,119 @@ describe("APIClient", () => {
     expect(localStorage.getItem("refreshToken")).toBeNull();
     expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
     expect(localStorage.getItem("remember")).toBeNull();
+  });
+
+  it("preserves local session when refresh fails transiently", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("remember", "true");
+
+    makeRequestMock.mockResolvedValue({
+      data: null,
+      status: 503,
+      error: { status: 503, message: "Service unavailable" },
+    });
+
+    const client = new APIClient("https://api.test", "user", true, undefined, {
+      refreshRetryDelayMs: 0,
+      refreshMaxRetries: 2,
+      refreshRetryCooldownMs: 0,
+    });
+
+    await expect(client.doQuery("/users")).rejects.toEqual({
+      status: 503,
+      message: "Service unavailable",
+    });
+    expect(localStorage.getItem("user")).toBe("expired-access-token");
+    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-1");
+    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+      "2000-01-01T00:00:00.000Z",
+    );
+    expect(localStorage.getItem("remember")).toBe("true");
+
+    const refreshCalls = makeRequestMock.mock.calls.filter(([url]) =>
+      url.includes("auth/refresh"),
+    );
+    expect(refreshCalls).toHaveLength(3);
+  });
+
+  it("uses the current token when pre-refresh fails transiently but token is still valid", async () => {
+    const futureExpiry = new Date(Date.now() + 1000).toISOString();
+    localStorage.setItem("user", "still-valid-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", futureExpiry);
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: null,
+        status: 503,
+        error: { status: 503, message: "Service unavailable" },
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test", "user", true, undefined, {
+      refreshRetryDelayMs: 0,
+      refreshMaxRetries: 0,
+      refreshRetryCooldownMs: 0,
+      refreshExpirySkewMs: 5000,
+    });
+
+    const result = await client.doQuery<{ ok: boolean }>("/users");
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      1,
+      "https://api.test/auth/refresh",
+      Methods.POST,
+      { refreshToken: "refresh-token-1" },
+      undefined,
+      expect.any(Function),
+    );
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      2,
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer still-valid-token" },
+      undefined,
+    );
+  });
+
+  it("enters cooldown after a transient refresh failure", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("refreshToken", "refresh-token-1");
+    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+
+    makeRequestMock.mockResolvedValue({
+      data: null,
+      status: 503,
+      error: { status: 503, message: "Service unavailable" },
+    });
+
+    const client = new APIClient("https://api.test", "user", true, undefined, {
+      refreshRetryDelayMs: 0,
+      refreshMaxRetries: 0,
+      refreshRetryCooldownMs: 60000,
+    });
+
+    await expect(client.doQuery("/users")).rejects.toEqual({
+      status: 503,
+      message: "Service unavailable",
+    });
+    await expect(client.doQuery("/users")).rejects.toEqual({
+      status: 503,
+      message: "Service unavailable",
+    });
+
+    const refreshCalls = makeRequestMock.mock.calls.filter(([url]) =>
+      url.includes("auth/refresh"),
+    );
+    expect(refreshCalls).toHaveLength(1);
   });
 
   it("builds query URL in get and returns query result", async () => {

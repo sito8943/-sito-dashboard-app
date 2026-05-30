@@ -132,8 +132,11 @@ describe("AuthProvider", () => {
     );
   });
 
-  it("falls back to logout when session recovery fails", async () => {
-    getSessionMock.mockRejectedValue(new Error("Session expired"));
+  it("falls back to logout when session recovery fails definitively", async () => {
+    getSessionMock.mockRejectedValue({
+      status: 401,
+      message: "Session expired",
+    });
     logoutMock.mockResolvedValue(undefined);
     localStorage.setItem("user", "stale-token");
     localStorage.setItem("refreshToken", "stale-refresh-token");
@@ -160,7 +163,10 @@ describe("AuthProvider", () => {
   });
 
   it("waits for logout completion when session recovery fails", async () => {
-    getSessionMock.mockRejectedValue(new Error("Session expired"));
+    getSessionMock.mockRejectedValue({
+      status: 401,
+      message: "Session expired",
+    });
     let resolveLogout: (() => void) | undefined;
     logoutMock.mockImplementation(
       () =>
@@ -190,6 +196,37 @@ describe("AuthProvider", () => {
     });
 
     expect(settled).toBe(true);
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("preserves stored session when session recovery fails transiently", async () => {
+    getSessionMock.mockRejectedValue({
+      status: 503,
+      message: "Failed to fetch",
+    });
+    localStorage.setItem("user", "stale-token");
+    localStorage.setItem("refreshToken", "stale-refresh-token");
+    localStorage.setItem("accessTokenExpiresAt", "2030-01-01T00:00:00.000Z");
+    localStorage.setItem("remember", "true");
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      await result.current.logUserFromLocal();
+    });
+
+    expect(getSessionMock).toHaveBeenCalledOnce();
+    expect(logoutMock).not.toHaveBeenCalled();
+    expect(localStorage.getItem("user")).toBe("stale-token");
+    expect(localStorage.getItem("refreshToken")).toBe("stale-refresh-token");
+    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+      "2030-01-01T00:00:00.000Z",
+    );
+    expect(localStorage.getItem("remember")).toBe("true");
+    expect(consoleErrorSpy).toHaveBeenCalled();
+
     consoleErrorSpy.mockRestore();
   });
 

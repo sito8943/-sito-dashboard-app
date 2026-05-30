@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.84] - 2026-05-30
+
+### Added
+
+- `APIClientAuthConfig` now supports `refreshMaxRetries`, `refreshRetryDelayMs`, `refreshRetryBackoffMultiplier`, and `refreshRetryCooldownMs` to tune access-token refresh retries.
+- Added `authSessionError` helpers to normalize auth/session refresh failures and classify them as definitive vs retryable.
+
+### Changed
+
+- `APIClient` now retries transient refresh failures with backoff, applies a short cooldown after exhausted retryable failures, and preserves the existing refresh mutex behavior so concurrent requests still share one refresh flow.
+- Pre-flight access-token refresh no longer forces session teardown on transient refresh failures when the current access token is still usable. Definitive auth/session failures still clear the stored session.
+- `AuthProvider` now logs the user out only on definitive session recovery failures, preserving stored session state on transient network/service errors.
+
+### Removed
+
+- Removed the `minimatch` override from `package.json`, allowing the lockfile to resolve compatible dependency versions instead of forcing `10.2.2`.
+
 ## [0.0.83] - 2026-05-27
 
 ### Added
