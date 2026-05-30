@@ -10,6 +10,7 @@ import { useManager } from "../useManager";
 
 // lib
 import { fromLocal } from "lib";
+import { isDefinitiveAuthSessionError } from "../../lib/api/authSessionError";
 
 /**
  * Auth Provider
@@ -78,7 +79,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
       logUser(authDto);
     } catch (err) {
       console.error(err);
-      await logoutUser();
+      if (isDefinitiveAuthSessionError(err)) await logoutUser();
     }
   }, [logUser, logoutUser, manager.Auth]);
 

@@ -24,6 +24,11 @@ import {
   APIClientAuthMode,
   APIClientRequestOptions,
 } from "./types";
+import {
+  isDefinitiveAuthSessionError,
+  isRetryableAuthSessionError,
+  normalizeAuthSessionError,
+} from "./authSessionError";
 
 // utils
 import { parseQueries } from "./utils";
@@ -40,11 +45,19 @@ export class APIClient {
   accessTokenExpiresAtKey: string;
   refreshEndpoint: string;
   refreshExpirySkewMs: number;
+  refreshMaxRetries: number;
+  refreshRetryDelayMs: number;
+  refreshRetryBackoffMultiplier: number;
+  refreshRetryCooldownMs: number;
   defaultAuthMode: APIClientAuthMode;
   /** @deprecated Use per-request `authMode` instead. */
   secured: boolean;
   tokenAcquirer!: (useCookie?: boolean) => RequestConfig | undefined;
   static refreshInFlight: Map<string, Promise<void>> = new Map();
+  static refreshCooldowns: Map<
+    string,
+    { until: number; error: { status: number; message: string }; refreshToken: string }
+  > = new Map();
 
   /**
    * @param baseUrl the base url of the server
@@ -71,6 +84,11 @@ export class APIClient {
       authConfig.accessTokenExpiresAtKey ?? "accessTokenExpiresAt";
     this.refreshEndpoint = authConfig.refreshEndpoint ?? "auth/refresh";
     this.refreshExpirySkewMs = authConfig.refreshExpirySkewMs ?? 5000;
+    this.refreshMaxRetries = authConfig.refreshMaxRetries ?? 2;
+    this.refreshRetryDelayMs = authConfig.refreshRetryDelayMs ?? 400;
+    this.refreshRetryBackoffMultiplier =
+      authConfig.refreshRetryBackoffMultiplier ?? 3;
+    this.refreshRetryCooldownMs = authConfig.refreshRetryCooldownMs ?? 20000;
     this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer;
   }
 
@@ -156,8 +174,65 @@ export class APIClient {
     removeFromLocal(this.accessTokenExpiresAtKey);
   }
 
+  private getAccessTokenExpiryTimestamp() {
+    const accessTokenExpiresAt = this.getAccessTokenExpiresAt();
+    if (!accessTokenExpiresAt) return undefined;
+
+    const expiresAtTimestamp = Date.parse(accessTokenExpiresAt);
+    if (Number.isNaN(expiresAtTimestamp)) return undefined;
+
+    return expiresAtTimestamp;
+  }
+
+  private isAccessTokenExpired() {
+    const expiresAtTimestamp = this.getAccessTokenExpiryTimestamp();
+    if (expiresAtTimestamp === undefined) return false;
+    return Date.now() >= expiresAtTimestamp;
+  }
+
+  private async waitForRefreshRetry(attempt: number) {
+    if (this.refreshRetryDelayMs <= 0) return;
+
+    const delay =
+      this.refreshRetryDelayMs *
+      this.refreshRetryBackoffMultiplier ** Math.max(0, attempt);
+
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, delay);
+    });
+  }
+
+  private getRefreshCooldown(refreshToken: string) {
+    const cooldown = APIClient.refreshCooldowns.get(this.getRefreshLockKey());
+    if (!cooldown) return undefined;
+    if (cooldown.refreshToken !== refreshToken || Date.now() >= cooldown.until) {
+      APIClient.refreshCooldowns.delete(this.getRefreshLockKey());
+      return undefined;
+    }
+
+    return cooldown;
+  }
+
+  private setRefreshCooldown(
+    refreshToken: string,
+    error: { status: number; message: string },
+  ) {
+    if (this.refreshRetryCooldownMs <= 0) return;
+
+    APIClient.refreshCooldowns.set(this.getRefreshLockKey(), {
+      until: Date.now() + this.refreshRetryCooldownMs,
+      error,
+      refreshToken,
+    });
+  }
+
+  private clearRefreshCooldown() {
+    APIClient.refreshCooldowns.delete(this.getRefreshLockKey());
+  }
+
   private storeSession(data: SessionDto, fallbackRefreshToken?: string) {
     toLocal(this.userKey, data.token);
+    this.clearRefreshCooldown();
 
     const resolvedRefreshToken =
       data.refreshToken === undefined
@@ -184,6 +259,9 @@ export class APIClient {
         message: "Missing refresh token",
       };
 
+    const cooldown = this.getRefreshCooldown(refreshToken);
+    if (cooldown) throw cooldown.error;
+
     const lockKey = this.getRefreshLockKey();
     const inFlight = APIClient.refreshInFlight.get(lockKey);
     if (inFlight) {
@@ -192,25 +270,47 @@ export class APIClient {
     }
 
     const refreshPromise = (async () => {
-      const { data, status, error } = await makeRequest<RefreshDto, SessionDto>(
-        this.buildUrl(this.refreshEndpoint),
-        Methods.POST,
-        { refreshToken },
-        undefined,
-        (value): value is SessionDto => this.isSessionDto(value),
-      );
+      let attempt = 0;
 
-      if (error || !data?.token) {
-        this.clearStoredSession();
-        throw (
+      while (attempt <= this.refreshMaxRetries) {
+        const { data, status, error } = await makeRequest<RefreshDto, SessionDto>(
+          this.buildUrl(this.refreshEndpoint),
+          Methods.POST,
+          { refreshToken },
+          undefined,
+          (value): value is SessionDto => this.isSessionDto(value),
+        );
+
+        if (data?.token) {
+          this.storeSession(data, refreshToken);
+          return;
+        }
+
+        const refreshError = normalizeAuthSessionError(
           error ?? {
             status,
             message: "Unable to refresh session",
-          }
+          },
         );
-      }
 
-      this.storeSession(data, refreshToken);
+        if (isDefinitiveAuthSessionError(refreshError)) {
+          this.clearRefreshCooldown();
+          this.clearStoredSession();
+          throw refreshError;
+        }
+
+        if (
+          isRetryableAuthSessionError(refreshError) &&
+          attempt < this.refreshMaxRetries
+        ) {
+          await this.waitForRefreshRetry(attempt);
+          attempt += 1;
+          continue;
+        }
+
+        this.setRefreshCooldown(refreshToken, refreshError);
+        throw refreshError;
+      }
     })();
 
     APIClient.refreshInFlight.set(lockKey, refreshPromise);
@@ -304,8 +404,17 @@ export class APIClient {
     requestConfig?: RequestConfig,
     responseValidator?: ResponseValidator<TResponse>,
   ) {
-    if (authMode === "access-token" && this.shouldRefreshBeforeRequest())
-      await this.refreshAccessTokenWithMutex();
+    if (authMode === "access-token" && this.shouldRefreshBeforeRequest()) {
+      try {
+        await this.refreshAccessTokenWithMutex();
+      } catch (error) {
+        if (
+          isDefinitiveAuthSessionError(error) ||
+          this.isAccessTokenExpired()
+        )
+          throw error;
+      }
+    }
 
     let response = await makeRequest<TBody, TResponse>(
       this.buildUrl(endpoint),

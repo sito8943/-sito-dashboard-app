@@ -35,6 +35,10 @@ export type APIClientAuthConfig = {
   accessTokenExpiresAtKey?: string;
   refreshEndpoint?: string;
   refreshExpirySkewMs?: number;
+  refreshMaxRetries?: number;
+  refreshRetryDelayMs?: number;
+  refreshRetryBackoffMultiplier?: number;
+  refreshRetryCooldownMs?: number;
 };
 
 export type APIClientAuthMode = "none" | "access-token";
