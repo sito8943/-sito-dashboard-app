@@ -56,7 +56,11 @@ export class APIClient {
   static refreshInFlight: Map<string, Promise<void>> = new Map();
   static refreshCooldowns: Map<
     string,
-    { until: number; error: { status: number; message: string }; refreshToken: string }
+    {
+      until: number;
+      error: { status: number; message: string };
+      refreshToken: string;
+    }
   > = new Map();
 
   /**
@@ -205,7 +209,10 @@ export class APIClient {
   private getRefreshCooldown(refreshToken: string) {
     const cooldown = APIClient.refreshCooldowns.get(this.getRefreshLockKey());
     if (!cooldown) return undefined;
-    if (cooldown.refreshToken !== refreshToken || Date.now() >= cooldown.until) {
+    if (
+      cooldown.refreshToken !== refreshToken ||
+      Date.now() >= cooldown.until
+    ) {
       APIClient.refreshCooldowns.delete(this.getRefreshLockKey());
       return undefined;
     }
@@ -273,7 +280,10 @@ export class APIClient {
       let attempt = 0;
 
       while (attempt <= this.refreshMaxRetries) {
-        const { data, status, error } = await makeRequest<RefreshDto, SessionDto>(
+        const { data, status, error } = await makeRequest<
+          RefreshDto,
+          SessionDto
+        >(
           this.buildUrl(this.refreshEndpoint),
           Methods.POST,
           { refreshToken },
@@ -408,10 +418,7 @@ export class APIClient {
       try {
         await this.refreshAccessTokenWithMutex();
       } catch (error) {
-        if (
-          isDefinitiveAuthSessionError(error) ||
-          this.isAccessTokenExpired()
-        )
+        if (isDefinitiveAuthSessionError(error) || this.isAccessTokenExpired())
           throw error;
       }
     }

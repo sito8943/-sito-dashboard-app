@@ -133,7 +133,10 @@ describe("AuthProvider", () => {
   });
 
   it("falls back to logout when session recovery fails definitively", async () => {
-    getSessionMock.mockRejectedValue({ status: 401, message: "Session expired" });
+    getSessionMock.mockRejectedValue({
+      status: 401,
+      message: "Session expired",
+    });
     logoutMock.mockResolvedValue(undefined);
     localStorage.setItem("user", "stale-token");
     localStorage.setItem("refreshToken", "stale-refresh-token");
@@ -160,7 +163,10 @@ describe("AuthProvider", () => {
   });
 
   it("waits for logout completion when session recovery fails", async () => {
-    getSessionMock.mockRejectedValue({ status: 401, message: "Session expired" });
+    getSessionMock.mockRejectedValue({
+      status: 401,
+      message: "Session expired",
+    });
     let resolveLogout: (() => void) | undefined;
     logoutMock.mockImplementation(
       () =>
@@ -194,7 +200,10 @@ describe("AuthProvider", () => {
   });
 
   it("preserves stored session when session recovery fails transiently", async () => {
-    getSessionMock.mockRejectedValue({ status: 503, message: "Failed to fetch" });
+    getSessionMock.mockRejectedValue({
+      status: 503,
+      message: "Failed to fetch",
+    });
     localStorage.setItem("user", "stale-token");
     localStorage.setItem("refreshToken", "stale-refresh-token");
     localStorage.setItem("accessTokenExpiresAt", "2030-01-01T00:00:00.000Z");

@@ -72,7 +72,9 @@ export const isDefinitiveAuthSessionError = (value: unknown) => {
 
   if (DEFINITIVE_STATUS_CODES.has(error.status)) return true;
   if (error.status === 400)
-    return DEFINITIVE_MESSAGE_PATTERNS.some((pattern) => pattern.test(haystack));
+    return DEFINITIVE_MESSAGE_PATTERNS.some((pattern) =>
+      pattern.test(haystack),
+    );
 
   return DEFINITIVE_MESSAGE_PATTERNS.some((pattern) => pattern.test(haystack));
 };
