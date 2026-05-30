@@ -28,7 +28,7 @@ jobs:
       - name: Regenerate lockfile for Linux runner
         run: |
           rm -f package-lock.json
-          npm install --package-lock-only
+          npm install --package-lock-only --ignore-scripts
 
       - name: Install dependencies
         run: npm ci
