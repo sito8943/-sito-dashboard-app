@@ -236,6 +236,46 @@ class ProductsSupabaseClient extends SupabaseDataClient<
 export const productsClient = new ProductsClient(import.meta.env.VITE_API_URL);
 ```
 
+### 2.1 Reuse exported helper types instead of redefining them
+
+When a consumer app needs shared data contracts, import them from
+`@sito/dashboard-app` instead of creating local duplicates.
+
+```ts
+import type {
+  BaseEntityDto,
+  BaseFilterDto,
+  QueryParam,
+  QueryResult,
+  RangeFilterValue,
+  RangeValue,
+} from "@sito/dashboard-app";
+
+type ReportRange = RangeValue<string>;
+
+interface TransactionDto extends BaseEntityDto {
+  amount: number;
+}
+
+interface TransactionFilterDto extends BaseFilterDto {
+  createdAt?: RangeFilterValue;
+}
+
+type TransactionQuery = QueryParam<TransactionDto>;
+type TransactionResponse = QueryResult<TransactionDto>;
+
+const currentRange: ReportRange = {
+  start: "2026-06-01",
+  end: "2026-06-30",
+};
+```
+
+Typical cases:
+
+- `RangeValue<T>` for app/domain ranges such as export windows or dashboard filters
+- `QueryParam<TDto>` and `QueryResult<TDto>` for typed list requests/responses
+- `RangeFilterValue` when wiring generic Supabase range filters where `start` or `end` may be missing
+
 ## 3. Ready-to-use export action with `useExportActionMutate`
 
 ```tsx

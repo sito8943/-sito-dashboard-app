@@ -144,6 +144,43 @@ Notes:
 
 For hand-rolled shells, lower-level `Navbar`/`Drawer`/`Notification`/`ToTop` primitives remain available.
 
+### 2.0 Typed menu metadata and feature-flag filtering
+
+`@sito/dashboard-app` already exports the menu/sitemap helper types and
+filtering utilities. Reuse them instead of defining local menu contracts.
+
+```tsx
+import { useMemo } from "react";
+import {
+  filterMenuByFeatureFlags,
+  type FeatureDependencyMap,
+  type MenuItemType,
+} from "@sito/dashboard-app";
+
+type AppPage = "home" | "reports" | "settings";
+type FeatureKey = "reports";
+
+const featureDependencies: FeatureDependencyMap<AppPage, FeatureKey> = {
+  reports: "reports",
+};
+
+export function useAppMenu(isFeatureEnabled: (key: FeatureKey) => boolean) {
+  return useMemo(() => {
+    const items: MenuItemType<AppPage>[] = [
+      { page: "home", path: "/", type: "menu" },
+      { page: "reports", path: "/reports", type: "menu" },
+      { page: "settings", path: "/settings", type: "menu" },
+    ];
+
+    return filterMenuByFeatureFlags(
+      items,
+      isFeatureEnabled,
+      featureDependencies,
+    );
+  }, [isFeatureEnabled]);
+}
+```
+
 ### 2.1 Mobile bottom nav with `BottomNavigation`
 
 For quick primary navigation on mobile while keeping the desktop drawer/navbar flow.
