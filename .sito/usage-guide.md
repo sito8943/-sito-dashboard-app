@@ -376,6 +376,7 @@ const options: Option[] = [
     { id: "us", name: "USA" },
   ]}
   label="Country"
+  autoSelectOnBlur
 />;
 
 <CheckInput
@@ -390,6 +391,8 @@ const options: Option[] = [
   onChange={(e) => console.log(e.target.files)}
 />;
 ```
+
+`autoSelectOnBlur` defaults to `true`. In single-select mode, blur selects the matching option when the typed text exactly matches an option label, ignoring case and surrounding spaces.
 
 For custom upload UIs (for example profile photo pickers), render only the native input:
 
