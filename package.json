@@ -107,7 +107,7 @@
     "vitest": "^3.2.1"
   },
   "dependencies": {
-    "@sito/dashboard": "^0.0.82",
+    "@sito/dashboard": "^0.0.83",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   }
