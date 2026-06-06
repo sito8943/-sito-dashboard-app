@@ -20,7 +20,7 @@ import { BaseEntityDto } from "lib";
  * @returns Action factory compatible with Actions/PrettyGrid.
  */
 export const useEditAction = <TRow extends BaseEntityDto>(
-  props: UseSingleActionPropTypes<number>,
+  props: UseSingleActionPropTypes<TRow["id"]>,
 ) => {
   const { t } = useTranslation();
 

@@ -63,27 +63,29 @@ export const Page = <TEntity extends BaseEntityDto>(
   const { countOfFilters } = useTableOptions();
 
   const parsedActions = useMemo(() => {
-    const pActions = Array.isArray(actions) ? [...actions] : [];
+    const pActions: ActionType<TEntity>[] = Array.isArray(actions)
+      ? [...actions]
+      : [];
     if (queryKey) {
-      const refreshAction = {
+      const refreshAction: ActionType<TEntity> = {
         id: GlobalActions.Refresh,
         onClick: () => queryClient.invalidateQueries({ queryKey }),
         icon: <FontAwesomeIcon icon={faRotateLeft} />,
         tooltip: t("_pages:common.actions.refresh.text"),
       };
-      pActions.unshift(refreshAction as ActionType<BaseEntityDto>);
+      pActions.unshift(refreshAction);
     }
     if (addOptions) {
       const addAction = {
-        ...(addOptions as ActionType<BaseEntityDto>),
+        ...(addOptions as Partial<ActionType<TEntity>>),
         id: GlobalActions.Add,
         icon: <FontAwesomeIcon icon={faAdd} />,
       };
-      pActions.unshift(addAction);
+      pActions.unshift(addAction as ActionType<TEntity>);
     }
     if (filterOptions) {
       const filterAction = {
-        ...(filterOptions as ActionType<BaseEntityDto>),
+        ...(filterOptions as Partial<ActionType<TEntity>>),
         id: "filter",
         icon: <FontAwesomeIcon icon={faFilter} />,
         children: (
@@ -93,7 +95,7 @@ export const Page = <TEntity extends BaseEntityDto>(
           />
         ),
       };
-      pActions.push(filterAction);
+      pActions.push(filterAction as ActionType<TEntity>);
     }
     return pActions;
   }, [

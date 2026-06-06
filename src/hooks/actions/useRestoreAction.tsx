@@ -16,7 +16,9 @@ import { BaseEntityDto } from "lib";
  * @param props - Restore action options.
  * @returns Action factory compatible with Actions/PrettyGrid.
  */
-export const useRestoreAction = (props: UseMultipleActionPropTypes<number>) => {
+export const useRestoreAction = <TRow extends BaseEntityDto>(
+  props: UseMultipleActionPropTypes<TRow["id"]>,
+) => {
   const { t } = useTranslation();
 
   const {
@@ -31,7 +33,7 @@ export const useRestoreAction = (props: UseMultipleActionPropTypes<number>) => {
   } = props;
 
   const action = useCallback(
-    (record: BaseEntityDto): ActionType<BaseEntityDto> => ({
+    (record: TRow): ActionType<TRow> => ({
       id,
       sticky,
       tooltip,
