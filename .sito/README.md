@@ -1,5 +1,16 @@
 # `@sito/dashboard` Consumer Docs
 
+Internal scope in this repository:
+
+- This folder is reference material for upstream `@sito/dashboard`.
+- It is used by the team and agents for inherited/re-exported behavior context.
+- It is not the canonical integration guide for `@sito/dashboard-app`.
+
+Canonical docs for this repository:
+
+- Consumer integration: [`../README.md`](../README.md)
+- Agent behavior/rules: [`../AGENTS.md`](../AGENTS.md)
+
 This folder is meant to be copied into a project that consumes the library.
 
 - [Usage guide index](./usage-guide.md)

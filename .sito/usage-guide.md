@@ -1,5 +1,13 @@
 # `@sito/dashboard` Consumer Guide
 
+## Internal Scope (This Repository)
+
+This document is an upstream reference for direct `@sito/dashboard` usage.
+If your app consumes `@sito/dashboard-app`, use the repository root docs instead:
+
+- `README.md` for public integration (`@sito/dashboard-app`)
+- `AGENTS.md` for agent/maintainer rules
+
 Use this file as an index for the consumer-facing docs:
 
 - [getting-started.md](./getting-started.md) for installation, required providers, base types, and the first table example.
@@ -118,7 +126,14 @@ import { useRef, useState } from "react";
 </Tooltip>;
 
 <Badge count={3} />;
+```
 
+Notes:
+
+- `IconButton` is overridden and expects `icon: IconDefinition`.
+- The React-node `icon` examples above apply to direct `@sito/dashboard` usage.
+
+```tsx
 <Chip text="Active" onDelete={() => console.log("delete")} />;
 
 <Action
