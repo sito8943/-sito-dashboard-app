@@ -1155,18 +1155,41 @@ export function ApiActionButton() {
 }
 ```
 
-## 11. Utility hooks (`useTimeAge`, `useScrollTrigger`)
+## 11. Utility hooks (`useTimeAge`, `useScrollTrigger`, `useOnlineStatus`)
 
 ```tsx
-import { useTimeAge, useScrollTrigger } from "@sito/dashboard-app";
+import {
+  OfflineBanner,
+  useOnlineStatus,
+  useScrollTrigger,
+  useTimeAge,
+} from "@sito/dashboard-app";
 
 export function RelativeDateBadge({ createdAt }: { createdAt: Date }) {
   const { timeAge } = useTimeAge();
   const compact = useScrollTrigger(120);
+  const { isOnline, isChecking } = useOnlineStatus({
+    checkIntervalMs: 30_000,
+    probeUrl: "/api/health",
+  });
 
-  return <span>{compact ? "..." : timeAge(createdAt)}</span>;
+  return (
+    <>
+      <OfflineBanner
+        isOnline={isOnline}
+        message={isChecking ? "Checking connectivity..." : "Offline mode"}
+      />
+      <span>{compact ? "..." : timeAge(createdAt)}</span>
+    </>
+  );
 }
 ```
+
+Reusable connectivity types:
+
+- `UseOnlineStatusOptions` for app-level wrappers around the polling config
+- `OnlineStatus` for the compact hook result
+- `OnlineStatusSnapshot` when you need browser connectivity and server reachability split out separately
 
 ## 12. Recipe usage recommendations
 

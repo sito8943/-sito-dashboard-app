@@ -13,7 +13,7 @@ Install peer dependencies in the consumer project as well:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.82 \
+  @sito/dashboard@^0.0.84 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -176,6 +176,59 @@ function AppShell({ children }: { children: ReactNode }) {
 - `"auto"` respects `prefers-reduced-motion`.
 - `"none"` disables library transitions and animations.
 - `"always"` keeps library transitions enabled even when the OS/browser requests reduced motion.
+
+### 2.0.2 Provider and navigation helper types
+
+These reusable types are also part of the public surface and should be
+imported from `@sito/dashboard-app` instead of copied into consumer apps.
+
+| Type                                                                        | Use                                                                                   |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `BasicProviderPropTypes`                                                    | Minimal `{ children }` contract for app-owned wrapper providers                       |
+| `AppProviderSlot<Props>` / `AnyAppProviderSlot`                             | Type app-specific provider slots passed into `AppProviders` / `createAppProviders`    |
+| `AppProvidersProps`                                                         | Full prop contract for custom wrappers around `AppProviders`                          |
+| `MotionPreference`                                                          | Shared `"auto" \| "always" \| "none"` motion union used by `ConfigProvider`           |
+| `Path` / `Location<State>`                                                  | Router-agnostic location shape consumed by `ConfigProvider` and auth helpers          |
+| `BaseLinkPropsType` / `BaseSearchModalPropsType`                            | Contracts for custom `linkComponent` and `searchComponent` passed to `ConfigProvider` |
+| `MenuItemType<MenuKeys>` / `SubMenuItemType`                                | Drawer/menu metadata contracts                                                        |
+| `ViewPageType<PageId>` / `NamedViewPageType<PageId>`                        | Typed sitemap/route metadata contracts                                                |
+| `AccessGuard`                                                               | Shared access predicate for routes/menu items                                         |
+| `FeatureEnabledFn<FeatureKey>` / `FeatureDependencyMap<PageId, FeatureKey>` | Feature-flag wiring for menu/sitemap filtering helpers                                |
+| `BottomNavItemType<PageId>` / `BottomNavigationItemType<TId>`               | Low-level route metadata and component-facing mobile nav item contracts               |
+| `BottomNavigationCenterActionType`                                          | Shared center-CTA contract for `BottomNavigation`                                     |
+
+Example:
+
+```ts
+import {
+  filterMenuByFeatureFlags,
+  type FeatureDependencyMap,
+  type MenuItemType,
+  type MotionPreference,
+} from "@sito/dashboard-app";
+
+type AppPage = "home" | "reports" | "settings";
+type FeatureKey = "reports";
+
+const motion: MotionPreference = "auto";
+const enabledFeatures: FeatureKey[] = ["reports"];
+
+const menuMap: MenuItemType<AppPage>[] = [
+  { page: "home", path: "/", type: "menu" },
+  { page: "reports", path: "/reports", type: "menu" },
+  { page: "settings", path: "/settings", type: "menu" },
+];
+
+const featureDependencies: FeatureDependencyMap<AppPage, FeatureKey> = {
+  reports: "reports",
+};
+
+const visibleMenu = filterMenuByFeatureFlags(
+  menuMap,
+  (key) => enabledFeatures.includes(key),
+  featureDependencies,
+);
+```
 
 ### 2.1 Supabase providers (optional backend)
 
@@ -480,6 +533,28 @@ const formProps = useMutationForm<
 <FormContainer {...formProps}>{/* inputs */}</FormContainer>;
 ```
 
+### 6.4 Public hook contract types
+
+These types are exported for consumers that build wrappers around the library
+hooks and want to stay aligned with the package surface.
+
+| Type                                                                                   | Use                                                                                                      |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `UseFetchPropsType<TRow, TFilterDto>` / `UseFetchByIdPropsType`                        | Shared input contracts for entity query hooks                                                            |
+| `ApiQueryResult<TDto>`                                                                 | Query result shape returned by fetch hooks, including `setTotal`                                         |
+| `FormDialogMode`                                                                       | Shared `"entity" \| "state"` union used by dialog hooks                                                  |
+| `FormDialogErrorPhase` / `FormDialogErrorContext<TForm>`                               | Typed error lifecycle context for `useFormDialog`                                                        |
+| `OpenFormDialogParamsType<TForm>`                                                      | Open-time payload shape for `openDialog({ id?, values? })`                                               |
+| `UseFormDialogReturnType<TForm>`                                                       | Return contract when composing higher-level dialog abstractions                                          |
+| `UsePostDialogPropsType<...>` / `UsePutDialogPropsType<...>`                           | Props contracts for wrappers around CRUD dialog hooks                                                    |
+| `UseFormPropsType<...>`                                                                | Shared prop contract for `useMutationForm`-style wrappers                                                |
+| `UseActionPropTypes` / `UseSingleActionPropTypes<T>` / `UseMultipleActionPropTypes<T>` | Shared action configuration contracts                                                                    |
+| `GlobalActions`                                                                        | Built-in ids for prefab page actions (`add`, `edit`, `delete`, `restore`, `refresh`, `export`, `import`) |
+| `UseExportActionMutatePropsType<TData, TEntity, TError>`                               | Props contract for custom wrappers around `useExportActionMutate`                                        |
+
+Use these when extracting app-level helpers around the library. Avoid copying
+the hook signatures into local types.
+
 ## 7. Typed API clients
 
 ### 7.1 Remote client with `BaseClient`
@@ -553,6 +628,57 @@ Optional `SupabaseDataClient` options:
 - `idColumn` (default `"id"`)
 - `deletedAtColumn` (default `"deletedAt"`)
 - `defaultSortColumn` (default `idColumn`)
+
+### 7.3 Reusable exported data types
+
+Consumer apps should import the shared types from `@sito/dashboard-app`
+instead of redefining them locally.
+
+| Type                                                                    | Use                                                                                                              |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `BaseEntityDto` / `BaseCommonEntityDto` / `DeleteDto` / `BaseFilterDto` | Base DTO contracts for CRUD resources                                                                            |
+| `SoftDeleteScope`                                                       | Filter union for active/deleted/all list queries                                                                 |
+| `QueryResult<TDto>`                                                     | Standard paginated response shape returned by `BaseClient#get`                                                   |
+| `QueryParam<TDto>`                                                      | Standard list query params (`sortingBy`, `sortingOrder`, `currentPage`, `pageSize`)                              |
+| `RangeValue<T>`                                                         | Strongly typed app/domain range shape: `{ start: T; end: T }`                                                    |
+| `RangeFilterValue`                                                      | Loose infra-level range shape used by `SupabaseDataClient` filter builders: `{ start?: unknown; end?: unknown }` |
+| `ImportPreviewDto` / `ImportDto<TPreview>`                              | Shared import preview item and import payload contracts                                                          |
+| `SessionDto<TExtra>` / `SessionAccountDto<TExtra>`                      | Shared auth session/account DTOs for REST and Supabase auth flows                                                |
+
+Example:
+
+```ts
+import type {
+  BaseEntityDto,
+  BaseFilterDto,
+  QueryParam,
+  QueryResult,
+  RangeFilterValue,
+  RangeValue,
+} from "@sito/dashboard-app";
+
+type TransactionRange = RangeValue<string>;
+
+interface TransactionDto extends BaseEntityDto {
+  amount: number;
+}
+
+interface TransactionFilterDto extends BaseFilterDto {
+  createdAt?: RangeFilterValue;
+}
+
+type TransactionListQuery = QueryParam<TransactionDto>;
+type TransactionListResponse = QueryResult<TransactionDto>;
+
+const selectedRange: TransactionRange = {
+  start: "2026-06-01",
+  end: "2026-06-30",
+};
+```
+
+Prefer `RangeValue<T>` for app-owned state and DTOs where both ends are required
+and strongly typed. Use `RangeFilterValue` when you need to interoperate with
+generic Supabase range-filter plumbing where either end can be omitted.
 
 ## 8. Auth and notifications
 
@@ -699,6 +825,19 @@ const confirmPayload = resolveConfirmEmailDtoFromLocation(
   location.search,
 );
 ```
+
+Reusable auth flow/helper types:
+
+| Type                                                           | Use                                                                   |
+| -------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `AuthRouteQueryParamKey` / `AuthRouteQueryParamTypeKey`        | Literal unions for auth query/hash keys and token `type` values       |
+| `AuthFlowStatus`                                               | Shared status union for confirm-email/update-password flows           |
+| `AuthLocationInput`                                            | Minimal `{ hash, search }` location shape for auth parsing/flow hooks |
+| `UseUpdatePasswordFlowOptions` / `UseUpdatePasswordFlowResult` | Contracts for `useUpdatePasswordFlow`                                 |
+| `UseConfirmEmailFlowOptions` / `UseConfirmEmailFlowResult`     | Contracts for `useConfirmEmailFlow`                                   |
+
+Prefer these exports over local string unions or hand-written interfaces when
+wrapping the built-in auth helpers.
 
 #### 8.1.3 Auth visual shells and agnostic auth views
 
@@ -898,6 +1037,30 @@ const { showSuccessNotification, showErrorNotification } = useNotification();
 showSuccessNotification({ message: "Saved" });
 showErrorNotification({ message: "Something failed" });
 ```
+
+Reusable feedback types:
+
+| Type                               | Use                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| `NotificationEnumType`             | Built-in success/error/warning/info variants                        |
+| `NotificationType`                 | Shared notification payload contract used by `NotificationProvider` |
+| `ServiceError` / `FieldErrorTuple` | Normalized service/field error shapes reused by validation handling |
+| `ValidationError` / `HttpError`    | Error contracts recognized by `isValidationError` / `isHttpError`   |
+
+If you need to map validation tuples into UI strings, reuse
+`mapValidationErrors(error, mapper)` instead of rebuilding that utility in the
+consumer app.
+
+### 8.3 Connectivity hooks
+
+`useOnlineStatus` and `useOnlineStatusSnapshot` also expose reusable helper
+types:
+
+| Type                     | Use                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| `UseOnlineStatusOptions` | Polling/probe configuration contract                                             |
+| `OnlineStatus`           | Compact online state returned by `useOnlineStatus`                               |
+| `OnlineStatusSnapshot`   | Expanded browser/server reachability state returned by `useOnlineStatusSnapshot` |
 
 ## 9. Styling, theme variables, CSS classes
 
