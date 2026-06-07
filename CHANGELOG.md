@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.85] - 2026-05-30
+
+### Added
+
+- `useDialogErrorNotification` — default dialog error handler that surfaces `ValidationError` (per-field stacked notifications) and `HttpError` (status-mapped message) failures as notifications, with a `500` fallback for unknown errors.
+- `AutoComplete` now accepts `autoSelectOnBlur` (default `true`). In single-select mode, blur selects the option whose label exactly matches the typed text, ignoring case and surrounding whitespace.
+
+### Changed
+
+- `usePostDialog` and `usePutDialog` now fall back to `useDialogErrorNotification` when no `onError` is provided, so failed mutations are surfaced to the user instead of being swallowed silently. Passing `onError` still overrides the default.
+- `useDeleteAction`, `useEditAction`, and `useRestoreAction` are now generic over `<TRow extends BaseEntityDto>`. The id type resolves to `TRow["id"]` and the action factory receives/returns `TRow` / `ActionType<TRow>` instead of being pinned to `BaseEntityDto` with a numeric id.
+- `Page` action assembly is now typed against `ActionType<TEntity>` instead of casting through `ActionType<BaseEntityDto>`.
+
+### Documentation
+
+- Expanded `docs/CONSUMER_GUIDE.md` with reference tables for the reusable exported types (provider/navigation, hook contracts, data DTOs, auth flow helpers, feedback, and connectivity types) and usage examples, steering consumers to import from `@sito/dashboard-app` instead of redefining locally.
+- Added `useOnlineStatus` / `OfflineBanner` recipe and connectivity-type notes to `docs/RECIPES_FORMS.md`, plus layout/data recipe updates.
+
 ## [0.0.84] - 2026-05-30
 
 ### Added
