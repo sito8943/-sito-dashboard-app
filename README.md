@@ -43,7 +43,7 @@ Peer dependencies:
 ```bash
 npm install \
   react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.82 \
+  @sito/dashboard@^0.0.84 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -68,7 +68,7 @@ npm install @supabase/supabase-js@2.100.0
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.82`
+- `@sito/dashboard` `^0.0.84`
 - Font Awesome peers per `package.json`
 
 ## Quick start
