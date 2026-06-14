@@ -126,14 +126,7 @@ import { useRef, useState } from "react";
 </Tooltip>;
 
 <Badge count={3} />;
-```
 
-Notes:
-
-- `IconButton` is overridden and expects `icon: IconDefinition`.
-- The React-node `icon` examples above apply to direct `@sito/dashboard` usage.
-
-```tsx
 <Chip text="Active" onDelete={() => console.log("delete")} />;
 
 <Action
@@ -165,6 +158,18 @@ Notes:
     },
   ]}
 />;
+
+<Actions
+  showTooltips={false}
+  actions={[
+    { id: "edit", tooltip: "Edit", icon: <span>E</span>, onClick: () => {} },
+  ]}
+/>;
+
+Notes:
+
+- `IconButton` is overridden and expects `icon: IconDefinition`.
+- The React-node `icon` examples above apply to direct `@sito/dashboard` usage.
 
 <ActionsDropdown
   actions={[

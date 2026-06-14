@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 import { useImportAction } from "./useImportAction";
 import { GlobalActions } from "./types";
@@ -38,5 +39,29 @@ describe("useImportAction", () => {
     const { result } = renderHook(() => useImportAction({ onClick }));
     result.current.action().onClick!();
     expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("respects override props and propagates action style props", () => {
+    const { result } = renderHook(() =>
+      useImportAction({
+        onClick: vi.fn(),
+        id: "custom-import",
+        icon: faPencil,
+        tooltip: "Custom import",
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+
+    expect(result.current.action()).toEqual(
+      expect.objectContaining({
+        id: "custom-import",
+        tooltip: "Custom import",
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
   });
 });

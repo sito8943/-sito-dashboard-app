@@ -9,6 +9,9 @@ export interface UseActionPropTypes {
   icon?: IconDefinition;
   tooltip?: string;
   id?: string;
+  className?: string;
+  iconClassName?: string;
+  labelClassName?: string;
 }
 
 export interface UseSingleActionPropTypes<TInDto> extends UseActionPropTypes {

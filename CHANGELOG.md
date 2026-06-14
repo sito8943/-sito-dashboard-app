@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.86] - 2026-06-14
+
+### Added
+
+- `Dialog` now accepts `initialFocus?: "first-input" | "submit"` so consumers can choose whether opening a modal focuses the first enabled field or the submit action.
+- `ConfirmationDialog` now defaults `initialFocus` to `"submit"`, making destructive/confirmation flows keyboard-ready without extra consumer wiring.
+- Action hooks now accept styling props that are forwarded to the rendered action item: `className`, `iconClassName`, and `labelClassName` on `useDeleteAction`, `useEditAction`, `useRestoreAction`, `useExportAction`, and `useImportAction`.
+
+### Changed
+
+- `Dialog` no longer auto-focuses the first input on open unless `initialFocus="first-input"` is explicitly set. When `initialFocus="submit"`, the first enabled submit control is focused instead.
+- `Page` and `PageHeader` now expose `showActionTooltips?: boolean` (default `true`) so desktop inline actions can opt out of tooltip wrappers while mobile dropdown actions keep their visible labels.
+- `useExportAction` and `useImportAction` now support overriding their default `id`, `icon`, and `tooltip`, in addition to the new styling props.
+- `Empty` no longer forces `showTooltips={false}` on its rendered action buttons, so action tooltip behavior follows the action/component defaults.
+
+### Documentation
+
+- Updated `README.md`, `docs/CONSUMER_GUIDE.md`, `docs/RECIPES_DATA.md`, and `docs/THEME_AND_CSS.md` to document `Dialog.initialFocus`, `ConfirmationDialog` focus behavior, action styling hooks, and `Page`/`PageHeader` tooltip controls.
+
 ## [0.0.85] - 2026-05-30
 
 ### Added

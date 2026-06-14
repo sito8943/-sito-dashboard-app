@@ -133,4 +133,62 @@ describe("Dialog", () => {
 
     expect(onSubmit).toHaveBeenCalledOnce();
   });
+
+  it("does not focus the first input by default", () => {
+    const previousFocus = document.createElement("button");
+    previousFocus.type = "button";
+    previousFocus.textContent = "Previously focused";
+    document.body.appendChild(previousFocus);
+    previousFocus.focus();
+
+    try {
+      render(
+        <Dialog open title="Profile" handleClose={vi.fn()}>
+          <input aria-label="Name" />
+        </Dialog>,
+      );
+
+      expect(previousFocus).toHaveFocus();
+      expect(screen.getByRole("textbox", { name: "Name" })).not.toHaveFocus();
+    } finally {
+      previousFocus.remove();
+    }
+  });
+
+  it("focuses the first enabled field when initialFocus is first-input", () => {
+    render(
+      <Dialog
+        open
+        title="Profile"
+        handleClose={vi.fn()}
+        initialFocus="first-input"
+      >
+        <div>
+          <input aria-label="Hidden field" type="hidden" />
+          <input aria-label="Disabled name" disabled />
+          <textarea aria-label="Description" />
+          <input aria-label="Name" />
+        </div>
+      </Dialog>,
+    );
+
+    expect(screen.getByRole("textbox", { name: "Description" })).toHaveFocus();
+    expect(screen.getByRole("textbox", { name: "Name" })).not.toHaveFocus();
+  });
+
+  it("focuses the submit button when initialFocus is submit", () => {
+    render(
+      <Dialog
+        open
+        title="Confirm"
+        handleClose={vi.fn()}
+        onSubmit={vi.fn()}
+        initialFocus="submit"
+      >
+        <button type="submit">Submit</button>
+      </Dialog>,
+    );
+
+    expect(screen.getByRole("button", { name: "Submit" })).toHaveFocus();
+  });
 });

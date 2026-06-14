@@ -1,4 +1,4 @@
-import { useTranslation } from "@sito/dashboard";
+import { classNames, useTranslation } from "@sito/dashboard";
 
 // icons
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -26,14 +26,20 @@ import "./styles.css";
 export const PageHeader = <TEntity extends BaseEntityDto>(
   props: PageHeaderPropsType<TEntity>,
 ) => {
-  const { showBackButton, title, actions } = props;
+  const {
+    showBackButton,
+    title,
+    actions,
+    showActionTooltips = true,
+    className,
+  } = props;
 
   const { t } = useTranslation();
 
   const { navigate } = useConfig();
 
   return (
-    <div className="page-header animated">
+    <div className={classNames("page-header animated", className)}>
       <div className="page-header-left">
         {showBackButton && (
           <AppIconButton
@@ -51,6 +57,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
         <Actions
           className="page-header-actions-desktop"
           actions={actions ?? []}
+          showTooltips={showActionTooltips}
         />
         <ActionsDropdown
           className="page-header-actions-mobile"

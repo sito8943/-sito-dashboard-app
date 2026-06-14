@@ -1,8 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PwaUpdateDialog } from "./PwaUpdateDialog";
+
+const { dialogSpy } = vi.hoisted(() => ({
+  dialogSpy: vi.fn(),
+}));
 
 type MockButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
@@ -24,18 +28,23 @@ vi.mock("../../ui/Dialog", () => ({
     open,
     title,
     children,
+    ...props
   }: {
     open: boolean;
     title: ReactNode;
     children: ReactNode;
     handleClose: () => void;
-  }) =>
-    open ? (
+    initialFocus?: "first-input" | "submit";
+  }) => {
+    dialogSpy(props);
+
+    return open ? (
       <div data-testid="dialog">
         <h2>{title}</h2>
         {children}
       </div>
-    ) : null,
+    ) : null;
+  },
 }));
 
 describe("PwaUpdateDialog", () => {
@@ -48,6 +57,10 @@ describe("PwaUpdateDialog", () => {
     dismissLabel: "Later",
     updateLabel: "Update",
   };
+
+  beforeEach(() => {
+    dialogSpy.mockClear();
+  });
 
   it("renders title, description, and both buttons when open", () => {
     render(<PwaUpdateDialog {...defaultProps} />);
@@ -80,5 +93,15 @@ describe("PwaUpdateDialog", () => {
     fireEvent.click(screen.getByText("Update"));
 
     expect(onUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it("forwards initialFocus to the base dialog", () => {
+    render(<PwaUpdateDialog {...defaultProps} initialFocus="submit" />);
+
+    expect(dialogSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        initialFocus: "submit",
+      }),
+    );
   });
 });

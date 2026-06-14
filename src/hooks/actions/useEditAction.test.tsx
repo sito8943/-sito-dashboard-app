@@ -46,4 +46,23 @@ describe("useEditAction", () => {
     result.current.action(record).onClick!();
     expect(onClick).toHaveBeenCalledWith(5);
   });
+
+  it("propagates action style props", () => {
+    const { result } = renderHook(() =>
+      useEditAction({
+        onClick: vi.fn(),
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+
+    expect(result.current.action(record)).toEqual(
+      expect.objectContaining({
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+  });
 });

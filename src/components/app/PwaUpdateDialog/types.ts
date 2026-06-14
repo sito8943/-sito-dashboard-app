@@ -1,3 +1,5 @@
+import type { DialogInitialFocusTarget } from "../../ui/Dialog";
+
 export type PwaUpdateDialogPropsType = {
   open: boolean;
   onDismiss: () => void;
@@ -6,6 +8,7 @@ export type PwaUpdateDialogPropsType = {
   description: string;
   dismissLabel: string;
   updateLabel: string;
+  initialFocus?: DialogInitialFocusTarget;
   mobileFullScreen?: boolean;
   containerClassName?: string;
 };

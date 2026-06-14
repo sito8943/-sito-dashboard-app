@@ -30,6 +30,7 @@ export const Dialog = (props: DialogPropsType) => {
     title,
     children,
     handleClose,
+    initialFocus,
     closeOnBackdropClick = false,
     onSubmit,
     open = false,
@@ -77,19 +78,19 @@ export const Dialog = (props: DialogPropsType) => {
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !initialFocus) return;
 
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    const primaryInput = dialog.querySelector<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >(
-      'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
-    );
+    if (initialFocus === "first-input") {
+      const primaryInput = dialog.querySelector<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >(
+        'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
+      );
 
-    if (primaryInput) {
-      primaryInput.focus();
+      primaryInput?.focus();
       return;
     }
 
@@ -98,7 +99,7 @@ export const Dialog = (props: DialogPropsType) => {
     );
 
     submitButton?.focus();
-  }, [open]);
+  }, [open, initialFocus]);
 
   return createPortal(
     <div

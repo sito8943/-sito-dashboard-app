@@ -24,13 +24,19 @@ export const ConfirmationDialog = (props: ConfirmationDialogPropsType) => {
     children,
     handleSubmit,
     handleClose,
+    initialFocus = "submit",
     isLoading = false,
     extraActions = [],
     ...rest
   } = props;
 
   return (
-    <Dialog {...rest} handleClose={handleClose} onSubmit={handleSubmit}>
+    <Dialog
+      {...rest}
+      handleClose={handleClose}
+      onSubmit={handleSubmit}
+      initialFocus={initialFocus}
+    >
       {children}
       <DialogActions
         primaryText={t("_accessibility:buttons.ok")}
