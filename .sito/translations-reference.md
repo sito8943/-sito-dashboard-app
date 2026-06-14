@@ -41,9 +41,9 @@ If a component that calls `useTranslation()` is rendered without the provider, i
 
 ### Required when non-sticky actions are used (ellipsis dropdown)
 
-| Key                                  | Where used        | Purpose                                           |
-| ------------------------------------ | ----------------- | ------------------------------------------------- |
-| `_accessibility:buttons.openActions` | `ActionsDropdown` | Aria label/name/tooltip for actions menu trigger. |
+| Key                                  | Where used        | Purpose                                       |
+| ------------------------------------ | ----------------- | --------------------------------------------- |
+| `_accessibility:buttons.openActions` | `ActionsDropdown` | Aria label/name for the actions menu trigger. |
 
 ### Required when column visibility or reset is used (`canHideColumns` / `canReset`)
 

@@ -30,6 +30,9 @@ export const useDeleteAction = <TRow extends BaseEntityDto>(
     disabled = false,
     id = GlobalActions.Delete,
     tooltip = t("_pages:common.actions.delete.text"),
+    className,
+    iconClassName,
+    labelClassName,
   } = props;
 
   const action = useCallback(
@@ -37,6 +40,9 @@ export const useDeleteAction = <TRow extends BaseEntityDto>(
       id,
       sticky,
       tooltip,
+      className,
+      iconClassName,
+      labelClassName,
       multiple,
       onClick: () => onClick([record?.id]),
       hidden: !!record.deletedAt || hidden,
@@ -44,7 +50,19 @@ export const useDeleteAction = <TRow extends BaseEntityDto>(
       icon: <FontAwesomeIcon className="text-bg-error" icon={icon} />,
       onMultipleClick: (rows) => onClick(rows.map((row) => row.id)),
     }),
-    [disabled, hidden, icon, id, multiple, onClick, sticky, tooltip],
+    [
+      className,
+      disabled,
+      hidden,
+      icon,
+      iconClassName,
+      id,
+      labelClassName,
+      multiple,
+      onClick,
+      sticky,
+      tooltip,
+    ],
   );
 
   return {

@@ -26,23 +26,43 @@ export const useExportAction = (props: UseExportAction) => {
     hidden = false,
     disabled = false,
     isLoading = false,
+    id = GlobalActions.Export,
+    icon = faCloudArrowDown,
+    tooltip = t("_pages:common.actions.export.text"),
+    className,
+    iconClassName,
+    labelClassName,
   } = props;
 
   const action = useCallback(
     () => ({
-      id: GlobalActions.Export,
-      hidden: hidden,
-      disabled: disabled,
+      id,
+      hidden,
+      disabled,
+      className,
+      iconClassName,
+      labelClassName,
       icon: (
         <FontAwesomeIcon
           className={`${isLoading ? "rotate" : ""}`}
-          icon={isLoading ? faCircleNotch : faCloudArrowDown}
+          icon={isLoading ? faCircleNotch : icon}
         />
       ),
-      tooltip: t("_pages:common.actions.export.text"),
-      onClick: onClick,
+      tooltip,
+      onClick,
     }),
-    [disabled, hidden, isLoading, onClick, t],
+    [
+      className,
+      disabled,
+      hidden,
+      icon,
+      iconClassName,
+      id,
+      isLoading,
+      labelClassName,
+      onClick,
+      tooltip,
+    ],
   );
 
   return {

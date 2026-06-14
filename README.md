@@ -90,10 +90,10 @@ Detailed setup, examples, and prop tables live in:
 - Layout and navigation: `Page`, `Navbar`, `Drawer`, `BottomNavigation`, `TabsLayout`, `PrettyGrid`, `ToTop`
 - Layout shells: `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`
 - Reusable views: `NotFoundView`, `FeatureUnavailableView`
-- Actions and menus: `Actions`, `Action`, `Dropdown`, button components
+- Actions and menus: `Actions`, `Action`, `ActionsDropdown`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, `PwaUpdateDialog`, form inputs
 - Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`, `TopBanner`
-- Hooks: `useFormDialog`, `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm`, `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — action hooks ship with default `sticky`, `multiple`, `id`, `icon`, `tooltip`; only `onClick` is required.
+- Hooks: `useFormDialog`, `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm`, `useDeleteAction`, `useNavbar`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — action hooks ship with default `sticky`, `multiple`, `id`, `icon`, `tooltip` and now forward `className`, `iconClassName`, `labelClassName`; only `onClick` is required. `Actions` renders icon-only items with tooltips by default (`showTooltips={true}`) and can opt out per action list.
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, `normalizeMenuDividers`.
 
 ## Local development

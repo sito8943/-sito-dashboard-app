@@ -66,4 +66,23 @@ describe("useRestoreAction", () => {
     result.current.action(deletedRecord).onMultipleClick!(rows);
     expect(onClick).toHaveBeenCalledWith([1, 3]);
   });
+
+  it("propagates action style props", () => {
+    const { result } = renderHook(() =>
+      useRestoreAction({
+        onClick: vi.fn(),
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+
+    expect(result.current.action(deletedRecord)).toEqual(
+      expect.objectContaining({
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+  });
 });

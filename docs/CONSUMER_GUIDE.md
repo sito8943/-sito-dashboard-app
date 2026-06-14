@@ -293,6 +293,9 @@ const CustomAuthProvider = ({ children }) => {
 | `Onboarding`                  | `steps`, `icons`, `alwaysShowIcon`, `alwaysHideIcon`, `alwaysHideLabel`, `showLabelOnMobile`, `remountStepOnChange`                                                              | Multi-step flow using controlled `TabsLayout`; horizontal swipe, Back button auto-rendered from step 2, per-action icon/display flags cascadable per-step                                                                                                   |
 | `PrettyGrid<T>`               | `data`, `renderComponent`, `hasMore`, `onLoadMore`, `className`, `itemClassName`                                                                                                 | Grid with empty state and optional infinite scroll                                                                                                                                                                                                          |
 | `Error`                       | Default mode (`error`, `message`, `onRetry`) or custom mode (`children`)                                                                                                         | Reusable error fallback                                                                                                                                                                                                                                     |
+| `Actions<T>`                  | `actions`, `showTooltips`, `showActionTexts`, `className`, `itemClassName`, `actionClassName`                                                                                    | Inline action list. Defaults to icon-only with tooltip wrappers; use `showTooltips={false}` for dense bars or when labels are already visible.                                                                                                              |
+| `Action<T>`                   | Action descriptor props + `showText`, `className`, `stopPropagation`                                                                                                             | Low-level single action button. `tooltip` still belongs on the action descriptor even when a parent `Actions` list hides visible tooltips.                                                                                                                  |
+| `ActionsDropdown<T>`          | `actions`, `className`                                                                                                                                                           | Ellipsis trigger for non-sticky actions. Internally renders `Actions` with `showActionTexts` and `showTooltips={false}` inside the dropdown.                                                                                                                |
 | `Dialog`                      | `open`, `title`, `handleClose`, `initialFocus`, `closeOnBackdropClick`, `mobileFullScreen`, `containerClassName`, `className`, `animationClass`                                  | Base modal. Backdrop click is disabled by default; set `closeOnBackdropClick` to `true` to close on outside click. `initialFocus="first-input"` focuses the first enabled input/textarea/select; `initialFocus="submit"` focuses the primary submit action. |
 | `FormDialog<TForm>`           | `Dialog` props + `FormContainer` props + `extraActions`                                                                                                                          | Form modal with optional secondary footer actions                                                                                                                                                                                                           |
 | `ConfirmationDialog`          | `open`, `title`, `handleSubmit`, `handleClose`, `isLoading`, `extraActions`, `initialFocus`                                                                                      | Basic confirmation flows. Defaults `initialFocus` to `"submit"` so Enter confirms immediately after open.                                                                                                                                                   |
@@ -372,6 +375,8 @@ const { action: editAction } = useEditAction({
   onClick: (id) => openEdit(id),
 });
 ```
+
+Prefab action hooks (`useEditAction`, `useDeleteAction`, `useRestoreAction`, `useExportAction`, `useImportAction`) also forward `className`, `iconClassName`, and `labelClassName` into the produced action descriptor, so you can style downstream `Action`/`Actions` rendering without hand-writing the action object.
 
 ### 6.2 Dialog hooks
 
@@ -554,6 +559,13 @@ hooks and want to stay aligned with the package surface.
 
 Use these when extracting app-level helpers around the library. Avoid copying
 the hook signatures into local types.
+
+### 6.5 Action rendering notes
+
+- Keep `tooltip` populated on action descriptors. It still feeds icon-only `Actions` tooltips and remains the semantic label carried by the action shape.
+- `Actions` defaults to `showTooltips={true}` and `showActionTexts={false}`. This is the icon-only toolbar mode.
+- Set `showTooltips={false}` when the action bar is visually dense, when labels are already shown, or when repeated hover tooltips add noise.
+- `ActionsDropdown` already renders visible labels and disables tooltip wrappers internally; you do not need to pass `showTooltips={false}` yourself for dropdown content.
 
 ## 7. Typed API clients
 

@@ -57,4 +57,23 @@ describe("useDeleteAction", () => {
     result.current.action(record).onMultipleClick!(rows);
     expect(onClick).toHaveBeenCalledWith([1, 2]);
   });
+
+  it("propagates action style props", () => {
+    const { result } = renderHook(() =>
+      useDeleteAction({
+        onClick: vi.fn(),
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+
+    expect(result.current.action(record)).toEqual(
+      expect.objectContaining({
+        className: "row-action",
+        iconClassName: "row-action-icon",
+        labelClassName: "row-action-label",
+      }),
+    );
+  });
 });

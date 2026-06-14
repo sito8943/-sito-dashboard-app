@@ -32,6 +32,9 @@ export const useEditAction = <TRow extends BaseEntityDto>(
     id = GlobalActions.Edit,
     icon = faPencil,
     tooltip = t("_pages:common.actions.edit.text"),
+    className,
+    iconClassName,
+    labelClassName,
   } = props;
 
   const action = useCallback(
@@ -39,12 +42,26 @@ export const useEditAction = <TRow extends BaseEntityDto>(
       id,
       sticky,
       tooltip,
+      className,
+      iconClassName,
+      labelClassName,
       onClick: () => onClick(record?.id),
       hidden: !!record.deletedAt || hidden,
       disabled: !!record.deletedAt || disabled,
       icon: <FontAwesomeIcon className="primary" icon={icon} />,
     }),
-    [disabled, hidden, icon, id, onClick, sticky, tooltip],
+    [
+      className,
+      disabled,
+      hidden,
+      icon,
+      iconClassName,
+      id,
+      labelClassName,
+      onClick,
+      sticky,
+      tooltip,
+    ],
   );
 
   return {

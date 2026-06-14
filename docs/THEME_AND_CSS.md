@@ -94,6 +94,8 @@ Use `motion="auto"` unless you have a clear product reason to force or disable m
 
 ## 4. Exported CSS class map by component
 
+Prefab action hooks (`useEditAction`, `useDeleteAction`, `useRestoreAction`, `useExportAction`, `useImportAction`) now forward `className`, `iconClassName`, and `labelClassName` to the generated action descriptor. Use those when you want hook-generated actions to participate in the same styling contract documented for `Action`.
+
 ### 4.1 Buttons and helpers
 
 - `.animated`

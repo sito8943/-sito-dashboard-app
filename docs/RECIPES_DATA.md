@@ -137,6 +137,7 @@ export function ProductActionsBar({ record }: { record: BaseEntityDto }) {
 
   return (
     <Actions
+      showTooltips={false}
       actions={[
         exportAction(),
         importAction(),
@@ -147,6 +148,8 @@ export function ProductActionsBar({ record }: { record: BaseEntityDto }) {
   );
 }
 ```
+
+Use `showTooltips={false}` for compact action bars that already sit next to clear surrounding context. Keep `tooltip` on each action descriptor anyway; the same action shape still feeds dropdown renderers and icon-only layouts elsewhere.
 
 ### 1.2 `PrettyGrid` infinite scroll
 
