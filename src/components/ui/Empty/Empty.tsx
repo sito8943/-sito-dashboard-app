@@ -33,7 +33,7 @@ export const Empty = <TRow extends BaseEntityDto>(
       <div className="flex gap-2 flex-wrap items-center justify-center">
         {action &&
           (Array.isArray(action) ? action : [action]).map((a) => (
-            <Action key={a.id} showTooltips={false} showText {...a} />
+            <Action key={a.id} showText {...a} />
           ))}
       </div>
     </div>
