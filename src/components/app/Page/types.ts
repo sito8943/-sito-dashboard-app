@@ -14,6 +14,7 @@ export type PagePropsType<TRow extends BaseEntityDto> = {
   filterOptions?: Partial<ActionType<TRow>>;
   isAnimated?: boolean;
   actions?: ActionType<TRow>[];
+  showActionTooltips?: boolean;
   showBackButton?: boolean;
   queryKey?: string[];
   className?: string;
@@ -30,6 +31,7 @@ export interface PageAddOptions<TRow extends BaseEntityDto>
 export type PageHeaderPropsType<TRow extends BaseEntityDto> = {
   title?: string;
   actions?: ActionType<TRow>[];
+  showActionTooltips?: boolean;
   showBackButton?: boolean;
   className?: string;
 };

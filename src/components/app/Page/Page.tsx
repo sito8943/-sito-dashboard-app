@@ -51,6 +51,7 @@ export const Page = <TEntity extends BaseEntityDto>(
     addOptions,
     filterOptions,
     actions,
+    showActionTooltips = true,
     queryKey,
     isLoading = false,
     isAnimated = true,
@@ -116,6 +117,7 @@ export const Page = <TEntity extends BaseEntityDto>(
       <PageHeader
         showBackButton={showBackButton}
         actions={parsedActions}
+        showActionTooltips={showActionTooltips}
         title={title}
         className={headerClassName}
       />

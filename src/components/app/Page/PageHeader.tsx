@@ -26,7 +26,13 @@ import "./styles.css";
 export const PageHeader = <TEntity extends BaseEntityDto>(
   props: PageHeaderPropsType<TEntity>,
 ) => {
-  const { showBackButton, title, actions, className } = props;
+  const {
+    showBackButton,
+    title,
+    actions,
+    showActionTooltips = true,
+    className,
+  } = props;
 
   const { t } = useTranslation();
 
@@ -51,6 +57,7 @@ export const PageHeader = <TEntity extends BaseEntityDto>(
         <Actions
           className="page-header-actions-desktop"
           actions={actions ?? []}
+          showTooltips={showActionTooltips}
         />
         <ActionsDropdown
           className="page-header-actions-mobile"

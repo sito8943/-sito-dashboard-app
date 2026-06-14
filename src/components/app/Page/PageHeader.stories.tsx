@@ -19,6 +19,7 @@ const meta = {
   args: {
     title: "Users",
     showBackButton: true,
+    showActionTooltips: true,
     actions: [
       {
         id: "create",
@@ -40,3 +41,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {};
+
+export const WithoutActionTooltips: Story = {
+  args: {
+    showActionTooltips: false,
+  },
+};
