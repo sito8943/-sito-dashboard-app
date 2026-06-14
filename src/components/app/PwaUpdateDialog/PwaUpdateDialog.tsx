@@ -18,6 +18,7 @@ export const PwaUpdateDialog = (props: PwaUpdateDialogPropsType) => {
     description,
     dismissLabel,
     updateLabel,
+    initialFocus,
     mobileFullScreen = false,
     containerClassName = "pwa-update-dialog-container",
   } = props;
@@ -27,6 +28,7 @@ export const PwaUpdateDialog = (props: PwaUpdateDialogPropsType) => {
       open={open}
       title={title}
       handleClose={onDismiss}
+      initialFocus={initialFocus}
       mobileFullScreen={mobileFullScreen}
       containerClassName={containerClassName}
     >

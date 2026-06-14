@@ -11,11 +11,14 @@ export type DialogSubmitHandler = (
   event?: BaseSyntheticEvent,
 ) => void | Promise<void>;
 
+export type DialogInitialFocusTarget = "first-input" | "submit";
+
 export type DialogPropsType = {
   open?: boolean;
   title: string;
   children?: ReactNode;
   handleClose: () => void;
+  initialFocus?: DialogInitialFocusTarget;
   closeOnBackdropClick?: boolean;
   onSubmit?: DialogSubmitHandler;
   mobileFullScreen?: boolean;

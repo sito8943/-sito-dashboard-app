@@ -1,7 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ConfirmationDialog } from "./ConfirmationDialog";
+
+const { dialogSpy } = vi.hoisted(() => ({
+  dialogSpy: vi.fn(),
+}));
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -14,16 +18,22 @@ vi.mock("./Dialog", () => ({
     children,
     title,
     onSubmit,
+    ...props
   }: {
     children: React.ReactNode;
     title: string;
     onSubmit?: (event?: React.BaseSyntheticEvent) => void | Promise<void>;
-  }) => (
-    <div role="dialog">
-      <h2>{title}</h2>
-      {onSubmit ? <form onSubmit={onSubmit}>{children}</form> : children}
-    </div>
-  ),
+    initialFocus?: "first-input" | "submit";
+  }) => {
+    dialogSpy(props);
+
+    return (
+      <div role="dialog">
+        <h2>{title}</h2>
+        {onSubmit ? <form onSubmit={onSubmit}>{children}</form> : children}
+      </div>
+    );
+  },
 }));
 
 vi.mock("./DialogActions", () => ({
@@ -93,6 +103,10 @@ const baseProps = {
 };
 
 describe("ConfirmationDialog", () => {
+  beforeEach(() => {
+    dialogSpy.mockClear();
+  });
+
   it("renders the dialog title", () => {
     render(<ConfirmationDialog {...baseProps} />);
     expect(screen.getByText("Confirm delete")).toBeInTheDocument();
@@ -156,5 +170,15 @@ describe("ConfirmationDialog", () => {
     fireEvent.click(screen.getByRole("button", { name: "Preview" }));
 
     expect(onPreview).toHaveBeenCalledOnce();
+  });
+
+  it("defaults initialFocus to submit", () => {
+    render(<ConfirmationDialog {...baseProps} />);
+
+    expect(dialogSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        initialFocus: "submit",
+      }),
+    );
   });
 });
