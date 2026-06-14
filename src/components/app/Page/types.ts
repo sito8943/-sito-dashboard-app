@@ -16,6 +16,9 @@ export type PagePropsType<TRow extends BaseEntityDto> = {
   actions?: ActionType<TRow>[];
   showBackButton?: boolean;
   queryKey?: string[];
+  className?: string;
+  contentClassName?: string;
+  headerClassName?: string;
 };
 
 export interface PageAddOptions<TRow extends BaseEntityDto>
@@ -28,4 +31,5 @@ export type PageHeaderPropsType<TRow extends BaseEntityDto> = {
   title?: string;
   actions?: ActionType<TRow>[];
   showBackButton?: boolean;
+  className?: string;
 };

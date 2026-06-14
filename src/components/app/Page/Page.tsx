@@ -55,6 +55,9 @@ export const Page = <TEntity extends BaseEntityDto>(
     isLoading = false,
     isAnimated = true,
     showBackButton = false,
+    className,
+    contentClassName,
+    headerClassName,
   } = props;
 
   const { t } = useTranslation();
@@ -109,13 +112,20 @@ export const Page = <TEntity extends BaseEntityDto>(
   ]);
 
   return (
-    <main className="page-main">
+    <main className={classNames("page-main", className)}>
       <PageHeader
         showBackButton={showBackButton}
         actions={parsedActions}
         title={title}
+        className={headerClassName}
       />
-      <div className={classNames("page-main-content", isAnimated && "appear")}>
+      <div
+        className={classNames(
+          "page-main-content",
+          isAnimated && "appear",
+          contentClassName,
+        )}
+      >
         {isLoading ? <Loading className="page-loading" /> : children}
       </div>
       {addOptions && (
