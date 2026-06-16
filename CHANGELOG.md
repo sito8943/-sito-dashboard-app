@@ -2,7 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.87] - 2026-06-14
+## [0.0.87] - 2026-06-15
+
+### Changed
+
+- Bumped the dev dependency `vitest` from `3.2.1` to `3.2.6`, which also refreshes the aligned `@vitest/*`, `vite-node`, and other transitive lockfile entries.
+- Updated the base library dependency `@sito/dashboard` from `^0.0.85` to `^0.0.86`.
 
 ## [0.0.86] - 2026-06-14
 
