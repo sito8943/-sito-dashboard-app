@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.86",
+  "version": "0.0.87",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -107,7 +107,7 @@
     "vitest": "^3.2.1"
   },
   "dependencies": {
-    "@sito/dashboard": "^0.0.85",
+    "@sito/dashboard": "^0.0.86",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   }
