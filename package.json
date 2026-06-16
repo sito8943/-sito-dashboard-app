@@ -1,14 +1,15 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.87",
+  "version": "0.0.88",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
   "module": "dist/dashboard-app.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/"
+    "dist/",
+    "theme.css"
   ],
   "homepage": "https://github.com/sito8943/-sito-dashboard-app#readme",
   "repository": {
@@ -23,7 +24,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/dashboard-app.js",
       "require": "./dist/dashboard-app.cjs"
-    }
+    },
+    "./theme.css": "./theme.css"
   },
   "sideEffects": [
     "**/*.css"
@@ -107,7 +109,7 @@
     "vitest": "^3.2.1"
   },
   "dependencies": {
-    "@sito/dashboard": "^0.0.86",
+    "@sito/dashboard": "^0.0.87",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   }
