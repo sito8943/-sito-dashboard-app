@@ -1,0 +1,134 @@
+/*
+ * @sito/dashboard-app — theme.css
+ *
+ * Color/theme layer for @sito/dashboard's HEADLESS components. The dashboard
+ * package ships structure + geometry only (no colors); consumer apps own the
+ * palette. Import this file into your app's main CSS (the one with
+ * `@import "tailwindcss"`) so it is processed by YOUR Tailwind build:
+ *
+ *   @import "tailwindcss";
+ *   @import "@sito/dashboard-app/theme.css";
+ *
+ * Plain CSS using the design tokens (`--color-*`), so it survives any
+ * consumer build (the lib's own prebuilt CSS does not — that's why these
+ * live here and not in @sito/dashboard).
+ */
+
+/* INPUTS */
+.input-error {
+  color: var(--color-bg-error);
+  border-color: var(--color-bg-error);
+}
+.input-error:focus {
+  border-color: var(--color-bg-error);
+}
+.input-good {
+  color: var(--color-bg-success);
+  border-color: var(--color-bg-success);
+}
+.input-good:focus {
+  border-color: var(--color-bg-success);
+}
+.input-normal {
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.input-normal:focus {
+  border-color: var(--color-primary);
+}
+.input-label-error {
+  color: var(--color-secondary);
+}
+.input-label-good {
+  color: var(--color-bg-success);
+}
+.input-label-normal {
+  color: var(--color-text-muted);
+}
+.peer:focus ~ .input-label-normal {
+  color: var(--color-primary);
+}
+.input-helper-text-error {
+  color: var(--color-bg-error);
+}
+.input-helper-text-good {
+  color: var(--color-bg-success);
+}
+.input-helper-text-normal {
+  color: var(--color-text-muted);
+}
+
+/* SELECT / AUTOCOMPLETE */
+.select-input-options-container,
+.autocomplete-suggestions-container {
+  background-color: var(--color-base-light);
+}
+.select-input-option-item:hover,
+.autocomplete-suggestion-item:hover {
+  background-color: var(--color-base-dark);
+}
+.autocomplete-delete-button {
+  color: var(--color-text);
+}
+.autocomplete-delete-button:hover {
+  color: var(--color-secondary);
+}
+.select-input-option-item.highlighted,
+.autocomplete-suggestion-item.highlighted {
+  background-color: var(--color-slate-200, #e2e8f0);
+}
+
+/* CHIP */
+.chip-main {
+  color: var(--color-text);
+  background-color: var(--color-base-dark);
+}
+.chip-delete-button:hover {
+  color: var(--color-secondary);
+}
+
+/* BADGE */
+.badge-main {
+  background-color: var(--color-bg-error);
+  color: var(--color-error);
+}
+
+/* TABLE */
+.table-loading {
+  background-color: var(--color-base-light);
+}
+.table-row {
+  background-color: var(--color-base-light);
+  border-bottom-color: var(--color-border);
+}
+.table-headers-row {
+  color: var(--color-text-muted);
+  background-color: var(--color-base);
+}
+.table-content {
+  color: var(--color-text-muted);
+}
+.table-row-cell.basic {
+  color: var(--color-text);
+}
+.table-navigation-buttons:disabled {
+  color: var(--color-text-muted);
+}
+.table-headers-cell {
+  border-color: var(--color-border);
+}
+.table-headers-cell:hover {
+  background-color: var(--color-base-dark);
+}
+
+/* FILTER */
+.filter-popup {
+  background-color: var(--color-base-light);
+}
+.filter-title {
+  color: var(--color-text-muted);
+}
+.filter-footer {
+  border-color: var(--color-border);
+  background-color: var(--color-base-dark);
+}
