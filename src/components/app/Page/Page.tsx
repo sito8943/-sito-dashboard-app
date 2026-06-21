@@ -21,8 +21,8 @@ import { PagePropsType } from "./types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdd,
+  faArrowsRotate,
   faFilter,
-  faRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 // lib
@@ -74,7 +74,7 @@ export const Page = <TEntity extends BaseEntityDto>(
       const refreshAction: ActionType<TEntity> = {
         id: GlobalActions.Refresh,
         onClick: () => queryClient.invalidateQueries({ queryKey }),
-        icon: <FontAwesomeIcon icon={faRotateLeft} />,
+        icon: <FontAwesomeIcon icon={faArrowsRotate} />,
         tooltip: t("_pages:common.actions.refresh.text"),
       };
       pActions.unshift(refreshAction);
