@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.89] - 2026-06-21
+
+### Changed
+
+- Updated the global `Page` refresh action icon from `faRotateLeft` to `faArrowsRotate`, giving refresh controls the standard rotating-arrows visual.
+- Aligned the lockfile with the declared `@sito/dashboard` `^0.0.87` dependency.
+
 ## [0.0.87] - 2026-06-15
 
 ### Changed
