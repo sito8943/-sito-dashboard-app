@@ -167,8 +167,7 @@ pnpm run test
 pnpm run lint
 ```
 
-Estado: implementación estática completada; pendiente instalación y
-verificación por el desarrollador.
+Estado: completado y verificado por el desarrollador.
 
 ## Checkpoint 4: Storybook 10.4
 
@@ -182,16 +181,16 @@ Actualizar conjuntamente a `10.4.6`:
 
 Trabajo:
 
-- [ ] Eliminar la mezcla actual de paquetes `8.4.7` con runtime `8.6.18`.
-- [ ] Retirar `addon-essentials` y `addon-interactions` si siguen sin tener uso
+- [x] Eliminar la mezcla actual de paquetes `8.4.7` con runtime `8.6.18`.
+- [x] Retirar `addon-essentials` y `addon-interactions` si siguen sin tener uso
       real; actualmente solo aparecen en la configuración.
-- [ ] Basar `.storybook/main.ts` en la configuración ya resuelta de
+- [x] Basar `.storybook/main.ts` en la configuración ya resuelta de
       `@sito/dashboard`: ESM correcto, `mergeAlias` y filtrado de plugins de
       librería que no deben entrar en Storybook.
-- [ ] Corregir los aliases actuales de `layouts` y `views` para que apunten a
+- [x] Corregir los aliases actuales de `layouts` y `views` para que apunten a
       `src/layouts` y `src/views`.
-- [ ] Evitar registrar Tailwind dos veces entre Vite y `viteFinal`.
-- [ ] Revisar `.storybook/preview.tsx` y los tipos `Meta` / `StoryObj` sin
+- [x] Evitar registrar Tailwind dos veces entre Vite y `viteFinal`.
+- [x] Revisar `.storybook/preview.tsx` y los tipos `Meta` / `StoryObj` sin
       reescribir stories que ya sean compatibles.
 
 Verificación del desarrollador:
@@ -200,6 +199,9 @@ Verificación del desarrollador:
 pnpm install
 pnpm run build-storybook
 ```
+
+Estado: implementación estática completada; pendiente instalación y
+verificación por el desarrollador.
 
 ## Checkpoint 5: jsdom 29
 

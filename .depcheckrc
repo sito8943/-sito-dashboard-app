@@ -5,8 +5,7 @@
     "providers",
     "hooks",
     "@storybook/addon-a11y",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
+    "@storybook/addon-docs",
     "tailwindcss",
     "@rollup/rollup-darwin-arm64"
   ],
