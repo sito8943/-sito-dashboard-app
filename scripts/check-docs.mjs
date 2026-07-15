@@ -134,18 +134,27 @@ const checkNodeRuntimeAlignment = () => {
     return;
   }
   const nvmrc = fs.readFileSync(nvmrcPath, "utf8").trim();
+  if (!/^\d+(\.\d+){0,2}$/.test(nvmrc)) {
+    failures.push(
+      `[runtime] .nvmrc must contain a plain version (got ${JSON.stringify(nvmrc)})`,
+    );
+    return;
+  }
+  const nodeMajor = nvmrc.split(".")[0];
   const readme = read("README.md");
   const agents = read("AGENTS.md");
 
-  if (!readme.includes(`Node.js \`${nvmrc}.x\``)) {
+  if (!readme.includes(`Node.js \`${nodeMajor}.x\``)) {
     failures.push(
-      `[runtime] README.md must mention Node.js \`${nvmrc}.x\` to align with .nvmrc`,
+      `[runtime] README.md must mention Node.js \`${nodeMajor}.x\` to align with .nvmrc (${nvmrc})`,
     );
   }
 
-  if (!agents.includes(`| Runtime      | Node.js              | ${nvmrc}.x`)) {
+  if (
+    !agents.includes(`| Runtime      | Node.js              | ${nodeMajor}.x`)
+  ) {
     failures.push(
-      `[runtime] AGENTS.md Tech Stack table must mention Node.js ${nvmrc}.x`,
+      `[runtime] AGENTS.md Tech Stack table must mention Node.js ${nodeMajor}.x`,
     );
   }
 };

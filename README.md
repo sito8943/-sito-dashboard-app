@@ -61,7 +61,7 @@ npm install @supabase/supabase-js@2.100.0
 
 ## Requirements
 
-- Node.js `20.x` (see `.nvmrc`)
+- Node.js `22.x` (see `.nvmrc`)
 - Browser runtime only (no SSR)
 - React `18.3.1`
 - React DOM `18.3.1`
@@ -102,31 +102,32 @@ Detailed setup, examples, and prop tables live in:
 git clone https://github.com/sito8943/-sito-dashboard-app.git
 cd ./-sito-dashboard-app
 nvm use
-npm install
-npm run dev
-# optional: npm run storybook
+corepack enable
+pnpm install
+pnpm run dev
+# optional: pnpm run storybook
 ```
 
 ## Scripts
 
-- `npm run dev` — Vite dev server
-- `npm run build` — TypeScript + library build
-- `npm run preview` — preview built bundle locally
-- `npm run lint` — ESLint + Prettier check + depcheck (no writes)
-- `npm run lint:fix` — ESLint autofix + Prettier write
-- `npm run docs:check` — docs policy markers, relative links, version alignment
-- `npm run test` — Vitest single run
-- `npm run test:watch` — Vitest watch mode
-- `npm run format` — Prettier write
-- `npm run storybook` — run Storybook locally
-- `npm run build-storybook` — static Storybook build
+- `pnpm run dev` — Vite dev server
+- `pnpm run build` — TypeScript + library build
+- `pnpm run preview` — preview built bundle locally
+- `pnpm run lint` — ESLint + Prettier check + depcheck (no writes)
+- `pnpm run lint:fix` — ESLint autofix + Prettier write
+- `pnpm run docs:check` — docs policy markers, relative links, version alignment
+- `pnpm run test` — Vitest single run
+- `pnpm run test:watch` — Vitest watch mode
+- `pnpm run format` — Prettier write
+- `pnpm run storybook` — run Storybook locally
+- `pnpm run build-storybook` — static Storybook build
 
 ## Validation stack
 
-- `npm run lint`
-- `npm run docs:check`
-- `npm run test`
-- `npm run build`
+- `pnpm run lint`
+- `pnpm run docs:check`
+- `pnpm run test`
+- `pnpm run build`
 - Storybook / manual visual checks (optional)
 
 ## Deployment / release
@@ -139,11 +140,11 @@ CI:
 Manual release:
 
 ```bash
-npm version patch        # or minor / major
-npm run lint
-npm run test
-npm run build
-npm publish --access public
+pnpm version patch       # or minor / major
+pnpm run lint
+pnpm run test
+pnpm run build
+pnpm publish --access public
 git push --follow-tags
 ```
 

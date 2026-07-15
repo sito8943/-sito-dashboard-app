@@ -29,7 +29,7 @@ Critical distinctions (override anything in `.sito/*`):
 | ------------ | -------------------- | ------- |
 | UI Framework | React                | 18.3.1  |
 | Language     | TypeScript           | 5.7.2   |
-| Runtime      | Node.js              | 20.x    |
+| Runtime      | Node.js              | 22.x    |
 | Styling      | Tailwind CSS         | 4.x     |
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
@@ -208,7 +208,7 @@ Migrated from `wallet` / `period-calendar` `views/Info/*`. Composable, i18n-agno
 21. **Use `PrettyGrid` infinite scroll props** (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options). No grid forks.
 22. **Use `ToTop` customization props** (`threshold`, target coords, `tooltip`, `icon`, `scrollOnClick`, `onClick`). No ad-hoc wrappers.
 23. **Keep Node version aligned with `.nvmrc`** in setup docs.
-24. **Run `npm run docs:check`** after doc edits.
+24. **Run `pnpm run docs:check`** after doc edits.
 25. **Never document or propose SSR** for this package.
 26. **Pick the right export flow** — direct (`useExportAction`) vs config dialog (`useExportDialog`). Both return the same `action()` shape. `useExportDialog` doesn't invalidate queries or auto-download.
 27. **Place new components by tier** under `src/components/`:

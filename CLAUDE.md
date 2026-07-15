@@ -21,7 +21,7 @@ When a change affects the public API or documented behavior:
 - keep provider setup docs aligned with current order:
   `ConfigProvider` -> `ManagerProvider` -> `AuthProvider` -> `NotificationProvider` -> `DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` is used). `ManagerProvider` mounts `QueryClientProvider` internally.
 - keep auth storage key examples aligned between `AuthProvider` and `IManager`/`BaseClient` auth config
-- keep runtime requirements aligned with `.nvmrc` (currently Node 20)
+- keep runtime requirements aligned with `.nvmrc` (currently Node 22)
 - keep `Onboarding` docs aligned with the current public API: `steps` are structured objects with `title`, `body`, optional `content`, `image`, and `alt`, not internal translation keys
 - keep `ImportDialog` docs aligned with `renderCustomPreview` support (component + `useImportDialog` passthrough) and with `extraFields` (component) + `defaultExtra`/`renderExtraFields` (hook). Hook merges extra values into `mutationFn` payload as `{ items, override, ...extra }`.
 - keep `ExportDialog`/`useExportDialog` docs aligned with the two export modes: direct via `useExportAction` + `useExportActionMutate`, or dialog-based via `useExportDialog` + `ExportDialog`. Both return the same `action()` shape; `useExportDialog` does not invalidate queries nor auto-trigger downloads.

@@ -33,7 +33,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 && prettier --check . && npm run depcheck",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 && prettier --check . && pnpm run depcheck",
     "lint:fix": "eslint --fix . --report-unused-disable-directives --max-warnings 0 && prettier --write .",
     "docs:check": "node ./scripts/check-docs.mjs",
     "depcheck": "node ./scripts/depcheck.cjs .",
@@ -52,6 +52,9 @@
   ],
   "author": "sito8943",
   "license": "MIT",
+  "engines": {
+    "node": "^22.13.0"
+  },
   "peerDependencies": {
     "@fortawesome/fontawesome-svg-core": ">=7.0.0 <8",
     "@fortawesome/free-brands-svg-icons": ">=7.0.0 <8",
@@ -113,7 +116,7 @@
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   },
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.34.4",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@swc/core",
