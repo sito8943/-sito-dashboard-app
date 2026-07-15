@@ -47,7 +47,6 @@ npm install \
   @fortawesome/fontawesome-svg-core@7.0.0 \
   @fortawesome/free-solid-svg-icons@7.0.0 \
   @fortawesome/free-regular-svg-icons@7.0.0 \
-  @fortawesome/free-brands-svg-icons@7.0.0 \
   @fortawesome/react-fontawesome@3.4.0
 ```
 

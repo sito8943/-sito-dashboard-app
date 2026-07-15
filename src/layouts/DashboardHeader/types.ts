@@ -4,7 +4,7 @@ import { MenuItemType } from "lib";
 
 import type { NavbarPropsType } from "components/app/Navbar/types";
 
-export type DashboardHeaderPropsType<MenuKeys> = {
+export type DashboardHeaderPropsType<MenuKeys extends string> = {
   menuMap: MenuItemType<MenuKeys>[];
   logo?: ReactNode;
   showOfflineBanner?: boolean;

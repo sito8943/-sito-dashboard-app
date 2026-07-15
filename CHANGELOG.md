@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.0] - 2026-07-15
+
+### Breaking changes
+
+- Migrated the public React and React DOM peer contract to React 19 and aligned
+  the development runtime with React `19.2.7`.
+- Updated the base library dependency to `@sito/dashboard@^0.1.0` and the
+  FontAwesome React peer to the supported `3.x` line.
+- Removed the unused FontAwesome brands package from the required peer set;
+  consumers can still install it when supplying brand icons.
+- Raised the local and CI runtime to Node `22.18.0` with engine
+  `^22.13.0`, adopted pnpm `10.34.4`, and removed the npm lockfile.
+
+### Added
+
+- Added `Dialog.dialogId`, assigning the requested id to the dialog and
+  `backdrop-${dialogId}` to its backdrop for stacking, testing, and DOM lookup.
+- Added separate `format:check` and `deps:check` commands plus a fail-fast
+  `full` validation command.
+- Added Oxlint type-aware configuration and Knip dependency analysis.
+
+### Changed
+
+- Upgraded the build and test stack to TypeScript `7.0.2`, Vite `8.1.4`,
+  Storybook `10.4.6`, Vitest `4.1.10`, jsdom `29.1.1`, Tailwind CSS `4.3.2`,
+  and Prettier `3.9.5`.
+- Replaced `@vitejs/plugin-react-swc` with `@vitejs/plugin-react`, moved the
+  library target to ES2020, and externalized `react/jsx-dev-runtime`.
+- Replaced ESLint and Depcheck with Oxlint and Knip while keeping Prettier as
+  the sole formatter.
+- Updated Storybook aliases and plugin filtering for the Vite 8 library setup,
+  and replaced the legacy addon set with the docs and accessibility addons.
+- Updated CI to use the frozen pnpm lockfile and run full validation, Storybook
+  build, and package-content verification.
+
+### Fixed
+
+- Updated refs and public type declarations for the React 19 type contract.
+- Removed the `Empty` barrel-import cycle that could create circular Rollup
+  chunks and unstable execution order.
+- Tightened resource, navigation, form, Supabase, and notification types for
+  TypeScript 7 and type-aware linting without changing their runtime contracts.
+
+### Documentation
+
+- Updated README, consumer guidance, agent rules, release commands, and the
+  migration plan for React 19, Node 22, pnpm, and the new validation stack.
+
 ## [0.0.89] - 2026-06-21
 
 ### Changed

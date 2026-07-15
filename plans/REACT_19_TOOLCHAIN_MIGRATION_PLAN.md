@@ -118,7 +118,7 @@ Trabajo de código ya identificado:
       `undefined` y reflejarlo en su tipo.
 - [x] Inicializar explícitamente los refs de cierre de `usePostDialog` y
       `usePutDialog` con `undefined` y reflejarlo en sus tipos.
-- [ ] Revisar de nuevo usos de refs, `ReactElement`, `JSX` y tests que clonen o
+- [x] Revisar de nuevo usos de refs, `ReactElement`, `JSX` y tests que clonen o
       inspeccionen elementos después de instalar los tipos de React 19.
 - [x] Mantener el wrapper público de `IconButton` basado en FontAwesome.
 - [x] No añadir `@sito/ui` directamente: llega como dependencia transitiva de
@@ -155,7 +155,7 @@ Actualizar sin cambiar todavía Vite, jsdom ni TypeScript:
 
 - [x] Revisar imports públicos actuales.
 - [x] Mantener configuración y tests sin refactors no relacionados.
-- [ ] Separar comprobación de formato y lint si el script actual dificulta
+- [x] Separar comprobación de formato y lint si el script actual dificulta
       identificar qué etapa falla.
 
 Verificación del desarrollador:
@@ -261,7 +261,7 @@ Estado: completado y verificado por el desarrollador.
 - [x] Añadir `@typescript/typescript6` como fallback para la API JavaScript que
       necesita `vite-plugin-dts` / `unplugin-dts`.
 - [x] Cambiar `tsconfig.node.json` a `NodeNext` donde corresponda.
-- [ ] Revisar aliases y tipos generados con TypeScript 7.
+- [x] Revisar aliases y tipos generados con TypeScript 7.
 - [x] Sustituir ESLint y typescript-eslint por Oxlint type-aware.
 - [x] Añadir Knip para análisis de dependencias y exports.
 - [x] Retirar Depcheck y sus excepciones una vez que Knip cubra el mismo
@@ -289,25 +289,28 @@ pnpm run build
 pnpm run test
 ```
 
-Estado: implementación estática completada; pendientes la revisión de tipos
-generados y las verificaciones del desarrollador.
+Estado: completado y verificado por el desarrollador.
 
 ## Checkpoint 8: CI, documentación y release 0.1.0
 
-- [ ] Actualizar CI a Node 22 y al package manager confirmado.
-- [ ] Usar instalación con lockfile congelado; CI no debe borrar ni regenerar
+- [x] Actualizar CI a Node 22 y al package manager confirmado.
+- [x] Usar instalación con lockfile congelado; CI no debe borrar ni regenerar
       el lockfile.
-- [ ] Actualizar README, AGENTS, `docs/CONSUMER_GUIDE.md`, comandos de desarrollo
+- [x] Actualizar README, AGENTS, `docs/CONSUMER_GUIDE.md`, comandos de desarrollo
       y checklist de pull request.
-- [ ] Sincronizar todos los marcadores de `@sito/dashboard@^0.1.0`.
+- [x] Sincronizar todos los marcadores de `@sito/dashboard@^0.1.0`.
 - [ ] Corregir upstream el README de `@sito/dashboard`, que todavía anuncia
       React 18 aunque su manifiesto 0.1.0 exige React 19.
-- [ ] Añadir la entrada de changelog de `@sito/dashboard-app@0.1.0` desde el diff
+- [x] Añadir la entrada de changelog de `@sito/dashboard-app@0.1.0` desde el diff
       real de la migración.
-- [ ] Cambiar la versión del paquete a `0.1.0` solo cuando los checkpoints
+- [x] Cambiar la versión del paquete a `0.1.0` solo cuando los checkpoints
       anteriores estén verificados.
 - [ ] Comprobar el contenido publicable y un consumidor React 19 antes de
       publicar.
+
+Estado: implementación del repositorio completada; pendientes la verificación
+final del desarrollador, la prueba con un consumidor React 19 y la corrección
+del README upstream de `@sito/dashboard`.
 
 Verificación final del desarrollador:
 

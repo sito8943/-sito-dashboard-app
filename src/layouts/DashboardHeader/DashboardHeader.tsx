@@ -10,7 +10,7 @@ import { DashboardHeaderPropsType } from "./types";
  * Combined app header: `Drawer` + `Navbar` (+ optional `OfflineBanner`).
  * Owns the drawer open/close state internally; consumer supplies `menuMap`.
  */
-export const DashboardHeader = <MenuKeys,>(
+export const DashboardHeader = <MenuKeys extends string>(
   props: DashboardHeaderPropsType<MenuKeys>,
 ) => {
   const { menuMap, logo, showOfflineBanner = false, navbarProps } = props;

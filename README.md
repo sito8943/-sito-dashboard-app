@@ -49,7 +49,6 @@ npm install \
   @fortawesome/fontawesome-svg-core@7.0.0 \
   @fortawesome/free-solid-svg-icons@7.0.0 \
   @fortawesome/free-regular-svg-icons@7.0.0 \
-  @fortawesome/free-brands-svg-icons@7.0.0 \
   @fortawesome/react-fontawesome@3.4.0
 ```
 
@@ -133,22 +132,23 @@ pnpm run dev
 - `pnpm run docs:check`
 - `pnpm run test`
 - `pnpm run build`
-- Storybook / manual visual checks (optional)
+- `pnpm run build-storybook`
+- `pnpm pack`
 
 ## Deployment / release
 
 CI:
 
-- `.github/workflows/ci.yml` — `test + build` on push / PR
-- `.github/workflows/lint.yml` — `lint + docs:check` on PR
+- `.github/workflows/ci.yml` — frozen install, full validation, Storybook build,
+  and package-content verification on push / PR
 
 Manual release:
 
 ```bash
-pnpm version patch       # or minor / major
-pnpm run lint
-pnpm run test
-pnpm run build
+pnpm install --frozen-lockfile
+pnpm run full
+pnpm run build-storybook
+pnpm pack
 pnpm publish --access public
 git push --follow-tags
 ```

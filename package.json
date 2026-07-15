@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.0.89",
+  "version": "0.1.0",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -59,7 +59,6 @@
   },
   "peerDependencies": {
     "@fortawesome/fontawesome-svg-core": ">=7.0.0 <8",
-    "@fortawesome/free-brands-svg-icons": ">=7.0.0 <8",
     "@fortawesome/free-regular-svg-icons": ">=7.0.0 <8",
     "@fortawesome/free-solid-svg-icons": ">=7.0.0 <8",
     "@fortawesome/react-fontawesome": ">=3.1.1 <4",
@@ -76,7 +75,6 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "7.0.0",
-    "@fortawesome/free-brands-svg-icons": "7.0.0",
     "@fortawesome/free-regular-svg-icons": "7.0.0",
     "@fortawesome/free-solid-svg-icons": "7.0.0",
     "@fortawesome/react-fontawesome": "3.4.0",
