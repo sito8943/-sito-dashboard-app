@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { libInjectCss } from "vite-plugin-lib-inject-css";
 import dts from "vite-plugin-dts";
@@ -52,6 +52,7 @@ export default defineConfig(() => {
     ],
     build: {
       copyPublicDir: false,
+      target: "es2020",
       lib: {
         entry: resolve(__dirname, "src/main.ts"),
         name: "@sito/dashboard-app",
@@ -62,6 +63,7 @@ export default defineConfig(() => {
         external: [
           "react",
           "react/jsx-runtime",
+          "react/jsx-dev-runtime",
           "react-dom",
           "@sito/dashboard",
           "@tanstack/react-query",

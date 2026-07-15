@@ -218,8 +218,7 @@ pnpm install
 pnpm run test
 ```
 
-Estado: implementación estática completada; pendiente instalación y
-verificación por el desarrollador.
+Estado: completado y verificado por el desarrollador.
 
 ## Checkpoint 6: Vite 8 y build de librería
 
@@ -234,13 +233,13 @@ Actualizar como una unidad:
 
 Trabajo:
 
-- [ ] Establecer `build.target` y `tsconfig.target` en ES2020.
-- [ ] Mantener el entrypoint, nombres de salida, CSS inyectado y exports
+- [x] Establecer `build.target` y `tsconfig.target` en ES2020.
+- [x] Mantener el entrypoint, nombres de salida, CSS inyectado y exports
       actuales de `@sito/dashboard-app`.
-- [ ] Externalizar `react/jsx-dev-runtime` además de los runtimes ya externos.
-- [ ] Mantener `@sito/dashboard` externo.
-- [ ] Mantener `vite-plugin-lib-inject-css`, salvo incompatibilidad demostrada.
-- [ ] Revisar `vite.config.ts`, `tsconfig.node.json` y generación de
+- [x] Externalizar `react/jsx-dev-runtime` además de los runtimes ya externos.
+- [x] Mantener `@sito/dashboard` externo.
+- [x] Mantener `vite-plugin-lib-inject-css`, salvo incompatibilidad demostrada.
+- [x] Revisar `vite.config.ts`, `tsconfig.node.json` y generación de
       declaraciones antes de tocar TypeScript.
 - [ ] Confirmar que `dist/index.d.ts`, los bundles ESM/CJS y `theme.css` siguen
       coincidiendo con `package.json#exports`.
@@ -253,6 +252,10 @@ pnpm run build
 pnpm run test
 pnpm run build-storybook
 ```
+
+Estado: implementación estática completada; pendiente instalación y
+verificación por el desarrollador. La comprobación de `dist` sigue abierta
+hasta completar el build.
 
 ## Checkpoint 7: TypeScript 7, Oxlint y Knip
 
