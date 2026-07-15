@@ -10,7 +10,8 @@ export type UseFetchByIdPropsType = {
   id: number;
 };
 
-export interface ApiQueryResult<TResponseDto extends BaseEntityDto>
-  extends Omit<UseQueryResult<QueryResult<TResponseDto>>, "setTotal"> {
+export interface ApiQueryResult<
+  TResponseDto extends BaseEntityDto,
+> extends Omit<UseQueryResult<QueryResult<TResponseDto>>, "setTotal"> {
   setTotal: (total: number) => void;
 }

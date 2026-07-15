@@ -1,12 +1,7 @@
 import type { IAuthApiClient, Location } from "lib";
 
 export type AuthFlowStatus =
-  | "idle"
-  | "submitting"
-  | "verifying"
-  | "success"
-  | "invalid_token"
-  | "error";
+  "idle" | "submitting" | "verifying" | "success" | "invalid_token" | "error";
 
 export type AuthLocationInput = Pick<Location, "hash" | "search">;
 

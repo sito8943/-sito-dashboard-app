@@ -38,11 +38,7 @@ export type OnboardingStepType = {
 };
 
 export type OnboardingActionKey =
-  | "back"
-  | "next"
-  | "skip"
-  | "startAsGuest"
-  | "signIn";
+  "back" | "next" | "skip" | "startAsGuest" | "signIn";
 
 export type OnboardingActionIconsType = Partial<
   Record<OnboardingActionKey, IconDefinition>
@@ -53,8 +49,7 @@ export type OnboardingActionIconsType = Partial<
  * to `false`.
  */
 export type OnboardingActionFlagType =
-  | boolean
-  | Partial<Record<OnboardingActionKey, boolean>>;
+  boolean | Partial<Record<OnboardingActionKey, boolean>>;
 
 export type StepPropsType = OnboardingStepType & {
   onClickNext: () => void;

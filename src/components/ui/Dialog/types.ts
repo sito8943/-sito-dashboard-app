@@ -34,15 +34,18 @@ export type DialogPropsType = {
   animationClass?: string;
 };
 
-export interface ConfirmationDialogPropsType
-  extends Omit<DialogPropsType, "onSubmit"> {
+export interface ConfirmationDialogPropsType extends Omit<
+  DialogPropsType,
+  "onSubmit"
+> {
   handleSubmit: () => void;
   isLoading?: boolean;
   extraActions?: ButtonPropsType[];
 }
 
 export interface FormDialogPropsType<TFormType extends FieldValues>
-  extends Omit<DialogPropsType, "onSubmit">,
+  extends
+    Omit<DialogPropsType, "onSubmit">,
     Omit<
       FormContainerPropsType<TFormType>,
       | "children"

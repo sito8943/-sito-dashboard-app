@@ -140,8 +140,7 @@ pnpm run test
 
 No avanzar si el build o los tests fallan.
 
-Estado: implementación estática completada; pendiente instalación y
-verificación por el desarrollador.
+Estado: completado y verificado por el desarrollador.
 
 ## Checkpoint 3: actualizaciones sencillas
 
@@ -154,8 +153,8 @@ Actualizar sin cambiar todavía Vite, jsdom ni TypeScript:
 - `@types/node`: una versión compatible con Node 22; no adoptar tipos de Node 26
   mientras el runtime objetivo siga siendo Node 22.
 
-- [ ] Revisar imports públicos actuales.
-- [ ] Mantener configuración y tests sin refactors no relacionados.
+- [x] Revisar imports públicos actuales.
+- [x] Mantener configuración y tests sin refactors no relacionados.
 - [ ] Separar comprobación de formato y lint si el script actual dificulta
       identificar qué etapa falla.
 
@@ -167,6 +166,9 @@ pnpm run build
 pnpm run test
 pnpm run lint
 ```
+
+Estado: implementación estática completada; pendiente instalación y
+verificación por el desarrollador.
 
 ## Checkpoint 4: Storybook 10.4
 

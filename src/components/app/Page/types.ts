@@ -23,7 +23,8 @@ export type PagePropsType<TRow extends BaseEntityDto> = {
 };
 
 export interface PageAddOptions<TRow extends BaseEntityDto>
-  extends Partial<Omit<ActionType<TRow>, "icon">>,
+  extends
+    Partial<Omit<ActionType<TRow>, "icon">>,
     Partial<Omit<IconButtonPropsType, "icon" | "onClick">> {
   icon?: IconDefinition;
 }

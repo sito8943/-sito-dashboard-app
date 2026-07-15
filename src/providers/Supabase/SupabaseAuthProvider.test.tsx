@@ -7,8 +7,7 @@ import { SupabaseAuthProvider } from "./SupabaseAuthProvider";
 import { useAuth } from "providers/Auth";
 
 let authStateHandler:
-  | ((event: string, session: Session | null) => void)
-  | undefined;
+  ((event: string, session: Session | null) => void) | undefined;
 
 const {
   signOutMock,

@@ -132,7 +132,7 @@ export const hasAuthTokenHashOrTypeParamsInLocation = (
 ): boolean =>
   Boolean(
     extractAuthTokenHashFromLocation(hash, search) ||
-      extractAuthRouteTypeFromLocation(hash, search),
+    extractAuthRouteTypeFromLocation(hash, search),
   );
 
 export const resolveResetPasswordDtoFromLocation = (

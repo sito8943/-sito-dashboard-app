@@ -6,8 +6,9 @@ import { ImportPreviewDto } from "lib";
 // components
 import { ButtonPropsType, DialogPropsType } from "components";
 
-export interface ImportDialogPropsType<EntityDto extends ImportPreviewDto>
-  extends Omit<DialogPropsType, "onSubmit"> {
+export interface ImportDialogPropsType<
+  EntityDto extends ImportPreviewDto,
+> extends Omit<DialogPropsType, "onSubmit"> {
   handleSubmit: () => void;
   isLoading?: boolean;
   fileProcessor?: (
