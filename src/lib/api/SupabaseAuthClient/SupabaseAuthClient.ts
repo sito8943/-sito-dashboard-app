@@ -95,7 +95,7 @@ export class SupabaseAuthClient implements IAuthClient {
    * that branch explicitly.
    */
   async register(data: RegisterDto): Promise<SessionDto> {
-    const result = await this.signUp(data as SupabaseRegisterDto);
+    const result = await this.signUp(data);
     if (result.status !== "authenticated") {
       throw new Error(EMAIL_CONFIRMATION_REQUIRED_ERROR);
     }

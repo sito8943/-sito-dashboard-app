@@ -2,9 +2,6 @@ import { useCallback } from "react";
 import { useTranslation } from "@sito/dashboard";
 import { useMutation } from "@tanstack/react-query";
 
-// lib
-import { NotificationType } from "lib";
-
 // providers
 import { useNotification } from "providers";
 
@@ -19,7 +16,11 @@ import { useExportAction } from "../actions";
  * @param props - Export mutation configuration.
  * @returns Export action factory with loading state integration.
  */
-export const useExportActionMutate = <TInOutDto, Tables, TError extends Error>(
+export const useExportActionMutate = <
+  TInOutDto,
+  Tables extends string,
+  TError extends Error,
+>(
   props: UseExportActionMutatePropsType<TInOutDto, Tables, TError>,
 ) => {
   const { showSuccessNotification } = useNotification();
@@ -55,7 +56,7 @@ export const useExportActionMutate = <TInOutDto, Tables, TError extends Error>(
       if (onSuccess) onSuccess(result);
       showSuccessNotification({
         message: onSuccessMessage,
-      } as NotificationType);
+      });
     },
   });
 

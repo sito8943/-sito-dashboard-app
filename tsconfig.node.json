@@ -1,23 +1,26 @@
 {
   "compilerOptions": {
     "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "types": ["node", "vite/client"],
     "paths": {
-      "components": ["./src/components/index"],
+      "components": ["./src/components/index.ts"],
       "components/*": ["./src/components/*"],
-      "providers": ["./src/providers/index"],
+      "providers": ["./src/providers/index.ts"],
       "providers/*": ["./src/providers/*"],
-      "lib": ["./src/lib/index"],
+      "lib": ["./src/lib/index.ts"],
       "lib/*": ["./src/lib/*"],
-      "hooks": ["./src/hooks/index"],
+      "hooks": ["./src/hooks/index.ts"],
       "hooks/*": ["./src/hooks/*"],
-      "layouts/*": ["./layouts/*"],
-      "views/*": ["./views/*"]
+      "layouts": ["./src/layouts/index.ts"],
+      "layouts/*": ["./src/layouts/*"],
+      "views": ["./src/views/index.ts"],
+      "views/*": ["./src/views/*"]
     }
   },
-  "include": ["vite.config.ts", "package.json"]
+  "include": ["vite.config.ts", ".storybook/main.ts"]
 }

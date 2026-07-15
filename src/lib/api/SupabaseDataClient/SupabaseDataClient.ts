@@ -74,11 +74,9 @@ export class SupabaseDataClient<
     this.table = table;
     this.supabase = supabase;
     this.options = options;
-    this.idColumn = (options.idColumn ?? "id") as keyof TRow & string;
-    this.deletedAtColumn = (options.deletedAtColumn ??
-      "deletedAt") as keyof TRow & string;
-    this.defaultSortColumn = (options.defaultSortColumn ??
-      this.idColumn) as keyof TRow & string;
+    this.idColumn = options.idColumn ?? "id";
+    this.deletedAtColumn = options.deletedAtColumn ?? "deletedAt";
+    this.defaultSortColumn = options.defaultSortColumn ?? this.idColumn;
   }
 
   private resolveStatus(status?: number): number {
@@ -135,9 +133,7 @@ export class SupabaseDataClient<
     return value as unknown as Partial<TRow>;
   }
 
-  private resolveObjectFilterValue(
-    value: Record<string, unknown>,
-  ): unknown | undefined {
+  private resolveObjectFilterValue(value: Record<string, unknown>): unknown {
     if (!("id" in value)) return undefined;
 
     const normalized = normalizeScalarValue(value.id);
@@ -314,9 +310,7 @@ export class SupabaseDataClient<
     const currentPage = query?.currentPage ?? 0;
     const sortingBy = String(query?.sortingBy ?? this.defaultSortColumn);
     const sortingOrder =
-      String(query?.sortingOrder ?? "asc").toLowerCase() === "desc"
-        ? "desc"
-        : "asc";
+      (query?.sortingOrder ?? "asc").toLowerCase() === "desc" ? "desc" : "asc";
 
     const from = currentPage * pageSize;
     const to = from + pageSize - 1;
@@ -445,7 +439,7 @@ export class SupabaseDataClient<
 
     const updateQuery = this.supabase.from(this.table).update({
       [this.deletedAtColumn]: deletedAt,
-    } as Record<string, unknown>);
+    });
 
     const inFilterValue = `(${ids.join(",")})`;
 
@@ -468,7 +462,7 @@ export class SupabaseDataClient<
 
     const updateQuery = this.supabase
       .from(this.table)
-      .update({ [this.deletedAtColumn]: null } as Record<string, unknown>);
+      .update({ [this.deletedAtColumn]: null });
 
     const inFilterValue = `(${ids.join(",")})`;
 

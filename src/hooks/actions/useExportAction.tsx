@@ -44,7 +44,7 @@ export const useExportAction = (props: UseExportAction) => {
       labelClassName,
       icon: (
         <FontAwesomeIcon
-          className={`${isLoading ? "rotate" : ""}`}
+          className={isLoading ? "rotate" : ""}
           icon={isLoading ? faCircleNotch : icon}
         />
       ),

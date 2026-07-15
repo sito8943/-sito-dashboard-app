@@ -241,7 +241,7 @@ Trabajo:
 - [x] Mantener `vite-plugin-lib-inject-css`, salvo incompatibilidad demostrada.
 - [x] Revisar `vite.config.ts`, `tsconfig.node.json` y generación de
       declaraciones antes de tocar TypeScript.
-- [ ] Confirmar que `dist/index.d.ts`, los bundles ESM/CJS y `theme.css` siguen
+- [x] Confirmar que `dist/index.d.ts`, los bundles ESM/CJS y `theme.css` siguen
       coincidiendo con `package.json#exports`.
 
 Verificación del desarrollador:
@@ -253,23 +253,21 @@ pnpm run test
 pnpm run build-storybook
 ```
 
-Estado: implementación estática completada; pendiente instalación y
-verificación por el desarrollador. La comprobación de `dist` sigue abierta
-hasta completar el build.
+Estado: completado y verificado por el desarrollador.
 
 ## Checkpoint 7: TypeScript 7, Oxlint y Knip
 
-- [ ] Actualizar TypeScript a `7.0.2`.
-- [ ] Añadir `@typescript/typescript6` como fallback para la API JavaScript que
+- [x] Actualizar TypeScript a `7.0.2`.
+- [x] Añadir `@typescript/typescript6` como fallback para la API JavaScript que
       necesita `vite-plugin-dts` / `unplugin-dts`.
-- [ ] Cambiar `tsconfig.node.json` a `NodeNext` donde corresponda.
+- [x] Cambiar `tsconfig.node.json` a `NodeNext` donde corresponda.
 - [ ] Revisar aliases y tipos generados con TypeScript 7.
-- [ ] Sustituir ESLint y typescript-eslint por Oxlint type-aware.
-- [ ] Añadir Knip para análisis de dependencias y exports.
-- [ ] Retirar Depcheck y sus excepciones una vez que Knip cubra el mismo
+- [x] Sustituir ESLint y typescript-eslint por Oxlint type-aware.
+- [x] Añadir Knip para análisis de dependencias y exports.
+- [x] Retirar Depcheck y sus excepciones una vez que Knip cubra el mismo
       contrato.
-- [ ] Mantener Prettier como propietario exclusivo del formato.
-- [ ] Separar scripts:
+- [x] Mantener Prettier como propietario exclusivo del formato.
+- [x] Separar scripts:
   - `lint`.
   - `lint:fix`.
   - `format`.
@@ -277,7 +275,7 @@ hasta completar el build.
   - `deps:check`.
   - `build`.
   - `test`.
-- [ ] Añadir un script agregador que falle inmediatamente cuando falle una
+- [x] Añadir un script agregador que falle inmediatamente cuando falle una
       etapa.
 
 Verificación del desarrollador:
@@ -290,6 +288,9 @@ pnpm run deps:check
 pnpm run build
 pnpm run test
 ```
+
+Estado: implementación estática completada; pendientes la revisión de tipos
+generados y las verificaciones del desarrollador.
 
 ## Checkpoint 8: CI, documentación y release 0.1.0
 

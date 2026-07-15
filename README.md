@@ -113,18 +113,23 @@ pnpm run dev
 - `pnpm run dev` — Vite dev server
 - `pnpm run build` — TypeScript + library build
 - `pnpm run preview` — preview built bundle locally
-- `pnpm run lint` — ESLint + Prettier check + depcheck (no writes)
-- `pnpm run lint:fix` — ESLint autofix + Prettier write
+- `pnpm run lint` — Oxlint type-aware check (no writes)
+- `pnpm run lint:fix` — Oxlint autofix
 - `pnpm run docs:check` — docs policy markers, relative links, version alignment
+- `pnpm run deps:check` — Knip dependency analysis
 - `pnpm run test` — Vitest single run
 - `pnpm run test:watch` — Vitest watch mode
 - `pnpm run format` — Prettier write
+- `pnpm run format:check` — Prettier check
+- `pnpm run full` — lint + format + dependencies + docs + build + tests
 - `pnpm run storybook` — run Storybook locally
 - `pnpm run build-storybook` — static Storybook build
 
 ## Validation stack
 
 - `pnpm run lint`
+- `pnpm run format:check`
+- `pnpm run deps:check`
 - `pnpm run docs:check`
 - `pnpm run test`
 - `pnpm run build`

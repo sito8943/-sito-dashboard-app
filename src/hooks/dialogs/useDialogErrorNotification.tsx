@@ -5,12 +5,7 @@ import { useTranslation } from "@sito/dashboard";
 import { useNotification } from "providers";
 
 // lib
-import {
-  NotificationEnumType,
-  NotificationType,
-  isHttpError,
-  isValidationError,
-} from "lib";
+import { NotificationEnumType, isHttpError, isValidationError } from "lib";
 
 /**
  * Builds the default dialog error handler that surfaces validation and HTTP
@@ -29,13 +24,10 @@ export const useDialogErrorNotification = (): ((error: Error) => void) => {
 
       if (isValidationError(error)) {
         showStackNotifications(
-          error.errors.map(
-            ([key, message]) =>
-              ({
-                message: t(`_entities:${key}.${message}`),
-                type: NotificationEnumType.error,
-              }) as NotificationType,
-          ),
+          error.errors.map(([key, message]) => ({
+            message: t(`_entities:${key}.${message}`),
+            type: NotificationEnumType.error,
+          })),
         );
       } else if (isHttpError(error)) {
         const fallback = error.message || t("_accessibility:errors.500");

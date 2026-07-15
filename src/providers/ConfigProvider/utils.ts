@@ -11,9 +11,15 @@ let nextMotionEntryId = 0;
 
 const syncMotionAttribute = () => {
   const root = document.documentElement;
-  const activeEntry = [...motionEntries]
-    .reverse()
-    .find((entry) => entry.motion !== "auto");
+  let activeEntry: MotionEntry | undefined;
+
+  for (let index = motionEntries.length - 1; index >= 0; index -= 1) {
+    const entry = motionEntries[index];
+    if (entry.motion !== "auto") {
+      activeEntry = entry;
+      break;
+    }
+  }
 
   if (!activeEntry) {
     root.removeAttribute(MOTION_ATTRIBUTE);

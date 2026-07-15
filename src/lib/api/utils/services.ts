@@ -59,6 +59,11 @@ const parseJsonBody = (
   }
 };
 
+const toQueryValue = (value: unknown) => {
+  if (value instanceof Date) return value.toISOString();
+  return String(value);
+};
+
 /**
  * @description Make a request to the API
  * @param url - URL to make the request
@@ -167,11 +172,6 @@ export function buildQueryUrl<TFilter>(
   endpoint: string,
   params?: TFilter,
 ): string {
-  const toQueryValue = (value: unknown) => {
-    if (value instanceof Date) return value.toISOString();
-    return String(value);
-  };
-
   if (params) {
     const queryString = Object.entries(params)
       .filter(([, value]) => value !== undefined && value !== null)

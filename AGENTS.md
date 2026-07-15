@@ -28,7 +28,7 @@ Critical distinctions (override anything in `.sito/*`):
 | Layer        | Technology           | Version |
 | ------------ | -------------------- | ------- |
 | UI Framework | React                | 19.2.7  |
-| Language     | TypeScript           | 5.7.2   |
+| Language     | TypeScript           | 7.0.2   |
 | Runtime      | Node.js              | 22.x    |
 | Styling      | Tailwind CSS         | 4.x     |
 | Icons        | FontAwesome          | 7.0.0   |

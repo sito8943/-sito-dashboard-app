@@ -117,7 +117,7 @@ export const ImportDialog = <EntityDto extends ImportPreviewDto>(
           processedCallbackRef.current?.([]);
         }}
         onChange={(e) => {
-          const selectedFile = (e.target as HTMLInputElement).files?.[0];
+          const selectedFile = e.target.files?.[0];
           if (!selectedFile) {
             dispatch({ type: "SET_FILE", file: null });
             processedCallbackRef.current?.([]);

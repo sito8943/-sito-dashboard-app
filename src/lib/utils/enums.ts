@@ -10,6 +10,6 @@ export function enumToKeyValueArray<T extends Record<string, string | number>>(
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({
       key,
-      value: enumObj[key] as string | number,
+      value: enumObj[key],
     }));
 }

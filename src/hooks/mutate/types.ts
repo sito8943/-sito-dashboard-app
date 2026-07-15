@@ -7,7 +7,7 @@ export type UseBaseActionMutate<TInDto, TError extends Error> = {
 
 export interface UseExportActionMutatePropsType<
   TInDto,
-  Tables,
+  Tables extends string,
   TError extends Error,
 > extends UseBaseActionMutate<TInDto, TError> {
   entity: Tables;

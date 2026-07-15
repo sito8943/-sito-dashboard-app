@@ -41,5 +41,4 @@ const NavbarProvider = (props: NavbarProviderPropTypes) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export { NavbarContext, NavbarProvider, useNavbar };

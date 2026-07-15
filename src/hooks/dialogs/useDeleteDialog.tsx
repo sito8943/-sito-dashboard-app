@@ -7,7 +7,6 @@ import { useNotification } from "providers";
 // lib
 import {
   NotificationEnumType,
-  NotificationType,
   ValidationError,
   isValidationError,
   isHttpError,
@@ -40,13 +39,10 @@ export const useDeleteDialog = (props: UseDeleteDialogPropsType) => {
       const unknownErr = error as unknown;
       if (isValidationError(unknownErr)) {
         showStackNotifications(
-          unknownErr.errors.map(
-            ([key, message]) =>
-              ({
-                message: t(`_pages:${key}.errors.${message}`),
-                type: NotificationEnumType.error,
-              }) as NotificationType,
-          ),
+          unknownErr.errors.map(([key, message]) => ({
+            message: t(`_pages:${key}.errors.${message}`),
+            type: NotificationEnumType.error,
+          })),
         );
       } else if (isHttpError(unknownErr)) {
         const fallback = unknownErr.message || t("_accessibility:errors.500");
@@ -55,7 +51,7 @@ export const useDeleteDialog = (props: UseDeleteDialogPropsType) => {
           {
             message: translated || fallback,
             type: NotificationEnumType.error,
-          } as NotificationType,
+          },
         ]);
       }
     },

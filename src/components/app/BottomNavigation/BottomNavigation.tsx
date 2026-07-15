@@ -35,7 +35,7 @@ export const BottomNavigation = <TId extends string = string>(
   const { items, centerAction, className = "", isItemActive } = props;
   const registeredCenterAction = useOptionalBottomNavAction()?.centerAction;
   const effectiveCenterAction = registeredCenterAction
-    ? { ...(centerAction ?? {}), ...registeredCenterAction }
+    ? { ...centerAction, ...registeredCenterAction }
     : centerAction;
 
   const { location, navigate, linkComponent } = useConfig();

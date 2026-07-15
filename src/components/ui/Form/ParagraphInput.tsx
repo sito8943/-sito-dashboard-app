@@ -47,12 +47,10 @@ export const ParagraphInput = forwardRef(function (
 
   const isControlled = value !== undefined;
   const [uncontrolledHasValue, setUncontrolledHasValue] = useState(() =>
-    hasInputValue(defaultValue as string),
+    hasInputValue(defaultValue),
   );
 
-  const hasValue = isControlled
-    ? hasInputValue(value as string)
-    : uncontrolledHasValue;
+  const hasValue = isControlled ? hasInputValue(value) : uncontrolledHasValue;
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     if (!isControlled) {

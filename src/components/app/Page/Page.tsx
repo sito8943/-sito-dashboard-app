@@ -89,7 +89,7 @@ export const Page = <TEntity extends BaseEntityDto>(
     }
     if (filterOptions) {
       const filterAction = {
-        ...(filterOptions as Partial<ActionType<TEntity>>),
+        ...filterOptions,
         id: "filter",
         icon: <FontAwesomeIcon icon={faFilter} />,
         children: (
