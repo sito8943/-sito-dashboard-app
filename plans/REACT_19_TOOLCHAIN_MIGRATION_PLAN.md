@@ -200,17 +200,16 @@ pnpm install
 pnpm run build-storybook
 ```
 
-Estado: implementación estática completada; pendiente instalación y
-verificación por el desarrollador.
+Estado: completado y verificado por el desarrollador.
 
 ## Checkpoint 5: jsdom 29
 
-- [ ] Actualizar `jsdom` a `29.1.1` de forma aislada.
-- [ ] Revisar los tests que dependen de portales, focus, geometría, scroll,
+- [x] Actualizar `jsdom` a `29.1.1` de forma aislada.
+- [x] Revisar los tests que dependen de portales, focus, geometría, scroll,
       observers y eventos del DOM.
-- [ ] Prestar especial atención a Dialog, Tooltip, Notification, ToTop,
+- [x] Prestar especial atención a Dialog, Tooltip, Notification, ToTop,
       PrettyGrid y hooks de scroll/online status.
-- [ ] No mezclar correcciones de jsdom con el cambio posterior de TypeScript.
+- [x] No mezclar correcciones de jsdom con el cambio posterior de TypeScript.
 
 Verificación del desarrollador:
 
@@ -218,6 +217,9 @@ Verificación del desarrollador:
 pnpm install
 pnpm run test
 ```
+
+Estado: implementación estática completada; pendiente instalación y
+verificación por el desarrollador.
 
 ## Checkpoint 6: Vite 8 y build de librería
 
