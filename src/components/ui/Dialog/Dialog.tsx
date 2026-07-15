@@ -27,6 +27,7 @@ export const Dialog = (props: DialogPropsType) => {
   const { t } = useTranslation();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const {
+    dialogId,
     title,
     children,
     handleClose,
@@ -103,6 +104,7 @@ export const Dialog = (props: DialogPropsType) => {
 
   return createPortal(
     <div
+      id={dialogId ? `backdrop-${dialogId}` : undefined}
       aria-label={t("_accessibility:ariaLabels.closeDialog")}
       aria-hidden={!open}
       onClick={bigHandleClose}
@@ -113,6 +115,7 @@ export const Dialog = (props: DialogPropsType) => {
       )}
     >
       <div
+        id={dialogId}
         ref={dialogRef}
         className={classNames(
           "dialog elevated animated",

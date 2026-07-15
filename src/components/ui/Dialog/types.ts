@@ -14,6 +14,13 @@ export type DialogSubmitHandler = (
 export type DialogInitialFocusTarget = "first-input" | "submit";
 
 export type DialogPropsType = {
+  /**
+   * Optional DOM id. When set, the inner dialog element receives this id
+   * and the backdrop element receives `backdrop-${dialogId}`, so both can be
+   * located quickly in the DOM (e.g. for stacking or testing).
+   * Named `dialogId` to avoid clashing with the entity `id` carried by forms.
+   */
+  dialogId?: string;
   open?: boolean;
   title: string;
   children?: ReactNode;

@@ -112,5 +112,13 @@
     "@sito/dashboard": "^0.0.87",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "esbuild"
+    ]
   }
 }
