@@ -1,6 +1,6 @@
 # AGENTS.md — @sito/dashboard-app
 
-Agent guardrails for projects consuming **`@sito/dashboard-app`** (React 18 UI library on top of `@sito/dashboard`).
+Agent guardrails for projects consuming **`@sito/dashboard-app`** (React 19 UI library on top of `@sito/dashboard`).
 Public usage examples live in `docs/CONSUMER_GUIDE.md` and the themed recipe files (`docs/RECIPES.md` is the index; recipes are split into `docs/RECIPES_LAYOUT.md`, `docs/RECIPES_DATA.md`, `docs/RECIPES_FORMS.md`). `README.md` is the entry point (install + doc index). This file is canonical for agent behavior; do not duplicate setup snippets here.
 
 ---
@@ -27,28 +27,28 @@ Critical distinctions (override anything in `.sito/*`):
 
 | Layer        | Technology           | Version |
 | ------------ | -------------------- | ------- |
-| UI Framework | React                | 18.3.1  |
+| UI Framework | React                | 19.2.7  |
 | Language     | TypeScript           | 5.7.2   |
 | Runtime      | Node.js              | 22.x    |
 | Styling      | Tailwind CSS         | 4.x     |
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.0.87 |
+| Base Library | @sito/dashboard      | ^0.1.0  |
 
 Peer install (consumer project):
 
 ```bash
 npm install \
-  react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.87 \
+  react@19.2.7 react-dom@19.2.7 \
+  @sito/dashboard@^0.1.0 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
   @fortawesome/free-solid-svg-icons@7.0.0 \
   @fortawesome/free-regular-svg-icons@7.0.0 \
   @fortawesome/free-brands-svg-icons@7.0.0 \
-  @fortawesome/react-fontawesome@0.2.3
+  @fortawesome/react-fontawesome@3.4.0
 ```
 
 See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, Supabase backend, component prop tables, hook signatures, `BaseClient` / `SupabaseDataClient` extension, dialog/form/auth/notification examples, styling config. See the themed recipe files for copy-ready snippets — `docs/RECIPES_LAYOUT.md` (providers, shells, fallback views, drawer), `docs/RECIPES_DATA.md` (CRUD, clients, exports), `docs/RECIPES_FORMS.md` (forms, dialogs, tabs/onboarding, feedback, auth, errors). `docs/RECIPES.md` indexes them.

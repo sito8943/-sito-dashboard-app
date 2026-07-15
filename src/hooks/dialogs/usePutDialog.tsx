@@ -26,7 +26,7 @@ export const usePutDialog = <
   >,
 ): UseFormDialogReturnType<TFormType> => {
   const queryClient = useQueryClient();
-  const entityRef = useRef<TDto>();
+  const entityRef = useRef<TDto | undefined>(undefined);
 
   const {
     mutationFn,
@@ -72,7 +72,7 @@ export const usePutDialog = <
     [dialogFn, handleError, onSuccess, queryClient, queryKey],
   );
 
-  const formCloseRef = useRef<() => void>();
+  const formCloseRef = useRef<(() => void) | undefined>(undefined);
 
   const confirmationFlow = useFormDialogConfirmation<TMutationDto>({
     confirmation,

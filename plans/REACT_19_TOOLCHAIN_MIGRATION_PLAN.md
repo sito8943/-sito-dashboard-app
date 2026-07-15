@@ -38,25 +38,25 @@ instalaciones y verificaciones de cada grupo antes de avanzar al siguiente.
 - `@sito/ui@0.3.0` confirma el mismo núcleo de React, Vite, TypeScript,
   Storybook, Vitest, jsdom, Prettier y Oxlint.
 
-## Estado inicial de `@sito/dashboard-app`
+## Estado al comenzar la migración de React
 
-| Área            | Estado actual                         | Objetivo de referencia                         |
-| --------------- | ------------------------------------- | ---------------------------------------------- |
-| Package manager | npm + `package-lock.json`             | Decisión pendiente; pnpm `10.34.4` recomendado |
-| Node            | `.nvmrc` `20`                         | Node `22.18.0` / engine `^22.13.0`             |
-| React           | `18.3.1`                              | `19.2.7`                                       |
-| React types     | `18.3.x`                              | `19.2.x`                                       |
-| Base library    | `@sito/dashboard@^0.0.87`             | `^0.1.0`                                       |
-| Testing Library | `16.3.0` / jest-dom `6.6.3`           | `16.3.2` / `6.9.1`                             |
-| Vitest          | `3.2.x`                               | `4.1.10`                                       |
-| Storybook       | paquetes `8.4.7` + runtime `8.6.18`   | grupo coherente `10.4.6`                       |
-| jsdom           | `26.1.0`                              | `29.1.1`                                       |
-| Vite            | `6.4.2`                               | `8.1.4`                                        |
-| React plugin    | `@vitejs/plugin-react-swc@3.7.2`      | `@vitejs/plugin-react@6.0.3`                   |
-| DTS plugin      | `4.5.4`                               | `5.0.3`                                        |
-| TypeScript      | `5.7.2`                               | `7.0.2`                                        |
-| Lint            | ESLint + typescript-eslint + Depcheck | Oxlint + Knip + Prettier separado              |
-| Output target   | ES2017                                | ES2020                                         |
+| Área            | Estado actual                         | Objetivo de referencia            |
+| --------------- | ------------------------------------- | --------------------------------- |
+| Package manager | pnpm `10.34.4` + `pnpm-lock.yaml`     | Completado                        |
+| Node            | `.nvmrc` `22.18.0`                    | Completado; engine `^22.13.0`     |
+| React           | `18.3.1`                              | `19.2.7`                          |
+| React types     | `18.3.x`                              | `19.2.x`                          |
+| Base library    | `@sito/dashboard@^0.0.87`             | `^0.1.0`                          |
+| Testing Library | `16.3.0` / jest-dom `6.6.3`           | `16.3.2` / `6.9.1`                |
+| Vitest          | `3.2.x`                               | `4.1.10`                          |
+| Storybook       | paquetes `8.4.7` + runtime `8.6.18`   | grupo coherente `10.4.6`          |
+| jsdom           | `26.1.0`                              | `29.1.1`                          |
+| Vite            | `6.4.2`                               | `8.1.4`                           |
+| React plugin    | `@vitejs/plugin-react-swc@3.7.2`      | `@vitejs/plugin-react@6.0.3`      |
+| DTS plugin      | `4.5.4`                               | `5.0.3`                           |
+| TypeScript      | `5.7.2`                               | `7.0.2`                           |
+| Lint            | ESLint + typescript-eslint + Depcheck | Oxlint + Knip + Prettier separado |
+| Output target   | ES2017                                | ES2020                            |
 
 ## Checkpoint 0: decisiones de base
 
@@ -68,13 +68,12 @@ instalaciones y verificaciones de cada grupo antes de avanzar al siguiente.
       versiones, sin copiar dependencias que esta librería no utiliza.
 - [x] Mantener fuera del alcance los cambios locales de `Dialog`.
 
-Si se confirma pnpm:
+La adopción de pnpm quedó resuelta en el checkpoint 0:
 
-- Añadir `packageManager: "pnpm@10.34.4"`.
-- Sustituir `package-lock.json` por `pnpm-lock.yaml`, generado por el
-  desarrollador.
-- Migrar CI, Husky, documentación y comandos internos de npm a pnpm.
-- Eliminar la regeneración dinámica del lockfile que hoy hace CI.
+- Se añadió `packageManager: "pnpm@10.34.4"`.
+- `pnpm-lock.yaml` es la única fuente de verdad del árbol instalado.
+- CI, Husky, documentación y comandos internos usan pnpm.
+- CI instala con lockfile congelado y no lo regenera.
 
 Verificación del desarrollador:
 
@@ -115,20 +114,21 @@ Actualizar como una unidad:
 
 Trabajo de código ya identificado:
 
-- [ ] Inicializar explícitamente el ref de entidad de `usePutDialog` con
+- [x] Inicializar explícitamente el ref de entidad de `usePutDialog` con
       `undefined` y reflejarlo en su tipo.
-- [ ] Inicializar explícitamente los refs de cierre de `usePostDialog` y
+- [x] Inicializar explícitamente los refs de cierre de `usePostDialog` y
       `usePutDialog` con `undefined` y reflejarlo en sus tipos.
 - [ ] Revisar de nuevo usos de refs, `ReactElement`, `JSX` y tests que clonen o
       inspeccionen elementos después de instalar los tipos de React 19.
-- [ ] Mantener el wrapper público de `IconButton` basado en FontAwesome.
-- [ ] No añadir `@sito/ui` directamente: llega como dependencia transitiva de
+- [x] Mantener el wrapper público de `IconButton` basado en FontAwesome.
+- [x] No añadir `@sito/ui` directamente: llega como dependencia transitiva de
       `@sito/dashboard`.
-- [ ] No cambiar `theme.css` salvo que una verificación visual demuestre una
+- [x] No cambiar `theme.css` salvo que una verificación visual demuestre una
       variable sin mapear.
 
-`@fortawesome/react-fontawesome@0.2.3` ya declara compatibilidad con React 19;
-no se actualizará solo por esta migración.
+`@fortawesome/react-fontawesome@0.2.3` declara compatibilidad con React 19, pero
+está obsoleto. Se actualiza a `3.4.0` y el peer público pasa a
+`>=3.1.1 <4`, siguiendo la línea ya usada por `@sito/dashboard`.
 
 Verificación del desarrollador:
 
@@ -139,6 +139,9 @@ pnpm run test
 ```
 
 No avanzar si el build o los tests fallan.
+
+Estado: implementación estática completada; pendiente instalación y
+verificación por el desarrollador.
 
 ## Checkpoint 3: actualizaciones sencillas
 

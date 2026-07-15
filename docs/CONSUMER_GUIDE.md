@@ -12,15 +12,15 @@ Install peer dependencies in the consumer project as well:
 
 ```bash
 npm install \
-  react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.87 \
+  react@19.2.7 react-dom@19.2.7 \
+  @sito/dashboard@^0.1.0 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
   @fortawesome/free-solid-svg-icons@7.0.0 \
   @fortawesome/free-regular-svg-icons@7.0.0 \
   @fortawesome/free-brands-svg-icons@7.0.0 \
-  @fortawesome/react-fontawesome@0.2.3
+  @fortawesome/react-fontawesome@3.4.0
 ```
 
 If you use Supabase backend, also install:

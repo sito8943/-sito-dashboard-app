@@ -56,7 +56,7 @@ export const usePostDialog = <
     [dialogFn, handleError, onSuccess, queryClient, queryKey],
   );
 
-  const formCloseRef = useRef<() => void>();
+  const formCloseRef = useRef<(() => void) | undefined>(undefined);
 
   const confirmationFlow = useFormDialogConfirmation<TMutationDto>({
     confirmation,

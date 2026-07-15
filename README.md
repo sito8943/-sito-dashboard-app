@@ -1,6 +1,6 @@
 # @sito/dashboard-app
 
-`@sito/dashboard-app` is a React 18 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
+`@sito/dashboard-app` is a React 19 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
 
 ## Documentation scope and source of truth
 
@@ -42,15 +42,15 @@ Peer dependencies:
 
 ```bash
 npm install \
-  react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.87 \
+  react@19.2.7 react-dom@19.2.7 \
+  @sito/dashboard@^0.1.0 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
   @fortawesome/free-solid-svg-icons@7.0.0 \
   @fortawesome/free-regular-svg-icons@7.0.0 \
   @fortawesome/free-brands-svg-icons@7.0.0 \
-  @fortawesome/react-fontawesome@0.2.3
+  @fortawesome/react-fontawesome@3.4.0
 ```
 
 Supabase backend (optional):
@@ -63,12 +63,12 @@ npm install @supabase/supabase-js@2.100.0
 
 - Node.js `22.x` (see `.nvmrc`)
 - Browser runtime only (no SSR)
-- React `18.3.1`
-- React DOM `18.3.1`
+- React `19.2.7`
+- React DOM `19.2.7`
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.87`
+- `@sito/dashboard` `^0.1.0`
 - Font Awesome peers per `package.json`
 
 ## Quick start
