@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-07-16
+
+### Added
+
+- Added `IconButton.iconSize` for selecting a FontAwesome predefined size,
+  defaulting to `"sm"` for a smaller icon footprint without changing the
+  button's clickable area.
+
 ## [0.1.0] - 2026-07-16
 
 ### Breaking changes

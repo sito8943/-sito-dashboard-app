@@ -1,8 +1,10 @@
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type { FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import type { IconButtonPropsType } from "@sito/dashboard";
 
 export type IconButtonPropsLocalType = Omit<IconButtonPropsType, "icon"> & {
   icon: IconDefinition;
+  iconSize?: FontAwesomeIconProps["size"];
 };
 
 export type ToTopPropsType = Omit<
