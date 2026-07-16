@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@sito/dashboard':
-        specifier: ^0.1.0
-        version: 0.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.1.2
+        version: 0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@use-gesture/react':
         specifier: ^10.3.1
         version: 10.3.1(react@19.2.7)
@@ -1416,15 +1416,15 @@ packages:
   '@rushstack/ts-command-line@5.3.10':
     resolution: {integrity: sha512-fwI076HYknC0IrMXdY6UmjDv+PH7NHhNJX3/pY2UblSE5XrXgndXZPiOe/6ZtuFpn6DvVDVNhtkIzQ+Qu/MhVQ==}
 
-  '@sito/dashboard@0.1.0':
-    resolution: {integrity: sha512-4rkJs54Y4bRHoOg1rTcw9kCPtyvg6W6zhpVL/iFmf4+acxJyPsGk6Wubx9hBQ3HitH4en4hxLcS+JakoZyy+Yw==}
+  '@sito/dashboard@0.1.2':
+    resolution: {integrity: sha512-KuOcOzoBanUyqsFVZ61Jh805/btBEvyppWr501dyUNhqnJUNg748SP9yN8/eELptWIKv+muVwDMnK0EYwSsAIw==}
     engines: {node: ^22.13.0}
     peerDependencies:
       react: ^19.0.0
       react-dom: ^19.0.0
 
-  '@sito/ui@0.3.0':
-    resolution: {integrity: sha512-1beOqxw5q0yX26HF3DflWB5l93Scf+5oTSx4W+CT59qx4ZounaoWM5IRJT6+4s87rDHdxoPgnjqKE8SZZ/UAHQ==}
+  '@sito/ui@0.3.2':
+    resolution: {integrity: sha512-gsvweal1m9+Pe3viQatuUZAKW0oYjhBIxRakxwvPSl6k0inDQ9o+oNp+O023L04KPP+Ib6I/c3pNMwSk9sfy2w==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
       react: ^19.0.0
@@ -3911,13 +3911,13 @@ snapshots:
       - '@types/node'
     optional: true
 
-  '@sito/dashboard@0.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@sito/dashboard@0.1.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@sito/ui': 0.3.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@sito/ui': 0.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@sito/ui@0.3.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@sito/ui@0.3.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
