@@ -12,6 +12,15 @@ export type { IconButtonPropsLocalType } from "./types";
  * @param props - Icon button props with a FontAwesome icon.
  * @returns Wrapped dashboard IconButton element.
  */
-export const AppIconButton = ({ icon, ...rest }: IconButtonPropsLocalType) => {
-  return <IconButtonBase icon={<FontAwesomeIcon icon={icon} />} {...rest} />;
+export const AppIconButton = ({
+  icon,
+  iconSize = "sm",
+  ...rest
+}: IconButtonPropsLocalType) => {
+  return (
+    <IconButtonBase
+      icon={<FontAwesomeIcon icon={icon} size={iconSize} />}
+      {...rest}
+    />
+  );
 };
