@@ -7,8 +7,7 @@ import { SupabaseAuthProvider } from "./SupabaseAuthProvider";
 import { useAuth } from "providers/Auth";
 
 let authStateHandler:
-  | ((event: string, session: Session | null) => void)
-  | undefined;
+  ((event: string, session: Session | null) => void) | undefined;
 
 const {
   signOutMock,
@@ -17,21 +16,21 @@ const {
   unsubscribeMock,
   supabaseMock,
 } = vi.hoisted(() => {
-  const signOutMock = vi.fn();
-  const getSessionMock = vi.fn();
-  const onAuthStateChangeMock = vi.fn();
-  const unsubscribeMock = vi.fn();
+  const signOut = vi.fn();
+  const getSession = vi.fn();
+  const onAuthStateChange = vi.fn();
+  const unsubscribe = vi.fn();
 
   return {
-    signOutMock,
-    getSessionMock,
-    onAuthStateChangeMock,
-    unsubscribeMock,
+    signOutMock: signOut,
+    getSessionMock: getSession,
+    onAuthStateChangeMock: onAuthStateChange,
+    unsubscribeMock: unsubscribe,
     supabaseMock: {
       auth: {
-        signOut: signOutMock,
-        getSession: getSessionMock,
-        onAuthStateChange: onAuthStateChangeMock,
+        signOut,
+        getSession,
+        onAuthStateChange,
       },
     },
   };

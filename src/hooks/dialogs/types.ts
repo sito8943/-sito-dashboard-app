@@ -46,8 +46,10 @@ export type FormDialogErrorContext<TFormType extends FieldValues> =
     phase: FormDialogErrorPhase;
   };
 
-export interface UseDeleteDialogPropsType
-  extends UseConfirmationPropsType<number, ValidationError> {
+export interface UseDeleteDialogPropsType extends UseConfirmationPropsType<
+  number,
+  ValidationError
+> {
   queryKey: QueryKey;
 }
 
@@ -107,17 +109,18 @@ export type UseFormDialogPropsType<
   TMappedValues = TFormType,
 > = UseFormDialogCorePropsType<TFormType, TMappedValues>;
 
-export interface TriggerFormDialogPropsType<TFormType extends FieldValues>
-  extends Omit<
-    FormDialogPropsType<TFormType>,
-    | "control"
-    | "getValues"
-    | "setValue"
-    | "reset"
-    | "setError"
-    | "handleSubmit"
-    | "onSubmit"
-  > {
+export interface TriggerFormDialogPropsType<
+  TFormType extends FieldValues,
+> extends Omit<
+  FormDialogPropsType<TFormType>,
+  | "control"
+  | "getValues"
+  | "setValue"
+  | "reset"
+  | "setError"
+  | "handleSubmit"
+  | "onSubmit"
+> {
   openDialog: (params?: number | OpenFormDialogParamsType<TFormType>) => void;
   control: Control<TFormType, unknown, TFormType>;
   getValues: UseFormGetValues<TFormType>;
@@ -152,8 +155,9 @@ export interface UseFormDialogConfirmationReturn<TMutationDto> {
   confirmationProps?: ConfirmationDialogPropsType;
 }
 
-export interface UseFormDialogReturnType<TFormType extends FieldValues>
-  extends TriggerFormDialogPropsType<TFormType> {
+export interface UseFormDialogReturnType<
+  TFormType extends FieldValues,
+> extends TriggerFormDialogPropsType<TFormType> {
   mode: FormDialogMode;
   id?: number;
   isSubmitting: boolean;
@@ -173,7 +177,9 @@ export interface UsePostDialogPropsType<
   TMutationDto,
   TMutationOutputDto,
   TFormType extends FieldValues,
-> extends UseBaseFormProps<TMutationOutputDto, Error>,
+>
+  extends
+    UseBaseFormProps<TMutationOutputDto, Error>,
     Omit<
       UseEntityCoreFormDialogPropsType<TFormType, TMutationDto>,
       "mode" | "onSubmit" | "onError"
@@ -189,9 +195,9 @@ export interface UsePutDialogPropsType<
   TMutationOutputDto,
   TFormType extends FieldValues,
 > extends Omit<
-    UsePostDialogPropsType<TMutationDto, TMutationOutputDto, TFormType>,
-    "dtoToForm" | "formToDto"
-  > {
+  UsePostDialogPropsType<TMutationDto, TMutationOutputDto, TFormType>,
+  "dtoToForm" | "formToDto"
+> {
   getFunction: (id: number) => Promise<TDto>;
   dtoToForm?: (data: TDto) => TFormType;
   formToDto?: (data: TFormType, dto?: TDto) => TMutationDto;

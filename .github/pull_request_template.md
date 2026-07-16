@@ -5,10 +5,14 @@
 
 ## Validation
 
-- [ ] `npm run lint`
-- [ ] `npm run docs:check`
-- [ ] `npm run test`
-- [ ] `npm run build`
+- [ ] `pnpm run lint`
+- [ ] `pnpm run format:check`
+- [ ] `pnpm run deps:check`
+- [ ] `pnpm run docs:check`
+- [ ] `pnpm run test`
+- [ ] `pnpm run build`
+- [ ] `pnpm run build-storybook`
+- [ ] `pnpm pack`
 
 ## Documentation checklist
 

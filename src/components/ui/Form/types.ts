@@ -12,7 +12,8 @@ import {
 } from "react-hook-form";
 
 export interface ParagraphInputPropsType
-  extends Pick<
+  extends
+    Pick<
       TextInputPropsType,
       | "label"
       | "state"

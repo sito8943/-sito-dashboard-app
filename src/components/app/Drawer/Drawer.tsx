@@ -20,7 +20,9 @@ import { APP_ROUTES, SubMenuItemType } from "lib";
  * @param props - Drawer props.
  * @returns Drawer element.
  */
-export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
+export function Drawer<MenuKeys extends string = string>(
+  props: DrawerPropsTypes<MenuKeys>,
+) {
   const { t } = useTranslation();
 
   const { open, onClose, menuMap, logo } = props;
@@ -75,7 +77,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
   const renderChild = useCallback(
     (child: SubMenuItemType) => (
       <li
-        key={child.id as string}
+        key={child.id}
         className={classNames(
           "drawer-list-item-child",
           isActive(child.path, true) && "active",
@@ -103,7 +105,8 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
 
   const renderItems = useMemo(() => {
     return parsedMenu.map((link, i) => {
-      const key = (link.page as string) ?? String(i);
+      const pageKey = link.page ?? link.id ?? String(i);
+      const key = pageKey;
       const liClass = classNames(
         "drawer-list-item",
         isActive(link.path) && "active",
@@ -120,9 +123,7 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
 
       const availableChildren =
         link.children ??
-        (link.page && !!dynamicItems
-          ? dynamicItems[link.page as string]
-          : null);
+        (link.page && !!dynamicItems ? dynamicItems[link.page] : null);
       const children = availableChildren?.filter(
         (child) => !child.access || child.access(account),
       );
@@ -132,13 +133,13 @@ export function Drawer<MenuKeys>(props: DrawerPropsTypes<MenuKeys>) {
           <Link
             tabIndex={open ? 0 : -1}
             to={link.path ?? APP_ROUTES.ROOT}
-            aria-label={t(`_accessibility:ariaLabels.${String(link.page)}`, {
-              defaultValue: t(`_pages:${String(link.page)}.title`),
+            aria-label={t(`_accessibility:ariaLabels.${pageKey}`, {
+              defaultValue: t(`_pages:${pageKey}.title`),
             })}
             className="drawer-link"
           >
             {link.icon}
-            {t(`_pages:${link.page}.title`)}
+            {t(`_pages:${pageKey}.title`)}
           </Link>
           {children && (
             <ul className="drawer-children-list">

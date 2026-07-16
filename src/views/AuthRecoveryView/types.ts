@@ -10,9 +10,7 @@ import type { RecoveryFormType } from "lib";
 export type AuthRecoveryViewActionType = "submit" | "secondary";
 
 export type AuthRecoveryViewStatusMessageVariantType =
-  | "default"
-  | "success"
-  | "error";
+  "default" | "success" | "error";
 
 export type AuthRecoveryViewErrorContextType = {
   action: AuthRecoveryViewActionType;

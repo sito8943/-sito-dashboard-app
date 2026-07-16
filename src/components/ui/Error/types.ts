@@ -36,5 +36,4 @@ export type ErrorCustomContentPropsType = {
 };
 
 export type ErrorPropsType =
-  | ErrorDefaultPropsType
-  | ErrorCustomContentPropsType;
+  ErrorDefaultPropsType | ErrorCustomContentPropsType;

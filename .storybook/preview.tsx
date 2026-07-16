@@ -94,7 +94,14 @@ const interpolate = (
   if (!opts) return template;
   return template.replace(/\{\{(\w+)\}\}/g, (_, name) => {
     const v = opts[name];
-    return v === undefined || v === null ? "" : String(v);
+    if (
+      typeof v === "string" ||
+      typeof v === "number" ||
+      typeof v === "boolean" ||
+      typeof v === "bigint"
+    )
+      return String(v);
+    return "";
   });
 };
 
@@ -125,7 +132,6 @@ const withProviders: Decorator = (Story) => (
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
         color: /(background|color)$/i,

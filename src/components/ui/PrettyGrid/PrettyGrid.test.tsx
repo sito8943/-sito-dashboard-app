@@ -24,6 +24,7 @@ type Item = BaseEntityDto & {
 class IntersectionObserverMock implements IntersectionObserver {
   readonly root: Element | Document | null = null;
   readonly rootMargin: string;
+  readonly scrollMargin: string;
   readonly thresholds: ReadonlyArray<number>;
 
   observe = vi.fn((target: Element) => {
@@ -42,6 +43,7 @@ class IntersectionObserverMock implements IntersectionObserver {
   ) {
     this.callback = callback;
     this.rootMargin = options?.rootMargin ?? "";
+    this.scrollMargin = options?.scrollMargin ?? "";
     this.thresholds = Array.isArray(options?.threshold)
       ? options.threshold
       : [options?.threshold ?? 0];

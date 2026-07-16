@@ -18,7 +18,7 @@ export type RenderExtraFields<TExtra extends Record<string, unknown>> = (
  */
 export const resolveInitialExtra = <TExtra extends Record<string, unknown>>(
   defaultExtra: TExtra | undefined,
-): TExtra => (defaultExtra ?? (EMPTY_EXTRA as unknown as TExtra)) as TExtra;
+): TExtra => defaultExtra ?? (EMPTY_EXTRA as unknown as TExtra);
 
 /**
  * Builds a stable setter that updates a single key in the `extra` form state.

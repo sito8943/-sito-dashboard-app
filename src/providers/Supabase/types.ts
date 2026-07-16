@@ -8,8 +8,7 @@ import { SupabaseSessionMapper } from "lib";
 import { BasicProviderPropTypes } from "providers";
 import { AuthProviderPropTypes } from "providers/Auth";
 
-export interface SupabaseManagerProviderPropTypes
-  extends BasicProviderPropTypes {
+export interface SupabaseManagerProviderPropTypes extends BasicProviderPropTypes {
   supabase: SupabaseClient;
   queryClient?: QueryClient;
 }

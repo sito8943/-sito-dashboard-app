@@ -9,7 +9,6 @@ import { useNotification } from "providers";
 // lib
 import {
   NotificationEnumType,
-  NotificationType,
   ValidationError,
   isValidationError,
   isHttpError,
@@ -74,6 +73,9 @@ export const useMutationForm = <
       if (!formScope) return messages;
 
       let hasFocused = false;
+      const entityKey = queryKey?.[0];
+      const entityTranslationKey =
+        typeof entityKey === "string" ? entityKey : "common";
       if (valError) {
         valError.forEach(([key, message]) => {
           const input = formScope.querySelector(`[name="${key}"]`);
@@ -87,7 +89,9 @@ export const useMutationForm = <
               hasFocused = true;
             }
             input.classList.add("error");
-            messages.push(t(`_entities:${queryKey}.${key}.${message}`));
+            messages.push(
+              t(`_entities:${entityTranslationKey}.${key}.${message}`),
+            );
           }
         });
       }
@@ -118,13 +122,10 @@ export const useMutationForm = <
           if (isValidationError(unknownErr)) {
             const messages = parseFormError(unknownErr);
             showStackNotifications(
-              messages.map(
-                (message) =>
-                  ({
-                    message,
-                    type: NotificationEnumType.error,
-                  }) as NotificationType,
-              ),
+              messages.map((message) => ({
+                message,
+                type: NotificationEnumType.error,
+              })),
             );
           } else if (isHttpError(unknownErr)) {
             const fallback =
@@ -141,7 +142,7 @@ export const useMutationForm = <
         if (onSuccessMessage)
           showSuccessNotification({
             message: onSuccessMessage,
-          } as NotificationType);
+          });
       },
     },
   );

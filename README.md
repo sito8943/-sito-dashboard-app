@@ -1,6 +1,6 @@
 # @sito/dashboard-app
 
-`@sito/dashboard-app` is a React 18 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
+`@sito/dashboard-app` is a React 19 component and utilities library for building Sito-style admin dashboards, CRUD screens, and internal tools. It packages UI components, hooks, providers, typed API helpers, and styles in a single npm package.
 
 ## Documentation scope and source of truth
 
@@ -42,15 +42,14 @@ Peer dependencies:
 
 ```bash
 npm install \
-  react@18.3.1 react-dom@18.3.1 \
-  @sito/dashboard@^0.0.87 \
+  react@19.2.7 react-dom@19.2.7 \
+  @sito/dashboard@^0.1.2 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
   @fortawesome/free-solid-svg-icons@7.0.0 \
   @fortawesome/free-regular-svg-icons@7.0.0 \
-  @fortawesome/free-brands-svg-icons@7.0.0 \
-  @fortawesome/react-fontawesome@0.2.3
+  @fortawesome/react-fontawesome@3.4.0
 ```
 
 Supabase backend (optional):
@@ -61,14 +60,14 @@ npm install @supabase/supabase-js@2.100.0
 
 ## Requirements
 
-- Node.js `20.x` (see `.nvmrc`)
+- Node.js `22.x` (see `.nvmrc`)
 - Browser runtime only (no SSR)
-- React `18.3.1`
-- React DOM `18.3.1`
+- React `19.2.7`
+- React DOM `19.2.7`
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.0.87`
+- `@sito/dashboard` `^0.1.2`
 - Font Awesome peers per `package.json`
 
 ## Quick start
@@ -102,48 +101,55 @@ Detailed setup, examples, and prop tables live in:
 git clone https://github.com/sito8943/-sito-dashboard-app.git
 cd ./-sito-dashboard-app
 nvm use
-npm install
-npm run dev
-# optional: npm run storybook
+corepack enable
+pnpm install
+pnpm run dev
+# optional: pnpm run storybook
 ```
 
 ## Scripts
 
-- `npm run dev` — Vite dev server
-- `npm run build` — TypeScript + library build
-- `npm run preview` — preview built bundle locally
-- `npm run lint` — ESLint + Prettier check + depcheck (no writes)
-- `npm run lint:fix` — ESLint autofix + Prettier write
-- `npm run docs:check` — docs policy markers, relative links, version alignment
-- `npm run test` — Vitest single run
-- `npm run test:watch` — Vitest watch mode
-- `npm run format` — Prettier write
-- `npm run storybook` — run Storybook locally
-- `npm run build-storybook` — static Storybook build
+- `pnpm run dev` — Vite dev server
+- `pnpm run build` — TypeScript + library build
+- `pnpm run preview` — preview built bundle locally
+- `pnpm run lint` — Oxlint type-aware check (no writes)
+- `pnpm run lint:fix` — Oxlint autofix
+- `pnpm run docs:check` — docs policy markers, relative links, version alignment
+- `pnpm run deps:check` — Knip dependency analysis
+- `pnpm run test` — Vitest single run
+- `pnpm run test:watch` — Vitest watch mode
+- `pnpm run format` — Prettier write
+- `pnpm run format:check` — Prettier check
+- `pnpm run full` — lint + format + dependencies + docs + build + tests
+- `pnpm run storybook` — run Storybook locally
+- `pnpm run build-storybook` — static Storybook build
 
 ## Validation stack
 
-- `npm run lint`
-- `npm run docs:check`
-- `npm run test`
-- `npm run build`
-- Storybook / manual visual checks (optional)
+- `pnpm run lint`
+- `pnpm run format:check`
+- `pnpm run deps:check`
+- `pnpm run docs:check`
+- `pnpm run test`
+- `pnpm run build`
+- `pnpm run build-storybook`
+- `pnpm pack`
 
 ## Deployment / release
 
 CI:
 
-- `.github/workflows/ci.yml` — `test + build` on push / PR
-- `.github/workflows/lint.yml` — `lint + docs:check` on PR
+- `.github/workflows/ci.yml` — frozen install, full validation, Storybook build,
+  and package-content verification on push / PR
 
 Manual release:
 
 ```bash
-npm version patch        # or minor / major
-npm run lint
-npm run test
-npm run build
-npm publish --access public
+pnpm install --frozen-lockfile
+pnpm run full
+pnpm run build-storybook
+pnpm pack
+pnpm publish --access public
 git push --follow-tags
 ```
 

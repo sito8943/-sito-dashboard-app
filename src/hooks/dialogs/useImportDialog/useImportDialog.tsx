@@ -95,7 +95,7 @@ export function useImportDialog<
           items,
           override,
           ...extra,
-        } as ImportDto<PreviewEntityDto> & TExtra);
+        });
         resetState();
       } catch (e) {
         console.error(e);

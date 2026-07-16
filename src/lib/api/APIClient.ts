@@ -93,7 +93,7 @@ export class APIClient {
     this.refreshRetryBackoffMultiplier =
       authConfig.refreshRetryBackoffMultiplier ?? 3;
     this.refreshRetryCooldownMs = authConfig.refreshRetryCooldownMs ?? 20000;
-    this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer;
+    this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer.bind(this);
   }
 
   defaultTokenAcquirer(useCookie?: boolean): RequestConfig | undefined {

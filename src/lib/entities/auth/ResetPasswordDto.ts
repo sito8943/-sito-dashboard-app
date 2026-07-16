@@ -12,5 +12,4 @@ export type ResetPasswordByTokenHashDto = {
 };
 
 export type ResetPasswordDto =
-  | ResetPasswordByAccessTokenDto
-  | ResetPasswordByTokenHashDto;
+  ResetPasswordByAccessTokenDto | ResetPasswordByTokenHashDto;

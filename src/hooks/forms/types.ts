@@ -7,8 +7,10 @@ export interface UseBaseFormProps<TInDto, TError extends Error> {
   onSuccessMessage?: string;
 }
 
-export interface UseConfirmationPropsType<TInDto, TError extends Error>
-  extends UseBaseFormProps<TInDto, TError> {
+export interface UseConfirmationPropsType<
+  TInDto,
+  TError extends Error,
+> extends UseBaseFormProps<TInDto, TError> {
   mutationFn: (data: TInDto[]) => Promise<TInDto>;
 }
 

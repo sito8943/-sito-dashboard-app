@@ -21,7 +21,7 @@ import { parseQueries } from "./utils/query";
 
 /** Generic REST client with CRUD, import/export and common list operations. */
 export class BaseClient<
-  Tables,
+  Tables extends string,
   TDto extends BaseEntityDto,
   TCommonDto extends BaseCommonEntityDto,
   TAddDto,
@@ -62,10 +62,7 @@ export class BaseClient<
    * @returns inserted item
    */
   async insert(value: TAddDto): Promise<TMutationOutputDto> {
-    return await this.api.post<TMutationOutputDto, TAddDto>(
-      `${this.table}`,
-      value,
-    );
+    return await this.api.post<TMutationOutputDto, TAddDto>(this.table, value);
   }
 
   /**
@@ -103,7 +100,7 @@ export class BaseClient<
     query?: QueryParam<TDto>,
     filters?: TFilter,
   ): Promise<QueryResult<TDto>> {
-    return await this.api.get<TDto, TFilter>(`${this.table}`, query, filters);
+    return await this.api.get<TDto, TFilter>(this.table, query, filters);
   }
 
   /**
@@ -156,7 +153,7 @@ export class BaseClient<
   }
 
   async softDelete(ids: number[]): Promise<number> {
-    return await this.api.delete(`${this.table}`, ids);
+    return await this.api.delete(this.table, ids);
   }
 
   async restore(ids: number[]): Promise<number> {

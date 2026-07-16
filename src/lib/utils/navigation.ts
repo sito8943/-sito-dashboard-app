@@ -48,8 +48,9 @@ export type ViewPageType<PageId extends string = string> = {
   access?: AccessGuard;
 };
 
-export interface NamedViewPageType<PageId extends string = string>
-  extends ViewPageType<PageId> {
+export interface NamedViewPageType<
+  PageId extends string = string,
+> extends ViewPageType<PageId> {
   name: string;
 }
 

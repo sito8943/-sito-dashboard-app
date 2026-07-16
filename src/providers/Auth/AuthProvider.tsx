@@ -45,10 +45,9 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
   });
 
   const logoutUser = useCallback(async () => {
-    const accessToken =
-      (fromLocal(user) as string | undefined) ?? account.token;
+    const accessToken = fromLocal(user) ?? account.token;
     const refreshToken =
-      (fromLocal(refreshTokenKey) as string | undefined) ??
+      fromLocal(refreshTokenKey) ??
       (typeof account.refreshToken === "string"
         ? account.refreshToken
         : undefined);

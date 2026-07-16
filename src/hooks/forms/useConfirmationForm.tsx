@@ -7,8 +7,6 @@ import { useDialog } from "hooks";
 // providers
 import { useNotification } from "providers";
 
-// types
-import { NotificationType } from "lib";
 import { UseConfirmationPropsType } from "hooks";
 
 /**
@@ -51,7 +49,7 @@ export const useConfirmationForm = <TInDto, TError extends Error>(
       if (onSuccess) onSuccess(result);
       showSuccessNotification({
         message: onSuccessMessage,
-      } as NotificationType);
+      });
       close();
     },
   });

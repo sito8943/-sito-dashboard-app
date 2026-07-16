@@ -1,13 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Action } from "@sito/dashboard";
 
 // types
 import { EmptyPropsType } from "./types";
 
 // lib
 import { BaseEntityDto } from "lib";
-
-// components
-import { Action } from "components";
 
 // styles
 import "./styles.css";

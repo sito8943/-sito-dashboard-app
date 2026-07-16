@@ -2,6 +2,83 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.0] - 2026-07-16
+
+### Breaking changes
+
+- Migrated the public React and React DOM peer contract to React `^19.0.0` and
+  aligned the development runtime and type packages with React `19.2.7`.
+- Updated the base library dependency to `@sito/dashboard@^0.1.2` and the
+  FontAwesome React peer to `>=3.1.1 <4` (`3.4.0` in development).
+- Removed the unused FontAwesome brands package from the required peer set;
+  consumers can still install it when supplying brand icons.
+- Raised the local and CI runtime to Node `22.18.0` with engine
+  `^22.13.0`, adopted pnpm `10.34.4` as the package manager and sole lockfile
+  source, and removed the npm lockfile.
+- Raised the emitted JavaScript target from ES2017 to ES2020.
+- Constrained public table and menu-key generics to strings across
+  `BaseClient`, `Drawer`, `DashboardHeader`, and `useExportActionMutate`.
+
+### Added
+
+- Added `Dialog.dialogId`, assigning the requested id to the dialog and
+  `backdrop-${dialogId}` to its backdrop for stacking, testing, and DOM lookup.
+- Added separate `format:check` and `deps:check` commands plus a fail-fast
+  `full` validation command.
+- Added Oxlint type-aware configuration and Knip dependency analysis.
+- Added `@typescript/typescript6` as the JavaScript Compiler API fallback used
+  by `vite-plugin-dts` under TypeScript 7.
+- Added a checkpointed React 19 and toolchain migration plan with the completed
+  decisions, compatibility work, and developer verification commands.
+
+### Changed
+
+- Upgraded the build and test stack to TypeScript `7.0.2`, Vite `8.1.4`,
+  Storybook `10.4.6`, Vitest `4.1.10`, jsdom `29.1.1`, Tailwind CSS `4.3.2`,
+  and Prettier `3.9.5`.
+- Updated Testing Library to `16.3.2`, jest-dom to `6.9.1`, the Node types to
+  the Node 22 line, and `vite-plugin-dts` to `5.0.3`.
+- Replaced `@vitejs/plugin-react-swc` with `@vitejs/plugin-react`, moved the
+  TypeScript and library targets to ES2020, externalized
+  `react/jsx-dev-runtime`, and moved the Node-side TypeScript configuration to
+  `NodeNext`.
+- Replaced ESLint and Depcheck with Oxlint and Knip while keeping Prettier as
+  the sole formatter and excluding the pnpm lockfile from format checks.
+- Updated Storybook aliases and plugin filtering for the Vite 8 library setup,
+  prevented duplicate library/Tailwind plugins, and replaced the legacy addon
+  set with the docs and accessibility addons.
+- Consolidated CI into one pnpm workflow using current checkout, Node setup,
+  and pnpm setup actions; it now installs from the frozen lockfile and runs full
+  validation, Storybook build, and package-content verification.
+- Updated Husky, the pull-request checklist, development commands, and release
+  instructions from npm to pnpm.
+
+### Fixed
+
+- Bound `APIClient.defaultTokenAcquirer` to its client instance so the default
+  secured-request path can read the configured storage key reliably.
+- Corrected `useMutationForm` validation translation keys to use the first
+  string segment of `queryKey`, with `common` as the fallback.
+- Made drawer entries without a `page` use their `id` or index for React keys,
+  labels, accessibility text, and translation lookup instead of resolving an
+  `undefined` page key.
+- Updated refs and public type declarations for the React 19 and TypeScript 7
+  contracts, including explicit `undefined` initialization for dialog refs.
+- Updated `ParagraphInput` value detection to handle readonly string arrays
+  directly instead of relying on string coercion.
+- Removed the `Empty` barrel-import cycle that could create circular Rollup
+  chunks and unstable execution order.
+- Removed unnecessary casts and tightened resource, navigation, form,
+  Supabase, and notification types for TypeScript 7 and type-aware linting.
+- Updated the documentation checker to validate exact `.nvmrc` versions while
+  comparing their major version with the documented Node runtime.
+
+### Documentation
+
+- Updated README, consumer guidance, agent rules, release commands, and the
+  migration plan for React 19, Node 22, pnpm, `@sito/dashboard` 0.1.x, and the
+  new validation stack.
+
 ## [0.0.89] - 2026-06-21
 
 ### Changed

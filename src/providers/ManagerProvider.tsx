@@ -23,6 +23,5 @@ const ManagerProvider = (props: ManagerProviderPropTypes) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export { createQueryClient, queryClient } from "./queryClient";
 export { ManagerProvider };

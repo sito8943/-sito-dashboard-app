@@ -1,0 +1,5 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  // JavaScript Compiler API fallback loaded indirectly by vite-plugin-dts.
+  "ignoreDependencies": ["@typescript/typescript6"],
+}
