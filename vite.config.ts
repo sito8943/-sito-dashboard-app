@@ -12,6 +12,7 @@ export default defineConfig(() => {
 
   return {
     resolve: {
+      dedupe: ["react", "react-dom"],
       alias: {
         components: resolve(srcPath, "components"),
         providers: resolve(srcPath, "providers"),
@@ -66,6 +67,7 @@ export default defineConfig(() => {
           "react/jsx-dev-runtime",
           "react-dom",
           "@sito/dashboard",
+          "@sito/ui",
           "@tanstack/react-query",
           "@supabase/supabase-js",
           "react-hook-form",

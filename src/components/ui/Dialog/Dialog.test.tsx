@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { Dialog } from "./Dialog";
-import { resetBodyScrollLockForTests } from "./bodyScrollLock";
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -10,21 +9,7 @@ vi.mock("@sito/dashboard", () => ({
     values.filter(Boolean).join(" "),
 }));
 
-vi.mock("components", () => ({
-  AppIconButton: ({
-    onClick,
-    ...props
-  }: {
-    onClick?: () => void;
-    [key: string]: unknown;
-  }) => <button type="button" onClick={onClick} {...props} />,
-}));
-
 describe("Dialog", () => {
-  beforeEach(() => {
-    resetBodyScrollLockForTests();
-  });
-
   it("renders via portal and restores previous body overflow on unmount", () => {
     document.body.style.overflow = "scroll";
 
@@ -39,6 +24,21 @@ describe("Dialog", () => {
 
     unmount();
     expect(document.body.style.overflow).toBe("scroll");
+  });
+
+  it("styles the close button without a generic error color class", () => {
+    render(
+      <Dialog open title="Confirm" handleClose={vi.fn()}>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+
+    const closeButton = screen.getByRole("button", {
+      name: "_accessibility:ariaLabels.closeDialog",
+    });
+
+    expect(closeButton).toHaveClass("dialog-close-btn");
+    expect(closeButton).not.toHaveAttribute("color");
   });
 
   it("calls handleClose on Escape when open", () => {
@@ -134,7 +134,7 @@ describe("Dialog", () => {
     expect(onSubmit).toHaveBeenCalledOnce();
   });
 
-  it("does not focus the first input by default", () => {
+  it("focuses the dialog instead of the first input by default", () => {
     const previousFocus = document.createElement("button");
     previousFocus.type = "button";
     previousFocus.textContent = "Previously focused";
@@ -148,7 +148,7 @@ describe("Dialog", () => {
         </Dialog>,
       );
 
-      expect(previousFocus).toHaveFocus();
+      expect(screen.getByRole("dialog", { name: "Profile" })).toHaveFocus();
       expect(screen.getByRole("textbox", { name: "Name" })).not.toHaveFocus();
     } finally {
       previousFocus.remove();

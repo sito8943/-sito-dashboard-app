@@ -4,24 +4,28 @@
   @apply px-4 py-1 rounded-4xl;
 }
 
-.dialog-backdrop {
-  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-[28rem]:z-36 w-full h-screen;
+.dialog-backdrop.sito-ui-dialog-backdrop {
+  @apply fixed left-0 top-0 flex items-center justify-center z-50 max-[28rem]:z-36 w-full h-screen p-0;
 }
 
 .dialog-backdrop.opened {
-  @apply backdrop-blur-xl bg-base/20;
+  @apply opacity-100 backdrop-blur-xl bg-base/20;
 }
 
 .dialog-backdrop.closed {
-  @apply pointer-events-none;
+  @apply pointer-events-none opacity-0;
 }
 
-.dialog {
+.dialog.sito-ui-dialog {
   @apply flex flex-col relative xs:min-w-90 max-xs:min-w-5/6 bg-base p-5 rounded-2xl border-border border;
+  width: auto;
+  max-height: none;
+  overflow: visible;
 }
 
-.dialog-mobile-full-screen {
+.dialog.sito-ui-dialog.dialog-mobile-full-screen {
   @apply max-sm:border-none max-sm:border-0 max-sm:rounded-none max-sm:w-screen max-sm:h-screen;
+  width: auto;
 }
 
 .dialog.opened {
@@ -38,6 +42,11 @@
 
 .dialog-title {
   @apply text-text text-xl max-xs:text-lg;
+}
+
+.dialog .dialog-close-btn {
+  --sito-ui-icon-button-container-size: var(--sito-ui-size-icon-button-sm);
+  --sito-ui-icon-button-icon-size: var(--sito-ui-size-icon-button-icon-sm);
 }
 
 .dialog-actions {

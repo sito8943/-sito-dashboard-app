@@ -110,7 +110,8 @@
     "vitest": "4.1.10"
   },
   "dependencies": {
-    "@sito/dashboard": "^0.1.2",
+    "@sito/dashboard": "^0.1.3",
+    "@sito/ui": "0.3.2",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   },
@@ -119,6 +120,9 @@
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "@sito/ui": "link:../ui"
+    }
   }
 }

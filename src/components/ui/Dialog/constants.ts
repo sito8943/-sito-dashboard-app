@@ -1,0 +1,1 @@
+export const DIALOG_EXIT_DURATION_MS = 300;
