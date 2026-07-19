@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-07-19
+
+### Added
+
+- Added mobile browser/device Back handling for `Dialog`: on viewports up to
+  `40rem`, opening a dialog creates a history entry so Back closes the topmost
+  dialog before navigating away from the current route.
+
+### Changed
+
+- Rebuilt the app-level `Dialog` wrapper on top of the shared `@sito/ui`
+  primitive, delegating portal rendering, Escape and backdrop handling, focus,
+  body scroll locking, and the exit lifecycle while preserving the existing
+  `@sito/dashboard-app` props and visual classes.
+- Changed the default dialog focus from leaving focus on the previously active
+  element to focusing the dialog itself when `initialFocus` is not supplied;
+  explicit `"first-input"` and `"submit"` modes remain available.
+- Updated the base library from `@sito/dashboard@^0.1.2` to
+  `@sito/dashboard@0.3.0`, added `@sito/ui@0.3.2` as a direct dependency, and
+  externalized the shared UI package from the library bundle.
+- Updated dialog styles for the shared primitive class contract, including a
+  compact close button, explicit open/closed opacity states, and a `300ms` exit
+  duration.
+
+### Fixed
+
+- Aligned table-header theming with the upstream class-name contract by
+  removing the local border-color override while retaining the themed hover
+  state.
+- Removed the error-color treatment from the dialog close action so its visual
+  style no longer implies a destructive operation.
+
+### Documentation
+
+- Documented mobile Back behavior for `Dialog` in the consumer guide and the
+  upstream `Table.showSortPreviewOnHover` option in the table reference.
+
 ## [0.1.1] - 2026-07-16
 
 ### Added
