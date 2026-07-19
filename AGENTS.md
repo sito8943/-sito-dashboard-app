@@ -34,14 +34,14 @@ Critical distinctions (override anything in `.sito/*`):
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.1.2  |
+| Base Library | @sito/dashboard      | 0.3.0   |
 
 Peer install (consumer project):
 
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.1.2 \
+  @sito/dashboard@0.3.0 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
