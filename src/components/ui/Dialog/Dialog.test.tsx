@@ -81,11 +81,7 @@ describe("Dialog", () => {
     setMobileViewport(true);
     const handleClose = vi.fn();
     const previousHistoryState = { route: "home" };
-    window.history.replaceState(
-      previousHistoryState,
-      "",
-      window.location.href,
-    );
+    window.history.replaceState(previousHistoryState, "", window.location.href);
 
     const MobileDialog = () => {
       const [open, setOpen] = useState(true);
@@ -108,11 +104,7 @@ describe("Dialog", () => {
 
     expect(getDialogHistoryEntryId(window.history.state)).not.toBeNull();
 
-    window.history.replaceState(
-      previousHistoryState,
-      "",
-      window.location.href,
-    );
+    window.history.replaceState(previousHistoryState, "", window.location.href);
     fireEvent.popState(window, { state: previousHistoryState });
 
     expect(handleClose).toHaveBeenCalledOnce();
@@ -122,11 +114,7 @@ describe("Dialog", () => {
     setMobileViewport(false);
     const handleClose = vi.fn();
     const previousHistoryState = { route: "home" };
-    window.history.replaceState(
-      previousHistoryState,
-      "",
-      window.location.href,
-    );
+    window.history.replaceState(previousHistoryState, "", window.location.href);
 
     render(
       <Dialog open title="Confirm" handleClose={handleClose}>

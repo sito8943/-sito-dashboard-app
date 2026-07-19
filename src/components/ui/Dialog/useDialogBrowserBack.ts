@@ -23,10 +23,7 @@ export const useDialogBrowserBack = (
     const dialogHistoryEntryId = createDialogHistoryEntryId();
 
     window.history.pushState(
-      createDialogHistoryState(
-        window.history.state,
-        dialogHistoryEntryId,
-      ),
+      createDialogHistoryState(window.history.state, dialogHistoryEntryId),
       "",
       window.location.href,
     );
