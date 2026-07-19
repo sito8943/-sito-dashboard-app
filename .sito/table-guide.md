@@ -12,6 +12,7 @@
 | `toolbar`                   | `ReactNode`                                | Right area in header.                                |
 | `isLoading`                 | `boolean`                                  | Loading state.                                       |
 | `onSort`                    | `(prop, order) => void`                    | Sort callback.                                       |
+| `showSortPreviewOnHover`    | `boolean`                                  | Preview the next order on sortable-header hover.     |
 | `onRowSelect`               | `(row, selected) => void`                  | Single-row selection callback.                       |
 | `onSelectedRowsChange`      | `(rows) => void`                           | All selected rows callback.                          |
 | `onRowExpand`               | `(expandedRow, collapsedRow) => ReactNode` | Expanded row content.                                |

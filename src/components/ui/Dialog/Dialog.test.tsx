@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useState } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { Dialog } from "./Dialog";
-import { resetBodyScrollLockForTests } from "./bodyScrollLock";
+import { getDialogHistoryEntryId } from "./utils";
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -10,21 +11,28 @@ vi.mock("@sito/dashboard", () => ({
     values.filter(Boolean).join(" "),
 }));
 
-vi.mock("components", () => ({
-  AppIconButton: ({
-    onClick,
-    ...props
-  }: {
-    onClick?: () => void;
-    [key: string]: unknown;
-  }) => <button type="button" onClick={onClick} {...props} />,
-}));
+const setMobileViewport = (matches: boolean) => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn((media: string) => ({
+      matches,
+      media,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+    })),
+  );
+};
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  window.history.replaceState(null, "", window.location.href);
+});
 
 describe("Dialog", () => {
-  beforeEach(() => {
-    resetBodyScrollLockForTests();
-  });
-
   it("renders via portal and restores previous body overflow on unmount", () => {
     document.body.style.overflow = "scroll";
 
@@ -41,6 +49,21 @@ describe("Dialog", () => {
     expect(document.body.style.overflow).toBe("scroll");
   });
 
+  it("styles the close button without a generic error color class", () => {
+    render(
+      <Dialog open title="Confirm" handleClose={vi.fn()}>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+
+    const closeButton = screen.getByRole("button", {
+      name: "_accessibility:ariaLabels.closeDialog",
+    });
+
+    expect(closeButton).toHaveClass("dialog-close-btn");
+    expect(closeButton).not.toHaveAttribute("color");
+  });
+
   it("calls handleClose on Escape when open", () => {
     const handleClose = vi.fn();
 
@@ -52,6 +75,58 @@ describe("Dialog", () => {
 
     fireEvent.keyDown(window, { key: "Escape" });
     expect(handleClose).toHaveBeenCalledOnce();
+  });
+
+  it("closes on browser back in a mobile viewport", () => {
+    setMobileViewport(true);
+    const handleClose = vi.fn();
+    const previousHistoryState = { route: "home" };
+    window.history.replaceState(previousHistoryState, "", window.location.href);
+
+    const MobileDialog = () => {
+      const [open, setOpen] = useState(true);
+
+      return (
+        <Dialog
+          open={open}
+          title="Confirm"
+          handleClose={() => {
+            handleClose();
+            setOpen(false);
+          }}
+        >
+          <p>Dialog body</p>
+        </Dialog>
+      );
+    };
+
+    render(<MobileDialog />);
+
+    expect(getDialogHistoryEntryId(window.history.state)).not.toBeNull();
+
+    window.history.replaceState(previousHistoryState, "", window.location.href);
+    fireEvent.popState(window, { state: previousHistoryState });
+
+    expect(handleClose).toHaveBeenCalledOnce();
+  });
+
+  it("keeps browser back unchanged outside a mobile viewport", () => {
+    setMobileViewport(false);
+    const handleClose = vi.fn();
+    const previousHistoryState = { route: "home" };
+    window.history.replaceState(previousHistoryState, "", window.location.href);
+
+    render(
+      <Dialog open title="Confirm" handleClose={handleClose}>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+
+    expect(window.history.state).toEqual(previousHistoryState);
+
+    fireEvent.popState(window, { state: null });
+
+    expect(handleClose).not.toHaveBeenCalled();
   });
 
   it("does not close when backdrop is clicked by default", () => {
@@ -134,7 +209,7 @@ describe("Dialog", () => {
     expect(onSubmit).toHaveBeenCalledOnce();
   });
 
-  it("does not focus the first input by default", () => {
+  it("focuses the dialog instead of the first input by default", () => {
     const previousFocus = document.createElement("button");
     previousFocus.type = "button";
     previousFocus.textContent = "Previously focused";
@@ -148,7 +223,7 @@ describe("Dialog", () => {
         </Dialog>,
       );
 
-      expect(previousFocus).toHaveFocus();
+      expect(screen.getByRole("dialog", { name: "Profile" })).toHaveFocus();
       expect(screen.getByRole("textbox", { name: "Name" })).not.toHaveFocus();
     } finally {
       previousFocus.remove();

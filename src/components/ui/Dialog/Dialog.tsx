@@ -1,19 +1,16 @@
-import { FormEvent, MouseEvent, useCallback, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { useTranslation } from "@sito/dashboard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Dialog as HeadlessDialog } from "@sito/ui";
+import { classNames, useTranslation } from "@sito/dashboard";
 
 // icons
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 
-// lib
-import { classNames } from "@sito/dashboard";
-
 // types
 import { DialogPropsType } from "./types";
-import { lockBodyScroll, unlockBodyScroll } from "./bodyScrollLock";
 
-// components
-import { AppIconButton } from "components";
+// constants
+import { DIALOG_EXIT_DURATION_MS } from "./constants";
+import { useDialogBrowserBack } from "./useDialogBrowserBack";
 
 // styles
 import "./styles.css";
@@ -25,7 +22,6 @@ import "./styles.css";
  */
 export const Dialog = (props: DialogPropsType) => {
   const { t } = useTranslation();
-  const dialogRef = useRef<HTMLDivElement | null>(null);
   const {
     dialogId,
     title,
@@ -41,111 +37,49 @@ export const Dialog = (props: DialogPropsType) => {
     animationClass = "appear",
   } = props;
 
-  const onKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) handleClose();
-    },
-    [open, handleClose],
-  );
+  const stateClassName = open ? "opened" : "closed";
+  const openingAnimationClassName = open ? animationClass : "";
 
-  useEffect(() => {
-    window.addEventListener("keydown", onKeyPress);
-    return () => {
-      window.removeEventListener("keydown", onKeyPress);
-    };
-  }, [onKeyPress]);
+  useDialogBrowserBack(open, handleClose);
 
-  const bigHandleClose = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      if (closeOnBackdropClick && e.target === e.currentTarget) handleClose();
-    },
-    [closeOnBackdropClick, handleClose],
-  );
-
-  const handleFormSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      onSubmit?.(e);
-    },
-    [onSubmit],
-  );
-
-  useEffect(() => {
-    if (!open) return;
-    lockBodyScroll();
-    return () => {
-      unlockBodyScroll();
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open || !initialFocus) return;
-
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    if (initialFocus === "first-input") {
-      const primaryInput = dialog.querySelector<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >(
-        'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled])',
-      );
-
-      primaryInput?.focus();
-      return;
-    }
-
-    const submitButton = dialog.querySelector<HTMLElement>(
-      'button[type="submit"]:not([disabled]), input[type="submit"]:not([disabled])',
-    );
-
-    submitButton?.focus();
-  }, [open, initialFocus]);
-
-  return createPortal(
-    <div
-      id={dialogId ? `backdrop-${dialogId}` : undefined}
-      aria-label={t("_accessibility:ariaLabels.closeDialog")}
-      aria-hidden={!open}
-      onClick={bigHandleClose}
-      className={classNames(
+  return (
+    <HeadlessDialog
+      dialogId={dialogId}
+      open={open}
+      title={title}
+      onClose={handleClose}
+      initialFocus={initialFocus ?? "none"}
+      closeOnBackdropClick={closeOnBackdropClick}
+      onSubmit={
+        onSubmit
+          ? (event) => {
+              return onSubmit(event);
+            }
+          : undefined
+      }
+      mobileFullScreen={mobileFullScreen}
+      containerClassName={classNames(
         "dialog-backdrop animated",
-        open ? `opened ${animationClass}` : "closed",
+        stateClassName,
+        openingAnimationClassName,
         containerClassName,
       )}
+      className={classNames(
+        "dialog elevated animated",
+        !mobileFullScreen && "dialog-framed",
+        mobileFullScreen && "dialog-mobile-full-screen",
+        stateClassName,
+        openingAnimationClassName,
+        className,
+      )}
+      headerClassName="dialog-header"
+      titleClassName="dialog-title"
+      closeButtonClassName="icon-button dialog-close-btn"
+      closeLabel={t("_accessibility:ariaLabels.closeDialog")}
+      closeIcon={<FontAwesomeIcon icon={faClose} size="sm" />}
+      exitDurationMs={DIALOG_EXIT_DURATION_MS}
     >
-      <div
-        id={dialogId}
-        ref={dialogRef}
-        className={classNames(
-          "dialog elevated animated",
-          !mobileFullScreen && "dialog-framed",
-          mobileFullScreen && "dialog-mobile-full-screen",
-          open ? `opened ${animationClass}` : "closed",
-          className,
-        )}
-      >
-        <div className="dialog-header">
-          <h3 className="dialog-title">{title}</h3>
-          <AppIconButton
-            icon={faClose}
-            disabled={!open}
-            aria-disabled={!open}
-            onClick={handleClose}
-            variant="text"
-            color="error"
-            className="icon-button dialog-close-btn"
-            name={t("_accessibility:buttons.closeDialog")}
-            aria-label={t("_accessibility:ariaLabels.closeDialog")}
-          />
-        </div>
-        {onSubmit ? (
-          <form onSubmit={handleFormSubmit}>{children}</form>
-        ) : (
-          children
-        )}
-      </div>
-    </div>,
-    document.body,
+      {children}
+    </HeadlessDialog>
   );
 };
