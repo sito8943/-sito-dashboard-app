@@ -111,7 +111,7 @@
   },
   "dependencies": {
     "@sito/dashboard": "0.3.0",
-    "@sito/ui": "0.3.2",
+    "@sito/ui": "0.3.3",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   },
@@ -120,10 +120,6 @@
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild"
-    ],
-    "overrides": {
-      "@sito/ui": "link:../ui",
-      "@sito/dashboard": "link:../../-sito-dashboard"
-    }
+    ]
   }
 }
