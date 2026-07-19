@@ -10,6 +10,7 @@ import { DialogPropsType } from "./types";
 
 // constants
 import { DIALOG_EXIT_DURATION_MS } from "./constants";
+import { useDialogBrowserBack } from "./useDialogBrowserBack";
 
 // styles
 import "./styles.css";
@@ -38,6 +39,8 @@ export const Dialog = (props: DialogPropsType) => {
 
   const stateClassName = open ? "opened" : "closed";
   const openingAnimationClassName = open ? animationClass : "";
+
+  useDialogBrowserBack(open, handleClose);
 
   return (
     <HeadlessDialog

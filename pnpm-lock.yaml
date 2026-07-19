@@ -6,14 +6,15 @@ settings:
 
 overrides:
   '@sito/ui': link:../ui
+  '@sito/dashboard': link:../../-sito-dashboard
 
 importers:
 
   .:
     dependencies:
       '@sito/dashboard':
-        specifier: ^0.1.3
-        version: 0.1.3(@sito/ui@0.3.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.3.0
+        version: 0.3.0(@sito/ui@0.3.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@sito/ui':
         specifier: link:../ui
         version: 0.3.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -1422,8 +1423,8 @@ packages:
   '@rushstack/ts-command-line@5.3.10':
     resolution: {integrity: sha512-fwI076HYknC0IrMXdY6UmjDv+PH7NHhNJX3/pY2UblSE5XrXgndXZPiOe/6ZtuFpn6DvVDVNhtkIzQ+Qu/MhVQ==}
 
-  '@sito/dashboard@0.1.3':
-    resolution: {integrity: sha512-PnrAtS6ehn9KW8LIGXyR47LONDm3bxkF2Dy3Lk2DBZyjJz8A2L160DQk7EUI8C7jrMp/EEFZXMcofHGaAH0Y+Q==}
+  '@sito/dashboard@0.3.0':
+    resolution: {integrity: sha512-gaIFxuLtLQft4d7tPEHdIlH+7YLH1cvtnLK12pdWur5hOUORJI+p09N+dVOF/S/7WDVnVmaSGwbzZ0DkjtjITw==}
     engines: {node: ^22.13.0}
     peerDependencies:
       '@sito/ui': '>=0.3.2 <0.4.0'
@@ -3918,7 +3919,7 @@ snapshots:
       - '@types/node'
     optional: true
 
-  '@sito/dashboard@0.1.3(@sito/ui@0.3.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@sito/dashboard@0.3.0(@sito/ui@0.3.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@sito/ui': 0.3.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7

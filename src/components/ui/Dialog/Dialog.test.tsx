@@ -1,13 +1,36 @@
-import { describe, expect, it, vi } from "vitest";
+import { useState } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { Dialog } from "./Dialog";
+import { getDialogHistoryEntryId } from "./utils";
 
 vi.mock("@sito/dashboard", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
   classNames: (...values: Array<string | false | null | undefined>) =>
     values.filter(Boolean).join(" "),
 }));
+
+const setMobileViewport = (matches: boolean) => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn((media: string) => ({
+      matches,
+      media,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+    })),
+  );
+};
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  window.history.replaceState(null, "", window.location.href);
+});
 
 describe("Dialog", () => {
   it("renders via portal and restores previous body overflow on unmount", () => {
@@ -52,6 +75,70 @@ describe("Dialog", () => {
 
     fireEvent.keyDown(window, { key: "Escape" });
     expect(handleClose).toHaveBeenCalledOnce();
+  });
+
+  it("closes on browser back in a mobile viewport", () => {
+    setMobileViewport(true);
+    const handleClose = vi.fn();
+    const previousHistoryState = { route: "home" };
+    window.history.replaceState(
+      previousHistoryState,
+      "",
+      window.location.href,
+    );
+
+    const MobileDialog = () => {
+      const [open, setOpen] = useState(true);
+
+      return (
+        <Dialog
+          open={open}
+          title="Confirm"
+          handleClose={() => {
+            handleClose();
+            setOpen(false);
+          }}
+        >
+          <p>Dialog body</p>
+        </Dialog>
+      );
+    };
+
+    render(<MobileDialog />);
+
+    expect(getDialogHistoryEntryId(window.history.state)).not.toBeNull();
+
+    window.history.replaceState(
+      previousHistoryState,
+      "",
+      window.location.href,
+    );
+    fireEvent.popState(window, { state: previousHistoryState });
+
+    expect(handleClose).toHaveBeenCalledOnce();
+  });
+
+  it("keeps browser back unchanged outside a mobile viewport", () => {
+    setMobileViewport(false);
+    const handleClose = vi.fn();
+    const previousHistoryState = { route: "home" };
+    window.history.replaceState(
+      previousHistoryState,
+      "",
+      window.location.href,
+    );
+
+    render(
+      <Dialog open title="Confirm" handleClose={handleClose}>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+
+    expect(window.history.state).toEqual(previousHistoryState);
+
+    fireEvent.popState(window, { state: null });
+
+    expect(handleClose).not.toHaveBeenCalled();
   });
 
   it("does not close when backdrop is clicked by default", () => {
