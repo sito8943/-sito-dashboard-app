@@ -28,6 +28,7 @@ export default defineConfig(() => {
         ? [
             dts({
               insertTypesEntry: true,
+              skipDiagnostics: true,
               exclude: [
                 "src/**/*.stories.ts",
                 "src/**/*.test.ts",
