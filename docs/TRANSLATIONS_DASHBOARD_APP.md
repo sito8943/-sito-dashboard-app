@@ -61,6 +61,9 @@ It does not replace the translation documentation for `@sito/dashboard`.
 - `_pages:common.actions.restore.successMessage`
 - `_pages:common.actions.restore.text`
 - `_pages:home.appName`
+- `_pages:notFound.body` (`NotFoundView` default, when `body` is omitted)
+- `_pages:notFound.cta` (`NotFoundView` default, when `ctaLabel` is omitted)
+- `_pages:notFound.title` (`NotFoundView` default, when `title` is omitted)
 
 ### `_messages`
 

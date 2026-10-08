@@ -294,6 +294,8 @@ Opt out of the built-in toast portal with `withNotification={false}`.
 
 Both consume `linkComponent` from `ConfigProvider` (router-agnostic). Pass `ctaTo` from your `routes.ts` constants — never hardcode.
 
+`NotFoundView` props are optional: without them it renders `t("_pages:notFound.title")`, `t("_pages:notFound.body")` and `t("_pages:notFound.cta")`, and the CTA goes to `/`. `<NotFoundView ctaTo={AppRoutes.Home} />` is enough when those keys exist in your translations; pass props only to override them.
+
 ```tsx
 import { useTranslation } from "react-i18next";
 import { faLock } from "@fortawesome/free-solid-svg-icons";

@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5]
+
+### Changed
+
+- `NotFoundView`: `title`, `body`, `ctaLabel` and `ctaTo` are now optional. Omitted texts
+  render `t("_pages:notFound.title")`, `t("_pages:notFound.body")` and
+  `t("_pages:notFound.cta")`, and the CTA defaults to `/`, so apps no longer need a
+  wrapper just to pass translations. Passing props keeps working as before (#89).
+- `TabsLayout` is now generic over the tab id type (`TId extends number | string`):
+  `tabs`, `currentTab`, `defaultTab` and `onTabChange` share it, so string ids no longer
+  force a `number` for `currentTab`. `TabsType`, `TabsLayoutPropsType` and the new
+  `TabId` type are exported (#91).
+
+### Fixed
+
+- `TabsLayout` silently rendered no content when `currentTab`/`defaultTab` did not match
+  any tab id (for example, passing an index with string ids). It now warns in development
+  (#91).
+
+### Docs
+
+- Documented the `_pages:notFound.*` default keys, the id semantics of
+  `currentTab`/`defaultTab`, and simplified the `TabsLayout` recipe
+  (`onTabChange={setTab}`).
+
 ## [0.2.0] - 2026-07-19
 
 ### Added

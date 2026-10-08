@@ -514,11 +514,14 @@ const tabs = [
 export function SettingsTabs() {
   const [tab, setTab] = useState(1);
 
+  // currentTab/defaultTab are tab ids (not indexes); their type follows the ids.
+  // String ids work the same way, e.g. "general" | "permissions" synced with ?tab=.
+
   return (
     <TabsLayout
       tabs={tabs}
       currentTab={tab}
-      onTabChange={(id) => setTab(Number(id))}
+      onTabChange={setTab}
       useLinks={false}
       tabButtonProps={{ variant: "outlined", color: "secondary" }}
     />
