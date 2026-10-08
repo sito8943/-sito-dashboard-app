@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   ActionType,
   Badge,
-  useTableOptions,
+  useOptionalTableOptions,
   Loading,
   useTranslation,
   classNames,
@@ -64,7 +64,8 @@ export const Page = <TEntity extends BaseEntityDto>(
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const { countOfFilters } = useTableOptions();
+  // Optional: pages without a table must render without a TableOptionsProvider.
+  const countOfFilters = useOptionalTableOptions()?.countOfFilters ?? 0;
 
   const parsedActions = useMemo(() => {
     const pActions: ActionType<TEntity>[] = Array.isArray(actions)

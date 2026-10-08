@@ -20,6 +20,10 @@ All notable changes to this project will be documented in this file.
 - `TabsLayout` silently rendered no content when `currentTab`/`defaultTab` did not match
   any tab id (for example, passing an index with string ids). It now warns in development
   (#91).
+- `Page` no longer requires a `TableOptionsProvider`: pages without a table rendered blank
+  with `tableOptionsContext must be used within a Provider`. It now reads the filter count
+  through `useOptionalTableOptions()` (badge hidden when there is no provider) (#86).
+  **Requires `@sito/dashboard` 0.3.4**: bump the dependency to `^0.3.4` when publishing.
 
 ### Docs
 
