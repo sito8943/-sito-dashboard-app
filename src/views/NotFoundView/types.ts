@@ -1,10 +1,14 @@
 import { ReactNode } from "react";
 
 export type NotFoundViewPropsType = {
-  title: ReactNode;
-  body: ReactNode;
-  ctaLabel: ReactNode;
-  ctaTo: string;
+  /** Defaults to `t("_pages:notFound.title")`. */
+  title?: ReactNode;
+  /** Defaults to `t("_pages:notFound.body")`. */
+  body?: ReactNode;
+  /** Defaults to `t("_pages:notFound.cta")`. */
+  ctaLabel?: ReactNode;
+  /** Defaults to `"/"`. */
+  ctaTo?: string;
   className?: string;
   titleClassName?: string;
   bodyClassName?: string;

@@ -13,6 +13,7 @@ type MockLinkProps = {
 vi.mock("@sito/dashboard", () => ({
   classNames: (...values: Array<string | false | null | undefined>) =>
     values.filter(Boolean).join(" "),
+  useTranslation: () => ({ t: (key: string) => `t(${key})` }),
 }));
 
 vi.mock("providers", () => ({
@@ -79,5 +80,16 @@ describe("NotFoundView", () => {
     expect(screen.getByTestId("custom-title").textContent).toBe("404");
     expect(screen.getByTestId("custom-body").textContent).toBe("missing");
     expect(screen.getByTestId("custom-cta").textContent).toBe("home");
+  });
+
+  it("falls back to translated defaults and / when props are omitted", () => {
+    render(<NotFoundView />);
+
+    expect(screen.getByText("t(_pages:notFound.title)")).toBeTruthy();
+    expect(screen.getByText("t(_pages:notFound.body)")).toBeTruthy();
+
+    const link = screen.getByTestId("cta-link");
+    expect(link.getAttribute("href")).toBe("/");
+    expect(link.textContent).toBe("t(_pages:notFound.cta)");
   });
 });

@@ -166,7 +166,7 @@ export const Onboarding = (props: OnboardingPropsType) => {
     <div className="onboarding-main" {...bindSwipe()}>
       <TabsLayout
         currentTab={currentStep}
-        onTabChange={(id) => setCurrentStep(Number(id))}
+        onTabChange={setCurrentStep}
         tabs={onboardingSteps}
         useLinks={false}
         className="onboarding-tab-main"
