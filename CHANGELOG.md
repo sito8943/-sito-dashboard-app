@@ -24,6 +24,12 @@ All notable changes to this project will be documented in this file.
   with `tableOptionsContext must be used within a Provider`. It now reads the filter count
   through `useOptionalTableOptions()` (badge hidden when there is no provider) (#86).
   **Requires `@sito/dashboard` 0.3.4**: bump the dependency to `^0.3.4` when publishing.
+- `theme.css` now colors every `Chip` variant (`.chip-main.chip-<variant>`: `primary`,
+  `secondary`, `success`, `danger`, `warning`, `info`, `light`, `dark`, `none`) from the
+  theme tokens; before, every chip used the same gray regardless of `variant`. The delete
+  icon inherits the chip text color so it stays visible on dark variants, and its hover
+  dims it instead of turning it `--color-secondary`. Relies on the `chip-<variant>` class
+  added in `@sito/dashboard` 0.3.4 (sito8943/-sito-dashboard#68).
 
 ### Docs
 

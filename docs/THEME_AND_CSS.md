@@ -36,6 +36,10 @@ These are defined by the library and can be overridden in your app:
 | `--color-error`            | `#fbfbfb`               |
 | `--breakpoint-xs`          | `28rem`                 |
 
+### Chip variants
+
+`theme.css` colors every `Chip` variant through `.chip-main.chip-<variant>` (`default`, `primary`, `secondary`, `success`, `danger`, `warning`, `info`, `light`, `dark`, `none`) using the tokens above, and the delete icon inherits the chip text color. The `chip-<variant>` class comes from `@sito/dashboard` ≥ 0.3.4. Override a variant by targeting the same selector in your theme file, e.g. `.chip-main.chip-info { background-color: var(--color-primary); }`.
+
 ## 2. Overriding theme tokens in the consumer app
 
 Create a theme CSS file and load it after the library styles.
