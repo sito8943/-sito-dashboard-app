@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Onboarding steps with a Back action now stagger the third action button's entrance
+  animation as well, so Next no longer appears ahead of the other actions.
 - `TabsLayout` silently rendered no content when `currentTab`/`defaultTab` did not match
   any tab id (for example, passing an index with string ids). It now warns in development
   (#91).
