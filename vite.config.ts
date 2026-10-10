@@ -56,9 +56,15 @@ export default defineConfig(() => {
       copyPublicDir: false,
       target: "es2020",
       lib: {
-        entry: resolve(__dirname, "src/main.ts"),
+        entry: {
+          "dashboard-app": resolve(__dirname, "src/main.ts"),
+          i18n: resolve(__dirname, "src/i18n.ts"),
+        },
         name: "@sito/dashboard-app",
-        fileName: "dashboard-app",
+        fileName: (format, entryName) =>
+          entryName === "i18n"
+            ? `i18n.${format === "es" ? "js" : "cjs"}`
+            : `dashboard-app.${format === "es" ? "js" : "cjs"}`,
         formats: ["es", "cjs"],
       },
       rollupOptions: {

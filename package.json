@@ -25,7 +25,12 @@
       "import": "./dist/dashboard-app.js",
       "require": "./dist/dashboard-app.cjs"
     },
-    "./theme.css": "./theme.css"
+    "./theme.css": "./theme.css",
+    "./i18n": {
+      "types": "./dist/i18n.d.ts",
+      "import": "./dist/i18n.js",
+      "require": "./dist/i18n.cjs"
+    }
   },
   "sideEffects": [
     "**/*.css"
