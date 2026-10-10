@@ -22,6 +22,7 @@ import {
 import {
   APIClientAuthConfig,
   APIClientAuthMode,
+  APIClientOptions,
   APIClientRequestOptions,
 } from "./types";
 import {
@@ -70,30 +71,55 @@ export class APIClient {
    * no per-request `authMode` override is provided.
    * @param tokenAcquirer custom token acquirer
    */
+  constructor(options: APIClientOptions);
   constructor(
     baseUrl: string,
+    userKey?: string,
+    secured?: boolean,
+    tokenAcquirer?: (useCookie?: boolean) => RequestConfig | undefined,
+    authConfig?: APIClientAuthConfig,
+  );
+  constructor(
+    optionsOrBaseUrl: APIClientOptions | string,
     userKey = "user",
     secured = true,
     tokenAcquirer?: (useCookie?: boolean) => RequestConfig | undefined,
     authConfig: APIClientAuthConfig = {},
   ) {
-    this.baseUrl = baseUrl;
-    this.defaultAuthMode = secured ? "access-token" : "none";
+    const options: APIClientOptions =
+      typeof optionsOrBaseUrl === "string"
+        ? {
+            baseUrl: optionsOrBaseUrl,
+            userKey,
+            authMode: secured ? "access-token" : "none",
+            tokenAcquirer,
+            authConfig,
+          }
+        : optionsOrBaseUrl;
+    const resolvedUserKey = options.userKey ?? "user";
+    const resolvedAuthConfig = options.authConfig ?? {};
+    this.baseUrl = options.baseUrl;
+    this.defaultAuthMode = options.authMode ?? "access-token";
     /** @deprecated Use per-request `authMode` instead. */
-    this.secured = secured;
-    this.userKey = userKey;
-    this.rememberKey = authConfig.rememberKey ?? "remember";
-    this.refreshTokenKey = authConfig.refreshTokenKey ?? "refreshToken";
+    this.secured = this.defaultAuthMode !== "none";
+    this.userKey = resolvedUserKey;
+    this.rememberKey =
+      resolvedAuthConfig.rememberKey ?? `${resolvedUserKey}_remember`;
+    this.refreshTokenKey =
+      resolvedAuthConfig.refreshTokenKey ?? `${resolvedUserKey}_refreshToken`;
     this.accessTokenExpiresAtKey =
-      authConfig.accessTokenExpiresAtKey ?? "accessTokenExpiresAt";
-    this.refreshEndpoint = authConfig.refreshEndpoint ?? "auth/refresh";
-    this.refreshExpirySkewMs = authConfig.refreshExpirySkewMs ?? 5000;
-    this.refreshMaxRetries = authConfig.refreshMaxRetries ?? 2;
-    this.refreshRetryDelayMs = authConfig.refreshRetryDelayMs ?? 400;
+      resolvedAuthConfig.accessTokenExpiresAtKey ??
+      `${resolvedUserKey}_accessTokenExpiresAt`;
+    this.refreshEndpoint = resolvedAuthConfig.refreshEndpoint ?? "auth/refresh";
+    this.refreshExpirySkewMs = resolvedAuthConfig.refreshExpirySkewMs ?? 5000;
+    this.refreshMaxRetries = resolvedAuthConfig.refreshMaxRetries ?? 2;
+    this.refreshRetryDelayMs = resolvedAuthConfig.refreshRetryDelayMs ?? 400;
     this.refreshRetryBackoffMultiplier =
-      authConfig.refreshRetryBackoffMultiplier ?? 3;
-    this.refreshRetryCooldownMs = authConfig.refreshRetryCooldownMs ?? 20000;
-    this.tokenAcquirer = tokenAcquirer ?? this.defaultTokenAcquirer.bind(this);
+      resolvedAuthConfig.refreshRetryBackoffMultiplier ?? 3;
+    this.refreshRetryCooldownMs =
+      resolvedAuthConfig.refreshRetryCooldownMs ?? 20000;
+    this.tokenAcquirer =
+      options.tokenAcquirer ?? this.defaultTokenAcquirer.bind(this);
   }
 
   defaultTokenAcquirer(useCookie?: boolean): RequestConfig | undefined {
@@ -385,7 +411,11 @@ export class APIClient {
     config?: RequestConfig,
   ): RequestConfig | undefined {
     const securedConfig =
-      authMode === "access-token" ? this.tokenAcquirer() : undefined;
+      authMode === "cookie"
+        ? { credentials: "include" as const }
+        : authMode === "access-token"
+          ? this.tokenAcquirer()
+          : undefined;
     const securedOptions = this.toRequestOptions(securedConfig);
     const customOptions = this.toRequestOptions(config);
 
@@ -436,7 +466,11 @@ export class APIClient {
       response.status === 401 &&
       this.canRefresh()
     ) {
-      await this.refreshAccessTokenWithMutex();
+      try {
+        await this.refreshAccessTokenWithMutex();
+      } catch {
+        return response;
+      }
       response = await makeRequest<TBody, TResponse>(
         this.buildUrl(endpoint),
         method,

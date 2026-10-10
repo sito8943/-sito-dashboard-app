@@ -1,7 +1,7 @@
 {
   "name": "@sito/dashboard-app",
   "private": false,
-  "version": "0.2.1",
+  "version": "0.2.4",
   "type": "module",
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
@@ -25,7 +25,12 @@
       "import": "./dist/dashboard-app.js",
       "require": "./dist/dashboard-app.cjs"
     },
-    "./theme.css": "./theme.css"
+    "./theme.css": "./theme.css",
+    "./i18n": {
+      "types": "./dist/i18n.d.ts",
+      "import": "./dist/i18n.js",
+      "require": "./dist/i18n.cjs"
+    }
   },
   "sideEffects": [
     "**/*.css"
@@ -110,8 +115,8 @@
     "vitest": "4.1.11"
   },
   "dependencies": {
-    "@sito/dashboard": "^0.3.1",
-    "@sito/ui": "0.3.3",
+    "@sito/dashboard": "^0.3.4",
+    "@sito/ui": "0.4.2",
     "@use-gesture/react": "^10.3.1",
     "some-javascript-utils": "^0.10.10"
   },

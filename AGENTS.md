@@ -34,14 +34,14 @@ Critical distinctions (override anything in `.sito/*`):
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.3.1  |
+| Base Library | @sito/dashboard      | ^0.3.3  |
 
 Peer install (consumer project):
 
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.3.1 \
+  @sito/dashboard@^0.3.3 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -227,3 +227,5 @@ Migrated from `wallet` / `period-calendar` `views/Info/*`. Composable, i18n-agno
 36. **Use shipped auth URL/token helpers** (`buildAuthRedirectUrl`, `extractAuthQueryParamFromLocation`, `extractRecoveryAccessTokenFromLocation`, `extractAuthSessionTokensFromLocation`, `hasAuthErrorParamsInLocation`, `getAuthErrorMessage`) instead of re-implementing query/hash parsing per app. They read both search and hash so Supabase recovery flows (hash-fragment tokens) and REST flows (query-string tokens) share one call site.
 
 37. **Compose legal/info pages with `LegalPage` + `LegalSection` + `LegalLinksList`** instead of forking the shell HTML/CSS. `LegalPage` is i18n-agnostic — resolve `<Trans>` / `t()` in the consumer and pass `ReactNode` for `title` / `intro` / section bodies. Use `richTextComponents` as the default component map for `<Trans>` and spread to extend (`{ ...richTextComponents, br: <br /> }`). Sections are children, not a `sections` prop — apps can interleave product-specific blocks (e.g. wallet's `HowToSection`) with shared `LegalSection` cards. `LegalLinksList` routes through `linkComponent` from `ConfigProvider` — pass `{to, label}` items from the consumer's `routes.ts`.
+
+38. **`Page` does not need a `TableOptionsProvider`.** It reads the filter-badge count through `useOptionalTableOptions()` from `@sito/dashboard` (≥ 0.3.4): without a provider the badge stays hidden. Mount `TableOptionsProvider` only around views with a `Table`. In library code, prefer `useOptionalTableOptions()` for components that may render outside a table.

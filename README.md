@@ -43,7 +43,7 @@ Peer dependencies:
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.3.1 \
+  @sito/dashboard@^0.3.3 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -67,7 +67,7 @@ npm install @supabase/supabase-js@2.100.0
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.3.1`
+- `@sito/dashboard` `^0.3.3`
 - Font Awesome peers per `package.json`
 
 ## Quick start
@@ -83,6 +83,11 @@ Detailed setup, examples, and prop tables live in:
 - [Theme and CSS](./docs/THEME_AND_CSS.md) — design tokens and safe CSS overrides.
 - [Troubleshooting](./docs/TROUBLESHOOTING.md) — provider/typing/styling/auth/routing diagnostics.
 - [Translations Reference](./docs/TRANSLATIONS_DASHBOARD_APP.md) — required i18n namespaces and keys.
+
+Default English and Spanish resources for the library's static translation
+keys are exported from `@sito/dashboard-app/i18n` as `dashboardAppResources`.
+Merge each namespace with app resources so app values can override defaults.
+Dynamic entity, route, and error keys still come from the app.
 
 ## Core exports
 

@@ -4,7 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [0.2.5]
 
+### Added
+
+- Added English and Spanish default translation resources for the library's static
+  keys, available from the `@sito/dashboard-app/i18n` subpath as
+  `dashboardAppResources`.
+- Added an options-object constructor for `APIClient` while retaining the positional
+  constructor. Added the `cookie` auth mode, which includes credentials and skips
+  access-token refresh (#88, #92).
+
 ### Changed
+
+- Default auth storage keys are now derived from `userKey` (`${userKey}_remember`,
+  `${userKey}_refreshToken`, and `${userKey}_accessTokenExpiresAt`) to avoid collisions
+  between apps sharing an origin. Consumers using the previous generic keys should
+  configure them explicitly (#92).
+- The bundled Tailwind CSS now omits preflight and emits weak fallback theme tokens,
+  allowing consumer theme values such as `--color-primary` to take precedence (#87).
 
 - `NotFoundView`: `title`, `body`, `ctaLabel` and `ctaTo` are now optional. Omitted texts
   render `t("_pages:notFound.title")`, `t("_pages:notFound.body")` and
@@ -17,9 +33,24 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Onboarding steps with a Back action now stagger the third action button's entrance
+  animation as well, so Next no longer appears ahead of the other actions.
+- Failed refresh attempts after an API `401` now preserve the original API response
+  instead of replacing it with the refresh endpoint error (#92).
+
 - `TabsLayout` silently rendered no content when `currentTab`/`defaultTab` did not match
   any tab id (for example, passing an index with string ids). It now warns in development
   (#91).
+- `Page` no longer requires a `TableOptionsProvider`: pages without a table rendered blank
+  with `tableOptionsContext must be used within a Provider`. It now reads the filter count
+  through `useOptionalTableOptions()` (badge hidden when there is no provider) (#86).
+  **Requires `@sito/dashboard` 0.3.4**: bump the dependency to `^0.3.4` when publishing.
+- `theme.css` now colors every `Chip` variant (`.chip-main.chip-<variant>`: `primary`,
+  `secondary`, `success`, `danger`, `warning`, `info`, `light`, `dark`, `none`) from the
+  theme tokens; before, every chip used the same gray regardless of `variant`. The delete
+  icon inherits the chip text color so it stays visible on dark variants, and its hover
+  dims it instead of turning it `--color-secondary`. Relies on the `chip-<variant>` class
+  added in `@sito/dashboard` 0.3.4 (sito8943/-sito-dashboard#68).
 
 ### Docs
 

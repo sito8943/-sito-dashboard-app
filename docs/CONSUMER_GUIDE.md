@@ -13,7 +13,7 @@ Install peer dependencies in the consumer project as well:
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.3.1 \
+  @sito/dashboard@^0.3.3 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -117,6 +117,13 @@ export function AppProviders({ children }: { children: ReactNode }) {
   );
 }
 ```
+
+The default access-token key is `user`; related keys are namespaced as
+`user_remember`, `user_refreshToken`, and `user_accessTokenExpiresAt`. Keep the
+same keys in `IManager` and `AuthProvider` when customizing them. Older apps
+that relied on generic `remember`, `refreshToken`, or
+`accessTokenExpiresAt` defaults should pass those keys explicitly during
+migration.
 
 ### 2.0.1 Provider composer
 
@@ -568,6 +575,19 @@ the hook signatures into local types.
 - `Page` and `PageHeader` expose this as `showActionTooltips`. It only affects the desktop inline action row; mobile dropdown actions still render with visible labels and no tooltip wrappers.
 
 ## 7. Typed API clients
+
+`APIClient` supports a named options object while retaining the positional
+constructor for compatibility. Use `authMode: "cookie"` for HttpOnly cookie
+sessions; it sends `credentials: "include"` and skips access-token refresh.
+
+```ts
+import { APIClient } from "@sito/dashboard-app";
+
+const api = new APIClient({
+  baseUrl: import.meta.env.VITE_API_URL,
+  authMode: "cookie", // "access-token" and "none" are also supported
+});
+```
 
 ### 7.1 Remote client with `BaseClient`
 
