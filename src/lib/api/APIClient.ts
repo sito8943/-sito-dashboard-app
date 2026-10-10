@@ -116,7 +116,8 @@ export class APIClient {
     this.refreshRetryDelayMs = resolvedAuthConfig.refreshRetryDelayMs ?? 400;
     this.refreshRetryBackoffMultiplier =
       resolvedAuthConfig.refreshRetryBackoffMultiplier ?? 3;
-    this.refreshRetryCooldownMs = resolvedAuthConfig.refreshRetryCooldownMs ?? 20000;
+    this.refreshRetryCooldownMs =
+      resolvedAuthConfig.refreshRetryCooldownMs ?? 20000;
     this.tokenAcquirer =
       options.tokenAcquirer ?? this.defaultTokenAcquirer.bind(this);
   }
