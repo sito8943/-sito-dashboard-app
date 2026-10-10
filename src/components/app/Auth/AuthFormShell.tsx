@@ -15,7 +15,7 @@ export const AuthFormShell = <TFormType extends FieldValues>(
     fields,
     onSubmit,
     disabled = false,
-    noValidate,
+    noValidate = true,
     formClassName,
     helperLinks,
     actions,
