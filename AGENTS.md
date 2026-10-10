@@ -127,15 +127,15 @@ import { isValidationError, isHttpError } from "@sito/dashboard-app";
 
 Migrated from `wallet` / `period-calendar` consumer apps; use these instead of forking local copies.
 
-| Export                   | Folder                               | Purpose                                                                                                                                                                            |
-| ------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AppShell`               | `src/layouts/AppShell`               | Authenticated route shell. Slots: `header`, `children`, `footer`, `bottomNavigation`, `extras`. Built-in `Notification` portal (opt out via `withNotification={false}`).           |
-| `AuthShell`              | `src/layouts/AuthShell`              | Auth route wrapper. Renders `children` + optional `Notification`. Redirect/error-boundary logic stays in the consumer.                                                             |
-| `DashboardHeader`        | `src/layouts/DashboardHeader`        | `Drawer` + `Navbar` combo. Owns drawer state internally. Generic over `MenuKeys`. Optional `OfflineBanner`.                                                                        |
-| `DashboardFooter`        | `src/layouts/DashboardFooter`        | Copyright line + optional `ToTop`. `bottomNavSpacing` for apps mounting `BottomNavigation`. Accepts `children` for full custom content.                                            |
-| `NotFoundView`           | `src/views/NotFoundView`             | Generic 404 fallback. CTA via `linkComponent` from `ConfigProvider` — consumer supplies `ctaTo` from its own `routes.ts`.                                                          |
-| `FeatureUnavailableView` | `src/views/FeatureUnavailableView`   | Generic feature-disabled fallback. Icon defaults to `faWarning`; overridable.                                                                                                      |
-| `PwaUpdateDialog`        | `src/components/app/PwaUpdateDialog` | Presentational PWA update prompt. Library does NOT import `navigator.serviceWorker` or `virtual:pwa-register/react` — consumer wires its own SW hook and passes `open`/`onUpdate`. |
+| Export                   | Folder                               | Purpose                                                                                                                                                                                    |
+| ------------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AppShell`               | `src/layouts/AppShell`               | Authenticated route shell. Slots: `header`, `children`, `footer`, `bottomNavigation`, `extras`. Built-in `Notification` portal (opt out via `withNotification={false}`).                   |
+| `AuthShell`              | `src/layouts/AuthShell`              | Auth route wrapper. Renders `children` + optional `Notification`. Redirect/error-boundary logic stays in the consumer.                                                                     |
+| `DashboardHeader`        | `src/layouts/DashboardHeader`        | `Drawer` + `Navbar` combo. Owns drawer state internally. Generic over `MenuKeys`. Optional `OfflineBanner`.                                                                                |
+| `DashboardFooter`        | `src/layouts/DashboardFooter`        | Copyright line + optional `ToTop`. `bottomNavSpacing` for apps mounting `BottomNavigation`. Accepts `children` for full custom content.                                                    |
+| `NotFoundView`           | `src/views/NotFoundView`             | Generic 404 fallback. CTA via `linkComponent` from `ConfigProvider` — consumer supplies `ctaTo` from its own `routes.ts`. Texts default to `_pages:notFound.{title,body,cta}`, CTA to `/`. |
+| `FeatureUnavailableView` | `src/views/FeatureUnavailableView`   | Generic feature-disabled fallback. Icon defaults to `faWarning`; overridable.                                                                                                              |
+| `PwaUpdateDialog`        | `src/components/app/PwaUpdateDialog` | Presentational PWA update prompt. Library does NOT import `navigator.serviceWorker` or `virtual:pwa-register/react` — consumer wires its own SW hook and passes `open`/`onUpdate`.         |
 
 ### Phase 2 shared auth surface (consumer apps)
 
@@ -201,7 +201,7 @@ Migrated from `wallet` / `period-calendar` `views/Info/*`. Composable, i18n-agno
 15. **Align auth storage keys** between `AuthProvider` and `IManager`/`BaseClient` auth config (`rememberKey`, `refreshTokenKey`, `accessTokenExpiresAtKey`).
 16. **`Error` is single-mode.** Default props (`error`/`message`/`icon`/`onRetry`) OR `children` — never both.
 17. **`TabsLayout` link mode intentional.** Links for routes; `useLinks={false}` + `tabButtonProps` for local state.
-18. **`TabsLayout` controlled (`currentTab` + `onTabChange`)** when parent owns step state (onboarding, wizards). `defaultTab` only for uncontrolled initial selection.
+18. **`TabsLayout` controlled (`currentTab` + `onTabChange`)** when parent owns step state (onboarding, wizards). `defaultTab` only for uncontrolled initial selection. Both are tab **ids** (generic `TId`, inferred from `tabs`), never indexes; a value matching no id renders no content and warns in development.
 19. **`Onboarding` steps are structured** (`title`, `body`, optional `content`/`image`/`alt`). No `_pages:onboarding.*` keys. Resolve i18n consumer-side.
 20. **Use `ImportDialog` extension points** (`renderCustomPreview`, hook `defaultExtra`/`renderExtraFields`, component `extraFields`). No forks.
 21. **Use `PrettyGrid` infinite scroll props** (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options). No grid forks.

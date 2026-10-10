@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // lib
 import { classNames } from "@sito/dashboard";
 
 // types
-import { TabsLayoutPropsType } from "./types";
+import { TabId, TabsLayoutPropsType } from "./types";
 
 // components
 import { Tab } from "./Tab";
@@ -17,7 +17,9 @@ import "./styles.css";
  * @param props - Tabs layout props.
  * @returns Tabs layout element.
  */
-export const TabsLayout = (props: TabsLayoutPropsType) => {
+export const TabsLayout = <TId extends TabId = TabId>(
+  props: TabsLayoutPropsType<TId>,
+) => {
   const {
     tabs = [],
     defaultTab,
@@ -29,13 +31,27 @@ export const TabsLayout = (props: TabsLayoutPropsType) => {
     tabButtonProps,
   } = props;
 
-  const [internalTab, setInternalTab] = useState(defaultTab ?? tabs[0]?.id);
+  const [internalTab, setInternalTab] = useState<TId | undefined>(
+    defaultTab ?? tabs[0]?.id,
+  );
 
   const activeTab = currentTab ?? internalTab;
 
   const current = useMemo(() => {
     return tabs.find((item) => item.id === activeTab);
   }, [tabs, activeTab]);
+
+  // `currentTab` is an id, not an index. When it matches no tab nothing is
+  // rendered, so warn in development instead of failing silently.
+  useEffect(() => {
+    if (!import.meta.env.DEV || activeTab === undefined || tabs.length === 0)
+      return;
+    if (!current) {
+      console.warn(
+        `[TabsLayout] No tab has id "${String(activeTab)}". currentTab/defaultTab must match a tab id, not its position.`,
+      );
+    }
+  }, [activeTab, current, tabs.length]);
 
   return (
     <div className={classNames("tabs-layout-main", className)}>
