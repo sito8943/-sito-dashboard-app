@@ -78,13 +78,55 @@
   background-color: var(--color-slate-200, #e2e8f0);
 }
 
-/* CHIP */
-.chip-main {
+/* CHIP — needs @sito/dashboard >= 0.3.4, which adds the `chip-<variant>` class.
+ * `.chip-main` alone is the default variant. */
+.chip-main,
+.chip-main.chip-default {
   color: var(--color-text);
   background-color: var(--color-base-dark);
 }
+.chip-main.chip-primary {
+  color: var(--color-base-light);
+  background-color: var(--color-primary);
+}
+.chip-main.chip-secondary {
+  color: var(--color-base-light);
+  background-color: var(--color-secondary);
+}
+.chip-main.chip-success {
+  color: var(--color-success);
+  background-color: var(--color-bg-success);
+}
+.chip-main.chip-danger {
+  color: var(--color-error);
+  background-color: var(--color-bg-error);
+}
+.chip-main.chip-warning {
+  color: var(--color-warning);
+  background-color: var(--color-bg-warning);
+}
+.chip-main.chip-info {
+  color: var(--color-info);
+  background-color: var(--color-bg-info);
+}
+.chip-main.chip-light {
+  color: var(--color-text);
+  background-color: var(--color-base-light);
+  border: 1px solid var(--color-border);
+}
+.chip-main.chip-dark {
+  color: var(--color-base-light);
+  background-color: var(--color-text);
+}
+.chip-main.chip-none {
+  background-color: transparent;
+}
+/* The delete icon follows the chip text color so it stays visible on every variant. */
+.chip-main .chip-delete-button {
+  color: inherit;
+}
 .chip-delete-button:hover {
-  color: var(--color-secondary);
+  opacity: 0.7;
 }
 
 /* BADGE */

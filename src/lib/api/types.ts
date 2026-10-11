@@ -41,7 +41,15 @@ export type APIClientAuthConfig = {
   refreshRetryCooldownMs?: number;
 };
 
-export type APIClientAuthMode = "none" | "access-token";
+export type APIClientAuthMode = "none" | "access-token" | "cookie";
+
+export type APIClientOptions = {
+  baseUrl: string;
+  userKey?: string;
+  authMode?: APIClientAuthMode;
+  tokenAcquirer?: (useCookie?: boolean) => RequestConfig | undefined;
+  authConfig?: APIClientAuthConfig;
+};
 
 export type APIClientRequestOptions = {
   authMode?: APIClientAuthMode;

@@ -1,6 +1,7 @@
-@import "tailwindcss";
+@import "tailwindcss/theme.css" reference;
+@import "tailwindcss/utilities.css";
 
-@theme {
+@theme reference {
   --color-primary: #041e42;
   --color-bg-primary: #021327;
   --color-hover-primary: #0a2f66;
@@ -30,6 +31,36 @@
   --color-bg-error: hsl(0, 50%, 51%);
   --color-error: #fbfbfb;
   --breakpoint-xs: 28rem;
+}
+
+/* Weak defaults let an app's own @theme values take precedence. */
+:where(:root) {
+  --color-primary: #041e42;
+  --color-bg-primary: #021327;
+  --color-hover-primary: #0a2f66;
+  --color-secondary: #cd212a;
+  --color-bg-secondary: #8f151b;
+  --color-hover-secondary: #e03a42;
+  --color-tertiary: #00997b;
+  --color-bg-tertiary: #006654;
+  --color-hover-tertiary: #1ab89a;
+  --color-quaternary: #d7942e;
+  --color-bg-quaternary: #9e6a1f;
+  --color-hover-quaternary: #ebb04a;
+  --color-base-dark: hsl(0 0% 90%);
+  --color-base: hsl(0 0% 95%);
+  --color-base-light: hsl(0 0% 100%);
+  --color-text: #0d0d0d;
+  --color-border: hsl(0 0% 80%);
+  --color-text-muted: hsl(0 0% 30%);
+  --color-bg-info: #0070ba;
+  --color-info: #fbfbfb;
+  --color-bg-success: hsl(149.76, 68%, 36%);
+  --color-success: #fbfbfb;
+  --color-bg-warning: #ffa500;
+  --color-warning: #000000;
+  --color-bg-error: hsl(0, 50%, 51%);
+  --color-error: #fbfbfb;
 }
 
 .animated {

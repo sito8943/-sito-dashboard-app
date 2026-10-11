@@ -19,6 +19,9 @@ export * from "./layouts";
 // views
 export * from "./views";
 
+// i18n resources
+export * from "./i18n";
+
 // @sito/dashboard
 export * from "@sito/dashboard";
 

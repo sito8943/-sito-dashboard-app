@@ -22,10 +22,15 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     children,
     guestMode = "guest_mode",
     user = "user",
-    remember = "remember",
-    refreshTokenKey = "refreshToken",
-    accessTokenExpiresAtKey = "accessTokenExpiresAt",
+    remember,
+    refreshTokenKey,
+    accessTokenExpiresAtKey,
   } = props;
+
+  const resolvedRemember = remember ?? `${user}_remember`;
+  const resolvedRefreshTokenKey = refreshTokenKey ?? `${user}_refreshToken`;
+  const resolvedAccessTokenExpiresAtKey =
+    accessTokenExpiresAtKey ?? `${user}_accessTokenExpiresAt`;
 
   const manager = useManager();
 
@@ -39,15 +44,15 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
   } = useAuthSessionState({
     guestMode,
     user,
-    remember,
-    refreshTokenKey,
-    accessTokenExpiresAtKey,
+    remember: resolvedRemember,
+    refreshTokenKey: resolvedRefreshTokenKey,
+    accessTokenExpiresAtKey: resolvedAccessTokenExpiresAtKey,
   });
 
   const logoutUser = useCallback(async () => {
     const accessToken = fromLocal(user) ?? account.token;
     const refreshToken =
-      fromLocal(refreshTokenKey) ??
+      fromLocal(resolvedRefreshTokenKey) ??
       (typeof account.refreshToken === "string"
         ? account.refreshToken
         : undefined);
@@ -67,7 +72,7 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
     account.token,
     clearStoredSession,
     manager.Auth,
-    refreshTokenKey,
+    resolvedRefreshTokenKey,
     setAccount,
     user,
   ]);
