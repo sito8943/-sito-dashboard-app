@@ -62,9 +62,9 @@ describe("AuthProvider", () => {
 
     expect(result.current.account).toEqual(session);
     expect(localStorage.getItem("user")).toBe("jwt-token");
-    expect(localStorage.getItem("remember")).toBe("true");
-    expect(localStorage.getItem("refreshToken")).toBe("refresh-token");
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+    expect(localStorage.getItem("user_remember")).toBe("true");
+    expect(localStorage.getItem("user_refreshToken")).toBe("refresh-token");
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBe(
       "2030-01-01T00:00:00.000Z",
     );
     expect(localStorage.getItem("guest_mode")).toBeNull();
@@ -87,9 +87,9 @@ describe("AuthProvider", () => {
       refreshToken: "refresh-token",
     });
     expect(localStorage.getItem("user")).toBeNull();
-    expect(localStorage.getItem("remember")).toBeNull();
-    expect(localStorage.getItem("refreshToken")).toBeNull();
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
+    expect(localStorage.getItem("user_remember")).toBeNull();
+    expect(localStorage.getItem("user_refreshToken")).toBeNull();
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBeNull();
     expect(result.current.account.token).toBeUndefined();
   });
 
@@ -126,8 +126,8 @@ describe("AuthProvider", () => {
     expect(getSessionMock).toHaveBeenCalledOnce();
     expect(result.current.account).toEqual(session);
     expect(localStorage.getItem("user")).toBe("jwt-token");
-    expect(localStorage.getItem("refreshToken")).toBe("refresh-token");
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+    expect(localStorage.getItem("user_refreshToken")).toBe("refresh-token");
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBe(
       "2030-01-01T00:00:00.000Z",
     );
   });
@@ -139,9 +139,12 @@ describe("AuthProvider", () => {
     });
     logoutMock.mockResolvedValue(undefined);
     localStorage.setItem("user", "stale-token");
-    localStorage.setItem("refreshToken", "stale-refresh-token");
-    localStorage.setItem("accessTokenExpiresAt", "2020-01-01T00:00:00.000Z");
-    localStorage.setItem("remember", "true");
+    localStorage.setItem("user_refreshToken", "stale-refresh-token");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2020-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
@@ -154,9 +157,9 @@ describe("AuthProvider", () => {
     expect(getSessionMock).toHaveBeenCalledOnce();
     expect(logoutMock).toHaveBeenCalledOnce();
     expect(localStorage.getItem("user")).toBeNull();
-    expect(localStorage.getItem("refreshToken")).toBeNull();
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
-    expect(localStorage.getItem("remember")).toBeNull();
+    expect(localStorage.getItem("user_refreshToken")).toBeNull();
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBeNull();
+    expect(localStorage.getItem("user_remember")).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
@@ -205,9 +208,12 @@ describe("AuthProvider", () => {
       message: "Failed to fetch",
     });
     localStorage.setItem("user", "stale-token");
-    localStorage.setItem("refreshToken", "stale-refresh-token");
-    localStorage.setItem("accessTokenExpiresAt", "2030-01-01T00:00:00.000Z");
-    localStorage.setItem("remember", "true");
+    localStorage.setItem("user_refreshToken", "stale-refresh-token");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2030-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
@@ -220,11 +226,13 @@ describe("AuthProvider", () => {
     expect(getSessionMock).toHaveBeenCalledOnce();
     expect(logoutMock).not.toHaveBeenCalled();
     expect(localStorage.getItem("user")).toBe("stale-token");
-    expect(localStorage.getItem("refreshToken")).toBe("stale-refresh-token");
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+    expect(localStorage.getItem("user_refreshToken")).toBe(
+      "stale-refresh-token",
+    );
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBe(
       "2030-01-01T00:00:00.000Z",
     );
-    expect(localStorage.getItem("remember")).toBe("true");
+    expect(localStorage.getItem("user_remember")).toBe("true");
     expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
@@ -272,8 +280,8 @@ describe("AuthProvider", () => {
       "2030-01-01T00:00:00.000Z",
     );
     expect(localStorage.getItem("user")).toBeNull();
-    expect(localStorage.getItem("remember")).toBeNull();
-    expect(localStorage.getItem("refreshToken")).toBeNull();
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
+    expect(localStorage.getItem("user_remember")).toBeNull();
+    expect(localStorage.getItem("user_refreshToken")).toBeNull();
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBeNull();
   });
 });

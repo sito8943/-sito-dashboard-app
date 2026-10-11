@@ -206,9 +206,12 @@ describe("APIClient", () => {
 
   it("refreshes access token before secured request when expired", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
-    localStorage.setItem("remember", "true");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
 
     makeRequestMock
       .mockResolvedValueOnce({
@@ -250,16 +253,19 @@ describe("APIClient", () => {
       undefined,
     );
     expect(localStorage.getItem("user")).toBe("new-access-token");
-    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-2");
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+    expect(localStorage.getItem("user_refreshToken")).toBe("refresh-token-2");
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBe(
       "2035-01-01T00:00:00.000Z",
     );
   });
 
   it("refreshes access token when a non-secured client opts into access-token mode", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
 
     makeRequestMock
       .mockResolvedValueOnce({
@@ -309,8 +315,11 @@ describe("APIClient", () => {
 
   it("keeps existing refresh token when refresh response omits it", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
 
     makeRequestMock
       .mockResolvedValueOnce({
@@ -335,16 +344,19 @@ describe("APIClient", () => {
 
     expect(result).toEqual({ ok: true });
     expect(localStorage.getItem("user")).toBe("new-access-token");
-    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-1");
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+    expect(localStorage.getItem("user_refreshToken")).toBe("refresh-token-1");
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBe(
       "2035-01-01T00:00:00.000Z",
     );
   });
 
   it("retries once after 401 by refreshing token", async () => {
     localStorage.setItem("user", "stale-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2035-01-01T00:00:00.000Z");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2035-01-01T00:00:00.000Z",
+    );
 
     makeRequestMock
       .mockResolvedValueOnce({
@@ -402,8 +414,11 @@ describe("APIClient", () => {
 
   it("uses a single refresh request for concurrent calls", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
 
     let releaseRefresh!: (value: HttpResponse) => void;
     const refreshPromise = new Promise<HttpResponse>((resolve) => {
@@ -454,9 +469,12 @@ describe("APIClient", () => {
 
   it("clears local session when refresh fails definitively", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
-    localStorage.setItem("remember", "true");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
 
     makeRequestMock.mockResolvedValue({
       data: null,
@@ -471,16 +489,19 @@ describe("APIClient", () => {
       message: "Invalid refresh token",
     });
     expect(localStorage.getItem("user")).toBeNull();
-    expect(localStorage.getItem("refreshToken")).toBeNull();
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBeNull();
-    expect(localStorage.getItem("remember")).toBeNull();
+    expect(localStorage.getItem("user_refreshToken")).toBeNull();
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBeNull();
+    expect(localStorage.getItem("user_remember")).toBeNull();
   });
 
   it("preserves local session when refresh fails transiently", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
-    localStorage.setItem("remember", "true");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
 
     makeRequestMock.mockResolvedValue({
       data: null,
@@ -499,11 +520,11 @@ describe("APIClient", () => {
       message: "Service unavailable",
     });
     expect(localStorage.getItem("user")).toBe("expired-access-token");
-    expect(localStorage.getItem("refreshToken")).toBe("refresh-token-1");
-    expect(localStorage.getItem("accessTokenExpiresAt")).toBe(
+    expect(localStorage.getItem("user_refreshToken")).toBe("refresh-token-1");
+    expect(localStorage.getItem("user_accessTokenExpiresAt")).toBe(
       "2000-01-01T00:00:00.000Z",
     );
-    expect(localStorage.getItem("remember")).toBe("true");
+    expect(localStorage.getItem("user_remember")).toBe("true");
 
     const refreshCalls = makeRequestMock.mock.calls.filter(([url]) =>
       url.includes("auth/refresh"),
@@ -514,8 +535,8 @@ describe("APIClient", () => {
   it("uses the current token when pre-refresh fails transiently but token is still valid", async () => {
     const futureExpiry = new Date(Date.now() + 1000).toISOString();
     localStorage.setItem("user", "still-valid-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", futureExpiry);
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem("user_accessTokenExpiresAt", futureExpiry);
 
     makeRequestMock
       .mockResolvedValueOnce({
@@ -559,8 +580,11 @@ describe("APIClient", () => {
 
   it("enters cooldown after a transient refresh failure", async () => {
     localStorage.setItem("user", "expired-access-token");
-    localStorage.setItem("refreshToken", "refresh-token-1");
-    localStorage.setItem("accessTokenExpiresAt", "2000-01-01T00:00:00.000Z");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
 
     makeRequestMock.mockResolvedValue({
       data: null,
