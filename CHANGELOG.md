@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.6]
+
+### Changed
+
+- Upgraded `@sito/ui` from `0.4.2` to `0.9.1` and `@sito/dashboard` from `^0.3.4` to
+  `^0.3.6` (the first release whose `@sito/ui` peer range allows `0.9.x`). Dialogs now
+  use `@sito/ui`'s enter/exit animation, which already moves the dialog, so the local
+  `.dialog.opened` / `.dialog.closed` classes only fade (no extra `translate-y`).
+  `ConfigProvider` `motion="none"` still disables it. The close button keeps its
+  previous red color (`closeButtonColor="error"`; `@sito/ui` defaults to neutral since
+  0.6).
+
+### Fixed
+
+- `FormDialog` and `FormContainer` no longer call `handleSubmit(onSubmit)` while
+  rendering; the submit handler is built when the form is submitted. Passing an already
+  invoked handler (`form.handleSubmit(cb)`) by mistake no longer submits on every render
+  (infinite request loop); it submits once per click and warns in development. The
+  `handleSubmit` prop still expects the uninvoked `form.handleSubmit` (#97).
+- Dialogs taller than the viewport now scroll: the local `max-height: none` /
+  `overflow: visible` override is gone, so `@sito/ui`'s
+  `max-height: calc(100dvh - 2rem)` and `overflow: auto` apply. `mobileFullScreen` dialogs now fill the
+  screen width on mobile (`w-screen`, `h-dvh`, `max-h-dvh`) instead of collapsing to
+  their content width. Absolutely positioned suggestion lists (`AutocompleteInput`,
+  `SelectInput`) now stay inside the dialog's scroll area (#98).
+- The dialog header (title + close button) and `DialogActions` footer are now sticky, so
+  they stay visible while tall dialog content scrolls (#98).
+
+### Security
+
+- Patched development-only Dependabot alerts (nothing ships in the published package):
+  `storybook` / `@storybook/*` 10.4.6 → 10.6.2, `vitest` 4.1.11 → 4.1.12, and
+  overrides for `undici` 7.30.1, `smol-toml` 1.9.0, `source-map-js` 1.2.2,
+  `brace-expansion@5` 5.0.12, `browserslist` 4.28.7 and `baseline-browser-mapping`
+  2.11.33, kept identical in `package.json` and `pnpm-workspace.yaml`.
+
 ## [0.2.5]
 
 ### Added
@@ -31,33 +67,12 @@ All notable changes to this project will be documented in this file.
   force a `number` for `currentTab`. `TabsType`, `TabsLayoutPropsType` and the new
   `TabId` type are exported (#91).
 
-- Upgraded `@sito/ui` from `0.4.2` to `0.9.1` and `@sito/dashboard` from `^0.3.4` to
-  `^0.3.6` (the first release whose `@sito/ui` peer range allows `0.9.x`). Dialogs now
-  use `@sito/ui`'s enter/exit animation, which already moves the dialog, so the local
-  `.dialog.opened` / `.dialog.closed` classes only fade (no extra `translate-y`).
-  `ConfigProvider` `motion="none"` still disables it. The close button keeps its
-  previous red color (`closeButtonColor="error"`; `@sito/ui` defaults to neutral since
-  0.6).
-
 ### Fixed
 
 - Onboarding steps with a Back action now stagger the third action button's entrance
   animation as well, so Next no longer appears ahead of the other actions.
 - Failed refresh attempts after an API `401` now preserve the original API response
   instead of replacing it with the refresh endpoint error (#92).
-- `FormDialog` and `FormContainer` no longer call `handleSubmit(onSubmit)` while
-  rendering; the submit handler is built when the form is submitted. Passing an already
-  invoked handler (`form.handleSubmit(cb)`) by mistake no longer submits on every render
-  (infinite request loop); it submits once per click and warns in development. The
-  `handleSubmit` prop still expects the uninvoked `form.handleSubmit` (#97).
-- Dialogs taller than the viewport now scroll: the local `max-height: none` /
-  `overflow: visible` override is gone, so `@sito/ui`'s
-  `max-height: calc(100dvh - 2rem)` and `overflow: auto` apply. `mobileFullScreen` dialogs now fill the
-  screen width on mobile (`w-screen`, `h-dvh`, `max-h-dvh`) instead of collapsing to
-  their content width. Absolutely positioned suggestion lists (`AutocompleteInput`,
-  `SelectInput`) now stay inside the dialog's scroll area (#98).
-- The dialog header (title + close button) and `DialogActions` footer are now sticky, so
-  they stay visible while tall dialog content scrolls (#98).
 
 - `TabsLayout` silently rendered no content when `currentTab`/`defaultTab` did not match
   any tab id (for example, passing an index with string ids). It now warns in development
