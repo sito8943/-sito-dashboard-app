@@ -63,7 +63,7 @@
     "node": "^22.13.0"
   },
   "peerDependencies": {
-    "@sito/dashboard": "^0.3.6",
+    "@sito/dashboard": "^0.3.7",
     "@sito/ui": "^0.9.1",
     "@fortawesome/fontawesome-svg-core": ">=7.0.0 <8",
     "@fortawesome/free-regular-svg-icons": ">=7.0.0 <8",
@@ -81,7 +81,7 @@
     }
   },
   "devDependencies": {
-    "@sito/dashboard": "^0.3.6",
+    "@sito/dashboard": "^0.3.7",
     "@sito/ui": "0.9.1",
     "@fortawesome/fontawesome-svg-core": "7.0.0",
     "@fortawesome/free-regular-svg-icons": "7.0.0",

@@ -6,8 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- `@sito/dashboard` and `@sito/ui` are now **peer dependencies** (`^0.3.6` and
-  `^0.9.1`) instead of regular dependencies. As regular dependencies, an app with a
+- `@sito/dashboard` and `@sito/ui` are now **peer dependencies** (`^0.3.7` and
+  `^0.9.1`) instead of regular dependencies. `@sito/dashboard` 0.3.7 ships `@sito/ui`'s
+  stylesheet once instead of twice (~29 KB less CSS). As regular dependencies, an app with a
   different `@sito/dashboard` version got two copies, and two copies of its React
   contexts (`TranslationProvider`, `TableOptionsProvider`) fail with "must be used
   within a Provider". npm 7+ and pnpm install peers automatically; with other package

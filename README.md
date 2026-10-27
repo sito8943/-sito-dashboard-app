@@ -43,7 +43,7 @@ Peer dependencies:
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.3.6 \
+  @sito/dashboard@^0.3.7 \
   @sito/ui@^0.9.1 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
@@ -68,7 +68,7 @@ npm install @supabase/supabase-js@2.100.0
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.3.6`
+- `@sito/dashboard` `^0.3.7`
 - `@sito/ui` `^0.9.1`
 - Font Awesome peers per `package.json`
 
