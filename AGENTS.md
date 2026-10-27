@@ -42,6 +42,7 @@ Peer install (consumer project):
 npm install \
   react@19.2.7 react-dom@19.2.7 \
   @sito/dashboard@^0.3.6 \
+  @sito/ui@^0.9.1 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \

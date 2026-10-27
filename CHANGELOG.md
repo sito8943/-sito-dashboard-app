@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7]
+
+### Changed
+
+- `@sito/dashboard` and `@sito/ui` are now **peer dependencies** (`^0.3.6` and
+  `^0.9.1`) instead of regular dependencies. As regular dependencies, an app with a
+  different `@sito/dashboard` version got two copies, and two copies of its React
+  contexts (`TranslationProvider`, `TableOptionsProvider`) fail with "must be used
+  within a Provider". npm 7+ and pnpm install peers automatically; with other package
+  managers, install both (see the peer install command in `README.md`).
+
+### Fixed
+
+- `@use-gesture/react` and `some-javascript-utils` were bundled into
+  `dist/dashboard-app.js` while also listed as dependencies, so apps installed them and
+  still shipped a second copy inside the library. The build now treats every
+  dependency and peer (including subpaths) as external: `dist/dashboard-app.js` drops
+  from ~166 KB to ~136 KB.
+
 ## [0.2.6]
 
 ### Changed

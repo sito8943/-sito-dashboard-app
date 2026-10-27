@@ -1,3 +1,4 @@
+import { readFileSync } from "fs";
 import { resolve } from "path";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
@@ -6,6 +7,21 @@ import { libInjectCss } from "vite-plugin-lib-inject-css";
 import dts from "vite-plugin-dts";
 
 const srcPath = resolve(__dirname, "src");
+
+// Every dependency and peer stays external (subpaths included), so the bundle
+// never inlines a package that consumers also install.
+const packageJson = JSON.parse(
+  readFileSync(resolve(__dirname, "package.json"), "utf-8"),
+) as {
+  dependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+};
+const externalPackages = Object.keys({
+  ...packageJson.dependencies,
+  ...packageJson.peerDependencies,
+});
+const isExternal = (id: string) =>
+  externalPackages.some((name) => id === name || id.startsWith(`${name}/`));
 
 export default defineConfig(() => {
   const isVitest = process.env.VITEST === "true";
@@ -68,22 +84,7 @@ export default defineConfig(() => {
         formats: ["es", "cjs"],
       },
       rollupOptions: {
-        external: [
-          "react",
-          "react/jsx-runtime",
-          "react/jsx-dev-runtime",
-          "react-dom",
-          "@sito/dashboard",
-          "@sito/ui",
-          "@tanstack/react-query",
-          "@supabase/supabase-js",
-          "react-hook-form",
-          "@fortawesome/fontawesome-svg-core",
-          "@fortawesome/free-brands-svg-icons",
-          "@fortawesome/free-regular-svg-icons",
-          "@fortawesome/free-solid-svg-icons",
-          "@fortawesome/react-fontawesome",
-        ],
+        external: isExternal,
       },
     },
     test: {

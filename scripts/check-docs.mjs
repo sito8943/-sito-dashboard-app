@@ -161,11 +161,11 @@ const checkNodeRuntimeAlignment = () => {
 
 const checkDashboardVersionAlignment = () => {
   const packageJson = readJson("package.json");
-  const dashboardVersion = packageJson?.dependencies?.["@sito/dashboard"];
+  const dashboardVersion = packageJson?.peerDependencies?.["@sito/dashboard"];
 
   if (typeof dashboardVersion !== "string" || dashboardVersion.length === 0) {
     failures.push(
-      "[version] package.json dependencies must include @sito/dashboard",
+      "[version] package.json peerDependencies must include @sito/dashboard",
     );
     return;
   }
