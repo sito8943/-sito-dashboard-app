@@ -9,6 +9,9 @@ import { Button } from "components";
 // types
 import { FormContainerPropsType } from "./types";
 
+// utils
+import { createFormSubmitHandler } from "./utils";
+
 // styles
 import "./styles.css";
 
@@ -89,7 +92,14 @@ export const FormContainer = <TInput extends FieldValues>(
   );
 
   return (
-    <form className="form-container" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="form-container"
+      onSubmit={createFormSubmitHandler(
+        handleSubmit,
+        onSubmit,
+        "FormContainer",
+      )}
+    >
       {children}
       {renderActions
         ? renderActions({

@@ -63,6 +63,10 @@ export type FormContainerPropsType<TFormType extends FieldValues> = {
   setValue?: UseFormSetValue<TFormType>;
   reset?: UseFormReset<TFormType>;
   setError?: UseFormSetError<TFormType>;
+  /**
+   * Uninvoked React Hook Form `handleSubmit` (`form.handleSubmit`), not
+   * `form.handleSubmit(cb)`. Pass the callback through `onSubmit`.
+   */
   handleSubmit: UseFormHandleSubmit<TFormType>;
   onSubmit: SubmitHandler<TFormType>;
   /* if the buttons are aligned to the end */

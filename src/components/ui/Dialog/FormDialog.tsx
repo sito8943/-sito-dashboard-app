@@ -8,6 +8,9 @@ import { DialogActions } from "./DialogActions";
 // types
 import { FormDialogPropsType } from "./types";
 
+// utils
+import { createFormSubmitHandler } from "../Form/utils";
+
 // styles
 import "./styles.css";
 
@@ -35,7 +38,7 @@ export const FormDialog = <TInput extends FieldValues>(
     <Dialog
       {...rest}
       handleClose={handleClose}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={createFormSubmitHandler(handleSubmit, onSubmit, "FormDialog")}
     >
       <div className="form-container">{children}</div>
       <DialogActions

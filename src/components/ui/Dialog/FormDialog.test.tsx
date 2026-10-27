@@ -106,7 +106,64 @@ const FormDialogHarness = ({
   );
 };
 
+const InvokedHandlerHarness = ({
+  onSubmit,
+}: {
+  onSubmit: (values: FormValues) => void;
+}) => {
+  const { handleSubmit, register } = useForm<FormValues>({
+    defaultValues: { description: "valid" },
+  });
+
+  return (
+    <FormDialog<FormValues>
+      open
+      title="Edit Description"
+      handleClose={vi.fn()}
+      // Common misuse: an already invoked handler instead of `handleSubmit`.
+      handleSubmit={handleSubmit(onSubmit) as unknown as typeof handleSubmit}
+      onSubmit={vi.fn()}
+    >
+      <input aria-label="Description" {...register("description")} />
+    </FormDialog>
+  );
+};
+
+const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
+
 describe("FormDialog", () => {
+  it("does not submit while rendering", async () => {
+    const onSubmit = vi.fn();
+    const { rerender } = render(<FormDialogHarness onSubmit={onSubmit} />);
+    rerender(<FormDialogHarness onSubmit={onSubmit} />);
+
+    await flush();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("does not loop when given an already invoked handler", async () => {
+    const onSubmit = vi.fn();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    render(<InvokedHandlerHarness onSubmit={onSubmit} />);
+    await flush();
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "_accessibility:buttons.submit",
+      }),
+    );
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+    await flush();
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
   it("submits the form when submit button is clicked", async () => {
     const onSubmit = vi.fn();
 
