@@ -75,6 +75,7 @@ export const Dialog = (props: DialogPropsType) => {
       headerClassName="dialog-header"
       titleClassName="dialog-title"
       closeButtonClassName="icon-button dialog-close-btn"
+      closeButtonColor="error"
       closeLabel={t("_accessibility:ariaLabels.closeDialog")}
       closeIcon={<FontAwesomeIcon icon={faClose} size="sm" />}
       exitDurationMs={DIALOG_EXIT_DURATION_MS}

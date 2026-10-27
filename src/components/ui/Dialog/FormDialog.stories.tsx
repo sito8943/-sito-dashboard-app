@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { TextInput, type ButtonPropsType } from "@sito/dashboard";
 import { FormDialog } from "./FormDialog";
 
-type FormData = { description: string };
+type FormData = Record<string, string>;
 
 type FormDialogStoryProps = {
   title?: string;
@@ -12,6 +12,8 @@ type FormDialogStoryProps = {
   buttonEnd?: boolean;
   mobileFullScreen?: boolean;
   extraActions?: ButtonPropsType[];
+  /* extra text fields rendered to make the dialog taller than the viewport */
+  extraFields?: number;
 };
 
 const FormDialogStory = ({
@@ -20,6 +22,7 @@ const FormDialogStory = ({
   buttonEnd = true,
   mobileFullScreen = false,
   extraActions = [],
+  extraFields = 0,
 }: FormDialogStoryProps) => {
   const [open, setOpen] = useState(true);
   const { register, handleSubmit } = useForm<FormData>({
@@ -51,6 +54,15 @@ const FormDialogStory = ({
           placeholder="Type here"
           {...register("description")}
         />
+        {Array.from({ length: extraFields }, (_, index) => (
+          <TextInput
+            key={index}
+            value={""}
+            label={`Field ${index + 1}`}
+            placeholder="Type here"
+            {...register(`field${index + 1}`)}
+          />
+        ))}
       </FormDialog>
     </div>
   );
@@ -110,6 +122,32 @@ export const WithExtraActions: Story = {
 export const MobileFullScreen: Story = {
   args: {
     mobileFullScreen: true,
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+  },
+};
+
+export const TallForm: Story = {
+  args: {
+    title: "Form taller than the viewport",
+    extraFields: 20,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Fields taller than the viewport scroll inside the dialog, so submit/cancel stay reachable.",
+      },
+    },
+  },
+};
+
+export const MobileFullScreenTallForm: Story = {
+  args: {
+    title: "Full screen form",
+    mobileFullScreen: true,
+    extraFields: 20,
   },
   parameters: {
     viewport: { defaultViewport: "mobile1" },

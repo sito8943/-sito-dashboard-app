@@ -12,6 +12,8 @@ import { DialogActions } from "./DialogActions";
 type DialogStoryDemoProps = {
   args: React.ComponentProps<typeof Dialog>;
   motion?: MotionPreference;
+  /* paragraphs rendered to make the dialog taller than the viewport */
+  extraParagraphs?: number;
 };
 
 const storyLocation: Location = {
@@ -48,7 +50,11 @@ const MotionWrapper = ({
   </ConfigProvider>
 );
 
-const DialogStoryDemo = ({ args, motion }: DialogStoryDemoProps) => {
+const DialogStoryDemo = ({
+  args,
+  motion,
+  extraParagraphs = 0,
+}: DialogStoryDemoProps) => {
   const [open, setOpen] = useState(!!args.open);
 
   const content = (
@@ -62,6 +68,11 @@ const DialogStoryDemo = ({ args, motion }: DialogStoryDemoProps) => {
       <Dialog {...args} open={open} handleClose={() => setOpen(false)}>
         <div className="p-4">
           <p className="mb-4">This is a basic dialog content.</p>
+          {Array.from({ length: extraParagraphs }, (_, index) => (
+            <p key={index} className="mb-4">
+              Paragraph {index + 1}. Scroll down to reach the dialog actions.
+            </p>
+          ))}
           <DialogActions
             primaryText="OK"
             cancelText="Cancel"
@@ -112,6 +123,42 @@ export const MobileFullScreen: Story = {
     viewport: { defaultViewport: "mobile1" },
   },
   render: Basic.render,
+};
+
+export const TallContent: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    title: "Dialog taller than the viewport",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Content taller than the viewport scrolls inside the dialog (`max-height: calc(100dvh - 2rem)`), so the actions stay reachable.",
+      },
+    },
+  },
+  render: (args) => <DialogStoryDemo args={args} extraParagraphs={40} />,
+};
+
+export const MobileFullScreenTallContent: Story = {
+  args: {
+    open: false,
+    handleClose: () => {},
+    mobileFullScreen: true,
+    title: "Full screen dialog with tall content",
+  },
+  parameters: {
+    viewport: { defaultViewport: "mobile1" },
+    docs: {
+      description: {
+        story:
+          "On mobile, `mobileFullScreen` fills the screen (`w-screen`, `h-dvh`) and scrolls its content.",
+      },
+    },
+  },
+  render: TallContent.render,
 };
 
 export const CloseOnBackdropClick: Story = {
