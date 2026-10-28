@@ -18,6 +18,16 @@ All notable changes to this project will be documented in this file.
   `dist/components/organisms/Dialog/index.d.ts` instead of
   `dist/components/ui/Dialog/index.d.ts`).
 
+### Fixed
+
+- `Dialog` sticky header and actions now share the dialog body background
+  (`--color-base`). `@sito/ui`'s `.sito-ui-dialog__header` / `.sito-ui-dialog-actions`
+  rules had the same specificity and, when loaded later, painted them with
+  `--color-base-light` — very visible in dark themes (#103).
+- `theme.css`: keyboard-highlighted `SelectInput` / `AutocompleteInput` options use
+  `var(--color-base-dark)` instead of a hardcoded `slate-200`, which made option
+  text unreadable in dark themes (#104).
+
 ## [0.2.7]
 
 ### Changed

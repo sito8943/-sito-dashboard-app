@@ -25,3 +25,28 @@ describe("theme.css", () => {
     expect(theme).toContain(`.chip-main.chip-${variant}`);
   });
 });
+
+describe("theme.css select/autocomplete", () => {
+  // Regression for #104: hardcoded slate-200 made highlighted options unreadable in dark themes.
+  it("uses a theme token for highlighted options", () => {
+    const rule = theme.match(
+      /\.autocomplete-suggestion-item\.highlighted\s*\{([^}]*)\}/,
+    );
+    expect(rule?.[1]).toContain("var(--color-base-dark)");
+    expect(theme).not.toContain("--color-slate-200");
+  });
+});
+
+describe("Dialog styles", () => {
+  const dialogCss = readFileSync(
+    resolve(process.cwd(), "src/components/organisms/Dialog/styles.css"),
+    "utf8",
+  );
+
+  // Regression for #103: @sito/ui's header/actions surface overrode the dialog body color.
+  it("scopes header/actions background under .dialog", () => {
+    expect(dialogCss).toMatch(
+      /\.dialog \.dialog-header,\s*\.dialog \.dialog-actions\s*\{\s*@apply bg-base;/,
+    );
+  });
+});
