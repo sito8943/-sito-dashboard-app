@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Breaking (peers):** `@sito/ui` peer raised from `^0.9.1` to `^0.10.0` and
+  `@sito/dashboard` from `^0.3.7` to `^0.4.1` (the first `@sito/dashboard` release that
+  accepts `@sito/ui@0.10.x`). `@sito/ui` 0.10.0 renders `IconButton` icons through its new
+  `Icon` atom (blur swap between glyphs) and adds the `sito-ui-pressable` utility; public
+  exports and class names are unchanged. Update both packages together (see the peer
+  install command in `README.md`).
 - Reorganized the source tree to match `@sito/ui` and `@sito/dashboard`: components are
   grouped into `src/components/atoms`, `molecules` and `organisms` instead of the former
   `ui` / `app` tiers; tests moved to `tests/` (mirroring `src/`, setup in `tests/setup.ts`)
