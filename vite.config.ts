@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -22,6 +23,21 @@ const externalPackages = Object.keys({
 });
 const isExternal = (id: string) =>
   externalPackages.some((name) => id === name || id.startsWith(`${name}/`));
+
+// libInjectCss emits `import "./x.css";` in every format. In a .cjs file that is
+// a syntax error, so CommonJS output gets `require("./x.css");` instead.
+const cjsCssRequire = (): Plugin => ({
+  name: "cjs-css-require",
+  enforce: "post",
+  renderChunk(code, _chunk, options) {
+    if (options.format !== "cjs") return null;
+    return code.replace(
+      /import\s*(["'])(\.\/[^"']+\.css)\1;?/g,
+      (_match, quote: string, path: string) =>
+        `require(${quote}${path}${quote});`,
+    );
+  },
+});
 
 export default defineConfig(() => {
   const isVitest = process.env.VITEST === "true";
@@ -51,6 +67,7 @@ export default defineConfig(() => {
               ],
             }),
             libInjectCss(),
+            cjsCssRequire(),
             tailwindcss(),
           ]
         : []),

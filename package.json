@@ -6,7 +6,7 @@
   "description": "UI Library with prefab components",
   "main": "dist/dashboard-app.cjs",
   "module": "dist/dashboard-app.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/dashboard-app.d.ts",
   "files": [
     "dist/",
     "theme.css"
@@ -21,7 +21,7 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/dashboard-app.d.ts",
       "import": "./dist/dashboard-app.js",
       "require": "./dist/dashboard-app.cjs"
     },
@@ -41,6 +41,7 @@
     "lint": "oxlint --type-aware --max-warnings 0",
     "lint:fix": "oxlint --type-aware --fix --max-warnings 0",
     "docs:check": "node ./scripts/check-docs.mjs",
+    "dist:check": "node ./scripts/check-dist.mjs",
     "deps:check": "knip --dependencies",
     "test": "NODE_OPTIONS=--max-old-space-size=6144 vitest run",
     "test:watch": "vitest",
@@ -49,7 +50,7 @@
     "build-storybook": "storybook build",
     "format": "prettier --write .",
     "format:check": "prettier . --check",
-    "full": "pnpm run lint && pnpm run format:check && pnpm run deps:check && pnpm run docs:check && pnpm run build && pnpm run test",
+    "full": "pnpm run lint && pnpm run format:check && pnpm run deps:check && pnpm run docs:check && pnpm run build && pnpm run dist:check && pnpm run test",
     "prepare": "husky"
   },
   "keywords": [

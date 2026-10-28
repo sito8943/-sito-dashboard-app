@@ -33,6 +33,12 @@ All notable changes to this project will be documented in this file.
 - `theme.css`: keyboard-highlighted `SelectInput` / `AutocompleteInput` options use
   `var(--color-base-dark)` instead of a hardcoded `slate-200`, which made option
   text unreadable in dark themes (#104).
+- `types` (top-level and `exports["."].types`) pointed at `dist/index.d.ts`, which the
+  build never emits. It now points at `dist/dashboard-app.d.ts`.
+- `dist/dashboard-app.cjs` started with an ESM `import "./dashboard-app.css"`, a syntax
+  error in CommonJS. CommonJS output now uses `require("./dashboard-app.css")`.
+  A new `pnpm run dist:check` (part of `pnpm run full`) fails the build if a
+  `package.json` entry path is missing or a `.cjs` file is not valid CommonJS.
 
 ## [0.2.7]
 
