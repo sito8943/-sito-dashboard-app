@@ -2,10 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, classNames, Loading } from "@sito/dashboard";
 
-import { AuthFormShell, type AuthFormFieldDefinitionType } from "components";
-import { useConfig } from "providers";
+import { AuthFormShell, type AuthFormFieldDefinitionType } from "@/components";
+import { useConfig } from "@/providers";
 
-import type { RecoveryFormType } from "lib";
+import type { RecoveryFormType } from "@/lib";
 import type {
   AuthRecoveryViewActionType,
   AuthRecoveryViewPropsType,

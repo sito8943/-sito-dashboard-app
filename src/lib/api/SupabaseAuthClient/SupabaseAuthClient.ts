@@ -5,12 +5,12 @@ import type {
   RefreshDto,
   RegisterDto,
   SessionDto,
-} from "../../entities";
-import type { IAuthClient } from "../IAuthClient";
+} from "@/lib/entities";
+import type { IAuthClient } from "@/lib/api/IAuthClient";
 import {
   mapSupabaseSessionToSessionDto,
   type SupabaseSessionMapper,
-} from "../supabaseAuth";
+} from "@/lib/api/supabaseAuth";
 import {
   AUTHENTICATED_SESSION_NOT_FOUND_ERROR,
   EMAIL_CONFIRMATION_REQUIRED_ERROR,

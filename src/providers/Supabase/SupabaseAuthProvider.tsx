@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { AuthContext, useAuthSessionState } from "providers/Auth";
+import { AuthContext, useAuthSessionState } from "@/providers/Auth";
 import type { SupabaseAuthProviderPropTypes } from "./types";
 import { useSupabase } from "./SupabaseContext";
 
-import { mapSupabaseSessionToSessionDto, SessionDto } from "lib";
+import { mapSupabaseSessionToSessionDto, SessionDto } from "@/lib";
 
 const SupabaseAuthProvider = (props: SupabaseAuthProviderPropTypes) => {
   const {

@@ -2,10 +2,10 @@ import { useCallback } from "react";
 import { useTranslation } from "@sito/dashboard";
 
 // providers
-import { useNotification } from "providers";
+import { useNotification } from "@/providers";
 
 // lib
-import { NotificationEnumType, isHttpError, isValidationError } from "lib";
+import { NotificationEnumType, isHttpError, isValidationError } from "@/lib";
 
 /**
  * Builds the default dialog error handler that surfaces validation and HTTP

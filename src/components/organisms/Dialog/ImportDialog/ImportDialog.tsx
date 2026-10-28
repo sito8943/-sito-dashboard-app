@@ -1,0 +1,171 @@
+import { useCallback, useEffect, useReducer, useRef } from "react";
+
+// @sito-dashboard
+import { FileInput, useTranslation } from "@sito/dashboard";
+
+// components
+import { Dialog, DialogActions, ImportDialogPropsType } from "@/components";
+import { Error as ErrorComponent } from "./Error";
+import { Loading } from "./Loading";
+import { Preview } from "./Preview";
+
+// styles
+import "./styles.css";
+
+// lib
+import { ImportPreviewDto } from "@/lib";
+
+// utils
+import { initialState, reducer } from "./utils";
+
+/**
+ * Handles file import, preview generation and submit for import workflows.
+ * @param props - Import dialog props.
+ * @returns Import dialog element.
+ */
+export const ImportDialog = <EntityDto extends ImportPreviewDto>(
+  props: ImportDialogPropsType<EntityDto>,
+) => {
+  const { t } = useTranslation();
+  const {
+    children,
+    handleSubmit,
+    handleClose,
+    isLoading = false,
+    fileProcessor,
+    onFileProcessed,
+    renderCustomPreview,
+    onOverrideChange,
+    open,
+    extraActions = [],
+    extraFields,
+    ...rest
+  } = props;
+
+  const [state, dispatch] = useReducer(
+    reducer<EntityDto>,
+    initialState<EntityDto>(),
+  );
+  const {
+    file,
+    previewItems,
+    parseError,
+    processing,
+    overrideExisting,
+    inputKey,
+  } = state;
+
+  const processedCallbackRef = useRef(onFileProcessed);
+  const fileProcessorRef = useRef(fileProcessor);
+
+  useEffect(() => {
+    processedCallbackRef.current = onFileProcessed;
+  }, [onFileProcessed]);
+
+  useEffect(() => {
+    fileProcessorRef.current = fileProcessor;
+  }, [fileProcessor]);
+
+  useEffect(() => {
+    if (!open) dispatch({ type: "RESET" });
+  }, [open]);
+
+  const processFile = useCallback(
+    async (targetFile: File, override: boolean) => {
+      if (!fileProcessorRef.current) return;
+      dispatch({ type: "START_PROCESSING" });
+      try {
+        const items = await fileProcessorRef.current(targetFile, { override });
+        if (!Array.isArray(items)) {
+          throw new Error(
+            t("_accessibility:errors.invalidImportPayload", {
+              defaultValue: "Invalid import payload",
+            }),
+          );
+        }
+        dispatch({ type: "SET_PREVIEW", items });
+        processedCallbackRef.current?.(items);
+      } catch (err) {
+        console.error(err);
+        const message =
+          err instanceof Error
+            ? err.message
+            : t("_accessibility:errors.failedToParseFile", {
+                defaultValue: "Failed to parse file",
+              });
+        dispatch({ type: "SET_ERROR", message });
+      }
+    },
+    [t],
+  );
+
+  return (
+    <Dialog
+      {...rest}
+      open={open}
+      handleClose={handleClose}
+      onSubmit={() => {
+        const canSubmit =
+          !fileProcessor || (!!previewItems && previewItems.length > 0);
+        if (canSubmit) handleSubmit();
+      }}
+    >
+      <FileInput
+        key={inputKey}
+        onClear={() => {
+          dispatch({ type: "SET_FILE", file: null });
+          processedCallbackRef.current?.([]);
+        }}
+        onChange={(e) => {
+          const selectedFile = e.target.files?.[0];
+          if (!selectedFile) {
+            dispatch({ type: "SET_FILE", file: null });
+            processedCallbackRef.current?.([]);
+            return;
+          }
+          dispatch({ type: "SET_FILE", file: selectedFile });
+          processFile(selectedFile, overrideExisting);
+        }}
+        label={t("_accessibility:labels.file")}
+      />
+      <label className="import-override-label">
+        <input
+          type="checkbox"
+          checked={overrideExisting}
+          onChange={(e) => {
+            const value = e.target.checked;
+            dispatch({ type: "SET_OVERRIDE", value });
+            onOverrideChange?.(value);
+            if (file) processFile(file, value);
+          }}
+        />
+        <span>
+          {t("_pages:common.actions.import.override", {
+            defaultValue: "Override existing items",
+          })}
+        </span>
+      </label>
+      {parseError && <ErrorComponent message={parseError} />}
+      {processing && <Loading />}
+      {renderCustomPreview
+        ? renderCustomPreview(previewItems)
+        : !!previewItems &&
+          previewItems.length > 0 && <Preview items={previewItems} />}
+      {extraFields}
+      {children}
+      <DialogActions
+        primaryText={t("_accessibility:buttons.ok")}
+        cancelText={t("_accessibility:buttons.cancel")}
+        onCancel={handleClose}
+        isLoading={isLoading}
+        primaryType="submit"
+        containerClassName="import-dialog-actions"
+        primaryName={t("_accessibility:buttons.ok")}
+        primaryAriaLabel={t("_accessibility:ariaLabels.ok")}
+        cancelName={t("_accessibility:buttons.cancel")}
+        cancelAriaLabel={t("_accessibility:ariaLabels.cancel")}
+        extraActions={extraActions}
+      />
+    </Dialog>
+  );
+};

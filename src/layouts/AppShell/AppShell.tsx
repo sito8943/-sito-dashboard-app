@@ -1,6 +1,6 @@
 import { classNames } from "@sito/dashboard";
 
-import { Notification } from "components/app/Notification";
+import { Notification } from "@/components/organisms/Notification";
 
 import { AppShellPropsType } from "./types";
 

@@ -1,0 +1,35 @@
+import { ReactNode } from "react";
+import { act, renderHook } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+import { NotificationProvider } from "@/providers/NotificationProvider";
+import { useNotification } from "@/providers/useNotification";
+
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <NotificationProvider>{children}</NotificationProvider>
+);
+
+describe("NotificationProvider", () => {
+  it("throws when useNotification is called outside provider", () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    expect(() => renderHook(() => useNotification())).toThrow(
+      "useNotification must be used within NotificationProvider",
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("provides notification actions when wrapped with provider", () => {
+    const { result } = renderHook(() => useNotification(), { wrapper });
+
+    act(() => {
+      result.current.showSuccessNotification({ message: "Done" });
+    });
+
+    expect(result.current.notification).toHaveLength(1);
+    expect(result.current.notification[0]?.message).toBe("Done");
+  });
+});

@@ -1,4 +1,4 @@
-import { DeleteDto } from "lib";
+import { DeleteDto } from "@/lib";
 
 export interface BaseEntityDto extends DeleteDto {
   deletedAt?: Date | null;

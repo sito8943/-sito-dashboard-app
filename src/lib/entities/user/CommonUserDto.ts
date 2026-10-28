@@ -1,3 +1,3 @@
-import { BaseCommonEntityDto } from "lib";
+import { BaseCommonEntityDto } from "@/lib";
 
 export type CommonUserDto = BaseCommonEntityDto;

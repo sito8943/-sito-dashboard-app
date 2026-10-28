@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
-import { ConfigContext } from "../ConfigContext";
-import type { ConfigProviderPropTypes } from "../types";
+import { ConfigContext } from "@/providers/ConfigContext";
+import type { ConfigProviderPropTypes } from "@/providers/types";
 import {
   registerMotionPreference,
   unregisterMotionPreference,

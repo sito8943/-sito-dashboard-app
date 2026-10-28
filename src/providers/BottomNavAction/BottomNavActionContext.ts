@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { BottomNavigationCenterActionType } from "components/app/BottomNavigation/types";
+import type { BottomNavigationCenterActionType } from "@/components/organisms/BottomNavigation/types";
 
 export type BottomNavActionContextType = {
   centerAction: BottomNavigationCenterActionType | null;

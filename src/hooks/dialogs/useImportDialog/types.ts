@@ -4,16 +4,16 @@ import { MutationFunction, QueryKey } from "@tanstack/react-query";
 import { ActionType } from "@sito/dashboard";
 
 // lib
-import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "lib";
+import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "@/lib";
 
 // components
-import { ImportDialogPropsType } from "components";
+import { ImportDialogPropsType } from "@/components";
 
 // hooks
-import { UseBaseFormProps } from "../../forms";
+import { UseBaseFormProps } from "@/hooks/forms";
 
 // shared
-import { ExtraFieldsContext, RenderExtraFields } from "../shared";
+import { ExtraFieldsContext, RenderExtraFields } from "@/hooks/dialogs/shared";
 
 /** @deprecated Use `ExtraFieldsContext` from `hooks/dialogs/shared`. */
 export type ImportDialogExtraFieldsContext<

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import type {
   AuthScreenBackButtonPropsType,
   AuthScreenMotionType,
-} from "components";
+} from "@/components";
 
 export type AuthSignUpConfirmationViewPropsType =
   AuthScreenBackButtonPropsType & {

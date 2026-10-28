@@ -30,9 +30,10 @@ Use this project structure as the default organization:
 ```txt
 src/
   providers/      # App/domain providers and context wiring
-  components/     # Reusable global components, split by tier (see below)
-    ui/          # Generic primitives — no provider/domain coupling
-    app/         # High-level shell pieces coupled to providers/routing/domain
+  components/     # Reusable global components, grouped by atomic design level
+    atoms/       # Standalone primitives
+    molecules/   # Small compositions of atoms
+    organisms/   # Large or provider/routing/domain-coupled pieces
   views/          # Route/page-level screens
   layouts/        # Shared layout shells used by views
   hooks/          # Reusable custom hooks
@@ -40,15 +41,28 @@ src/
     models/
     utils/
   styles/         # Global styles (including global.css/theme definitions)
+tests/            # Vitest suites mirroring src/ (components/<level>/, hooks/, lib/, …) + setup.ts
+stories/          # Storybook stories: atoms/ molecules/ organisms/ hooks/ providers/ layouts/ views/ foundations/
 ```
 
 Notes:
 
 - `components/` is for shared/global UI blocks, not route-specific page composition.
-- `components/ui/` holds generic primitives (`Buttons`, `Dialog`, `Form`, `Loading`, `Empty`, `Error`, `PrettyGrid`, `TabsLayout`, `TopBanner`, …). They must NOT import from `components/app/` or from any provider/domain module.
-- `components/app/` holds high-level pieces coupled to providers, routing, or domain (`Navbar`, `Drawer`, `Notification`, `BottomNavigation`, `Page`, `Onboarding`, `OfflineBanner`, `PwaUpdateDialog`, …). They MAY import from `components/ui/`.
-- Public surface stays unchanged: re-export both tiers from `src/components/index.ts`. Consumers never reach into `ui/`/`app/` directly.
-- Decision rule when adding a new component: if it depends only on props + styles, place it in `ui/`; if it depends on a provider, routing primitive, or domain hook, place it in `app/`.
+- `components/atoms/` holds standalone primitives (`Buttons` — `IconButton`, `ToTop` —, `Clock`, `Loading`).
+- `components/molecules/` holds small compositions of atoms (`Empty`, `Error`, `Form`, `TabsLayout`, `TopBanner`).
+- `components/organisms/` holds large or provider/routing/domain-coupled pieces (`Dialog` with its `ImportDialog`/`ExportDialog` subfolders, `PrettyGrid`, `Auth`, `BottomNavigation`, `Drawer`, `Navbar`, `Notification`, `OfflineBanner`, `Onboarding`, `Page`, `PwaUpdateDialog`).
+- Imports point down or sideways only: organisms may import molecules and atoms, molecules may import atoms, atoms never import molecules or organisms.
+- Public surface stays unchanged: re-export every level from `src/components/index.ts`. Consumers never reach into `atoms/`/`molecules/`/`organisms/` directly.
+- Decision rule when adding a new component: place it in the lowest level that fits what it composes; anything that needs a provider, routing primitive, or domain hook is usually an organism.
+- Same layout as `@sito/ui` and `@sito/dashboard`. Where a component name exists upstream, keep the same level.
+
+### Imports, tests and stories
+
+- Imports that leave the current folder use the `@/` alias for `src/` with a specific path (`@/lib`, `@/components/atoms/Buttons`, `@/providers`); same-folder imports stay `./`.
+- The alias is configured in `tsconfig.json` (and `tsconfig.node.json`), `vite.config.ts` (also used by Vitest) and `.storybook/main.ts`. `vite-plugin-dts` rewrites it, so the emitted `.d.ts` files contain relative paths — `dist` must never contain `@/` imports.
+- CSS `@import` / `@reference` paths stay relative.
+- Tests live in `tests/`, mirroring `src/` (`tests/components/<level>/<Name>/`, `tests/hooks/`, `tests/lib/`, …); the Vitest setup file is `tests/setup.ts`.
+- Stories live in `stories/<level>/` (`atoms`, `molecules`, `organisms`) plus `stories/hooks`, `stories/providers`, `stories/layouts`, `stories/views` and `stories/foundations`. Component story titles start with `Atoms/…`, `Molecules/…` or `Organisms/…`.
 - `views/` should focus on screen composition and orchestration.
 - `layouts/` should hold reusable structures shared between multiple views.
 

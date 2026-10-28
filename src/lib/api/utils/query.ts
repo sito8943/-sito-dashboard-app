@@ -1,8 +1,8 @@
 // types
-import { QueryParam } from "../types";
+import { QueryParam } from "@/lib/api/types";
 
 // entities
-import { BaseFilterDto } from "../../entities";
+import { BaseFilterDto } from "@/lib/entities";
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null;

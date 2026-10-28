@@ -6,11 +6,11 @@ import { AuthContext } from "./authContext";
 import { useAuthSessionState } from "./useAuthSessionState";
 
 // hooks
-import { useManager } from "../useManager";
+import { useManager } from "@/providers/useManager";
 
 // lib
-import { fromLocal } from "lib";
-import { isDefinitiveAuthSessionError } from "../../lib/api/authSessionError";
+import { fromLocal } from "@/lib";
+import { isDefinitiveAuthSessionError } from "@/lib/api/authSessionError";
 
 /**
  * Auth Provider

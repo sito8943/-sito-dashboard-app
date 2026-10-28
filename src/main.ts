@@ -26,5 +26,5 @@ export * from "./i18n";
 export * from "@sito/dashboard";
 
 // override: expose our IconButton (FontAwesome-based) instead of @sito/dashboard's
-export { AppIconButton as IconButton } from "./components/ui/Buttons/IconButton";
-export type { IconButtonPropsLocalType as IconButtonPropsType } from "./components/ui/Buttons/IconButton";
+export { AppIconButton as IconButton } from "./components/atoms/Buttons/IconButton";
+export type { IconButtonPropsLocalType as IconButtonPropsType } from "./components/atoms/Buttons/IconButton";

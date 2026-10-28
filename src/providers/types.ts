@@ -9,10 +9,10 @@ import {
   NotificationType,
   Location,
   SubMenuItemType,
-} from "lib";
+} from "@/lib";
 
 // components
-import { BaseLinkPropsType, BaseSearchModalPropsType } from "components";
+import { BaseLinkPropsType, BaseSearchModalPropsType } from "@/components";
 
 export type BasicProviderPropTypes = {
   children: ReactNode;

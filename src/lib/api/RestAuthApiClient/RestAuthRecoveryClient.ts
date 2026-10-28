@@ -4,11 +4,11 @@ import type {
   ForgotPasswordDto,
   ResendConfirmEmailDto,
   ResetPasswordDto,
-} from "../../entities";
-import { APIClient } from "../APIClient";
-import type { APIClientAuthConfig } from "../types";
-import type { IAuthApiClient } from "../IAuthApiClient";
-import { Methods } from "../utils/services";
+} from "@/lib/entities";
+import { APIClient } from "@/lib/api/APIClient";
+import type { APIClientAuthConfig } from "@/lib/api/types";
+import type { IAuthApiClient } from "@/lib/api/IAuthApiClient";
+import { Methods } from "@/lib/api/utils/services";
 import type {
   ResolvedRestAuthRecoveryClientEndpoints,
   RestAuthRecoveryClientOptions,

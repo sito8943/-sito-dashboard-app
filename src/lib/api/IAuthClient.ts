@@ -1,4 +1,9 @@
-import type { AuthDto, RefreshDto, RegisterDto, SessionDto } from "../entities";
+import type {
+  AuthDto,
+  RefreshDto,
+  RegisterDto,
+  SessionDto,
+} from "@/lib/entities";
 
 /**
  * Session-focused auth contract shared by {@link RestSessionAuthClient}

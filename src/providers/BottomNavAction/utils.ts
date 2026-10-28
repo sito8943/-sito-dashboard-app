@@ -1,5 +1,5 @@
 // types
-import { BottomNavigationCenterActionType } from "../../components";
+import { BottomNavigationCenterActionType } from "@/components";
 import type { BottomNavActionRegistrationType } from "./types";
 
 const toComparableString = (value: unknown): string => {

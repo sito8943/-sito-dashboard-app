@@ -3,7 +3,7 @@ import { faWarning } from "@fortawesome/free-solid-svg-icons";
 
 import { classNames } from "@sito/dashboard";
 
-import { useConfig } from "providers";
+import { useConfig } from "@/providers";
 
 import { FeatureUnavailableViewPropsType } from "./types";
 

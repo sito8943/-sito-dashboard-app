@@ -1,4 +1,4 @@
-import { APIClient } from "../APIClient";
+import { APIClient } from "@/lib/api/APIClient";
 
 import {
   AuthDto,
@@ -6,10 +6,10 @@ import {
   RegisterDto,
   SessionDto,
   SignOutDto,
-} from "../../entities";
-import type { APIClientAuthConfig } from "../types";
-import type { IAuthClient } from "../IAuthClient";
-import { Methods } from "../utils/services";
+} from "@/lib/entities";
+import type { APIClientAuthConfig } from "@/lib/api/types";
+import type { IAuthClient } from "@/lib/api/IAuthClient";
+import { Methods } from "@/lib/api/utils/services";
 import { AUTH_CLIENT_ENDPOINTS } from "./constants";
 import type { RestSessionAuthClientLogoutOptions } from "./types";
 

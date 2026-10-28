@@ -5,10 +5,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "@sito/dashboard";
 
 // lib
-import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "lib";
+import { BaseEntityDto, HttpError, ImportDto, ImportPreviewDto } from "@/lib";
 
 // hooks
-import { useImportAction } from "hooks";
+import { useImportAction } from "@/hooks";
 
 // types
 import { UseImportDialogPropsType, UseImportDialogReturnType } from "./types";

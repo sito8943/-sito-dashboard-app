@@ -9,10 +9,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { GlobalActions, UseSingleActionPropTypes } from "hooks";
+import { GlobalActions, UseSingleActionPropTypes } from "@/hooks";
 
 // lib
-import { BaseEntityDto } from "lib";
+import { BaseEntityDto } from "@/lib";
 
 /**
  * Creates an edit action descriptor for row-level editing flows.

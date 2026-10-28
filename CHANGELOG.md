@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0]
+
+### Changed
+
+- **Breaking (peers):** `@sito/ui` peer raised from `^0.9.1` to `^0.10.0` and
+  `@sito/dashboard` from `^0.3.7` to `^0.4.1` (the first `@sito/dashboard` release that
+  accepts `@sito/ui@0.10.x`). `@sito/ui` 0.10.0 renders `IconButton` icons through its new
+  `Icon` atom (blur swap between glyphs) and adds the `sito-ui-pressable` utility; public
+  exports and class names are unchanged. Update both packages together (see the peer
+  install command in `README.md`).
+- Reorganized the source tree to match `@sito/ui` and `@sito/dashboard`: components are
+  grouped into `src/components/atoms`, `molecules` and `organisms` instead of the former
+  `ui` / `app` tiers; tests moved to `tests/` (mirroring `src/`, setup in `tests/setup.ts`)
+  and stories to `stories/`, both mirroring the levels, with story titles `Atoms/…`,
+  `Molecules/…` and `Organisms/…`; the bare `components` / `providers` / `lib` / `hooks` /
+  `layouts` / `views` import aliases were replaced by a single `@/` alias for `src/`. No
+  change to the public API: export names, props and package subpath exports (`.`,
+  `./theme.css`, `./i18n`) are the same, with the same emitted JS and CSS filenames. Only the
+  internal `.d.ts` locations behind the `types` conditions moved (e.g.
+  `dist/components/organisms/Dialog/index.d.ts` instead of
+  `dist/components/ui/Dialog/index.d.ts`).
+
+### Fixed
+
+- `Dialog` sticky header and actions now share the dialog body background
+  (`--color-base`). `@sito/ui`'s `.sito-ui-dialog__header` / `.sito-ui-dialog-actions`
+  rules had the same specificity and, when loaded later, painted them with
+  `--color-base-light` — very visible in dark themes (#103).
+- `theme.css`: keyboard-highlighted `SelectInput` / `AutocompleteInput` options use
+  `var(--color-base-dark)` instead of a hardcoded `slate-200`, which made option
+  text unreadable in dark themes (#104).
+
 ## [0.2.7]
 
 ### Changed

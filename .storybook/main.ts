@@ -18,7 +18,7 @@ const getPluginName = (plugin: unknown): string => {
 };
 
 const config: StorybookConfig = {
-  stories: ["../src/**/*.stories.@(js|jsx|ts|tsx)", "../src/**/*.mdx"],
+  stories: ["../stories/**/*.stories.@(js|jsx|ts|tsx)", "../stories/**/*.mdx"],
   addons: ["@storybook/addon-docs", "@storybook/addon-a11y"],
   framework: {
     name: "@storybook/react-vite",
@@ -30,12 +30,7 @@ const config: StorybookConfig = {
   viteFinal: (viteConfig) => {
     viteConfig.resolve = viteConfig.resolve || {};
     viteConfig.resolve.alias = mergeAlias(viteConfig.resolve.alias, {
-      components: resolve(__dirname, "../src/components"),
-      providers: resolve(__dirname, "../src/providers"),
-      lib: resolve(__dirname, "../src/lib"),
-      hooks: resolve(__dirname, "../src/hooks"),
-      layouts: resolve(__dirname, "../src/layouts"),
-      views: resolve(__dirname, "../src/views"),
+      "@": resolve(__dirname, "../src"),
     });
 
     if (Array.isArray(viteConfig.plugins)) {

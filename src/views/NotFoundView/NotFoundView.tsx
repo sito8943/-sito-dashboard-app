@@ -1,6 +1,6 @@
 import { classNames, useTranslation } from "@sito/dashboard";
 
-import { useConfig } from "providers";
+import { useConfig } from "@/providers";
 
 import { NotFoundViewPropsType } from "./types";
 import {

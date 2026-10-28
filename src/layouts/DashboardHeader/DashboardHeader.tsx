@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { Drawer } from "components/app/Drawer";
-import { Navbar } from "components/app/Navbar";
-import { OfflineBanner } from "components/app/OfflineBanner";
+import { Drawer } from "@/components/organisms/Drawer";
+import { Navbar } from "@/components/organisms/Navbar";
+import { OfflineBanner } from "@/components/organisms/OfflineBanner";
 
 import { DashboardHeaderPropsType } from "./types";
 

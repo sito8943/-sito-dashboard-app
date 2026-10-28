@@ -1,6 +1,6 @@
 import type { Session } from "@supabase/supabase-js";
 
-import type { SessionDto } from "lib";
+import type { SessionDto } from "@/lib";
 
 export type SupabaseSessionMapper = (session: Session) => SessionDto;
 

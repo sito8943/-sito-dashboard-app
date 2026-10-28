@@ -3,13 +3,13 @@ import { useTranslation } from "@sito/dashboard";
 import { useMutation } from "@tanstack/react-query";
 
 // providers
-import { useNotification } from "providers";
+import { useNotification } from "@/providers";
 
 // types
 import { UseExportActionMutatePropsType } from "./types";
 
 // actions
-import { useExportAction } from "../actions";
+import { useExportAction } from "@/hooks/actions";
 
 /**
  * Runs export mutation and returns a prefab export action descriptor.

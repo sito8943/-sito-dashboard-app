@@ -2,7 +2,7 @@ import { useTranslation } from "@sito/dashboard";
 import { useQueryClient } from "@tanstack/react-query";
 
 // providers
-import { useNotification } from "providers";
+import { useNotification } from "@/providers";
 
 // lib
 import {
@@ -10,13 +10,13 @@ import {
   ValidationError,
   isValidationError,
   isHttpError,
-} from "lib";
+} from "@/lib";
 
 // hooks
-import { useDeleteAction, useConfirmationForm } from "hooks";
+import { useDeleteAction, useConfirmationForm } from "@/hooks";
 
 // types
-import { UseDeleteDialogPropsType } from "hooks";
+import { UseDeleteDialogPropsType } from "@/hooks";
 
 /**
  * Builds delete dialog state, submit handler and matching delete action.

@@ -18,20 +18,9 @@
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "components": ["./src/components/index"],
-      "components/*": ["./src/components/*"],
-      "providers": ["./src/providers/index"],
-      "providers/*": ["./src/providers/*"],
-      "lib": ["./src/lib/index"],
-      "lib/*": ["./src/lib/*"],
-      "hooks": ["./src/hooks/index"],
-      "hooks/*": ["./src/hooks/*"],
-      "layouts": ["./src/layouts/index"],
-      "layouts/*": ["./src/layouts/*"],
-      "views": ["./src/views/index"],
-      "views/*": ["./src/views/*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "tests", "stories"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

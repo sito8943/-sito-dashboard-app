@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Loading } from "@sito/dashboard";
 
-import { AuthFormShell, type AuthFormFieldDefinitionType } from "components";
-import { useConfig } from "providers";
+import { AuthFormShell, type AuthFormFieldDefinitionType } from "@/components";
+import { useConfig } from "@/providers";
 
 import type { AuthSignInViewFormType, AuthSignInViewPropsType } from "./types";
 

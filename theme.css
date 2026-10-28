@@ -75,7 +75,7 @@
 }
 .select-input-option-item.highlighted,
 .autocomplete-suggestion-item.highlighted {
-  background-color: var(--color-slate-200, #e2e8f0);
+  background-color: var(--color-base-dark);
 }
 
 /* CHIP — needs @sito/dashboard >= 0.3.4, which adds the `chip-<variant>` class.

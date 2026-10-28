@@ -5,7 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import type { SupabaseManagerProviderPropTypes } from "./types";
 
 import { SupabaseManagerContext } from "./SupabaseContext";
-import { createQueryClient } from "../ManagerProvider";
+import { createQueryClient } from "@/providers/ManagerProvider";
 
 const SupabaseManagerProvider = (props: SupabaseManagerProviderPropTypes) => {
   const { children, supabase, queryClient: providedQueryClient } = props;

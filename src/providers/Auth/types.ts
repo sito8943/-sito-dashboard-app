@@ -1,5 +1,5 @@
-import { SessionAccountDto, SessionDto } from "lib";
-import { BasicProviderPropTypes } from "providers";
+import { SessionAccountDto, SessionDto } from "@/lib";
+import { BasicProviderPropTypes } from "@/providers";
 
 export interface AuthProviderPropTypes extends BasicProviderPropTypes {
   guestMode?: string;
