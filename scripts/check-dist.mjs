@@ -1,5 +1,6 @@
 // Verifies the built package: every path in package.json entry fields exists,
-// and CommonJS output parses as CommonJS (no ESM `import` statements).
+// CommonJS output parses as CommonJS (no ESM `import` statements), and relative
+// specifiers in .d.ts files carry a `.js` extension (node16/nodenext resolution).
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
@@ -40,6 +41,20 @@ for (const file of readdirSync(resolve(root, "dist"))) {
       lines.find((line) => line.startsWith("SyntaxError")) ??
       lines.find(Boolean);
     errors.push(`[cjs] dist/${file} is not valid CommonJS: ${message}`);
+  }
+}
+
+const relativeSpecifier =
+  /(?:\bfrom\s*|\bimport\s*\(\s*)(["'])(\.{1,2}\/[^"']+?)\1/g;
+
+for (const entry of readdirSync(resolve(root, "dist"), { recursive: true })) {
+  const file = String(entry);
+  if (!file.endsWith(".d.ts")) continue;
+  const content = readFileSync(resolve(root, "dist", file), "utf8");
+  for (const [, , specifier] of content.matchAll(relativeSpecifier)) {
+    if (!/\.(c|m)?js$/.test(specifier)) {
+      errors.push(`[dts] dist/${file}: '${specifier}' needs a .js extension`);
+    }
   }
 }
 

@@ -43,8 +43,8 @@ Peer dependencies:
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.4.1 \
-  @sito/ui@^0.10.0 \
+  @sito/dashboard@^0.4.2 \
+  @sito/ui@^0.10.1 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -68,8 +68,8 @@ npm install @supabase/supabase-js@2.100.0
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.4.1`
-- `@sito/ui` `^0.10.0`
+- `@sito/dashboard` `^0.4.2`
+- `@sito/ui` `^0.10.1`
 - Font Awesome peers per `package.json`
 
 ## Quick start
@@ -122,7 +122,7 @@ pnpm run dev
 - `pnpm run lint` — Oxlint type-aware check (no writes)
 - `pnpm run lint:fix` — Oxlint autofix
 - `pnpm run docs:check` — docs policy markers, relative links, version alignment
-- `pnpm run dist:check` — built entry paths exist, `.cjs` output is valid CommonJS (run after build)
+- `pnpm run dist:check` — built entry paths exist, `.cjs` output is valid CommonJS, `.d.ts` relative imports have `.js` extensions (run after build)
 - `pnpm run deps:check` — Knip dependency analysis
 - `pnpm run test` — Vitest single run
 - `pnpm run test:watch` — Vitest watch mode

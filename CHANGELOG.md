@@ -6,9 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Breaking (peers):** `@sito/ui` peer raised from `^0.9.1` to `^0.10.0` and
-  `@sito/dashboard` from `^0.3.7` to `^0.4.1` (the first `@sito/dashboard` release that
-  accepts `@sito/ui@0.10.x`). `@sito/ui` 0.10.0 renders `IconButton` icons through its new
+- **Breaking (peers):** `@sito/ui` peer raised from `^0.9.1` to `^0.10.1` and
+  `@sito/dashboard` from `^0.3.7` to `^0.4.2` (accepts `@sito/ui@0.10.x`, valid CommonJS
+  and `.d.ts` files with explicit extensions). `@sito/ui` 0.10.0 renders `IconButton` icons through its new
   `Icon` atom (blur swap between glyphs) and adds the `sito-ui-pressable` utility; public
   exports and class names are unchanged. Update both packages together (see the peer
   install command in `README.md`).
@@ -39,6 +39,12 @@ All notable changes to this project will be documented in this file.
   error in CommonJS. CommonJS output now uses `require("./dashboard-app.css")`.
   A new `pnpm run dist:check` (part of `pnpm run full`) fails the build if a
   `package.json` entry path is missing or a `.cjs` file is not valid CommonJS.
+- Type declarations: relative specifiers in the emitted `.d.ts` files now carry explicit
+  `.js` extensions (`export * from './components/index.js'`), so consumers with
+  `moduleResolution: "node16"` / `"nodenext"` see the exports instead of
+  `TS2305: Module '"@sito/dashboard-app"' has no exported member ...`. `"bundler"`
+  resolution is unaffected. `dist:check` now also fails on extensionless relative
+  specifiers in `dist/**/*.d.ts`.
 
 ## [0.2.7]
 
