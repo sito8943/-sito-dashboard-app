@@ -81,7 +81,7 @@
     }
   },
   "devDependencies": {
-    "@sito/dashboard": "^0.4.0",
+    "@sito/dashboard": "^0.4.1",
     "@sito/ui": "0.10.0",
     "@fortawesome/fontawesome-svg-core": "7.0.0",
     "@fortawesome/free-regular-svg-icons": "7.0.0",
