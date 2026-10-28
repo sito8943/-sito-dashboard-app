@@ -1,7 +1,7 @@
 import { useReducer, useRef, useMemo, useCallback } from "react";
 
 // lib
-import { NotificationEnumType, NotificationType } from "lib";
+import { NotificationEnumType, NotificationType } from "@/lib";
 
 // types
 import { BasicProviderPropTypes } from "./types";

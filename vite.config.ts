@@ -30,12 +30,7 @@ export default defineConfig(() => {
     resolve: {
       dedupe: ["react", "react-dom"],
       alias: {
-        components: resolve(srcPath, "components"),
-        providers: resolve(srcPath, "providers"),
-        lib: resolve(srcPath, "lib"),
-        hooks: resolve(srcPath, "hooks"),
-        layouts: resolve(srcPath, "layouts"),
-        views: resolve(srcPath, "views"),
+        "@": srcPath,
       },
     },
     plugins: [
@@ -45,23 +40,15 @@ export default defineConfig(() => {
             dts({
               insertTypesEntry: true,
               skipDiagnostics: true,
+              entryRoot: "src",
               exclude: [
-                "src/**/*.stories.ts",
-                "src/**/*.test.ts",
-                "src/**/*.test.tsx",
-                "src/**/*.stories.tsx",
-                "src/test/**",
+                "tests/**",
+                "stories/**",
+                "**/*.test.ts",
+                "**/*.test.tsx",
+                "**/*.stories.ts",
+                "**/*.stories.tsx",
               ],
-              beforeWriteFile: (filePath, content) => {
-                const normalizedPath = filePath.replaceAll("\\", "/");
-                if (
-                  normalizedPath.endsWith(".test.d.ts") ||
-                  normalizedPath.endsWith(".stories.d.ts") ||
-                  normalizedPath.includes("/test/")
-                )
-                  return false;
-                return { filePath, content };
-              },
             }),
             libInjectCss(),
             tailwindcss(),
@@ -90,8 +77,8 @@ export default defineConfig(() => {
     test: {
       globals: true,
       environment: "jsdom",
-      setupFiles: "./src/test/setup.ts",
-      include: ["src/**/*.test.{ts,tsx}"],
+      setupFiles: "./tests/setup.ts",
+      include: ["tests/**/*.test.{ts,tsx}"],
       exclude: ["node_modules", "dist"],
       minWorkers: 1,
       maxWorkers: 2,

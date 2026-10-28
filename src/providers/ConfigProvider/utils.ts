@@ -1,4 +1,4 @@
-import type { MotionPreference } from "../types";
+import type { MotionPreference } from "@/providers/types";
 import { MOTION_ATTRIBUTE } from "./constants";
 
 type MotionEntry = {

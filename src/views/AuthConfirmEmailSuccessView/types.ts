@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import type { IAuthApiClient } from "lib";
+import type { IAuthApiClient } from "@/lib";
 import type {
   AuthScreenBackButtonPropsType,
   AuthScreenMotionType,
-} from "components";
+} from "@/components";
 
 export type AuthConfirmEmailSuccessViewPropsType =
   AuthScreenBackButtonPropsType & {

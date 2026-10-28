@@ -4,16 +4,16 @@ import { MutationFunction } from "@tanstack/react-query";
 import { ActionType } from "@sito/dashboard";
 
 // lib
-import { BaseEntityDto, HttpError } from "lib";
+import { BaseEntityDto, HttpError } from "@/lib";
 
 // components
-import { ExportDialogPropsType } from "components";
+import { ExportDialogPropsType } from "@/components";
 
 // hooks
-import { UseBaseFormProps } from "../../forms";
+import { UseBaseFormProps } from "@/hooks/forms";
 
 // shared
-import { RenderExtraFields } from "../shared";
+import { RenderExtraFields } from "@/hooks/dialogs/shared";
 
 export interface UseExportDialogPropsType<
   TExtra extends Record<string, unknown> = Record<string, never>,

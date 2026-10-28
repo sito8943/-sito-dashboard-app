@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 
-import { AuthResultView } from "components";
-import { useConfirmEmailFlow } from "hooks";
-import { useConfig } from "providers";
+import { AuthResultView } from "@/components";
+import { useConfirmEmailFlow } from "@/hooks";
+import { useConfig } from "@/providers";
 
 import type { AuthConfirmEmailSuccessViewPropsType } from "./types";
 

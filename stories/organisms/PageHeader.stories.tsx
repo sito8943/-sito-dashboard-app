@@ -1,0 +1,41 @@
+import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
+import { PageHeader } from "@/components/organisms/Page/PageHeader";
+import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+const meta = {
+  title: "Organisms/Page/PageHeader",
+  component: PageHeader,
+  tags: ["autodocs"],
+  args: {
+    title: "Users",
+    showBackButton: true,
+    showActionTooltips: true,
+    actions: [
+      {
+        id: "create",
+        tooltip: "Create",
+        icon: <FontAwesomeIcon icon={faPlus} />,
+        onClick: () => alert("Create clicked"),
+      },
+      {
+        id: "delete",
+        tooltip: "Delete",
+        icon: <FontAwesomeIcon icon={faTrash} />,
+        onClick: () => alert("Delete clicked"),
+      },
+    ],
+  },
+} satisfies Meta<typeof PageHeader>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Basic: Story = {};
+
+export const WithoutActionTooltips: Story = {
+  args: {
+    showActionTooltips: false,
+  },
+};

@@ -5,10 +5,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "@sito/dashboard";
 
 // lib
-import { BaseEntityDto, HttpError } from "lib";
+import { BaseEntityDto, HttpError } from "@/lib";
 
 // hooks
-import { useExportAction } from "hooks";
+import { useExportAction } from "@/hooks";
 
 // types
 import { UseExportDialogPropsType, UseExportDialogReturnType } from "./types";

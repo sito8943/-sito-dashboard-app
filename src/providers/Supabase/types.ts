@@ -2,11 +2,11 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
 
 // lib
-import { SupabaseSessionMapper } from "lib";
+import { SupabaseSessionMapper } from "@/lib";
 
 // providers
-import { BasicProviderPropTypes } from "providers";
-import { AuthProviderPropTypes } from "providers/Auth";
+import { BasicProviderPropTypes } from "@/providers";
+import { AuthProviderPropTypes } from "@/providers/Auth";
 
 export interface SupabaseManagerProviderPropTypes extends BasicProviderPropTypes {
   supabase: SupabaseClient;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { resolveResetPasswordDtoFromLocation } from "lib";
+import { resolveResetPasswordDtoFromLocation } from "@/lib";
 
 import type {
   AuthFlowStatus,

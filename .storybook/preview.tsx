@@ -10,11 +10,11 @@ import {
   NotificationProvider,
   ManagerProvider,
   AuthProvider,
-} from "providers";
+} from "@/providers";
 import { TranslationProvider } from "@sito/dashboard";
-import { IManager } from "lib";
-import type { Location } from "lib";
-import type { BaseLinkPropsType } from "components";
+import { IManager } from "@/lib";
+import type { Location } from "@/lib";
+import type { BaseLinkPropsType } from "@/components";
 
 const MockLink = (props: BaseLinkPropsType) => {
   const { to, children, ...rest } = props;

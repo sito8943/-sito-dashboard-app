@@ -6,10 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { GlobalActions, UseMultipleActionPropTypes } from "hooks";
+import { GlobalActions, UseMultipleActionPropTypes } from "@/hooks";
 
 // lib
-import { BaseEntityDto } from "lib";
+import { BaseEntityDto } from "@/lib";
 
 /**
  * Creates a restore action descriptor for soft-deleted records.

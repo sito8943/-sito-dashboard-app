@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from "react";
-import type { BottomNavigationCenterActionType } from "components/app/BottomNavigation/types";
+import type { BottomNavigationCenterActionType } from "@/components/organisms/BottomNavigation/types";
 
 // types
-import type { BasicProviderPropTypes } from "../types";
+import type { BasicProviderPropTypes } from "@/providers/types";
 
 // context
 import {

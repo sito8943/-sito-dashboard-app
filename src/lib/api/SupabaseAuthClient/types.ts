@@ -1,8 +1,8 @@
-import type { RegisterDto, SessionDto } from "../../entities";
+import type { RegisterDto, SessionDto } from "@/lib/entities";
 import type {
   SupabaseSessionMapper,
   SupabaseSessionMapperOptions,
-} from "../supabaseAuth";
+} from "@/lib/api/supabaseAuth";
 
 export type SupabaseRegisterExtra = {
   name?: string;

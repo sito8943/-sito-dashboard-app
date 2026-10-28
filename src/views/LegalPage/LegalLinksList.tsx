@@ -1,6 +1,6 @@
 import { classNames } from "@sito/dashboard";
 
-import { useConfig } from "providers";
+import { useConfig } from "@/providers";
 
 import type { LegalLinksListPropsType } from "./types";
 

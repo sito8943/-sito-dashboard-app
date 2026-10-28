@@ -1,6 +1,6 @@
 import type { Session } from "@supabase/supabase-js";
 
-import type { SessionDto } from "lib";
+import type { SessionDto } from "@/lib";
 
 import { DEFAULT_SUPABASE_SESSION_MAPPER_OPTIONS } from "./constants";
 import type { SupabaseSessionMapperOptions } from "./types";

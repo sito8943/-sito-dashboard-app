@@ -6,7 +6,7 @@ import {
   toLocal,
   SessionAccountDto,
   SessionDto,
-} from "lib";
+} from "@/lib";
 
 export interface AuthSessionStateKeys {
   guestMode?: string;

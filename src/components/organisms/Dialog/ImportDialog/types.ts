@@ -1,0 +1,62 @@
+import { ReactNode } from "react";
+
+// lib
+import { ImportPreviewDto } from "@/lib";
+
+// components
+import { ButtonPropsType, DialogPropsType } from "@/components";
+
+export interface ImportDialogPropsType<
+  EntityDto extends ImportPreviewDto,
+> extends Omit<DialogPropsType, "onSubmit"> {
+  handleSubmit: () => void;
+  isLoading?: boolean;
+  fileProcessor?: (
+    file: File,
+    options?: { override?: boolean },
+  ) => Promise<EntityDto[]>;
+  onFileProcessed?: (items: EntityDto[]) => void;
+  renderCustomPreview?: (items?: EntityDto[] | null) => ReactNode;
+  onOverrideChange?: (override: boolean) => void;
+  extraActions?: ButtonPropsType[];
+  extraFields?: ReactNode;
+}
+
+export type ImportDialogLoadingProps = {
+  message?: string;
+  className?: string;
+};
+
+export type ImportState<T> = {
+  file: File | null;
+  previewItems: T[] | null;
+  parseError: string | null;
+  processing: boolean;
+  overrideExisting: boolean;
+  inputKey: number;
+};
+
+export type ImportAction<T> =
+  | { type: "SET_FILE"; file: File | null }
+  | { type: "START_PROCESSING" }
+  | { type: "SET_PREVIEW"; items: T[] }
+  | { type: "SET_ERROR"; message: string }
+  | { type: "SET_OVERRIDE"; value: boolean }
+  | { type: "RESET" };
+
+export type PreviewProps<EntityDto extends ImportPreviewDto> = {
+  items: EntityDto[];
+  max?: number;
+  className?: string;
+};
+
+export type ImportPreviewStatusCounts = {
+  existing: number;
+  willCreate: number;
+  conflict: number;
+};
+
+export type ErrorProps = {
+  message?: string | null;
+  className?: string;
+};

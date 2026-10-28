@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { QueryParam, QueryResult } from "../types";
+import type { QueryParam, QueryResult } from "@/lib/api/types";
 
 import {
   BaseCommonEntityDto,
@@ -9,7 +9,7 @@ import {
   DeleteDto,
   ImportDto,
   ImportPreviewDto,
-} from "lib";
+} from "@/lib";
 
 import type {
   FilterBuilder,

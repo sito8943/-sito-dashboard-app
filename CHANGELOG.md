@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0]
+
+### Changed
+
+- Reorganized the source tree to match `@sito/ui` and `@sito/dashboard`: components are
+  grouped into `src/components/atoms`, `molecules` and `organisms` instead of the former
+  `ui` / `app` tiers; tests moved to `tests/` (mirroring `src/`, setup in `tests/setup.ts`)
+  and stories to `stories/`, both mirroring the levels, with story titles `Atoms/…`,
+  `Molecules/…` and `Organisms/…`; the bare `components` / `providers` / `lib` / `hooks` /
+  `layouts` / `views` import aliases were replaced by a single `@/` alias for `src/`. No
+  change to the public API: export names, props and package subpath exports (`.`,
+  `./theme.css`, `./i18n`) are the same, with the same emitted JS and CSS filenames. Only the
+  internal `.d.ts` locations behind the `types` conditions moved (e.g.
+  `dist/components/organisms/Dialog/index.d.ts` instead of
+  `dist/components/ui/Dialog/index.d.ts`).
+
 ## [0.2.7]
 
 ### Changed

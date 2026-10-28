@@ -5,8 +5,8 @@ import type {
   ForgotPasswordDto,
   ResendConfirmEmailDto,
   ResetPasswordDto,
-} from "../../entities";
-import type { IAuthApiClient } from "../IAuthApiClient";
+} from "@/lib/entities";
+import type { IAuthApiClient } from "@/lib/api/IAuthApiClient";
 import { NO_ACTIVE_SESSION_ERROR } from "./constants";
 import { requireRefreshToken, toOtpPayload, trimOrUndefined } from "./utils";
 

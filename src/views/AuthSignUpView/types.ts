@@ -4,7 +4,7 @@ import type { UseFormSetError } from "react-hook-form";
 import type {
   AuthScreenBackButtonPropsType,
   AuthScreenMotionType,
-} from "components";
+} from "@/components";
 
 export type AuthSignUpViewFormType = {
   name: string;

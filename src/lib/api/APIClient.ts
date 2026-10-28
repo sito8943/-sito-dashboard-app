@@ -18,7 +18,7 @@ import {
   RefreshDto,
   SessionDto,
   toLocal,
-} from "lib";
+} from "@/lib";
 import {
   APIClientAuthConfig,
   APIClientAuthMode,

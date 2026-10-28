@@ -1,4 +1,4 @@
-import type { SoftDeleteScope } from "lib";
+import type { SoftDeleteScope } from "@/lib";
 
 import type { RangeFilterValue } from "./types";
 

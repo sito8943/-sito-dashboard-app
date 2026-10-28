@@ -4,7 +4,7 @@ import type {
   ForgotPasswordDto,
   ResendConfirmEmailDto,
   ResetPasswordDto,
-} from "../entities";
+} from "@/lib/entities";
 
 /**
  * Auth side-channel endpoints (password reset, email confirmation) not covered

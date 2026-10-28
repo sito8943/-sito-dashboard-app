@@ -5,7 +5,7 @@ import { DrawerMenuContextType, DrawerMenuProviderPropTypes } from "./types";
 import { DrawerMenuContext } from "./DrawerMenuContext";
 
 // lib
-import { SubMenuItemType } from "lib";
+import { SubMenuItemType } from "@/lib";
 
 /**
  * Drawer Menu Provider

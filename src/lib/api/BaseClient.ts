@@ -16,7 +16,7 @@ import {
   ImportPreviewDto,
   Methods,
   QueryResult,
-} from "lib";
+} from "@/lib";
 import { parseQueries } from "./utils/query";
 
 /** Generic REST client with CRUD, import/export and common list operations. */

@@ -4,8 +4,8 @@ import type { UseFormSetError } from "react-hook-form";
 import type {
   AuthScreenBackButtonPropsType,
   AuthScreenMotionType,
-} from "components";
-import type { RecoveryFormType } from "lib";
+} from "@/components";
+import type { RecoveryFormType } from "@/lib";
 
 export type AuthRecoveryViewActionType = "submit" | "secondary";
 

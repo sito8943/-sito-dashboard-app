@@ -1,6 +1,6 @@
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { ElementType, ReactNode } from "react";
-import type { SessionAccountDto } from "../entities/auth";
+import type { SessionAccountDto } from "@/lib/entities/auth";
 
 /**
  * The pathname, search, and hash values of a URL.

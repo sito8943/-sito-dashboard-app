@@ -4,7 +4,7 @@ import { useTranslation } from "@sito/dashboard";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // providers
-import { useNotification } from "providers";
+import { useNotification } from "@/providers";
 
 // lib
 import {
@@ -12,11 +12,11 @@ import {
   ValidationError,
   isValidationError,
   isHttpError,
-} from "lib";
+} from "@/lib";
 
 // types
-import { UseFormPropsType } from "hooks";
-import { FormPropsType } from "components";
+import { UseFormPropsType } from "@/hooks";
+import { FormPropsType } from "@/components";
 
 /**
  * Creates a mutation-backed form handler with notification-aware errors.

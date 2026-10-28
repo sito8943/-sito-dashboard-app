@@ -4,7 +4,7 @@ import {
   hasAuthErrorParamsInLocation,
   hasAuthTokenHashOrTypeParamsInLocation,
   resolveConfirmEmailDtoFromLocation,
-} from "lib";
+} from "@/lib";
 
 import type {
   AuthFlowStatus,

@@ -16,13 +16,13 @@ import {
 import { ActionType } from "@sito/dashboard";
 
 // types
-import { BaseEntityDto, ValidationError } from "lib";
-import { UseBaseFormProps, UseConfirmationPropsType } from "../forms";
+import { BaseEntityDto, ValidationError } from "@/lib";
+import { UseBaseFormProps, UseConfirmationPropsType } from "@/hooks/forms";
 import {
   ButtonPropsType,
   ConfirmationDialogPropsType,
   FormDialogPropsType,
-} from "components";
+} from "@/components";
 
 export type FormDialogMode = "entity" | "state";
 

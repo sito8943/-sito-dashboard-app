@@ -1,1 +1,1 @@
-export { createExtraSetter, resolveInitialExtra } from "../shared";
+export { createExtraSetter, resolveInitialExtra } from "@/hooks/dialogs/shared";

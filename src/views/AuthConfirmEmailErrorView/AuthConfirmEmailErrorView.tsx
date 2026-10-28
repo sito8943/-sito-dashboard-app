@@ -1,5 +1,5 @@
-import { AuthResultView } from "components";
-import { useConfig } from "providers";
+import { AuthResultView } from "@/components";
+import { useConfig } from "@/providers";
 
 import type { AuthConfirmEmailErrorViewPropsType } from "./types";
 

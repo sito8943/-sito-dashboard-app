@@ -1,5 +1,5 @@
 import { AuthRouteQueryParam, AuthRouteQueryParamType } from "./types";
-import type { ConfirmEmailDto, ResetPasswordDto } from "../entities/auth";
+import type { ConfirmEmailDto, ResetPasswordDto } from "@/lib/entities/auth";
 
 const recoveryAccessTokenParams = [
   AuthRouteQueryParam.accessToken,

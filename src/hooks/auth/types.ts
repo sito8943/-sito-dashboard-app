@@ -1,4 +1,4 @@
-import type { IAuthApiClient, Location } from "lib";
+import type { IAuthApiClient, Location } from "@/lib";
 
 export type AuthFlowStatus =
   "idle" | "submitting" | "verifying" | "success" | "invalid_token" | "error";

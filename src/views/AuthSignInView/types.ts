@@ -4,8 +4,8 @@ import type { UseFormSetError } from "react-hook-form";
 import type {
   AuthScreenBackButtonPropsType,
   AuthScreenMotionType,
-} from "components";
-import type { AuthDto } from "lib";
+} from "@/components";
+import type { AuthDto } from "@/lib";
 
 export type AuthSignInViewFormType = AuthDto<{
   rememberMe: boolean;

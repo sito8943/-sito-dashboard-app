@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 // hooks
-import { useDialog } from "hooks";
+import { useDialog } from "@/hooks";
 
 // providers
-import { useNotification } from "providers";
+import { useNotification } from "@/providers";
 
-import { UseConfirmationPropsType } from "hooks";
+import { UseConfirmationPropsType } from "@/hooks";
 
 /**
  * Manages confirmation dialog state and mutation execution for bulk actions.

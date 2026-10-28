@@ -1,6 +1,6 @@
 import { Button, Loading } from "@sito/dashboard";
 
-import { AuthResultView } from "components";
+import { AuthResultView } from "@/components";
 
 import type { AuthSignUpConfirmationViewPropsType } from "./types";
 

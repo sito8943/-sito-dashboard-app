@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 // types
-import { GlobalActions, UseExportAction } from "hooks";
+import { GlobalActions, UseExportAction } from "@/hooks";
 
 /**
  * Creates an export action descriptor with loading-state icon handling.

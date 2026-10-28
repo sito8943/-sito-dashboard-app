@@ -1,4 +1,4 @@
-import type { ConfirmEmailDto, ResetPasswordDto } from "../../entities";
+import type { ConfirmEmailDto, ResetPasswordDto } from "@/lib/entities";
 
 import { RESET_PASSWORD_REFRESH_TOKEN_REQUIRED_ERROR } from "./constants";
 
