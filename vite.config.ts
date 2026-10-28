@@ -1,5 +1,5 @@
-import { readFileSync } from "fs";
-import { resolve } from "path";
+import { existsSync, readFileSync } from "fs";
+import { dirname, relative, resolve } from "path";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
@@ -8,6 +8,7 @@ import { libInjectCss } from "vite-plugin-lib-inject-css";
 import dts from "vite-plugin-dts";
 
 const srcPath = resolve(__dirname, "src");
+const distPath = resolve(__dirname, "dist");
 
 // Every dependency and peer stays external (subpaths included), so the bundle
 // never inlines a package that consumers also install.
@@ -39,6 +40,28 @@ const cjsCssRequire = (): Plugin => ({
   },
 });
 
+// node16/nodenext resolution needs explicit extensions in relative specifiers of
+// a "type": "module" package, so resolve each one against the source tree.
+const sourceExists = (path: string) =>
+  [".ts", ".tsx", ".d.ts"].some((ext) => existsSync(`${path}${ext}`));
+
+const withJsExtension = (filePath: string, specifier: string) => {
+  const sourceDir = resolve(srcPath, relative(distPath, dirname(filePath)));
+  const target = resolve(sourceDir, specifier);
+  if (sourceExists(target)) return `${specifier}.js`;
+  if (sourceExists(resolve(target, "index"))) return `${specifier}/index.js`;
+  return specifier;
+};
+
+const addDtsExtensions = (filePath: string, content: string) =>
+  content.replace(
+    /(\bfrom\s*|\bimport\s*\(\s*)(["'])(\.{1,2}\/[^"']+?)\2/g,
+    (match, prefix: string, q: string, specifier: string) =>
+      /\.(c|m)?js$/.test(specifier)
+        ? match
+        : `${prefix}${q}${withJsExtension(filePath, specifier)}${q}`,
+  );
+
 export default defineConfig(() => {
   const isVitest = process.env.VITEST === "true";
 
@@ -65,6 +88,10 @@ export default defineConfig(() => {
                 "**/*.stories.ts",
                 "**/*.stories.tsx",
               ],
+              beforeWriteFile: (filePath, content) => ({
+                filePath,
+                content: addDtsExtensions(filePath, content),
+              }),
             }),
             libInjectCss(),
             cjsCssRequire(),
