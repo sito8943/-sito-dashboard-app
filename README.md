@@ -122,12 +122,13 @@ pnpm run dev
 - `pnpm run lint` — Oxlint type-aware check (no writes)
 - `pnpm run lint:fix` — Oxlint autofix
 - `pnpm run docs:check` — docs policy markers, relative links, version alignment
+- `pnpm run dist:check` — built entry paths exist, `.cjs` output is valid CommonJS (run after build)
 - `pnpm run deps:check` — Knip dependency analysis
 - `pnpm run test` — Vitest single run
 - `pnpm run test:watch` — Vitest watch mode
 - `pnpm run format` — Prettier write
 - `pnpm run format:check` — Prettier check
-- `pnpm run full` — lint + format + dependencies + docs + build + tests
+- `pnpm run full` — lint + format + dependencies + docs + build + dist + tests
 - `pnpm run storybook` — run Storybook locally
 - `pnpm run build-storybook` — static Storybook build
 
@@ -139,6 +140,7 @@ pnpm run dev
 - `pnpm run docs:check`
 - `pnpm run test`
 - `pnpm run build`
+- `pnpm run dist:check`
 - `pnpm run build-storybook`
 - `pnpm pack`
 
