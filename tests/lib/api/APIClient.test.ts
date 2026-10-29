@@ -258,6 +258,93 @@ describe("APIClient", () => {
     );
   });
 
+  it("refreshes against an absolute refreshEndpoint on another server", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "new-access-token",
+          refreshToken: "refresh-token-2",
+          accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({ data: { ok: true }, status: 200, error: null });
+
+    const client = new APIClient("https://api.test", "user", true, undefined, {
+      refreshEndpoint: "https://auth.test/auth/refresh",
+    });
+    const result = await client.doQuery<{ ok: boolean }>("/accounts");
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock.mock.calls[0][0]).toBe(
+      "https://auth.test/auth/refresh",
+    );
+    expect(makeRequestMock.mock.calls[1][0]).toBe("https://api.test/accounts");
+  });
+
+  it("shares one refresh between clients on different base URLs with the same auth server", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
+
+    let resolveRefresh: (value: HttpResponse) => void = () => {};
+    const refreshPromise = new Promise<HttpResponse>((resolve) => {
+      resolveRefresh = resolve;
+    });
+    makeRequestMock.mockImplementation(async (url: string) => {
+      if (url.includes("auth/refresh")) return await refreshPromise;
+      return { data: { ok: true }, status: 200, error: null };
+    });
+
+    const authConfig = { refreshEndpoint: "https://auth.test/auth/refresh" };
+    const walletClient = new APIClient(
+      "https://api.test",
+      "user",
+      true,
+      undefined,
+      authConfig,
+    );
+    // Session client living on the auth server itself, relative endpoint.
+    const sessionClient = new APIClient("https://auth.test", "user", true);
+
+    const first = walletClient.doQuery("/accounts");
+    const second = sessionClient.doQuery("/auth/session");
+    resolveRefresh({
+      data: {
+        id: 1,
+        username: "sito",
+        email: "sito@mail.com",
+        token: "new-access-token",
+        refreshToken: "refresh-token-2",
+        accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+      },
+      status: 200,
+      error: null,
+    });
+    await Promise.all([first, second]);
+
+    const refreshCalls = makeRequestMock.mock.calls.filter(([url]) =>
+      url.includes("auth/refresh"),
+    );
+    expect(refreshCalls).toHaveLength(1);
+  });
+
   it("refreshes access token when a non-secured client opts into access-token mode", async () => {
     localStorage.setItem("user", "expired-access-token");
     localStorage.setItem("user_refreshToken", "refresh-token-1");
