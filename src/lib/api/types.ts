@@ -33,6 +33,7 @@ export type APIClientAuthConfig = {
   rememberKey?: string;
   refreshTokenKey?: string;
   accessTokenExpiresAtKey?: string;
+  /** Path relative to the client's base URL, or an absolute URL (e.g. a separate auth server). */
   refreshEndpoint?: string;
   refreshExpirySkewMs?: number;
   refreshMaxRetries?: number;

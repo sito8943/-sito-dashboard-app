@@ -153,11 +153,14 @@ export class APIClient {
     );
   }
 
+  // Keyed by the resolved refresh URL, not the base URL: clients on different
+  // APIs that share one auth server must share one refresh (tokens rotate).
   private getRefreshLockKey() {
-    return `${this.baseUrl}|${this.userKey}|${this.refreshTokenKey}|${this.accessTokenExpiresAtKey}`;
+    return `${this.buildUrl(this.refreshEndpoint)}|${this.userKey}|${this.refreshTokenKey}|${this.accessTokenExpiresAtKey}`;
   }
 
   private buildUrl(endpoint: string) {
+    if (/^https?:\/\//i.test(endpoint)) return endpoint;
     const trimmedBaseUrl = this.baseUrl.endsWith("/")
       ? this.baseUrl.slice(0, -1)
       : this.baseUrl;
