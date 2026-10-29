@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1]
+
+### Added
+
+- `APIClientAuthConfig.refreshEndpoint` accepts an absolute URL, so data clients can
+  refresh tokens against a separate auth server (e.g. sito-auth) while calling their own API.
+
+### Fixed
+
+- Clients with different base URLs that share the same refresh endpoint now share one
+  in-flight refresh (and cooldown). Before, they could refresh in parallel with the same
+  rotating refresh token, and the losing request cleared the session.
+
 ## [0.3.0]
 
 ### Changed
