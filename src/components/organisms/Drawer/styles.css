@@ -12,8 +12,11 @@
   @apply pointer-events-none;
 }
 
+/* Scrolls on its own (without dragging the page behind) so every entry is
+   reachable on short screens; 100dvh is the visible viewport on mobile, where
+   100vh also counts the area behind the browser bars. */
 .drawer {
-  @apply pt-5 w-64 fixed top-0 left-0 z-1 border-r-2 rounded-none bg-base border-border h-screen;
+  @apply box-border pt-5 w-64 fixed top-0 left-0 z-1 border-r-2 rounded-none bg-base border-border h-dvh overflow-y-auto overscroll-contain pb-[calc(env(safe-area-inset-bottom)+1rem)];
 }
 
 .drawer.opened {
