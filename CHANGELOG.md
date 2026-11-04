@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.2]
+
+### Fixed
+
+- Remembered sessions no longer end ~15 minutes after a reload. `AuthProvider.logUserFromLocal`
+  passed the `/auth/session` response to `logUser`, which removes the stored refresh token
+  when the session has none; session-check endpoints (e.g. sito-auth) return
+  `refreshToken: null`. The stored refresh token is now kept.
+- `APIClient` reads the access-token expiry from the JWT `exp` claim first and only falls
+  back to `accessTokenExpiresAt`. A date sent without time-zone offset (a server
+  `LocalDateTime`) was parsed in the browser's zone, so the token looked expired early (or
+  late) and was refreshed on every request (or not at all).
+- `APIClient`: when a refresh fails definitively but another tab has already stored a newer
+  refresh token (rotation revoked the one this tab used), the client adopts that session
+  instead of clearing it and signing every tab out.
+
 ## [0.3.1]
 
 ### Added

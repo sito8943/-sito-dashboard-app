@@ -80,12 +80,21 @@ const AuthProvider = (props: AuthProviderPropTypes) => {
   const logUserFromLocal = useCallback(async () => {
     try {
       const authDto = await manager.Auth.getSession();
-      logUser(authDto);
+      // A session check may not return the refresh token: keep the stored
+      // one, or logUser would drop it and end a remembered session.
+      const storedRefreshToken = fromLocal(resolvedRefreshTokenKey);
+      logUser(
+        !authDto.refreshToken &&
+          typeof storedRefreshToken === "string" &&
+          storedRefreshToken.length
+          ? { ...authDto, refreshToken: storedRefreshToken }
+          : authDto,
+      );
     } catch (err) {
       console.error(err);
       if (isDefinitiveAuthSessionError(err)) await logoutUser();
     }
-  }, [logUser, logoutUser, manager.Auth]);
+  }, [logUser, logoutUser, manager.Auth, resolvedRefreshTokenKey]);
 
   const value = useMemo(() => {
     return {

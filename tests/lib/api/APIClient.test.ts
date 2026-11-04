@@ -16,6 +16,17 @@ vi.mock("@/lib/api/utils/services", async () => {
   };
 });
 
+const jwtWithExp = (expiresAtMs: number) => {
+  const encode = (value: object) =>
+    btoa(JSON.stringify(value))
+      .replace(/=+$/, "")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_");
+  return `${encode({ alg: "HS256" })}.${encode({
+    exp: Math.floor(expiresAtMs / 1000),
+  })}.signature`;
+};
+
 describe("APIClient", () => {
   const makeRequestMock = vi.mocked(makeRequest);
 
@@ -578,6 +589,113 @@ describe("APIClient", () => {
     expect(localStorage.getItem("user_refreshToken")).toBeNull();
     expect(localStorage.getItem("user_accessTokenExpiresAt")).toBeNull();
     expect(localStorage.getItem("user_remember")).toBeNull();
+  });
+
+  it("adopts a refresh token rotated by another tab instead of clearing", async () => {
+    localStorage.setItem("user", "expired-access-token");
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem(
+      "user_accessTokenExpiresAt",
+      "2000-01-01T00:00:00.000Z",
+    );
+    localStorage.setItem("user_remember", "true");
+
+    makeRequestMock
+      .mockImplementationOnce(async () => {
+        // Another tab refreshed first: the server revoked refresh-token-1.
+        localStorage.setItem("user", "other-tab-access-token");
+        localStorage.setItem("user_refreshToken", "refresh-token-2");
+        localStorage.setItem(
+          "user_accessTokenExpiresAt",
+          "2035-01-01T00:00:00.000Z",
+        );
+        return {
+          data: null,
+          status: 401,
+          error: { status: 401, message: "Invalid refresh token" },
+        };
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test");
+    const result = await client.doQuery<{ ok: boolean }>("/users");
+
+    expect(result).toEqual({ ok: true });
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      2,
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      { Authorization: "Bearer other-tab-access-token" },
+      undefined,
+    );
+    expect(localStorage.getItem("user_refreshToken")).toBe("refresh-token-2");
+    expect(localStorage.getItem("user_remember")).toBe("true");
+  });
+
+  it("trusts the JWT exp over an accessTokenExpiresAt without offset", async () => {
+    // Valid for 10 more minutes, while the offset-less date reads as past.
+    localStorage.setItem("user", jwtWithExp(Date.now() + 10 * 60_000));
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem("user_accessTokenExpiresAt", "2000-01-01T00:00:00");
+
+    makeRequestMock.mockResolvedValue({
+      data: { ok: true },
+      status: 200,
+      error: null,
+    });
+
+    const client = new APIClient("https://api.test");
+    await client.doQuery("/users");
+
+    expect(makeRequestMock).toHaveBeenCalledOnce();
+    expect(makeRequestMock).toHaveBeenCalledWith(
+      "https://api.test/users",
+      Methods.GET,
+      undefined,
+      expect.anything(),
+      undefined,
+    );
+  });
+
+  it("refreshes when the JWT exp has passed even if accessTokenExpiresAt has not", async () => {
+    localStorage.setItem("user", jwtWithExp(Date.now() - 60_000));
+    localStorage.setItem("user_refreshToken", "refresh-token-1");
+    localStorage.setItem("user_accessTokenExpiresAt", "2035-01-01T00:00:00");
+
+    makeRequestMock
+      .mockResolvedValueOnce({
+        data: {
+          id: 1,
+          username: "sito",
+          email: "sito@mail.com",
+          token: "new-access-token",
+          refreshToken: "refresh-token-2",
+        },
+        status: 200,
+        error: null,
+      })
+      .mockResolvedValueOnce({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+    const client = new APIClient("https://api.test");
+    await client.doQuery("/users");
+
+    expect(makeRequestMock).toHaveBeenNthCalledWith(
+      1,
+      "https://api.test/auth/refresh",
+      Methods.POST,
+      { refreshToken: "refresh-token-1" },
+      undefined,
+      expect.any(Function),
+    );
   });
 
   it("preserves local session when refresh fails transiently", async () => {

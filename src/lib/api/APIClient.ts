@@ -25,6 +25,7 @@ import {
   APIClientOptions,
   APIClientRequestOptions,
 } from "./types";
+import { getJwtExpiry } from "./accessTokenExpiry";
 import {
   isDefinitiveAuthSessionError,
   isRetryableAuthSessionError,
@@ -189,13 +190,10 @@ export class APIClient {
   }
 
   private shouldRefreshBeforeRequest() {
-    const refreshToken = this.getRefreshToken();
-    const accessTokenExpiresAt = this.getAccessTokenExpiresAt();
+    if (!this.getRefreshToken()) return false;
 
-    if (!refreshToken || !accessTokenExpiresAt) return false;
-
-    const expiresAtTimestamp = Date.parse(accessTokenExpiresAt);
-    if (Number.isNaN(expiresAtTimestamp)) return false;
+    const expiresAtTimestamp = this.getAccessTokenExpiryTimestamp();
+    if (expiresAtTimestamp === undefined) return false;
 
     return Date.now() >= expiresAtTimestamp - this.refreshExpirySkewMs;
   }
@@ -207,7 +205,15 @@ export class APIClient {
     removeFromLocal(this.accessTokenExpiresAtKey);
   }
 
+  // The token's own `exp` first: `accessTokenExpiresAt` may come without a
+  // time-zone offset (e.g. a server LocalDateTime) and be read as local time.
   private getAccessTokenExpiryTimestamp() {
+    const accessToken = fromLocal(this.userKey);
+    if (typeof accessToken === "string" && accessToken.length) {
+      const jwtExpiry = getJwtExpiry(accessToken);
+      if (jwtExpiry !== undefined) return jwtExpiry;
+    }
+
     const accessTokenExpiresAt = this.getAccessTokenExpiresAt();
     if (!accessTokenExpiresAt) return undefined;
 
@@ -334,6 +340,10 @@ export class APIClient {
 
         if (isDefinitiveAuthSessionError(refreshError)) {
           this.clearRefreshCooldown();
+          // Another tab may have rotated the token meanwhile (the server
+          // revokes the used one): adopt its session instead of clearing it.
+          const latestRefreshToken = this.getRefreshToken();
+          if (latestRefreshToken && latestRefreshToken !== refreshToken) return;
           this.clearStoredSession();
           throw refreshError;
         }
