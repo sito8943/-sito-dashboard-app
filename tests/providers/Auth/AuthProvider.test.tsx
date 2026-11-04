@@ -132,6 +132,21 @@ describe("AuthProvider", () => {
     );
   });
 
+  it("keeps the stored refresh token when the session check omits it", async () => {
+    localStorage.setItem("user_refreshToken", "stored-refresh-token");
+    getSessionMock.mockResolvedValue({ ...session, refreshToken: null });
+    const { result } = renderHook(() => useAuth(), { wrapper });
+
+    await act(async () => {
+      await result.current.logUserFromLocal();
+    });
+
+    expect(localStorage.getItem("user_refreshToken")).toBe(
+      "stored-refresh-token",
+    );
+    expect(result.current.account.refreshToken).toBe("stored-refresh-token");
+  });
+
   it("falls back to logout when session recovery fails definitively", async () => {
     getSessionMock.mockRejectedValue({
       status: 401,
