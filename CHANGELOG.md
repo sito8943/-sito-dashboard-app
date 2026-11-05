@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- `Drawer` scrolls on its own. It was a fixed `100vh` panel without overflow, so on short
+  (mobile) screens the last entries were cut off and unreachable. It now has
+  `overflow-y: auto` with contained overscroll, is `100dvh` tall (the visible viewport on
+  mobile) and leaves room for the bottom safe area.
+
 ## [0.3.2]
 
 ### Fixed
