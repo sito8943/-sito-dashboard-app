@@ -16,10 +16,13 @@ It does not replace the translation documentation for `@sito/dashboard`.
 - `_accessibility:ariaLabels.next`
 - `_accessibility:ariaLabels.ok`
 - `_accessibility:ariaLabels.openMenu`
+- `_accessibility:ariaLabels.search`
 - `_accessibility:ariaLabels.showPassword`
 - `_accessibility:ariaLabels.skip`
 - `_accessibility:ariaLabels.start`
 - `_accessibility:ariaLabels.submit`
+- `_accessibility:ariaLabels.switchToDark`
+- `_accessibility:ariaLabels.switchToLight`
 - `_accessibility:buttons.back`
 - `_accessibility:buttons.cancel`
 - `_accessibility:buttons.closeDialog`
@@ -31,6 +34,8 @@ It does not replace the translation documentation for `@sito/dashboard`.
 - `_accessibility:buttons.skip`
 - `_accessibility:buttons.startAsGuest`
 - `_accessibility:buttons.submit`
+- `_accessibility:buttons.switchToDark`
+- `_accessibility:buttons.switchToLight`
 - `_accessibility:buttons.toTop`
 - `_accessibility:errors.500`
 - `_accessibility:errors.unknownError`

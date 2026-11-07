@@ -137,6 +137,7 @@ Optional capabilities:
 2. Enable optional UI providers: `withNavbarProvider`, `withBottomNavActionProvider`
 3. Inject app-specific wrappers: `featureFlagsProvider`, `offlineSyncProvider`, `appWrapperProvider`
 4. Control library transitions globally with `config.motion`: `"auto"` (default), `"none"`, or `"always"`
+5. Mount `ThemeProvider` (outermost) with `theme={{ ... }}` (`{}` for defaults). Omitted or `false`: not mounted. See §2.0.3.
 
 ```tsx
 import type { ReactNode } from "react";
@@ -237,6 +238,68 @@ const visibleMenu = filterMenuByFeatureFlags(
 );
 ```
 
+### 2.0.3 Theme (light/dark) with `ThemeProvider`
+
+The library owns light/dark theme logic so every app shares it. `ThemeProvider` is optional and **not** mounted by default.
+
+- Persists the user's mode (`"system" | "light" | "dark"`) in `localStorage` (`storageKey`, default `"sito-theme"`; storage errors are ignored).
+- While mode is `"system"`, follows `prefers-color-scheme` live.
+- Applies the `dark` class and `style.colorScheme` on `<html>`; updates `<meta name="theme-color">` when `themeColors` is passed.
+- `useTheme()` returns `{ mode, resolvedTheme, setMode, toggleTheme }` (throws outside the provider). `useOptionalTheme()` returns `undefined` outside it.
+- `theme.css` (and the bundled CSS) ship weak `:where(.dark)` dark token defaults. An app-level `.dark { ... }` block still wins.
+
+| Prop          | Type                                     | Default        |
+| ------------- | ---------------------------------------- | -------------- |
+| `storageKey`  | `string`                                 | `"sito-theme"` |
+| `defaultMode` | `ThemeMode`                              | `"system"`     |
+| `themeColors` | `Partial<Record<ResolvedTheme, string>>` | —              |
+
+Mount it through the composer (outermost provider) or manually:
+
+```tsx
+<AppProviders
+  config={config}
+  manager={{ manager }}
+  withNavbarProvider
+  theme={{ themeColors: { light: "#041e42", dark: "#0f141c" } }}
+>
+  {children}
+</AppProviders>
+```
+
+Show the toggle in the `Navbar` toolbar (opt-in):
+
+```tsx
+<DashboardHeader menuMap={menuMap} navbarProps={{ showThemeToggle: true }} />
+```
+
+Avoid a flash of the wrong theme by inlining the boot script in `index.html` `<head>`. `THEME_BOOT_SCRIPT` holds it for the defaults; use `getThemeBootScript({ storageKey, defaultMode })` when you change them. Equivalent inline snippet for the defaults:
+
+```html
+<script>
+  (function () {
+    try {
+      var m = localStorage.getItem("sito-theme");
+      if (m !== "system" && m !== "light" && m !== "dark") m = "system";
+      var d =
+        m === "dark" ||
+        (m === "system" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      if (d) document.documentElement.classList.add("dark");
+      document.documentElement.style.colorScheme = d ? "dark" : "light";
+    } catch (e) {}
+  })();
+</script>
+```
+
+For Tailwind `dark:` utilities, declare the class-based variant in your app CSS:
+
+```css
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+Apps that already own a `ThemeProvider` (e.g. wallet, period-calendar) keep working: leave `theme` unset.
+
 ### 2.1 Supabase providers (optional backend)
 
 For Supabase, keep the same outer providers and replace manager/auth pair:
@@ -309,7 +372,8 @@ const CustomAuthProvider = ({ children }) => {
 | `ImportDialog<TPreview>`      | `fileProcessor`, `onFileProcessed`, `renderCustomPreview`, `onOverrideChange`, `extraActions`, `extraFields`                                                                     | Import with preview + override + custom inputs                                                                                                                                                                                                                                                                                                |
 | `ExportDialog`                | `handleSubmit`, `isLoading`, `extraFields`, `extraActions`                                                                                                                       | Optional export config modal (date range, format)                                                                                                                                                                                                                                                                                             |
 | `Drawer<MenuKeys>`            | `open`, `onClose`, `menuMap`, `logo`                                                                                                                                             | Side navigation                                                                                                                                                                                                                                                                                                                               |
-| `Navbar`                      | `openDrawer`, `menuButtonProps`, `showSearch`                                                                                                                                    | Top bar with dynamic title/actions                                                                                                                                                                                                                                                                                                            |
+| `Navbar`                      | `openDrawer`, `menuButtonProps`, `showSearch`, `showThemeToggle`                                                                                                                 | Top bar with dynamic title/actions                                                                                                                                                                                                                                                                                                            |
+| `ThemeToggle`                 | `darkIcon`, `lightIcon`, `onClick` + `IconButton` props                                                                                                                          | Light/dark toggle (requires `ThemeProvider`); icon shows the target theme                                                                                                                                                                                                                                                                     |
 | `BottomNavigation<TId>`       | `items`, `centerAction`, `isItemActive`, `className`                                                                                                                             | Mobile fixed navigation with optional center CTA                                                                                                                                                                                                                                                                                              |
 | `ToTop`                       | `threshold`, `tooltip`, `scrollOnClick`, `className`                                                                                                                             | Floating scroll-to-top button                                                                                                                                                                                                                                                                                                                 |
 | `IconButton`                  | `icon: IconDefinition` + visual props                                                                                                                                            | FontAwesome-only icon contract                                                                                                                                                                                                                                                                                                                |

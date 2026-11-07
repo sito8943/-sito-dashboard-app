@@ -8,8 +8,9 @@ import {
 } from "@/components/organisms/Navbar/NavbarProvider";
 import { useEffect } from "react";
 
-const { useConfigMock } = vi.hoisted(() => ({
+const { useConfigMock, useOptionalThemeMock } = vi.hoisted(() => ({
   useConfigMock: vi.fn(),
+  useOptionalThemeMock: vi.fn(),
 }));
 
 vi.mock("@sito/dashboard", () => ({
@@ -24,6 +25,7 @@ vi.mock("@sito/dashboard", () => ({
 
 vi.mock("@/providers", () => ({
   useConfig: () => useConfigMock(),
+  useOptionalTheme: () => useOptionalThemeMock(),
 }));
 
 vi.mock("@/components", () => ({
@@ -34,6 +36,7 @@ vi.mock("@/components", () => ({
     onClick?: () => void;
     "aria-label"?: string;
   }) => <button onClick={onClick} aria-label={ariaLabel} />,
+  ThemeToggle: () => <button data-testid="theme-toggle" />,
 }));
 
 vi.mock("./Clock", () => ({
@@ -137,6 +140,72 @@ describe("Navbar", () => {
     });
 
     expect(screen.queryByTestId("search-dialog")).not.toBeInTheDocument();
+  });
+});
+
+describe("Navbar theme toggle", () => {
+  const themeValue = {
+    mode: "system",
+    resolvedTheme: "light",
+    setMode: vi.fn(),
+    toggleTheme: vi.fn(),
+  };
+
+  beforeEach(() => {
+    useConfigMock.mockReturnValue({
+      searchComponent: null,
+      location: window.location,
+    });
+  });
+
+  it("is hidden by default even with a ThemeProvider", () => {
+    useOptionalThemeMock.mockReturnValue(themeValue);
+    renderWithProvider(<Navbar {...baseProps} />);
+    expect(screen.queryByTestId("theme-toggle")).not.toBeInTheDocument();
+  });
+
+  it("renders with showThemeToggle and a ThemeProvider", () => {
+    useOptionalThemeMock.mockReturnValue(themeValue);
+    renderWithProvider(<Navbar {...baseProps} showThemeToggle />);
+    expect(screen.getByTestId("theme-toggle")).toBeInTheDocument();
+  });
+
+  it("is hidden with showThemeToggle but no ThemeProvider", () => {
+    useOptionalThemeMock.mockReturnValue(undefined);
+    renderWithProvider(<Navbar {...baseProps} showThemeToggle />);
+    expect(screen.queryByTestId("theme-toggle")).not.toBeInTheDocument();
+  });
+
+  it("renders the toggle after rightContent and the search button", () => {
+    useOptionalThemeMock.mockReturnValue(themeValue);
+    useConfigMock.mockReturnValue({
+      searchComponent: () => null,
+      location: window.location,
+    });
+    function RightContentSetter() {
+      const { setRightContent } = useNavbar();
+      useEffect(() => {
+        setRightContent(<span data-testid="right-custom">Extra</span>);
+      }, [setRightContent]);
+      return null;
+    }
+    render(
+      <NavbarProvider>
+        <RightContentSetter />
+        <Navbar {...baseProps} showThemeToggle />
+      </NavbarProvider>,
+    );
+    const toolbar = screen.getByTestId("theme-toggle").parentElement;
+    const children = Array.from(toolbar?.children ?? []);
+    expect(
+      children.map(
+        (el) => el.getAttribute("data-testid") ?? el.getAttribute("aria-label"),
+      ),
+    ).toEqual([
+      "right-custom",
+      "_accessibility:ariaLabels.search",
+      "theme-toggle",
+    ]);
   });
 });
 

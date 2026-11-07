@@ -50,3 +50,23 @@ describe("Dialog styles", () => {
     );
   });
 });
+
+describe("theme.css dark defaults", () => {
+  const darkBlock = (css: string) =>
+    css.match(/:where\(\.dark\)\s*\{[^}]*\}/)?.[0];
+
+  it("ships weak :where(.dark) token defaults", () => {
+    const block = darkBlock(theme);
+    expect(block).toBeDefined();
+    expect(block).toContain("--color-base: #0f141c;");
+    expect(block).toContain("--color-on-brand: #f1f5fb;");
+  });
+
+  it("keeps the dark defaults in sync with the bundled src/index.css", () => {
+    const indexCss = readFileSync(
+      resolve(process.cwd(), "src/index.css"),
+      "utf8",
+    );
+    expect(darkBlock(indexCss)).toBe(darkBlock(theme));
+  });
+});

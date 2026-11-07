@@ -12,7 +12,48 @@
  * Plain CSS using the design tokens (`--color-*`), so it survives any
  * consumer build (the lib's own prebuilt CSS does not — that's why these
  * live here and not in @sito/dashboard).
+ *
+ * Dark mode: `ThemeProvider` toggles `.dark` on <html>. For Tailwind `dark:`
+ * utilities, also declare in your CSS:
+ *   @custom-variant dark (&:where(.dark, .dark *));
  */
+
+/* Weak dark defaults (applied while `ThemeProvider` sets `.dark` on <html>).
+ * `:where()` keeps specificity at 0 so an app's own `.dark { ... }` wins.
+ * Keep in sync between src/index.css and theme.css. */
+:where(.dark) {
+  --color-primary: #1f4f99;
+  --color-bg-primary: #1a4285;
+  --color-hover-primary: #2d62b8;
+  --color-secondary: #cd212a;
+  --color-bg-secondary: #a51b22;
+  --color-hover-secondary: #e03a42;
+  --color-tertiary: #0a8a70;
+  --color-bg-tertiary: #08705b;
+  --color-hover-tertiary: #12a585;
+  --color-quaternary: #b87a1f;
+  --color-bg-quaternary: #9a6619;
+  --color-hover-quaternary: #d08e2a;
+  --color-on-brand: #f1f5fb;
+  --color-base-dark: #0b0f16;
+  --color-base: #0f141c;
+  --color-base-light: #1a212c;
+  --color-text: #e6e9ef;
+  --color-border: #343d4b;
+  --color-text-muted: #a0a8b6;
+  --color-bg-info: #1f6fb0;
+  --color-info: #f1f5fb;
+  --color-bg-success: #1f8a55;
+  --color-success: #f1f5fb;
+  --color-bg-warning: #e8a33a;
+  --color-warning: #111111;
+  --color-bg-error: #c24a4a;
+  --color-error: #f1f5fb;
+  --sito-ui-color-scheme: dark;
+  --sito-ui-color-text-muted: var(--color-text-muted);
+  --sito-ui-color-primary-text: var(--color-on-brand);
+  --sito-ui-color-secondary-text: var(--color-on-brand);
+}
 
 /* INPUTS */
 .input-error {

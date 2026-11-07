@@ -1,6 +1,7 @@
 import { ComponentType, ReactNode } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import type { AuthProviderPropTypes } from "./Auth/types";
+import type { ThemeProviderProps } from "./Theme/types";
 
 // lib
 import {
@@ -34,6 +35,11 @@ export interface AppProvidersProps extends BasicProviderPropTypes {
   config: ProviderPropsWithoutChildren<ConfigProviderPropTypes>;
   manager: ProviderPropsWithoutChildren<ManagerProviderPropTypes>;
   auth?: false | ProviderPropsWithoutChildren<AuthProviderPropTypes>;
+  /**
+   * Mounts `ThemeProvider` as the outermost provider when an object is passed
+   * (`{}` for defaults). Omitted/`false`: not mounted.
+   */
+  theme?: false | ProviderPropsWithoutChildren<ThemeProviderProps>;
   withNavbarProvider?: boolean;
   withBottomNavActionProvider?: boolean;
   featureFlagsProvider?: AnyAppProviderSlot;
