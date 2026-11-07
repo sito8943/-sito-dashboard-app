@@ -134,3 +134,54 @@ describe("token defaults cascade layers", () => {
     expect(css.match(/:where\(\.dark\)/g)).toHaveLength(1);
   });
 });
+
+describe("@sito/ui variable mapping", () => {
+  // Regression: @sito/dashboard's sitoUi.css sets every `--sito-ui-*` on an
+  // unlayered `:root` (0,1,0), which beat the lib's layered `:where(.dark)`
+  // overrides. @sito/ui components kept a light color-scheme, a literal muted
+  // text and dark-on-brand button text in dark mode.
+  const indexCss = readFileSync(
+    resolve(process.cwd(), "src/index.css"),
+    "utf8",
+  );
+  const mappingBlock = (css: string) =>
+    css.match(
+      /\/\* @sito\/ui variable mapping[\s\S]*?\/\* End @sito\/ui variable mapping \*\//,
+    )?.[0];
+  const unlayered = (css: string, index: number) => {
+    let depth = 0;
+    for (const char of css.slice(0, index)) {
+      if (char === "{") depth++;
+      if (char === "}") depth--;
+    }
+    return depth === 0;
+  };
+
+  it("maps the unmapped vars to tokens above :root specificity", () => {
+    expect(mappingBlock(theme)).toMatch(
+      /html:root \{\s*--sito-ui-color-text-muted: var\(--color-text-muted\);\s*--sito-ui-color-primary-text: var\(--color-on-brand\);\s*--sito-ui-color-secondary-text: var\(--color-on-brand\);\s*\}/,
+    );
+    expect(mappingBlock(theme)).toMatch(
+      /html\.dark \{\s*--sito-ui-color-scheme: dark;\s*\}/,
+    );
+  });
+
+  it.each([
+    ["src/index.css", indexCss],
+    ["theme.css", theme],
+  ])("keeps the mapping unlayered in %s", (_file, css) => {
+    expect(unlayered(css, css.indexOf("html:root {"))).toBe(true);
+    expect(unlayered(css, css.indexOf("html.dark {"))).toBe(true);
+  });
+
+  it("drops the dead --sito-ui-* overrides from the layered dark block", () => {
+    expect(theme.match(/:where\(\.dark\)\s*\{[^}]*\}/)?.[0]).not.toContain(
+      "--sito-ui-",
+    );
+  });
+
+  it("keeps the block in sync with the bundled src/index.css", () => {
+    expect(mappingBlock(indexCss)).toBeDefined();
+    expect(mappingBlock(indexCss)).toBe(mappingBlock(theme));
+  });
+});
