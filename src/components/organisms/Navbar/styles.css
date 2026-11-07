@@ -1,7 +1,7 @@
 @reference "../../../index.css";
 
 .header {
-  @apply w-full flex items-center justify-between z-20 px-3 h-12 sticky top-0 bg-primary text-base-light;
+  @apply w-full flex items-center justify-between z-20 px-3 h-12 sticky top-0 bg-primary text-on-brand;
 }
 
 .navbar-title {
@@ -17,14 +17,20 @@
 }
 
 .header h1 {
-  @apply text-base-light;
+  @apply text-on-brand;
 }
 
 .navbar-right .actions-container .actions-container-item .action {
-  @apply bg-base/30 text-base-light hover:bg-secondary w-7.5 h-7.5;
+  @apply bg-base/30 text-on-brand hover:bg-secondary w-7.5 h-7.5;
 }
 
 .header .icon-button,
 .navbar-menu {
-  @apply text-base-light hover:!bg-secondary;
+  @apply text-on-brand hover:!bg-secondary;
+}
+
+/* Right toolbar buttons (search, theme toggle): light icon on the brand fill,
+ * visible hover + keyboard focus ring. */
+.header .navbar-toolbar-btn {
+  @apply text-on-brand hover:!bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-brand;
 }

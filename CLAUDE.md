@@ -27,3 +27,4 @@ When a change affects the public API or documented behavior:
 - keep `ExportDialog`/`useExportDialog` docs aligned with the two export modes: direct via `useExportAction` + `useExportActionMutate`, or dialog-based via `useExportDialog` + `ExportDialog`. Both return the same `action()` shape; `useExportDialog` does not invalidate queries nor auto-trigger downloads.
 - keep `PrettyGrid` docs aligned with optional infinite-scroll props (`hasMore`, `loadingMore`, `onLoadMore`, `loadMoreComponent`, observer options)
 - keep `ToTop` docs aligned with customization props (`threshold`, target coordinates, icon, tooltip, and click behavior)
+- keep theme docs aligned with `ThemeProvider` (`storageKey`, `defaultMode`, `themeColors`), `useTheme` / `useOptionalTheme`, `AppProviders` `theme` option (not mounted by default), and the opt-in `Navbar` `showThemeToggle` prop

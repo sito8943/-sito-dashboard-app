@@ -9,19 +9,19 @@
 }
 
 .top-banner--primary {
-  @apply bg-bg-primary text-base-light;
+  @apply bg-bg-primary text-on-brand;
 }
 
 .top-banner--secondary {
-  @apply bg-bg-secondary text-base-light;
+  @apply bg-bg-secondary text-on-brand;
 }
 
 .top-banner--tertiary {
-  @apply bg-bg-tertiary text-base-light;
+  @apply bg-bg-tertiary text-on-brand;
 }
 
 .top-banner--quaternary {
-  @apply bg-bg-quaternary text-base-light;
+  @apply bg-bg-quaternary text-on-brand;
 }
 
 .top-banner--info {

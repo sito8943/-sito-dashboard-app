@@ -13,6 +13,7 @@ import { useConfig } from "@/providers/useConfig";
 import { useDrawerMenu } from "@/providers/useDrawerMenu";
 import { useManager } from "@/providers/useManager";
 import { useNotification } from "@/providers/useNotification";
+import { useOptionalTheme } from "@/providers/Theme/useOptionalTheme";
 import type { BasicProviderPropTypes } from "@/providers/types";
 
 const manager = {
@@ -168,6 +169,51 @@ describe("AppProviders", () => {
     expect(screen.getByTestId("bottom-nav-action-null")).toHaveTextContent(
       "true",
     );
+  });
+});
+
+describe("AppProviders theme option", () => {
+  const ThemeProbe = () => {
+    const theme = useOptionalTheme();
+    return <span data-testid="theme">{theme?.mode ?? "none"}</span>;
+  };
+
+  it("does not mount ThemeProvider by default", () => {
+    render(
+      <AppProviders {...baseProps} auth={false}>
+        <ThemeProbe />
+      </AppProviders>,
+    );
+    expect(screen.getByTestId("theme")).toHaveTextContent("none");
+  });
+
+  it("mounts ThemeProvider when theme options are passed", () => {
+    localStorage.setItem("custom-theme", "light");
+    render(
+      <AppProviders
+        {...baseProps}
+        auth={false}
+        theme={{ storageKey: "custom-theme" }}
+      >
+        <ThemeProbe />
+      </AppProviders>,
+    );
+    expect(screen.getByTestId("theme")).toHaveTextContent("light");
+  });
+
+  it("forwards the theme option through createAppProviders", () => {
+    const Providers = createAppProviders({
+      ...baseProps,
+      auth: false,
+      theme: { defaultMode: "dark" },
+    });
+    render(
+      <Providers>
+        <ThemeProbe />
+      </Providers>,
+    );
+    expect(screen.getByTestId("theme")).toHaveTextContent("dark");
+    document.documentElement.classList.remove("dark");
   });
 });
 

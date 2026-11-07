@@ -7,6 +7,7 @@ import { ConfigProvider } from "./ConfigProvider";
 import { DrawerMenuProvider } from "./DrawerMenuProvider";
 import { ManagerProvider } from "./ManagerProvider";
 import { NotificationProvider } from "./NotificationProvider";
+import { ThemeProvider } from "./Theme";
 
 // components
 import { NavbarProvider } from "@/components/organisms/Navbar/NavbarProvider";
@@ -23,6 +24,7 @@ import { applyOptionalProvider } from "./appProviders.utils";
  *
  * Optional wrappers:
  * NavbarProvider and BottomNavActionProvider can be enabled by flags.
+ * ThemeProvider wraps everything (outermost) when `theme` is an object.
  * Feature flags / offline sync / app wrapper providers can be injected as slots.
  */
 const AppProviders = (props: AppProvidersProps) => {
@@ -31,6 +33,7 @@ const AppProviders = (props: AppProvidersProps) => {
     config,
     manager,
     auth = {},
+    theme = false,
     withNavbarProvider = false,
     withBottomNavActionProvider = false,
     featureFlagsProvider,
@@ -55,11 +58,15 @@ const AppProviders = (props: AppProvidersProps) => {
   if (auth !== false)
     content = <AuthProvider {...auth}>{content}</AuthProvider>;
 
-  return (
+  content = (
     <ConfigProvider {...config}>
       <ManagerProvider {...manager}>{content}</ManagerProvider>
     </ConfigProvider>
   );
+
+  if (theme) content = <ThemeProvider {...theme}>{content}</ThemeProvider>;
+
+  return content;
 };
 
 export { AppProviders };

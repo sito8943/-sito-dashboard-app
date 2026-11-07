@@ -529,6 +529,33 @@ Notes:
 - `richTextComponents` is a default map (`p`, `strong`, `em`, `ul`, `ol`, `li`, `a`, `code`). Spread to add tags: `<Trans components={{ ...richTextComponents, br: <br /> }} />`.
 - The library does NOT depend on `react-i18next`. Any equivalent rich-text/`t` solution works as long as the consumer hands `ReactNode` / `string` to the primitives.
 
+### 2.6 Light/dark theme toggle in the Navbar
+
+Mount `ThemeProvider` (via `AppProviders`' `theme` option) and opt into the toolbar toggle. The Navbar right toolbar renders `rightContent` → search → `ThemeToggle`.
+
+```tsx
+import { AppProviders, DashboardHeader, useTheme } from "@sito/dashboard-app";
+
+<AppProviders
+  config={config}
+  manager={{ manager }}
+  withNavbarProvider
+  theme={{ storageKey: "acme-theme" }}
+>
+  <DashboardHeader menuMap={menuMap} navbarProps={{ showThemeToggle: true }} />
+</AppProviders>;
+
+// anywhere below the provider
+const { mode, resolvedTheme, setMode, toggleTheme } = useTheme();
+```
+
+Notes:
+
+- `showThemeToggle` defaults to `false`; the toggle also stays hidden without a `ThemeProvider`.
+- Use `ThemeToggle` standalone (settings pages, footers) inside a `ThemeProvider`.
+- Add `@custom-variant dark (&:where(.dark, .dark *));` to your Tailwind CSS for `dark:` utilities.
+- Inline `getThemeBootScript({ storageKey: "acme-theme" })` output in `index.html` to avoid a theme flash (see `CONSUMER_GUIDE.md` §2.0.3).
+
 ## 3. Dynamic drawer children with `useDrawerMenu`
 
 ```tsx

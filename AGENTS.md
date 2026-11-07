@@ -17,7 +17,7 @@ Public usage examples live in `docs/CONSUMER_GUIDE.md` and the themed recipe fil
 
 Critical distinctions (override anything in `.sito/*`):
 
-- Provider order: `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` used). Manual or via `AppProviders` / `createAppProviders`.
+- Provider order: `ConfigProvider -> ManagerProvider -> AuthProvider -> NotificationProvider -> DrawerMenuProvider` (`NavbarProvider` when `Navbar`/`useNavbar` used). Manual or via `AppProviders` / `createAppProviders`. Optional `ThemeProvider` goes outermost (`AppProviders` `theme` option).
 - Browser-only. **Not SSR-compatible.**
 - `IconButton` is overridden — expects `icon: IconDefinition` (FontAwesome), not a React node.
 
@@ -59,14 +59,15 @@ See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, 
 
 ### Provider responsibilities
 
-| Provider               | Purpose                                                                                                                     |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `ConfigProvider`       | Router `location`, `navigate`, `linkComponent`, optional `searchComponent`, global `motion` (`auto`/`none`/`always`)        |
-| `ManagerProvider`      | API manager (`IManager`); mounts `QueryClientProvider` internally                                                           |
-| `AuthProvider`         | Session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`); exposes `account`, `logUser`, `logoutUser`, etc.     |
-| `NotificationProvider` | Toast system                                                                                                                |
-| `DrawerMenuProvider`   | Drawer menu state                                                                                                           |
-| `NavbarProvider`       | Optional dynamic navbar (`title`, `setTitle`, `rightContent`, `setRightContent`) — required when using `Navbar`/`useNavbar` |
+| Provider               | Purpose                                                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ConfigProvider`       | Router `location`, `navigate`, `linkComponent`, optional `searchComponent`, global `motion` (`auto`/`none`/`always`)                           |
+| `ManagerProvider`      | API manager (`IManager`); mounts `QueryClientProvider` internally                                                                              |
+| `AuthProvider`         | Session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`); exposes `account`, `logUser`, `logoutUser`, etc.                        |
+| `NotificationProvider` | Toast system                                                                                                                                   |
+| `DrawerMenuProvider`   | Drawer menu state                                                                                                                              |
+| `NavbarProvider`       | Optional dynamic navbar (`title`, `setTitle`, `rightContent`, `setRightContent`) — required when using `Navbar`/`useNavbar`                    |
+| `ThemeProvider`        | Optional light/dark theme (`storageKey`, `defaultMode`, `themeColors`); `useTheme` / `useOptionalTheme`. Outermost; via `AppProviders` `theme` |
 
 ### Action hook defaults
 
@@ -249,3 +250,5 @@ Never cut a release from a feature or release branch, or from a stale `main`. Th
 37. **Compose legal/info pages with `LegalPage` + `LegalSection` + `LegalLinksList`** instead of forking the shell HTML/CSS. `LegalPage` is i18n-agnostic — resolve `<Trans>` / `t()` in the consumer and pass `ReactNode` for `title` / `intro` / section bodies. Use `richTextComponents` as the default component map for `<Trans>` and spread to extend (`{ ...richTextComponents, br: <br /> }`). Sections are children, not a `sections` prop — apps can interleave product-specific blocks (e.g. wallet's `HowToSection`) with shared `LegalSection` cards. `LegalLinksList` routes through `linkComponent` from `ConfigProvider` — pass `{to, label}` items from the consumer's `routes.ts`.
 
 38. **`Page` does not need a `TableOptionsProvider`.** It reads the filter-badge count through `useOptionalTableOptions()` from `@sito/dashboard` (≥ 0.3.4): without a provider the badge stays hidden. Mount `TableOptionsProvider` only around views with a `Table`. In library code, prefer `useOptionalTableOptions()` for components that may render outside a table.
+
+39. **Use the library `ThemeProvider` for light/dark** instead of app-local theme providers in new apps. Mount it via `AppProviders` `theme={{ ... }}` (not mounted by default), show the Navbar toggle with `showThemeToggle` (opt-in), keep `storageKey`/`defaultMode` aligned with the `index.html` boot script (`getThemeBootScript` / `THEME_BOOT_SCRIPT`), and declare `@custom-variant dark (&:where(.dark, .dark *));` for Tailwind `dark:` utilities. Override dark tokens with an app-level `.dark { ... }` block.

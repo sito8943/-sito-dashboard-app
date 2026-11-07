@@ -50,3 +50,59 @@ describe("Dialog styles", () => {
     );
   });
 });
+
+describe("theme.css dark defaults", () => {
+  const darkBlock = (css: string) =>
+    css.match(/:where\(\.dark\)\s*\{[^}]*\}/)?.[0];
+
+  it("ships weak :where(.dark) token defaults", () => {
+    const block = darkBlock(theme);
+    expect(block).toBeDefined();
+    expect(block).toContain("--color-base: #0f141c;");
+    expect(block).toContain("--color-on-brand: #f1f5fb;");
+  });
+
+  it("keeps the dark defaults in sync with the bundled src/index.css", () => {
+    const indexCss = readFileSync(
+      resolve(process.cwd(), "src/index.css"),
+      "utf8",
+    );
+    expect(darkBlock(indexCss)).toBe(darkBlock(theme));
+  });
+});
+
+describe("brand surface icon buttons", () => {
+  const brandBlock = (css: string) =>
+    css.match(
+      /\/\* Icon buttons on brand surfaces[\s\S]*?\/\* End brand surfaces \*\//,
+    )?.[0];
+
+  // Regression: @sito/ui's `.sito-ui-button--text { color: var(--sito-ui-color-text) }`
+  // loads after the lib CSS and painted the Page back arrow dark on the brand header.
+  it("re-points @sito/ui text color on brand surfaces", () => {
+    expect(brandBlock(theme)).toMatch(
+      /\.header,\s*\.page-header\s*\{\s*--sito-ui-color-text: var\(--color-on-brand\);/,
+    );
+  });
+
+  it("colors icon buttons with --color-on-brand above single-class specificity", () => {
+    expect(brandBlock(theme)).toMatch(
+      /:is\(\.header, \.page-header\) :is\(\.icon-button, \.action\) \{\s*color: var\(--color-on-brand\);/,
+    );
+  });
+
+  it("gives them a visible focus-visible outline", () => {
+    expect(brandBlock(theme)).toMatch(
+      /:focus-visible \{\s*outline: 2px solid var\(--color-on-brand\);/,
+    );
+  });
+
+  it("keeps the block in sync with the bundled src/index.css", () => {
+    const indexCss = readFileSync(
+      resolve(process.cwd(), "src/index.css"),
+      "utf8",
+    );
+    expect(brandBlock(indexCss)).toBeDefined();
+    expect(brandBlock(indexCss)).toBe(brandBlock(theme));
+  });
+});

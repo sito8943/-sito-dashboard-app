@@ -7,6 +7,11 @@ export type NavbarPropsType = {
   menuButtonProps?: IconButtonPropsLocalType;
   openDrawer: () => void;
   showSearch?: boolean;
+  /**
+   * Shows the light/dark `ThemeToggle` in the right toolbar. Opt-in (default
+   * `false`); also requires a `ThemeProvider` above the Navbar.
+   */
+  showThemeToggle?: boolean;
 };
 
 export type NavbarProviderPropTypes = {

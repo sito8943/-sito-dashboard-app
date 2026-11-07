@@ -67,6 +67,13 @@ Create a theme CSS file and load it after the library styles.
 }
 ```
 
+## 2.0 Dark mode defaults
+
+`ThemeProvider` toggles `.dark` on `<html>`. The bundled CSS and `theme.css` ship weak dark defaults under `:where(.dark)` (specificity 0), so any app that mounts `ThemeProvider` gets a working dark palette. An app-level `.dark { ... }` block overrides them.
+
+- `--color-on-brand`: text/icon color on brand fills (Navbar). Defaults to `--color-base-light` in light mode and `#f1f5fb` in dark mode.
+- For Tailwind `dark:` utilities, add `@custom-variant dark (&:where(.dark, .dark *));` to your app CSS.
+
 ## 2.1 Motion control and shared animation utility
 
 Library transitions use a shared `.animated` utility class.
@@ -145,6 +152,7 @@ Prefab action hooks (`useEditAction`, `useDeleteAction`, `useRestoreAction`, `us
 - `.page-main`, `.page-main-content`, `.page-loading`
 - `.page-header-actions-desktop`, `.page-header-actions-mobile`
 - `.header`, `.navbar-title`, `.navbar-left`, `.navbar-right`, `.navbar-menu`
+- `.navbar-toolbar-btn` (right toolbar buttons: search + theme toggle), `.navbar-search-btn`, `.navbar-theme-toggle`, `.theme-toggle`
 - `.tabs-layout-main`, `.tabs-container`, `.tab`
 - `.onboarding-main`, `.step-container`, `.step-title`, `.step-body`, `.step-content`, `.step-actions`, `.step-button`
 - `.big-appear` (entry animation hook used by `Onboarding` step container)

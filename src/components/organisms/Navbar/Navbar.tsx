@@ -11,27 +11,34 @@ import { NavbarPropsType } from "./types.js";
 import "./styles.css";
 
 // components
-import { AppIconButton } from "@/components";
+import { AppIconButton, ThemeToggle } from "@/components";
 
 // utils
 import { APP_ROUTES, isMac } from "@/lib";
 
 // providers
-import { useConfig } from "@/providers";
+import { useConfig, useOptionalTheme } from "@/providers";
 import { useNavbar } from "./useNavbar.js";
 
 /**
- * Renders the top navigation bar with menu, title and optional search.
+ * Renders the top navigation bar with menu, title and a right toolbar
+ * (`rightContent` + optional search + optional theme toggle).
  * @param props - Navbar props.
  * @returns Navbar element.
  */
 export function Navbar(props: NavbarPropsType) {
   const { t } = useTranslation();
 
-  const { openDrawer, showSearch = true, menuButtonProps } = props;
+  const {
+    openDrawer,
+    showSearch = true,
+    showThemeToggle = false,
+    menuButtonProps,
+  } = props;
 
   const { searchComponent, location } = useConfig();
   const { title, rightContent } = useNavbar();
+  const theme = useOptionalTheme();
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -52,6 +59,7 @@ export function Navbar(props: NavbarPropsType) {
 
   const Search = searchComponent;
   const canShowSearch = showSearch && !!Search;
+  const canShowThemeToggle = showThemeToggle && !!theme;
 
   return (
     <>
@@ -86,10 +94,16 @@ export function Navbar(props: NavbarPropsType) {
           {rightContent}
           {canShowSearch && (
             <AppIconButton
+              type="button"
               icon={faSearch}
-              className="navbar-search-btn"
+              className="navbar-search-btn navbar-toolbar-btn"
               onClick={() => setShowDialog(true)}
+              name={t("_accessibility:ariaLabels.search")}
+              aria-label={t("_accessibility:ariaLabels.search")}
             />
+          )}
+          {canShowThemeToggle && (
+            <ThemeToggle className="navbar-theme-toggle navbar-toolbar-btn" />
           )}
         </div>
       </header>

@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.4]
+
+### Added
+
+- `ThemeProvider` (light/dark, ported from wallet): persists the mode (`"system" | "light" | "dark"`)
+  in `localStorage` (`storageKey`, default `"sito-theme"`), follows `prefers-color-scheme`
+  while mode is `system`, and applies the `dark` class + `color-scheme` on `<html>` (plus
+  `<meta name="theme-color">` via `themeColors`). Props: `storageKey`, `defaultMode`,
+  `themeColors`.
+- `useTheme()` (`{ mode, resolvedTheme, setMode, toggleTheme }`) and `useOptionalTheme()`.
+- Types `ThemeMode`, `ResolvedTheme`, `ThemeColors`, `ThemeProviderProps`, `ThemeContextType`;
+  helpers `getThemeBootScript()` / `THEME_BOOT_SCRIPT` (inline in `index.html` to avoid a
+  theme flash) and theme utils (`resolveTheme`, `applyResolvedTheme`, `readStoredThemeMode`,
+  `persistThemeMode`, `prefersDarkScheme`, `isThemeMode`, constants).
+- `ThemeToggle`: `IconButton` with sun/moon (shows the theme you switch to), labelled with new
+  `_accessibility:{buttons,ariaLabels}.switchToDark|switchToLight` keys (en + es).
+- `Navbar` `showThemeToggle` prop (opt-in, default `false`): the right toolbar renders
+  `rightContent` → search → `ThemeToggle` (only inside a `ThemeProvider`).
+- `AppProviders` / `createAppProviders` `theme` option: pass an object to mount `ThemeProvider`
+  as the outermost provider. Not mounted by default.
+- Weak dark token defaults under `:where(.dark)` in `theme.css` and the bundled CSS, and a new
+  `--color-on-brand` token (defaults to `--color-base-light`).
+
+### Changed
+
+- Navbar text and toolbar icons use `--color-on-brand` (same color as before in light mode;
+  stays light on the brand header in dark mode). Toolbar buttons get a visible focus ring.
+- The Navbar search button now has an accessible name (`_accessibility:ariaLabels.search`).
+
+### Fixed
+
+- Icon buttons on brand surfaces were dark on the dark header. `@sito/ui`'s
+  `.sito-ui-button--text { color: var(--sito-ui-color-text) }` (`#101010`) has the same
+  specificity as `.page-header-back` and its CSS loads after the lib bundle, so it won
+  (Page back button; in dark mode `text-base-light` was dark too). A shared block in
+  `theme.css` and the bundled CSS now sets `--sito-ui-color-text: var(--color-on-brand)` on
+  `.header` / `.page-header` and colors every `.icon-button` / `.action` inside them with
+  `--color-on-brand` (two-class selector, wins in any load order), with a secondary hover and
+  a visible `:focus-visible` outline. Covers the Page back button, Page actions and mobile
+  dropdown trigger, the Navbar menu button and toolbar (search, `ThemeToggle`).
+- `.page-header` text and brand `TopBanner` variants use `--color-on-brand` instead of
+  `--color-base-light` (which is dark in dark mode).
+
 ## [0.3.3]
 
 ### Fixed
