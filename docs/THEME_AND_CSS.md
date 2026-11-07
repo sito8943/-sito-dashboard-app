@@ -67,9 +67,26 @@ Create a theme CSS file and load it after the library styles.
 }
 ```
 
+### How the library defaults lose to your tokens
+
+The library's token defaults sit in cascade layers, so your tokens win in any load order (bundled CSS before or after your app CSS):
+
+| Library default               | Layer          | Beaten by                                                                                    |
+| ----------------------------- | -------------- | -------------------------------------------------------------------------------------------- |
+| Light tokens, `:where(:root)` | `@layer theme` | Your Tailwind `@theme` tokens (same layer, higher specificity) and any plain `:root { ... }` |
+| Dark tokens, `:where(.dark)`  | `@layer base`  | Your unlayered `.dark { ... }`, or a `.dark` rule in `@layer base`                           |
+
+The bundled CSS declares `@layer theme, base, components, utilities;` (the same order as Tailwind v4), so the order stays the same whichever stylesheet loads first. In dark mode the dark defaults still beat your light `@theme` tokens: override a token for dark mode inside `.dark { ... }`.
+
+Rules for the consumer CSS:
+
+- Define tokens with `@theme { ... }` (or plain `:root { ... }`) in the CSS file that has `@import "tailwindcss"`, and dark overrides in an unlayered `.dark { ... }`.
+- Do not import your own token file with `@reference` from another CSS file in the same Tailwind root. `@reference` registers the tokens without emitting them, which empties `@layer theme`, so the library defaults apply instead of your tokens.
+- Tailwind only emits `@theme` tokens that are used. If a token is only read by library CSS, use `@theme static { ... }` or reference it from a utility so it is emitted.
+
 ## 2.0 Dark mode defaults
 
-`ThemeProvider` toggles `.dark` on `<html>`. The bundled CSS and `theme.css` ship weak dark defaults under `:where(.dark)` (specificity 0), so any app that mounts `ThemeProvider` gets a working dark palette. An app-level `.dark { ... }` block overrides them.
+`ThemeProvider` toggles `.dark` on `<html>`. The bundled CSS and `theme.css` ship weak dark defaults under `:where(.dark)` (specificity 0, inside `@layer base`), so any app that mounts `ThemeProvider` gets a working dark palette. An app-level `.dark { ... }` block overrides them.
 
 - `--color-on-brand`: text/icon color on brand fills (Navbar). Defaults to `--color-base-light` in light mode and `#f1f5fb` in dark mode.
 - For Tailwind `dark:` utilities, add `@custom-variant dark (&:where(.dark, .dark *));` to your app CSS.

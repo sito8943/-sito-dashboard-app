@@ -106,3 +106,31 @@ describe("brand surface icon buttons", () => {
     expect(brandBlock(indexCss)).toBe(brandBlock(theme));
   });
 });
+
+describe("token defaults cascade layers", () => {
+  // Regression: unlayered defaults beat every layered rule, so they overrode
+  // the app's `@theme` tokens (Tailwind v4 puts them in `@layer theme`).
+  const indexCss = readFileSync(
+    resolve(process.cwd(), "src/index.css"),
+    "utf8",
+  );
+
+  it("declares Tailwind's layer order before anything else in src/index.css", () => {
+    expect(indexCss).toMatch(
+      /^(\/\*[\s\S]*?\*\/\s*)?@layer theme, base, components, utilities;/,
+    );
+  });
+
+  it("puts the light defaults inside @layer theme", () => {
+    expect(indexCss).toMatch(/@layer theme \{\s*:where\(:root\) \{/);
+    expect(indexCss.match(/:where\(:root\)/g)).toHaveLength(1);
+  });
+
+  it.each([
+    ["src/index.css", indexCss],
+    ["theme.css", theme],
+  ])("puts the dark defaults inside @layer base in %s", (_file, css) => {
+    expect(css).toMatch(/@layer base \{\s*:where\(\.dark\) \{/);
+    expect(css.match(/:where\(\.dark\)/g)).toHaveLength(1);
+  });
+});

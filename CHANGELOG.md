@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Library token defaults no longer override the app's tokens. The weak defaults were
+  unlayered, and unlayered rules beat every layered rule, including the app's Tailwind
+  `@theme` tokens (`@layer theme`). Light defaults (`:where(:root)`) now sit in
+  `@layer theme` and dark defaults (`:where(.dark)`, bundled CSS and `theme.css`) in
+  `@layer base`. The bundled CSS declares `@layer theme, base, components, utilities;` so the
+  order holds whichever stylesheet loads first. App `@theme` tokens and app `.dark { ... }`
+  blocks now win in light and dark mode.
+
 ## [0.3.4]
 
 ### Added
