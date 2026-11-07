@@ -1,3 +1,7 @@
+/* Same order Tailwind v4 declares. Whichever stylesheet loads first (this
+ * bundle or the app's), the layers keep this order. */
+@layer theme, base, components, utilities;
+
 @import "tailwindcss/theme.css" reference;
 @import "tailwindcss/utilities.css";
 
@@ -35,72 +39,81 @@
   --breakpoint-xs: 28rem;
 }
 
-/* Weak defaults let an app's own @theme values take precedence. */
-:where(:root) {
-  --color-primary: #041e42;
-  --color-bg-primary: #021327;
-  --color-hover-primary: #0a2f66;
-  --color-secondary: #cd212a;
-  --color-bg-secondary: #8f151b;
-  --color-hover-secondary: #e03a42;
-  --color-tertiary: #00997b;
-  --color-bg-tertiary: #006654;
-  --color-hover-tertiary: #1ab89a;
-  --color-quaternary: #d7942e;
-  --color-bg-quaternary: #9e6a1f;
-  --color-hover-quaternary: #ebb04a;
-  --color-on-brand: var(--color-base-light);
-  --color-base-dark: hsl(0 0% 90%);
-  --color-base: hsl(0 0% 95%);
-  --color-base-light: hsl(0 0% 100%);
-  --color-text: #0d0d0d;
-  --color-border: hsl(0 0% 80%);
-  --color-text-muted: hsl(0 0% 30%);
-  --color-bg-info: #0070ba;
-  --color-info: #fbfbfb;
-  --color-bg-success: hsl(149.76, 68%, 36%);
-  --color-success: #fbfbfb;
-  --color-bg-warning: #ffa500;
-  --color-warning: #000000;
-  --color-bg-error: hsl(0, 50%, 51%);
-  --color-error: #fbfbfb;
+/* Weak light defaults, inside `@layer theme` (where Tailwind puts an app's
+ * `@theme` tokens). Unlayered, they beat every layered rule, so they used to
+ * override the app's tokens. In the same layer, `:where()` (specificity 0)
+ * loses to Tailwind's `:root, :host` in any load order. */
+@layer theme {
+  :where(:root) {
+    --color-primary: #041e42;
+    --color-bg-primary: #021327;
+    --color-hover-primary: #0a2f66;
+    --color-secondary: #cd212a;
+    --color-bg-secondary: #8f151b;
+    --color-hover-secondary: #e03a42;
+    --color-tertiary: #00997b;
+    --color-bg-tertiary: #006654;
+    --color-hover-tertiary: #1ab89a;
+    --color-quaternary: #d7942e;
+    --color-bg-quaternary: #9e6a1f;
+    --color-hover-quaternary: #ebb04a;
+    --color-on-brand: var(--color-base-light);
+    --color-base-dark: hsl(0 0% 90%);
+    --color-base: hsl(0 0% 95%);
+    --color-base-light: hsl(0 0% 100%);
+    --color-text: #0d0d0d;
+    --color-border: hsl(0 0% 80%);
+    --color-text-muted: hsl(0 0% 30%);
+    --color-bg-info: #0070ba;
+    --color-info: #fbfbfb;
+    --color-bg-success: hsl(149.76, 68%, 36%);
+    --color-success: #fbfbfb;
+    --color-bg-warning: #ffa500;
+    --color-warning: #000000;
+    --color-bg-error: hsl(0, 50%, 51%);
+    --color-error: #fbfbfb;
+  }
 }
 
 /* Weak dark defaults (applied while `ThemeProvider` sets `.dark` on <html>).
- * `:where()` keeps specificity at 0 so an app's own `.dark { ... }` wins.
+ * In `@layer base`: after `theme`, so they still beat an app's light `@theme`
+ * tokens in dark mode, but any unlayered app `.dark { ... }` wins. `:where()`
+ * keeps specificity at 0, so an app `.dark` inside `@layer base` wins too.
  * Keep in sync between src/index.css and theme.css. */
-:where(.dark) {
-  --color-primary: #1f4f99;
-  --color-bg-primary: #1a4285;
-  --color-hover-primary: #2d62b8;
-  --color-secondary: #cd212a;
-  --color-bg-secondary: #a51b22;
-  --color-hover-secondary: #e03a42;
-  --color-tertiary: #0a8a70;
-  --color-bg-tertiary: #08705b;
-  --color-hover-tertiary: #12a585;
-  --color-quaternary: #b87a1f;
-  --color-bg-quaternary: #9a6619;
-  --color-hover-quaternary: #d08e2a;
-  --color-on-brand: #f1f5fb;
-  --color-base-dark: #0b0f16;
-  --color-base: #0f141c;
-  --color-base-light: #1a212c;
-  --color-text: #e6e9ef;
-  --color-border: #343d4b;
-  --color-text-muted: #a0a8b6;
-  --color-bg-info: #1f6fb0;
-  --color-info: #f1f5fb;
-  --color-bg-success: #1f8a55;
-  --color-success: #f1f5fb;
-  --color-bg-warning: #e8a33a;
-  --color-warning: #111111;
-  --color-bg-error: #c24a4a;
-  --color-error: #f1f5fb;
-  --sito-ui-color-scheme: dark;
-  --sito-ui-color-text-muted: var(--color-text-muted);
-  --sito-ui-color-primary-text: var(--color-on-brand);
-  --sito-ui-color-secondary-text: var(--color-on-brand);
+@layer base {
+  :where(.dark) {
+    --color-primary: #1f4f99;
+    --color-bg-primary: #1a4285;
+    --color-hover-primary: #2d62b8;
+    --color-secondary: #cd212a;
+    --color-bg-secondary: #a51b22;
+    --color-hover-secondary: #e03a42;
+    --color-tertiary: #0a8a70;
+    --color-bg-tertiary: #08705b;
+    --color-hover-tertiary: #12a585;
+    --color-quaternary: #b87a1f;
+    --color-bg-quaternary: #9a6619;
+    --color-hover-quaternary: #d08e2a;
+    --color-on-brand: #f1f5fb;
+    --color-base-dark: #0b0f16;
+    --color-base: #0f141c;
+    --color-base-light: #1a212c;
+    --color-text: #e6e9ef;
+    --color-border: #343d4b;
+    --color-text-muted: #a0a8b6;
+    --color-bg-info: #1f6fb0;
+    --color-info: #f1f5fb;
+    --color-bg-success: #1f8a55;
+    --color-success: #f1f5fb;
+    --color-bg-warning: #e8a33a;
+    --color-warning: #111111;
+    --color-bg-error: #c24a4a;
+    --color-error: #f1f5fb;
+    --sito-ui-color-scheme: dark;
+    --sito-ui-color-text-muted: var(--color-text-muted);
+    --sito-ui-color-primary-text: var(--color-on-brand);
+    --sito-ui-color-secondary-text: var(--color-on-brand);
+  }
 }
 
 /* Icon buttons on brand surfaces (Navbar `.header`, Page `.page-header`).
