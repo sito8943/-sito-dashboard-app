@@ -109,12 +109,28 @@
     --color-warning: #111111;
     --color-bg-error: #c24a4a;
     --color-error: #f1f5fb;
-    --sito-ui-color-scheme: dark;
-    --sito-ui-color-text-muted: var(--color-text-muted);
-    --sito-ui-color-primary-text: var(--color-on-brand);
-    --sito-ui-color-secondary-text: var(--color-on-brand);
   }
 }
+
+/* @sito/ui variable mapping. @sito/dashboard's sitoUi.css sets every
+ * `--sito-ui-*` on an unlayered `:root` (0,1,0). It maps most of them to our
+ * `--color-*` tokens, but not these: text-muted is a literal, primary/secondary
+ * text point to `--color-base-light` (dark in dark mode), and color-scheme is
+ * always `light`. Layered or `:where()` rules lose to that `:root`, so these
+ * are unlayered and one step stronger: `html:root` / `html.dark` (0,1,1) win
+ * in any load order. They point to tokens, so apps only set `--color-*`.
+ * To override a `--sito-ui-*` var yourself, use `:root.dark` / `:root:root`
+ * (0,2,0) — a plain `.dark { --sito-ui-*: ... }` (0,1,0) loses here.
+ * Keep in sync between src/index.css and theme.css. */
+html:root {
+  --sito-ui-color-text-muted: var(--color-text-muted);
+  --sito-ui-color-primary-text: var(--color-on-brand);
+  --sito-ui-color-secondary-text: var(--color-on-brand);
+}
+html.dark {
+  --sito-ui-color-scheme: dark;
+}
+/* End @sito/ui variable mapping */
 
 /* Icon buttons on brand surfaces (Navbar `.header`, Page `.page-header`).
  * @sito/ui paints text-variant buttons with `.sito-ui-button--text { color:

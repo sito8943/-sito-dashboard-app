@@ -13,6 +13,17 @@ All notable changes to this project will be documented in this file.
   `@layer base`. The bundled CSS declares `@layer theme, base, components, utilities;` so the
   order holds whichever stylesheet loads first. App `@theme` tokens and app `.dark { ... }`
   blocks now win in light and dark mode.
+- @sito/ui components (dialogs, buttons, context menus, toasts) now follow dark mode.
+  `@sito/dashboard`'s `sitoUi.css` sets every `--sito-ui-*` on an unlayered `:root` (0,1,0),
+  which beat the library's layered `:where(.dark)` overrides. In dark mode the color-scheme
+  stayed `light`, muted text stayed `#667085`, and primary/secondary button text was dark on
+  brand fills. The library now maps `--sito-ui-color-text-muted` to `var(--color-text-muted)`
+  and `--sito-ui-color-primary-text` / `--sito-ui-color-secondary-text` to
+  `var(--color-on-brand)` on `html:root`, and sets `--sito-ui-color-scheme: dark` on
+  `html.dark` (both unlayered, 0,1,1), in the bundled CSS and `theme.css`. Light mode: only
+  muted text changes, to the app's `--color-text-muted`. Apps can drop their own
+  `--sito-ui-*` overrides from `.dark { ... }`; to override these variables, use
+  `:root.dark` (0,2,0).
 
 ## [0.3.4]
 

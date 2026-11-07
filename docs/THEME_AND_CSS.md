@@ -91,6 +91,20 @@ Rules for the consumer CSS:
 - `--color-on-brand`: text/icon color on brand fills (Navbar). Defaults to `--color-base-light` in light mode and `#f1f5fb` in dark mode.
 - For Tailwind `dark:` utilities, add `@custom-variant dark (&:where(.dark, .dark *));` to your app CSS.
 
+### @sito/ui variables
+
+`@sito/dashboard`'s `sitoUi.css` sets every `--sito-ui-*` variable on an unlayered `:root` (specificity 0,1,0), so layered or `:where()` rules cannot change them. It already maps most of them to your `--color-*` tokens. The library maps the rest in unlayered rules that win in any load order:
+
+| Selector (specificity) | Variable                                                         | Value                     |
+| ---------------------- | ---------------------------------------------------------------- | ------------------------- |
+| `html:root` (0,1,1)    | `--sito-ui-color-text-muted`                                     | `var(--color-text-muted)` |
+| `html:root` (0,1,1)    | `--sito-ui-color-primary-text`, `--sito-ui-color-secondary-text` | `var(--color-on-brand)`   |
+| `html.dark` (0,1,1)    | `--sito-ui-color-scheme`                                         | `dark`                    |
+
+- Set `--color-*` tokens only. You do not need `--sito-ui-*` overrides in your `.dark { ... }` block; remove them.
+- To override one of these four variables yourself, use `:root.dark { ... }` or `:root:root { ... }` (0,2,0). A plain `.dark { --sito-ui-...: ... }` (0,1,0) loses to the library mapping.
+- The `--sito-ui-color-text` override on brand surfaces (`.header`, `.page-header`) still wins: it is set on a descendant element.
+
 ## 2.1 Motion control and shared animation utility
 
 Library transitions use a shared `.animated` utility class.
