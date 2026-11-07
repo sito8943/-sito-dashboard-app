@@ -31,6 +31,20 @@ All notable changes to this project will be documented in this file.
   stays light on the brand header in dark mode). Toolbar buttons get a visible focus ring.
 - The Navbar search button now has an accessible name (`_accessibility:ariaLabels.search`).
 
+### Fixed
+
+- Icon buttons on brand surfaces were dark on the dark header. `@sito/ui`'s
+  `.sito-ui-button--text { color: var(--sito-ui-color-text) }` (`#101010`) has the same
+  specificity as `.page-header-back` and its CSS loads after the lib bundle, so it won
+  (Page back button; in dark mode `text-base-light` was dark too). A shared block in
+  `theme.css` and the bundled CSS now sets `--sito-ui-color-text: var(--color-on-brand)` on
+  `.header` / `.page-header` and colors every `.icon-button` / `.action` inside them with
+  `--color-on-brand` (two-class selector, wins in any load order), with a secondary hover and
+  a visible `:focus-visible` outline. Covers the Page back button, Page actions and mobile
+  dropdown trigger, the Navbar menu button and toolbar (search, `ThemeToggle`).
+- `.page-header` text and brand `TopBanner` variants use `--color-on-brand` instead of
+  `--color-base-light` (which is dark in dark mode).
+
 ## [0.3.3]
 
 ### Fixed

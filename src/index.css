@@ -103,6 +103,32 @@
   --sito-ui-color-secondary-text: var(--color-on-brand);
 }
 
+/* Icon buttons on brand surfaces (Navbar `.header`, Page `.page-header`).
+ * @sito/ui paints text-variant buttons with `.sito-ui-button--text { color:
+ * var(--sito-ui-color-text) }` (dark, same specificity as a single class) and
+ * its CSS loads after ours, so it beat `.page-header-back`. Re-pointing the
+ * variable on the surface fixes every @sito/ui button inside it; the
+ * two-class rule below wins over the single-class @sito/ui rule in any load
+ * order. Plain CSS so it survives any consumer build.
+ * Keep in sync between src/index.css and theme.css. */
+.header,
+.page-header {
+  --sito-ui-color-text: var(--color-on-brand);
+}
+:is(.header, .page-header) :is(.icon-button, .action) {
+  color: var(--color-on-brand);
+}
+:is(.header, .page-header) :is(.icon-button, .action):focus-visible {
+  outline: 2px solid var(--color-on-brand);
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  :is(.header, .page-header) :is(.icon-button, .action):not(:disabled):hover {
+    background-color: var(--color-secondary) !important;
+  }
+}
+/* End brand surfaces */
+
 .animated {
   @apply transition duration-300 ease-in-out;
 }

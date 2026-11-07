@@ -2,7 +2,7 @@
 
 .page-header {
   @apply flex items-center justify-between
-    pr-3 pl-4 py-2 bg-primary text-base-light w-full;
+    pr-3 pl-4 py-2 bg-primary text-on-brand w-full;
 }
 
 .page-header-left {
@@ -34,18 +34,8 @@
 }
 
 .page-header .action {
-  @apply bg-base/30 text-base-light hover:bg-secondary;
+  @apply bg-base/30;
 }
 
-.page-header-actions-mobile .actions-dropdown-trigger {
-  @apply text-base-light hover:!bg-secondary;
-}
-
-.page-header .action {
-  @apply bg-base/30 text-base-light hover:bg-secondary;
-}
-
-.page-header-back,
-.page-header-actions-mobile .actions-dropdown-trigger {
-  @apply text-base-light hover:!bg-secondary;
-}
+/* Color, hover and focus ring for icon buttons on the brand header live in the
+ * shared "brand surfaces" block (src/index.css + theme.css). */
