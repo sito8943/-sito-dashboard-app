@@ -95,14 +95,17 @@ Rules for the consumer CSS:
 
 `@sito/dashboard`'s `sitoUi.css` sets every `--sito-ui-*` variable on an unlayered `:root` (specificity 0,1,0), so layered or `:where()` rules cannot change them. It already maps most of them to your `--color-*` tokens. The library maps the rest in unlayered rules that win in any load order:
 
-| Selector (specificity) | Variable                                                         | Value                     |
-| ---------------------- | ---------------------------------------------------------------- | ------------------------- |
-| `html:root` (0,1,1)    | `--sito-ui-color-text-muted`                                     | `var(--color-text-muted)` |
-| `html:root` (0,1,1)    | `--sito-ui-color-primary-text`, `--sito-ui-color-secondary-text` | `var(--color-on-brand)`   |
-| `html.dark` (0,1,1)    | `--sito-ui-color-scheme`                                         | `dark`                    |
+| Selector (specificity) | Variable                                                         | Value                      |
+| ---------------------- | ---------------------------------------------------------------- | -------------------------- |
+| `html:root` (0,1,1)    | `--sito-ui-color-text-muted`                                     | `var(--color-text-muted)`  |
+| `html:root` (0,1,1)    | `--sito-ui-color-primary-text`, `--sito-ui-color-secondary-text` | `var(--color-on-brand)`    |
+| `html:root` (0,1,1)    | `--sito-ui-color-{success,error,warning,info}-default`           | `var(--color-bg-{status})` |
+| `html:root` (0,1,1)    | `--sito-ui-color-{success,error,warning,info}-text`              | `var(--color-{status})`    |
+| `html.dark` (0,1,1)    | `--sito-ui-color-scheme`                                         | `dark`                     |
 
 - Set `--color-*` tokens only. You do not need `--sito-ui-*` overrides in your `.dark { ... }` block; remove them.
-- To override one of these four variables yourself, use `:root.dark { ... }` or `:root:root { ... }` (0,2,0). A plain `.dark { --sito-ui-...: ... }` (0,1,0) loses to the library mapping.
+- The status colors drive `NotificationProvider` toasts (and `@sito/ui` error buttons). Set `--color-bg-success` / `--color-success` etc.; success never falls back to the brand color.
+- To override one of these variables yourself, use `:root.dark { ... }` or `:root:root { ... }` (0,2,0). A plain `.dark { --sito-ui-...: ... }` (0,1,0) loses to the library mapping.
 - The `--sito-ui-color-text` override on brand surfaces (`.header`, `.page-header`) still wins: it is set on a descendant element.
 
 ## 2.1 Motion control and shared animation utility
@@ -195,9 +198,7 @@ Prefab action hooks (`useEditAction`, `useDeleteAction`, `useRestoreAction`, `us
 
 - `.error-container`, `.error-icon`, `.error-message`, `.error-retry`
 - `.empty-container`, `.empty-message`
-- `.notification-portal`, `.notification`, `.notification.closing`
-- `.notification-body`, `.notification-icon`, `.notification-text`
-- `.notification-close`, `.notification-close-icon`
+- Toasts are `@sito/ui` markup (`.sito-ui-toast-viewport`, `.sito-ui-toast`, `.sito-ui-toast--{success,error,warning,info}`, `.sito-ui-toast__message`, `.sito-ui-toast__close`). Pass `viewportClassName` / `toastClassName` to `NotificationProvider` for custom classes. The old `.notification-*` classes are gone.
 - `.splash-screen`
 
 ### 4.7 Form and grid

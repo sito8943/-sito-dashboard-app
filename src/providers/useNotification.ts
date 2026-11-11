@@ -7,7 +7,8 @@ import { NotificationContext } from "./NotificationContext";
  * Hook to consume the notification context.
  *
  * @returns {NotificationContextType} Notification state and helper methods.
- * `notification` is `NotificationType[]`.
+ * `notification` is deprecated and always empty (toasts live in `@sito/ui`).
+ * `removeNotification(id?)` dismisses one toast, or all when `id` is omitted.
  * `showNotification` receives `NotificationType`.
  * `showSuccessNotification` and `showErrorNotification` receive `Partial<NotificationType>`.
  * `showStackNotifications` receives `NotificationType[]`.

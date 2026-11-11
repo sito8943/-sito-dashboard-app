@@ -2,6 +2,7 @@ import { ComponentType, ReactNode } from "react";
 import { QueryClient } from "@tanstack/react-query";
 import type { AuthProviderPropTypes } from "./Auth/types";
 import type { ThemeProviderProps } from "./Theme/types";
+import type { NotificationProviderProps } from "./Notification/types";
 
 // lib
 import {
@@ -40,6 +41,11 @@ export interface AppProvidersProps extends BasicProviderPropTypes {
    * (`{}` for defaults). Omitted/`false`: not mounted.
    */
   theme?: false | ProviderPropsWithoutChildren<ThemeProviderProps>;
+  /**
+   * Toast options for the built-in `NotificationProvider` (`placement`,
+   * `variant`, `duration`, `max`, `label`, `closeLabel`, class names).
+   */
+  notification?: ProviderPropsWithoutChildren<NotificationProviderProps>;
   withNavbarProvider?: boolean;
   withBottomNavActionProvider?: boolean;
   featureFlagsProvider?: AnyAppProviderSlot;
@@ -91,12 +97,22 @@ export type FileDataType = {
 };
 
 export type NotificationContextType = {
+  /**
+   * @deprecated Always an empty array. Toasts are rendered by `@sito/ui`'s
+   * `ToastProvider`, which does not report auto-dismissed toasts back, so the
+   * shown list is no longer tracked. Will be removed in a future minor.
+   */
   notification: NotificationType[];
+  /** Dismisses one notification by id, or every shown one when `id` is omitted. */
   removeNotification: (id?: number) => void;
-  showErrorNotification: (options: Partial<NotificationType>) => void;
-  showNotification: (options: NotificationType) => void;
-  showSuccessNotification: (options: Partial<NotificationType>) => void;
-  showStackNotifications: (notifications: NotificationType[]) => void;
+  /** Shows an error toast. Returns its id (for `removeNotification`). */
+  showErrorNotification: (options: Partial<NotificationType>) => number;
+  /** Shows a toast colored by `type` (missing means error). Returns its id. */
+  showNotification: (options: NotificationType) => number;
+  /** Shows a success toast. Returns its id. */
+  showSuccessNotification: (options: Partial<NotificationType>) => number;
+  /** Shows one toast per item (they stack). Returns their ids. */
+  showStackNotifications: (notifications: NotificationType[]) => number[];
 };
 
 export type DrawerMenuProviderPropTypes = BasicProviderPropTypes;

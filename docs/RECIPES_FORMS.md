@@ -776,6 +776,14 @@ export function SaveButton() {
 }
 ```
 
+Behavior (`@sito/ui` toasts rendered by `NotificationProvider`):
+
+- Toasts stack, up to 3 visible; the oldest leaves first.
+- Non-error toasts leave after 5000ms; errors stay until closed.
+- Colors: `success`, `error`, `warning`, `info` (missing `type` means `error`), from your `--color-bg-*` / `--color-*` tokens.
+- Every `show*` returns the toast id (`showStackNotifications` returns an array). `removeNotification(id)` closes one; `removeNotification()` closes all.
+- Configure with props on `NotificationProvider` (or `AppProviders` `notification={{ ... }}`): `placement` (default `"bottom-left"`), `variant` (`"filled"`), `duration`, `max`, `label`, `closeLabel`.
+
 ## 9. Auth patterns with `useAuth` (`rememberMe`, session restore/logout)
 
 ```tsx

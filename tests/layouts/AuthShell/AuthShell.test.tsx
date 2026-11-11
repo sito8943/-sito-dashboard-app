@@ -8,10 +8,6 @@ vi.mock("@sito/dashboard", () => ({
     values.filter(Boolean).join(" "),
 }));
 
-vi.mock("@/components/organisms/Notification", () => ({
-  Notification: () => <div data-testid="notification" />,
-}));
-
 describe("AuthShell", () => {
   it("renders children inside the auth-shell wrapper", () => {
     const { container } = render(
@@ -24,25 +20,21 @@ describe("AuthShell", () => {
     expect(container.querySelector(".auth-shell")).toBeTruthy();
   });
 
-  it("renders the Notification portal by default", () => {
-    render(
-      <AuthShell>
-        <span />
-      </AuthShell>,
-    );
+  it.each([true, false, undefined])(
+    "renders only children whatever withNotification is (%s)",
+    (withNotification) => {
+      const { container } = render(
+        <AuthShell withNotification={withNotification}>
+          <span data-testid="auth-content" />
+        </AuthShell>,
+      );
 
-    expect(screen.getByTestId("notification")).toBeTruthy();
-  });
-
-  it("hides the Notification portal when withNotification is false", () => {
-    render(
-      <AuthShell withNotification={false}>
-        <span />
-      </AuthShell>,
-    );
-
-    expect(screen.queryByTestId("notification")).toBeNull();
-  });
+      const ids = Array.from(
+        container.querySelector(".auth-shell")?.children ?? [],
+      ).map((node) => node.getAttribute("data-testid"));
+      expect(ids).toEqual(["auth-content"]);
+    },
+  );
 
   it("merges a custom className onto the wrapper", () => {
     const { container } = render(

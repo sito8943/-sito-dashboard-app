@@ -159,10 +159,27 @@ describe("@sito/ui variable mapping", () => {
 
   it("maps the unmapped vars to tokens above :root specificity", () => {
     expect(mappingBlock(theme)).toMatch(
-      /html:root \{\s*--sito-ui-color-text-muted: var\(--color-text-muted\);\s*--sito-ui-color-primary-text: var\(--color-on-brand\);\s*--sito-ui-color-secondary-text: var\(--color-on-brand\);\s*\}/,
+      /html:root \{\s*--sito-ui-color-text-muted: var\(--color-text-muted\);\s*--sito-ui-color-primary-text: var\(--color-on-brand\);\s*--sito-ui-color-secondary-text: var\(--color-on-brand\);/,
     );
     expect(mappingBlock(theme)).toMatch(
       /html\.dark \{\s*--sito-ui-color-scheme: dark;\s*\}/,
+    );
+  });
+
+  // Toasts use @sito/ui status colors; @sito/ui's own `:root` literals would
+  // win over @sito/dashboard's mapping when its CSS loads later.
+  it.each([
+    ["success", "success"],
+    ["error", "error"],
+    ["warning", "warning"],
+    ["info", "info"],
+  ])("maps the %s status colors to the notification tokens", (status) => {
+    const root = mappingBlock(theme)?.match(/html:root \{[^}]*\}/)?.[0];
+    expect(root).toContain(
+      `--sito-ui-color-${status}-default: var(--color-bg-${status});`,
+    );
+    expect(root).toContain(
+      `--sito-ui-color-${status}-text: var(--color-${status});`,
     );
   });
 

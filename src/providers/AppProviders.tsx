@@ -6,7 +6,7 @@ import { BottomNavActionProvider } from "./BottomNavAction";
 import { ConfigProvider } from "./ConfigProvider";
 import { DrawerMenuProvider } from "./DrawerMenuProvider";
 import { ManagerProvider } from "./ManagerProvider";
-import { NotificationProvider } from "./NotificationProvider";
+import { NotificationProvider } from "./Notification";
 import { ThemeProvider } from "./Theme";
 
 // components
@@ -34,6 +34,7 @@ const AppProviders = (props: AppProvidersProps) => {
     manager,
     auth = {},
     theme = false,
+    notification,
     withNavbarProvider = false,
     withBottomNavActionProvider = false,
     featureFlagsProvider,
@@ -53,7 +54,9 @@ const AppProviders = (props: AppProvidersProps) => {
   if (withNavbarProvider) content = <NavbarProvider>{content}</NavbarProvider>;
 
   content = <DrawerMenuProvider>{content}</DrawerMenuProvider>;
-  content = <NotificationProvider>{content}</NotificationProvider>;
+  content = (
+    <NotificationProvider {...notification}>{content}</NotificationProvider>
+  );
 
   if (auth !== false)
     content = <AuthProvider {...auth}>{content}</AuthProvider>;

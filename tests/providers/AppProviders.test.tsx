@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { BaseLinkPropsType } from "@/components/types";
@@ -15,6 +15,14 @@ import { useManager } from "@/providers/useManager";
 import { useNotification } from "@/providers/useNotification";
 import { useOptionalTheme } from "@/providers/Theme/useOptionalTheme";
 import type { BasicProviderPropTypes } from "@/providers/types";
+
+// No TranslationProvider here: `useTranslation` throws, as in @sito/dashboard,
+// and NotificationProvider falls back to English labels.
+vi.mock("@sito/dashboard", () => ({
+  useTranslation: () => {
+    throw new Error("translationContext must be used within a Provider");
+  },
+}));
 
 const manager = {
   Auth: {
@@ -117,6 +125,38 @@ describe("AppProviders", () => {
     expect(screen.getByTestId("has-auth")).toHaveTextContent("true");
     expect(screen.getByTestId("notification-count")).toHaveTextContent("0");
     expect(screen.getByTestId("drawer-count")).toHaveTextContent("0");
+  });
+
+  it("forwards the notification option to NotificationProvider", () => {
+    const ShowToast = () => {
+      const { showErrorNotification } = useNotification();
+      return (
+        <button
+          type="button"
+          onClick={() => showErrorNotification({ message: "Failed" })}
+        >
+          show
+        </button>
+      );
+    };
+
+    render(
+      <AppProviders
+        {...baseProps}
+        notification={{ placement: "top-center", label: "Alerts" }}
+      >
+        <ShowToast />
+      </AppProviders>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "show" }));
+
+    const viewport = document.body.querySelector(
+      '[data-sito-ui="toast-viewport"]',
+    );
+    expect(viewport).toHaveAttribute("data-placement", "top-center");
+    expect(viewport).toHaveAttribute("aria-label", "Alerts");
+    expect(screen.getByText("Failed")).toBeInTheDocument();
   });
 
   it("allows disabling AuthProvider", () => {

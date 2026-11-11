@@ -1,0 +1,30 @@
+/* Info toast rules from @sito/ui 0.11.0. Apps get @sito/ui's CSS through
+ * @sito/dashboard's bundled sitoUi.css, which is built against @sito/ui
+ * 0.10.x and has no `info` toast color yet, so `NotificationEnumType.info`
+ * would render unfilled. Same selectors as @sito/ui: harmless duplicates once
+ * @sito/dashboard ships the 0.11 styles. Remove after that. */
+.sito-ui-toast--info {
+  --sito-ui-toast-accent: var(--sito-ui-color-info-default);
+}
+
+.sito-ui-toast--filled.sito-ui-toast--info {
+  --sito-ui-toast-filled-background: var(--sito-ui-color-info-default);
+  --sito-ui-toast-filled-foreground: var(--sito-ui-color-info-text);
+  background-color: var(--sito-ui-toast-filled-background);
+  border-color: var(--sito-ui-toast-filled-background);
+  color: var(--sito-ui-toast-filled-foreground);
+}
+
+.sito-ui-toast--filled.sito-ui-toast--info
+  :is(.sito-ui-toast__icon, .sito-ui-toast__action, .sito-ui-toast__close) {
+  color: var(--sito-ui-toast-filled-foreground);
+}
+
+.sito-ui-toast--filled.sito-ui-toast--info
+  :is(.sito-ui-toast__action, .sito-ui-toast__close):not(:disabled):hover {
+  background-color: color-mix(
+    in srgb,
+    var(--sito-ui-toast-filled-foreground) 16%,
+    transparent
+  );
+}

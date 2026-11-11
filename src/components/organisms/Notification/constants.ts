@@ -1,1 +1,0 @@
-export const NOTIFICATION_ANIMATION_MS = 300;
