@@ -77,7 +77,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
 ## 2. Base app shell with layout helpers (`AppShell` + `DashboardHeader` + `DashboardFooter`)
 
-Prefer bundled shells over hand-rolling Navbar/Drawer/Footer wiring. `AppShell` mounts slots in fixed order (`header → children → footer → bottomNavigation → extras → Notification`); `DashboardHeader` owns drawer open/close state internally.
+Prefer bundled shells over hand-rolling Navbar/Drawer/Footer wiring. `AppShell` mounts slots in fixed order (`header → children → footer → bottomNavigation → extras`); `DashboardHeader` owns drawer open/close state internally.
 
 ```tsx
 import { useMemo } from "react";
@@ -138,11 +138,11 @@ export function AppLayout() {
 
 Notes:
 
-- `AppShell` mounts `<Notification />` at end of slot order. Pass `withNotification={false}` only when mounting your own portal.
+- Toasts come from `NotificationProvider` (`@sito/ui` `ToastProvider`), not from the shell. `withNotification` is deprecated and has no effect.
 - `DashboardHeader` is generic over `MenuKeys`. Drawer state lives inside; consumers supply `menuMap` and optional `logo` / `showOfflineBanner` / `navbarProps`.
 - `DashboardFooter` renders `ToTop` by default. Toggle with `showToTop={false}` or customize via `toTopProps`. Set `bottomNavSpacing` when also mounting `BottomNavigation`.
 
-For hand-rolled shells, lower-level `Navbar`/`Drawer`/`Notification`/`ToTop` primitives remain available.
+For hand-rolled shells, lower-level `Navbar`/`Drawer`/`ToTop` primitives remain available.
 
 ### 2.0 Typed menu metadata and feature-flag filtering
 
@@ -260,7 +260,7 @@ function CategoriesCenterAction() {
 
 ### 2.2 Auth route shell with `AuthShell`
 
-Wrap auth routes with `AuthShell` so `Notification` portal stays mounted pre-sign-in. Redirect/error-boundary logic stays in the consumer.
+Wrap auth routes with `AuthShell`. Toasts work pre-sign-in because `NotificationProvider` renders them. Redirect/error-boundary logic stays in the consumer.
 
 ```tsx
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -287,8 +287,6 @@ export function AuthLayout() {
   );
 }
 ```
-
-Opt out of the built-in toast portal with `withNotification={false}`.
 
 ### 2.3 Reusable fallback views (`NotFoundView`, `FeatureUnavailableView`)
 

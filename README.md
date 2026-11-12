@@ -43,8 +43,8 @@ Peer dependencies:
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.4.2 \
-  @sito/ui@^0.10.1 \
+  @sito/dashboard@^0.4.7 \
+  @sito/ui@^0.11.0 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -68,8 +68,8 @@ npm install @supabase/supabase-js@2.100.0
 - `@tanstack/react-query` `5.83.0`
 - `@supabase/supabase-js` `2.100.0` (optional)
 - `react-hook-form` `7.61.1`
-- `@sito/dashboard` `^0.4.2`
-- `@sito/ui` `^0.10.1`
+- `@sito/dashboard` `^0.4.7`
+- `@sito/ui` `^0.11.0`
 - Font Awesome peers per `package.json`
 
 ## Quick start
@@ -98,7 +98,7 @@ Dynamic entity, route, and error keys still come from the app.
 - Reusable views: `NotFoundView`, `FeatureUnavailableView`
 - Actions and menus: `Actions`, `Action`, `ActionsDropdown`, `Dropdown`, button components
 - Dialogs and forms: `Dialog`, `FormDialog`, `ImportDialog`, `ExportDialog`, `PwaUpdateDialog`, form inputs
-- Feedback: `Notification`, `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`, `TopBanner`
+- Feedback: `NotificationProvider` + `useNotification` (`@sito/ui` toasts), `Loading`, `Empty`, `Error`, `Onboarding`, `OfflineBanner`, `TopBanner`
 - Hooks: `useFormDialog`, `usePostDialog`, `usePutDialog`, `useImportDialog`, `useExportDialog`, `useDeleteDialog`, `useMutationForm`, `useDeleteAction`, `useNavbar`, `useTheme`, `useOptionalTheme`, `useOnlineStatus`, `useOnlineStatusSnapshot`, and more — action hooks ship with default `sticky`, `multiple`, `id`, `icon`, `tooltip` and now forward `className`, `iconClassName`, `labelClassName`; only `onClick` is required. `Actions` renders icon-only items with tooltips by default (`showTooltips={true}`) and can opt out per action list.
 - Providers and utilities: `ConfigProvider`, `ManagerProvider`, `AppProviders`, `createAppProviders`, `SupabaseManagerProvider`, `AuthProvider`, `SupabaseAuthProvider`, `NotificationProvider`, `DrawerMenuProvider`, `NavbarProvider`, `ThemeProvider` (light/dark, `THEME_BOOT_SCRIPT`), `BottomNavActionProvider`, `useBottomNavAction`, `useOptionalBottomNavAction`, `useRegisterBottomNavAction`, DTOs, API clients (`BaseClient`, `SupabaseDataClient`), `useSupabase`, `filterMenuByFeatureFlags`, `normalizeMenuDividers`.
 

@@ -116,7 +116,10 @@
  * `--sito-ui-*` on an unlayered `:root` (0,1,0). It maps most of them to our
  * `--color-*` tokens, but not these: text-muted is a literal, primary/secondary
  * text point to `--color-base-light` (dark in dark mode), and color-scheme is
- * always `light`. Layered or `:where()` rules lose to that `:root`, so these
+ * always `light`. The status colors (success/error/warning/info) are mapped
+ * there too, but @sito/ui's own `:root` literals win when its CSS loads later,
+ * so toasts are pinned to our notification tokens here. Layered or
+ * `:where()` rules lose to that `:root`, so these
  * are unlayered and one step stronger: `html:root` / `html.dark` (0,1,1) win
  * in any load order. They point to tokens, so apps only set `--color-*`.
  * To override a `--sito-ui-*` var yourself, use `:root.dark` / `:root:root`
@@ -126,6 +129,15 @@ html:root {
   --sito-ui-color-text-muted: var(--color-text-muted);
   --sito-ui-color-primary-text: var(--color-on-brand);
   --sito-ui-color-secondary-text: var(--color-on-brand);
+  /* Status colors (toasts, error buttons) follow the notification tokens. */
+  --sito-ui-color-success-default: var(--color-bg-success);
+  --sito-ui-color-success-text: var(--color-success);
+  --sito-ui-color-error-default: var(--color-bg-error);
+  --sito-ui-color-error-text: var(--color-error);
+  --sito-ui-color-warning-default: var(--color-bg-warning);
+  --sito-ui-color-warning-text: var(--color-warning);
+  --sito-ui-color-info-default: var(--color-bg-info);
+  --sito-ui-color-info-text: var(--color-info);
 }
 html.dark {
   --sito-ui-color-scheme: dark;

@@ -8,10 +8,6 @@ vi.mock("@sito/dashboard", () => ({
     values.filter(Boolean).join(" "),
 }));
 
-vi.mock("@/components/organisms/Notification", () => ({
-  Notification: () => <div data-testid="notification" />,
-}));
-
 describe("AppShell", () => {
   it("renders children inside the app-shell wrapper", () => {
     const { container } = render(
@@ -24,7 +20,7 @@ describe("AppShell", () => {
     expect(container.querySelector(".app-shell")).toBeTruthy();
   });
 
-  it("renders all slots in declared order: header, children, footer, bottomNav, extras, Notification", () => {
+  it("renders all slots in declared order: header, children, footer, bottomNav, extras", () => {
     const { container } = render(
       <AppShell
         header={<div data-testid="hdr">hdr</div>}
@@ -40,17 +36,20 @@ describe("AppShell", () => {
     const children = Array.from(shell?.children ?? []);
     const ids = children.map((node) => node.getAttribute("data-testid"));
 
-    expect(ids).toEqual(["hdr", "cnt", "ftr", "btm", "xtr", "notification"]);
+    expect(ids).toEqual(["hdr", "cnt", "ftr", "btm", "xtr"]);
   });
 
-  it("hides Notification when withNotification is false", () => {
-    render(
-      <AppShell withNotification={false}>
-        <main />
+  it("ignores the deprecated withNotification prop", () => {
+    const { container } = render(
+      <AppShell withNotification>
+        <main data-testid="cnt" />
       </AppShell>,
     );
 
-    expect(screen.queryByTestId("notification")).toBeNull();
+    const ids = Array.from(
+      container.querySelector(".app-shell")?.children ?? [],
+    ).map((node) => node.getAttribute("data-testid"));
+    expect(ids).toEqual(["cnt"]);
   });
 
   it("merges a custom className onto the wrapper", () => {
@@ -77,6 +76,6 @@ describe("AppShell", () => {
       node.getAttribute("data-testid"),
     );
 
-    expect(ids).toEqual(["cnt", "notification"]);
+    expect(ids).toEqual(["cnt"]);
   });
 });

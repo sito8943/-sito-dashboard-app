@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- **Notifications now use `@sito/ui` toasts.** `NotificationProvider` renders `@sito/ui`'s
+  `ToastProvider` and implements `useNotification()` on top of `useToast()`. The public API is
+  the same; behavior changes:
+  - Toasts stack (up to 3 visible, the oldest leaves first). A new notification no longer
+    replaces the shown ones.
+  - Non-error toasts leave after 5000ms (paused on hover/focus). Errors stay until closed.
+  - Toasts close with their close button or Escape (while focused). Clicking anywhere or
+    pressing Escape outside no longer closes them all.
+  - `NotificationEnumType.info` renders the `info` color (was the success fallback icon on an
+    info background). Missing `type` is still an error.
+  - Toasts render wherever `NotificationProvider` is mounted, no longer only inside
+    `AppShell` / `AuthShell`.
+- `showNotification`, `showSuccessNotification` and `showErrorNotification` return the toast id;
+  `showStackNotifications` returns the ids. Pass one to `removeNotification(id)`;
+  `removeNotification()` closes all.
+- `NotificationProvider` accepts `placement` (default `"bottom-left"`), `variant` (default
+  `"filled"`), `duration`, `max`, `label`, `closeLabel`, `viewportClassName`, `toastClassName`.
+  `AppProviders` / `createAppProviders` forward them through a new `notification` option.
+- Toast labels use `_accessibility:labels.notifications` (new key, en + es) and
+  `_accessibility:ariaLabels.closeNotification`, with English fallbacks when
+  `NotificationProvider` sits outside `TranslationProvider` (e.g. inside `AppProviders` with
+  `TranslationProvider` nested below it). Pass `label` / `closeLabel` to translate them there.
+- `--sito-ui-color-{success,error,warning,info}-{default,text}` are mapped to the notification
+  tokens (`--color-bg-success` / `--color-success`, …) in the unlayered `html:root` block of the
+  bundled CSS and `theme.css`, so toasts keep each app's colors in any load order. Success
+  always uses the success token, never the brand color.
+- Peer dependencies: `@sito/ui` `^0.11.0` (adds the `info` toast color) and `@sito/dashboard`
+  `^0.4.7` (its bundled `sitoUi.css` ships the 0.11 toast styles: info, filled by default,
+  smooth updates).
+
+### Deprecated
+
+- `Notification` component: renders nothing. Toasts come from `NotificationProvider`.
+- `withNotification` prop on `AppShell` / `AuthShell`: no effect.
+- `notification` field of `useNotification()`: always an empty array. `@sito/ui` does not report
+  auto-dismissed toasts back.
+
+### Removed
+
+- The library's own toast portal and its CSS classes (`.notification-portal`, `.notification`,
+  `.notification-body`, `.notification-icon`, `.notification-text`, `.notification-close`,
+  `.notification-close-icon`).
+
 ## [0.3.5]
 
 ### Fixed

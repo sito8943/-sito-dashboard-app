@@ -1,14 +1,33 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
-import { Notification } from "@/components/organisms/Notification/Notification";
-import { useNotification } from "@/providers";
+import { NotificationProvider, useNotification } from "@/providers";
 import { NotificationEnumType } from "@/lib";
 
 const meta = {
-  title: "Organisms/Notification/Notification",
-  component: Notification,
+  title: "Providers/NotificationProvider",
+  component: NotificationProvider,
   tags: ["autodocs"],
-} satisfies Meta<typeof Notification>;
+  args: {
+    children: null,
+    placement: "bottom-left",
+    variant: "filled",
+    duration: 5000,
+    max: 3,
+  },
+  argTypes: {
+    placement: {
+      control: "select",
+      options: [
+        "top-left",
+        "top-center",
+        "top-right",
+        "bottom-left",
+        "bottom-center",
+        "bottom-right",
+      ],
+    },
+    variant: { control: "inline-radio", options: ["filled", "accent"] },
+  },
+} satisfies Meta<typeof NotificationProvider>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -27,10 +46,7 @@ const NotificationControls = () => {
       <button
         className="button submit primary"
         onClick={() =>
-          showSuccessNotification({
-            message: "Saved successfully",
-            type: NotificationEnumType.success,
-          })
+          showSuccessNotification({ message: "Saved successfully" })
         }
       >
         Success
@@ -94,23 +110,31 @@ const NotificationControls = () => {
 };
 
 export const Basic: Story = {
-  render: () => (
-    <div className="p-4">
-      <NotificationControls />
-      <Notification />
-    </div>
+  render: (args) => (
+    <NotificationProvider {...args}>
+      <div className="p-4">
+        <NotificationControls />
+      </div>
+    </NotificationProvider>
   ),
 };
 
 export const StackAndDismiss: Story = {
-  render: () => (
-    <div className="p-4">
-      <p className="mb-3 text-sm opacity-70">
-        Use Stack to render multiple notifications. You can close with ESC,
-        click outside or use Clear all.
-      </p>
-      <NotificationControls />
-      <Notification />
-    </div>
+  render: (args) => (
+    <NotificationProvider {...args}>
+      <div className="p-4">
+        <p className="mb-3 text-sm opacity-70">
+          Toasts stack (up to `max`, the oldest leaves first). Non-error toasts
+          leave after `duration`; errors stay until closed. Clear all calls
+          `removeNotification()`.
+        </p>
+        <NotificationControls />
+      </div>
+    </NotificationProvider>
   ),
+};
+
+export const Accent: Story = {
+  ...Basic,
+  args: { variant: "accent", placement: "top-right" },
 };

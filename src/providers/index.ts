@@ -1,4 +1,4 @@
-export * from "./NotificationProvider";
+export * from "./Notification";
 export * from "./ManagerProvider";
 export * from "./AppProviders";
 export * from "./createAppProviders";

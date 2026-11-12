@@ -67,8 +67,7 @@ Quick diagnosis guide for common issues in consumer projects.
 
 **Fix**
 
-- Mount `NotificationProvider` in root.
-- Also render `<Notification />` so toast UI is visible.
+- Mount `NotificationProvider` in root (or use `AppProviders`). It renders the `@sito/ui` toasts itself; `<Notification />` is deprecated and renders nothing.
 
 ### 2.5 `PageHeader` back button does nothing
 

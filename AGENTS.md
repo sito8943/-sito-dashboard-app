@@ -34,15 +34,15 @@ Critical distinctions (override anything in `.sito/*`):
 | Icons        | FontAwesome          | 7.0.0   |
 | Forms        | React Hook Form      | 7.61.1  |
 | Server State | TanStack React Query | 5.x     |
-| Base Library | @sito/dashboard      | ^0.4.2  |
+| Base Library | @sito/dashboard      | ^0.4.7  |
 
 Peer install (consumer project):
 
 ```bash
 npm install \
   react@19.2.7 react-dom@19.2.7 \
-  @sito/dashboard@^0.4.2 \
-  @sito/ui@^0.10.1 \
+  @sito/dashboard@^0.4.7 \
+  @sito/ui@^0.11.0 \
   @tanstack/react-query@5.83.0 \
   react-hook-form@7.61.1 \
   @fortawesome/fontawesome-svg-core@7.0.0 \
@@ -64,7 +64,7 @@ See `docs/CONSUMER_GUIDE.md` for: full provider setup, `AppProviders` composer, 
 | `ConfigProvider`       | Router `location`, `navigate`, `linkComponent`, optional `searchComponent`, global `motion` (`auto`/`none`/`always`)                           |
 | `ManagerProvider`      | API manager (`IManager`); mounts `QueryClientProvider` internally                                                                              |
 | `AuthProvider`         | Session (`token`, `refreshToken`, `accessTokenExpiresAt`, `remember`); exposes `account`, `logUser`, `logoutUser`, etc.                        |
-| `NotificationProvider` | Toast system                                                                                                                                   |
+| `NotificationProvider` | Toast system: renders `@sito/ui` `ToastProvider` (stacking, auto-dismiss, `placement`/`variant`/`duration`/`max`/`label`/`closeLabel` props)   |
 | `DrawerMenuProvider`   | Drawer menu state                                                                                                                              |
 | `NavbarProvider`       | Optional dynamic navbar (`title`, `setTitle`, `rightContent`, `setRightContent`) — required when using `Navbar`/`useNavbar`                    |
 | `ThemeProvider`        | Optional light/dark theme (`storageKey`, `defaultMode`, `themeColors`); `useTheme` / `useOptionalTheme`. Outermost; via `AppProviders` `theme` |
@@ -131,8 +131,8 @@ Migrated from `wallet` / `period-calendar` consumer apps; use these instead of f
 
 | Export                   | Folder                                     | Purpose                                                                                                                                                                                    |
 | ------------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `AppShell`               | `src/layouts/AppShell`                     | Authenticated route shell. Slots: `header`, `children`, `footer`, `bottomNavigation`, `extras`. Built-in `Notification` portal (opt out via `withNotification={false}`).                   |
-| `AuthShell`              | `src/layouts/AuthShell`                    | Auth route wrapper. Renders `children` + optional `Notification`. Redirect/error-boundary logic stays in the consumer.                                                                     |
+| `AppShell`               | `src/layouts/AppShell`                     | Authenticated route shell. Slots: `header`, `children`, `footer`, `bottomNavigation`, `extras`. Toasts come from `NotificationProvider` (`withNotification` deprecated, no effect).        |
+| `AuthShell`              | `src/layouts/AuthShell`                    | Auth route wrapper. Renders `children`. Redirect/error-boundary logic stays in the consumer.                                                                                               |
 | `DashboardHeader`        | `src/layouts/DashboardHeader`              | `Drawer` + `Navbar` combo. Owns drawer state internally. Generic over `MenuKeys`. Optional `OfflineBanner`.                                                                                |
 | `DashboardFooter`        | `src/layouts/DashboardFooter`              | Copyright line + optional `ToTop`. `bottomNavSpacing` for apps mounting `BottomNavigation`. Accepts `children` for full custom content.                                                    |
 | `NotFoundView`           | `src/views/NotFoundView`                   | Generic 404 fallback. CTA via `linkComponent` from `ConfigProvider` — consumer supplies `ctaTo` from its own `routes.ts`. Texts default to `_pages:notFound.{title,body,cta}`, CTA to `/`. |
@@ -210,7 +210,7 @@ Never cut a release from a feature or release branch, or from a stale `main`. Th
 6. **Extend `BaseClient`** per API resource. No raw fetch.
 7. **Use `isValidationError` / `isHttpError`** for error branching.
 8. **Use provided hooks** (`useDeleteAction`, `useMutationForm`, dialog hooks) instead of reimplementing.
-9. **Use `useNotification`** for user feedback. No `alert` / console-only.
+9. **Use `useNotification`** for user feedback. No `alert` / console-only. Do not read the deprecated `notification` array (always empty); use the ids returned by `show*` with `removeNotification(id)`.
 10. **Use `State` + `*StateClassName` utilities** for stateful inputs. No inline style overrides.
 11. **No `any`.** Library is fully typed — find the right DTO/utility.
 12. **`IconButton` expects `icon: IconDefinition`** (not React node) — diverges from upstream `@sito/dashboard`.
@@ -231,12 +231,12 @@ Never cut a release from a feature or release branch, or from a stale `main`. Th
 27. **Place new components by atomic design level** under `src/components/` (same layout as `@sito/ui` and `@sito/dashboard`):
     - `atoms/` — standalone primitives (`Buttons` with `IconButton`/`ToTop`, `Clock`, `Loading`).
     - `molecules/` — small compositions of atoms (`Empty`, `Error`, `Form`, `TabsLayout`, `TopBanner`).
-    - `organisms/` — large or provider/routing-coupled pieces (`Dialog` with `FormDialog`/`ConfirmationDialog`/`ImportDialog`/`ExportDialog`, `PrettyGrid`, `Auth`, `BottomNavigation`, `Drawer`, `Navbar`, `Notification`, `OfflineBanner`, `Onboarding`, `Page`, `PwaUpdateDialog`).
+    - `organisms/` — large or provider/routing-coupled pieces (`Dialog` with `FormDialog`/`ConfirmationDialog`/`ImportDialog`/`ExportDialog`, `PrettyGrid`, `Auth`, `BottomNavigation`, `Drawer`, `Navbar`, `Notification` (deprecated, renders nothing), `OfflineBanner`, `Onboarding`, `Page`, `PwaUpdateDialog`).
     - Imports point down or sideways only: organisms may import molecules and atoms, molecules may import atoms, atoms never import molecules or organisms. Pick the lowest level that fits. Public surface stays the same — re-export through `src/components/index.ts`.
     - Imports that leave the current folder use the `@/` alias for `src/` (`@/lib`, `@/components/atoms/Buttons`); same-folder imports stay `./`. CSS `@import`/`@reference` paths stay relative. Emitted `.d.ts` files get relative paths (no `@/` in `dist`).
     - Tests live in `tests/` mirroring `src/` (`tests/components/<level>/<Name>/`, `tests/hooks/…`, setup in `tests/setup.ts`); stories live in `stories/<level>/` (plus `stories/hooks|providers|layouts|views|foundations/`) with titles `Atoms/…`, `Molecules/…`, `Organisms/…`.
 28. **Place page-level screens** under `src/views/` (e.g. `NotFoundView`, `FeatureUnavailableView`) and **shared layout shells** under `src/layouts/` (e.g. `AppShell`, `AuthShell`, `DashboardHeader`, `DashboardFooter`); their tests go in `tests/views|layouts/` and stories in `stories/views|layouts/`. Each follows the §7 feature folder convention (`FeatureName.tsx` + `types.ts` + `index.ts` + optional `constants.ts`/`utils.ts`).
-29. **Use `AppShell` / `AuthShell` instead of bespoke layout wrappers.** Mount providers via `AppProviders`, then compose routes with these shells. `AppShell` slots: `header` / `children` / `footer` / `bottomNavigation` / `extras` (Tooltip/Onboarding/PwaUpdateDialog) — in that render order — plus the built-in `Notification` portal. Opt out with `withNotification={false}` only when mounting your own.
+29. **Use `AppShell` / `AuthShell` instead of bespoke layout wrappers.** Mount providers via `AppProviders`, then compose routes with these shells. `AppShell` slots: `header` / `children` / `footer` / `bottomNavigation` / `extras` (Tooltip/Onboarding/PwaUpdateDialog) — in that render order. Toasts are rendered by `NotificationProvider`; do not mount `<Notification />` (deprecated, renders nothing) and drop `withNotification`.
 30. **Use `DashboardHeader` / `DashboardFooter` instead of forking app-local header/footer files.** Drawer open/close state lives inside `DashboardHeader`. Set `bottomNavSpacing` on `DashboardFooter` when also mounting `BottomNavigation`.
 31. **Use `NotFoundView` / `FeatureUnavailableView` for 404 / feature-off fallbacks.** Pass `ctaTo` from the consumer's `routes.ts` constants — never hardcode. CTA navigation goes through `linkComponent` from `ConfigProvider`, so they stay router-agnostic.
 32. **`PwaUpdateDialog` is presentational only.** Library never imports `navigator.serviceWorker` or `virtual:pwa-register/react`. Consumer owns the SW source (`useServiceWorkerUpdate` custom hook, `vite-plugin-pwa`'s `useRegisterSW`, etc.) and passes `open` / `onDismiss` / `onUpdate` plus consumer-side i18n strings.

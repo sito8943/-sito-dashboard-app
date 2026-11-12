@@ -46,6 +46,7 @@ It does not replace the translation documentation for `@sito/dashboard`.
 - `_accessibility:labels.justNow`
 - `_accessibility:labels.minute`
 - `_accessibility:labels.minutes`
+- `_accessibility:labels.notifications`
 - `_accessibility:labels.yesterday`
 - `_accessibility:messages.empty`
 
