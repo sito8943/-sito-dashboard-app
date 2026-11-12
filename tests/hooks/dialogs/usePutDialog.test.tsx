@@ -11,11 +11,15 @@ vi.mock("@sito/dashboard", () => ({
   }),
 }));
 
+const { showSuccessNotification } = vi.hoisted(() => ({
+  showSuccessNotification: vi.fn(),
+}));
+
 vi.mock("@/providers", () => ({
   useNotification: () => ({
     showErrorNotification: vi.fn(),
     showStackNotifications: vi.fn(),
-    showSuccessNotification: vi.fn(),
+    showSuccessNotification,
   }),
 }));
 
@@ -183,5 +187,45 @@ describe("usePutDialog", () => {
       expect(result.current.getValues().name).toBe("Remote Product");
     });
     expect(getFunction).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows onSuccessMessage after a successful update", async () => {
+    const getFunction = vi.fn(async (id: number) => ({ id, name: "Remote" }));
+    const mutationFn = vi.fn(async (payload: ProductUpdateDto) => payload);
+
+    const { result } = renderHook(
+      () =>
+        usePutDialog<
+          ProductDto,
+          ProductUpdateDto,
+          ProductUpdateDto,
+          ProductForm
+        >({
+          title: "Edit product",
+          defaultValues: { name: "" },
+          getFunction,
+          mutationFn,
+          dtoToForm: (dto) => ({ name: dto.name }),
+          formToDto: (values, dto) => ({ id: dto?.id, name: values.name }),
+          onSuccessMessage: "Updated!",
+          queryKey: ["products"],
+        }),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.openDialog(3);
+    });
+    await waitFor(() => {
+      expect(result.current.getValues().name).toBe("Remote");
+    });
+
+    await act(async () => {
+      await result.current.onSubmit({ name: "Updated" });
+    });
+
+    expect(showSuccessNotification).toHaveBeenCalledWith({
+      message: "Updated!",
+    });
   });
 });

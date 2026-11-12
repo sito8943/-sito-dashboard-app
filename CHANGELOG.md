@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- `usePostDialog` and `usePutDialog` show `onSuccessMessage` again as a success toast after a
+  successful submit (after cache invalidation and `onSuccess`). It was accepted by the types
+  but silently ignored since 0.0.55, so add/edit dialogs in consuming apps never confirmed a save.
+
 ## [0.4.0]
 
 ### Changed
