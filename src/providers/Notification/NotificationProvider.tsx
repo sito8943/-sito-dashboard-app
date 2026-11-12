@@ -19,7 +19,6 @@ import { NotificationBridge } from "./NotificationBridge";
 import type { NotificationProviderProps } from "./types";
 
 // styles
-import "./styles.css";
 
 /**
  * Provides `useNotification()` and renders `@sito/ui` toasts. Toasts stack

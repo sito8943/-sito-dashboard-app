@@ -32,9 +32,9 @@ All notable changes to this project will be documented in this file.
   tokens (`--color-bg-success` / `--color-success`, …) in the unlayered `html:root` block of the
   bundled CSS and `theme.css`, so toasts keep each app's colors in any load order. Success
   always uses the success token, never the brand color.
-- The bundled CSS ships the `info` toast rules from `@sito/ui` 0.11 until `@sito/dashboard`'s
-  `sitoUi.css` includes them.
-- Peer dependency `@sito/ui` is now `^0.11.0` (adds the `info` toast color).
+- Peer dependencies: `@sito/ui` `^0.11.0` (adds the `info` toast color) and `@sito/dashboard`
+  `^0.4.7` (its bundled `sitoUi.css` ships the 0.11 toast styles: info, filled by default,
+  smooth updates).
 
 ### Deprecated
 
