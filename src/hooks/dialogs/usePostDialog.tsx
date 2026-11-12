@@ -5,6 +5,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormDialog } from "./useFormDialog";
 import { useFormDialogConfirmation } from "./useFormDialogConfirmation";
 import { useDialogErrorNotification } from "./useDialogErrorNotification";
+
+// providers
+import { useNotification } from "@/providers";
 import { UseFormDialogReturnType, UsePostDialogPropsType } from "./types";
 
 /**
@@ -24,6 +27,7 @@ export const usePostDialog = <
     mutationFn,
     queryKey,
     onSuccess,
+    onSuccessMessage,
     onError,
     formToDto,
     confirmation,
@@ -32,6 +36,7 @@ export const usePostDialog = <
   } = props;
 
   const notifyError = useDialogErrorNotification();
+  const { showSuccessNotification } = useNotification();
   const handleError = onError ?? notifyError;
 
   const dialogFn = useMutation<TMutationOutputDto, Error, TMutationDto>({
@@ -48,12 +53,23 @@ export const usePostDialog = <
         if (onSuccess) {
           await onSuccess(result);
         }
+        if (onSuccessMessage) {
+          showSuccessNotification({ message: onSuccessMessage });
+        }
       } catch (error) {
         handleError(error as Error);
         throw error;
       }
     },
-    [dialogFn, handleError, onSuccess, queryClient, queryKey],
+    [
+      dialogFn,
+      handleError,
+      onSuccess,
+      onSuccessMessage,
+      queryClient,
+      queryKey,
+      showSuccessNotification,
+    ],
   );
 
   const formCloseRef = useRef<(() => void) | undefined>(undefined);
