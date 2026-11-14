@@ -110,6 +110,68 @@ describe("Dialog", () => {
     expect(handleClose).toHaveBeenCalledOnce();
   });
 
+  it("keeps outer dialogs open when a nested dialog goes back to its parent entry", () => {
+    setMobileViewport(true);
+    window.history.replaceState({ route: "home" }, "", window.location.href);
+    const closeOuter = vi.fn();
+    const closeMiddle = vi.fn();
+    const closeInner = vi.fn();
+
+    const { rerender } = render(
+      <Dialog open title="Outer" handleClose={closeOuter}>
+        <Dialog open title="Middle" handleClose={closeMiddle} />
+      </Dialog>,
+    );
+    const middleState = window.history.state;
+
+    rerender(
+      <Dialog open title="Outer" handleClose={closeOuter}>
+        <Dialog open title="Middle" handleClose={closeMiddle}>
+          <Dialog open title="Inner" handleClose={closeInner} />
+        </Dialog>
+      </Dialog>,
+    );
+    expect(getDialogHistoryEntryId(window.history.state)).not.toBe(
+      getDialogHistoryEntryId(middleState),
+    );
+
+    // Inner closes: its cleanup goes back to the middle dialog's entry.
+    rerender(
+      <Dialog open title="Outer" handleClose={closeOuter}>
+        <Dialog open title="Middle" handleClose={closeMiddle} />
+      </Dialog>,
+    );
+    window.history.replaceState(middleState, "", window.location.href);
+    fireEvent.popState(window, { state: middleState });
+
+    expect(closeOuter).not.toHaveBeenCalled();
+    expect(closeMiddle).not.toHaveBeenCalled();
+  });
+
+  it("closes only the dialogs above the entry the browser went back to", () => {
+    setMobileViewport(true);
+    window.history.replaceState({ route: "home" }, "", window.location.href);
+    const closeOuter = vi.fn();
+    const closeInner = vi.fn();
+
+    const { rerender } = render(
+      <Dialog open title="Outer" handleClose={closeOuter} />,
+    );
+    const outerState = window.history.state;
+
+    rerender(
+      <Dialog open title="Outer" handleClose={closeOuter}>
+        <Dialog open title="Inner" handleClose={closeInner} />
+      </Dialog>,
+    );
+
+    window.history.replaceState(outerState, "", window.location.href);
+    fireEvent.popState(window, { state: outerState });
+
+    expect(closeInner).toHaveBeenCalledOnce();
+    expect(closeOuter).not.toHaveBeenCalled();
+  });
+
   it("keeps browser back unchanged outside a mobile viewport", () => {
     setMobileViewport(false);
     const handleClose = vi.fn();
