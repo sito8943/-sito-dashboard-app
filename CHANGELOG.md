@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.2]
+
+### Fixed
+
+- `Dialog` no longer closes its parent dialogs on mobile when a nested dialog closes (a588dde).
+  Closing a nested dialog goes back to its parent's history entry, and every dialog below it took
+  that `popstate` as a browser back (3+ levels, e.g. list > edit form > picker). Dialogs now only
+  close when the history goes below their own entry.
+
 ## [0.4.1]
 
 ### Fixed

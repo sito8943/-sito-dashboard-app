@@ -4,7 +4,10 @@ import {
   createDialogHistoryEntryId,
   createDialogHistoryState,
   getDialogHistoryEntryId,
+  isDialogHistoryEntryAtOrAbove,
   isMobileDialogViewport,
+  registerDialogHistoryEntry,
+  unregisterDialogHistoryEntry,
 } from "./utils";
 
 export const useDialogBrowserBack = (
@@ -27,9 +30,11 @@ export const useDialogBrowserBack = (
       "",
       window.location.href,
     );
+    registerDialogHistoryEntry(dialogHistoryEntryId);
 
     const handlePopState = (event: PopStateEvent) => {
-      if (getDialogHistoryEntryId(event.state) === dialogHistoryEntryId) return;
+      if (isDialogHistoryEntryAtOrAbove(event.state, dialogHistoryEntryId))
+        return;
 
       handleCloseRef.current();
     };
@@ -38,6 +43,7 @@ export const useDialogBrowserBack = (
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
+      unregisterDialogHistoryEntry(dialogHistoryEntryId);
 
       if (
         getDialogHistoryEntryId(window.history.state) === dialogHistoryEntryId
