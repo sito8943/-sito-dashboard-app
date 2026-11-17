@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- `APIClient` sends the current session token after a refresh (c596fb4). A custom client that
+  passed `defaultTokenAcquirer()` as request config captured the bearer before the pre-flight or
+  `401` refresh, and that header overrode the fresh one: the request and its retry both went out
+  with the expired token, so the first action after an idle period failed. In `access-token`
+  mode a caller-supplied `Authorization: Bearer` header is now replaced by the stored token
+  (other schemes are kept; send an explicit bearer with `authMode: "none"`). On a `401`, a
+  request whose token a concurrent refresh already replaced retries with it instead of
+  refreshing again.
+
 ## [0.4.2]
 
 ### Fixed
