@@ -27,6 +27,10 @@ import {
 } from "./types";
 import { getJwtExpiry } from "./accessTokenExpiry";
 import {
+  getAuthorizationHeader,
+  omitBearerAuthorization,
+} from "./authorizationHeader";
+import {
   isDefinitiveAuthSessionError,
   isRetryableAuthSessionError,
   normalizeAuthSessionError,
@@ -394,6 +398,12 @@ export class APIClient {
     return headers;
   }
 
+  private getRequestAuthorization(config?: RequestConfig) {
+    return getAuthorizationHeader(
+      this.toHeaderRecord(this.toRequestOptions(config).headers),
+    );
+  }
+
   private isAPIClientRequestOptions(
     config?: RequestConfig | APIClientRequestOptions,
   ): config is APIClientRequestOptions {
@@ -431,10 +441,17 @@ export class APIClient {
           : undefined;
     const securedOptions = this.toRequestOptions(securedConfig);
     const customOptions = this.toRequestOptions(config);
+    const securedHeaders = this.toHeaderRecord(securedOptions.headers);
+    const customHeaders = this.toHeaderRecord(customOptions.headers);
 
+    // The session token is read at send time, so a refreshed one is used even
+    // when the caller passed a bearer it captured before the refresh.
     const mergedHeaders = {
-      ...this.toHeaderRecord(securedOptions.headers),
-      ...this.toHeaderRecord(customOptions.headers),
+      ...securedHeaders,
+      ...(authMode === "access-token" &&
+      getAuthorizationHeader(securedHeaders) !== undefined
+        ? omitBearerAuthorization(customHeaders)
+        : customHeaders),
     };
 
     const credentials = customOptions.credentials ?? securedOptions.credentials;
@@ -466,11 +483,12 @@ export class APIClient {
       }
     }
 
+    const sentConfig = this.mergeRequestConfig(authMode, requestConfig);
     let response = await makeRequest<TBody, TResponse>(
       this.buildUrl(endpoint),
       method,
       body,
-      this.mergeRequestConfig(authMode, requestConfig),
+      sentConfig,
       responseValidator,
     );
 
@@ -479,10 +497,19 @@ export class APIClient {
       response.status === 401 &&
       this.canRefresh()
     ) {
-      try {
-        await this.refreshAccessTokenWithMutex();
-      } catch {
-        return response;
+      // Another request may have refreshed while this one was in flight: retry
+      // with that token instead of rotating the session a second time.
+      const tokenChangedSinceSent =
+        this.getRequestAuthorization(sentConfig) !==
+        this.getRequestAuthorization(
+          this.mergeRequestConfig(authMode, requestConfig),
+        );
+      if (!tokenChangedSinceSent) {
+        try {
+          await this.refreshAccessTokenWithMutex();
+        } catch {
+          return response;
+        }
       }
       response = await makeRequest<TBody, TResponse>(
         this.buildUrl(endpoint),
