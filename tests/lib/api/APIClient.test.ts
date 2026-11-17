@@ -931,4 +931,251 @@ describe("APIClient", () => {
       client.post<string, { name: string }>("/users", { name: "Sito" }),
     ).resolves.toBe("");
   });
+
+  // Production timeline (wallet, idle tab): a custom client passes
+  // `defaultTokenAcquirer()` as request config, capturing the expired bearer
+  // before the refresh. The request and its 401 retry both went out with it.
+  describe("caller-captured bearer (session expired while idle)", () => {
+    const refreshedSession = (token: string, refreshToken: string) => ({
+      data: {
+        id: 1,
+        username: "sito",
+        email: "sito@mail.com",
+        token,
+        refreshToken,
+        accessTokenExpiresAt: "2035-01-01T00:00:00.000Z",
+      },
+      status: 200,
+      error: null,
+    });
+
+    const unauthorized = {
+      data: null,
+      status: 401,
+      error: { status: 401, message: "Unauthorized" },
+    };
+
+    const authorizationOf = (url: string) =>
+      makeRequestMock.mock.calls
+        .filter(([calledUrl]) => calledUrl === url)
+        .map(([, , , config]) => config);
+
+    it("refreshes before sending and replaces the captured expired bearer", async () => {
+      const expiredToken = jwtWithExp(Date.now() - 60_000);
+      localStorage.setItem("user", expiredToken);
+      localStorage.setItem("user_refreshToken", "refresh-token-1");
+
+      makeRequestMock
+        .mockResolvedValueOnce(
+          refreshedSession("fresh-access-token", "refresh-token-2"),
+        )
+        .mockResolvedValueOnce({ data: null, status: 204, error: null });
+
+      const client = new APIClient("https://api.test");
+      const captured = client.defaultTokenAcquirer();
+      await client.doQuery("/api-keys/1", Methods.DELETE, undefined, captured);
+
+      expect(makeRequestMock).toHaveBeenCalledTimes(2);
+      expect(makeRequestMock).toHaveBeenNthCalledWith(
+        1,
+        "https://api.test/auth/refresh",
+        Methods.POST,
+        { refreshToken: "refresh-token-1" },
+        undefined,
+        expect.any(Function),
+      );
+      expect(makeRequestMock).toHaveBeenNthCalledWith(
+        2,
+        "https://api.test/api-keys/1",
+        Methods.DELETE,
+        undefined,
+        { Authorization: "Bearer fresh-access-token" },
+        undefined,
+      );
+    });
+
+    it("on 401 awaits the refresh and retries once with the new token", async () => {
+      // exp still in the future locally (clock skew / early revocation).
+      const rejectedToken = jwtWithExp(Date.now() + 10 * 60_000);
+      localStorage.setItem("user", rejectedToken);
+      localStorage.setItem("user_refreshToken", "refresh-token-1");
+
+      makeRequestMock
+        .mockResolvedValueOnce(unauthorized)
+        .mockResolvedValueOnce(
+          refreshedSession("fresh-access-token", "refresh-token-2"),
+        )
+        .mockResolvedValueOnce({ data: null, status: 204, error: null });
+
+      const client = new APIClient("https://api.test");
+      await client.doQuery(
+        "/api-keys/1",
+        Methods.DELETE,
+        undefined,
+        client.defaultTokenAcquirer(),
+      );
+
+      expect(makeRequestMock).toHaveBeenCalledTimes(3);
+      expect(authorizationOf("https://api.test/api-keys/1")).toEqual([
+        { Authorization: `Bearer ${rejectedToken}` },
+        { Authorization: "Bearer fresh-access-token" },
+      ]);
+    });
+
+    it("shares one refresh between concurrent 401s and retries each with the new token", async () => {
+      const rejectedToken = jwtWithExp(Date.now() + 10 * 60_000);
+      localStorage.setItem("user", rejectedToken);
+      localStorage.setItem("user_refreshToken", "refresh-token-1");
+
+      let releaseRefresh!: (value: HttpResponse) => void;
+      const refreshResponse = new Promise<HttpResponse>((resolve) => {
+        releaseRefresh = resolve;
+      });
+
+      makeRequestMock.mockImplementation(
+        async (url, _method, _body, config) => {
+          if (url.includes("auth/refresh")) return await refreshResponse;
+          const authorization = (config as Record<string, string>)
+            .Authorization;
+          return authorization === "Bearer fresh-access-token"
+            ? { data: { ok: true }, status: 200, error: null }
+            : unauthorized;
+        },
+      );
+
+      const client = new APIClient("https://api.test");
+      const other = new APIClient("https://api.test");
+      const first = client.doQuery<{ ok: boolean }>(
+        "/api-keys",
+        Methods.GET,
+        undefined,
+        client.defaultTokenAcquirer(),
+      );
+      const second = other.doQuery<{ ok: boolean }>("/profiles/me");
+
+      await vi.waitFor(() => {
+        expect(
+          makeRequestMock.mock.calls.filter(([url]) =>
+            url.includes("auth/refresh"),
+          ),
+        ).toHaveLength(1);
+      });
+      releaseRefresh(refreshedSession("fresh-access-token", "refresh-token-2"));
+
+      await expect(Promise.all([first, second])).resolves.toEqual([
+        { ok: true },
+        { ok: true },
+      ]);
+      expect(
+        makeRequestMock.mock.calls.filter(([url]) =>
+          url.includes("auth/refresh"),
+        ),
+      ).toHaveLength(1);
+      expect(authorizationOf("https://api.test/api-keys")).toEqual([
+        { Authorization: `Bearer ${rejectedToken}` },
+        { Authorization: "Bearer fresh-access-token" },
+      ]);
+    });
+
+    it("retries with a token refreshed while the request was in flight without refreshing again", async () => {
+      localStorage.setItem("user", "old-access-token");
+      localStorage.setItem("user_refreshToken", "refresh-token-1");
+
+      makeRequestMock
+        .mockImplementationOnce(async () => {
+          // A concurrent request finished its refresh meanwhile.
+          localStorage.setItem("user", "fresh-access-token");
+          localStorage.setItem("user_refreshToken", "refresh-token-2");
+          return unauthorized;
+        })
+        .mockResolvedValueOnce({
+          data: { ok: true },
+          status: 200,
+          error: null,
+        });
+
+      const client = new APIClient("https://api.test");
+      await expect(client.doQuery("/users")).resolves.toEqual({ ok: true });
+
+      expect(makeRequestMock).toHaveBeenCalledTimes(2);
+      expect(authorizationOf("https://api.test/users")).toEqual([
+        { Authorization: "Bearer old-access-token" },
+        { Authorization: "Bearer fresh-access-token" },
+      ]);
+    });
+
+    it("clears the session and surfaces the 401 when the refresh token is invalid", async () => {
+      localStorage.setItem("user", "rejected-access-token");
+      localStorage.setItem("user_refreshToken", "refresh-token-1");
+      localStorage.setItem("user_remember", "true");
+
+      makeRequestMock
+        .mockResolvedValueOnce(unauthorized)
+        .mockResolvedValueOnce({
+          data: null,
+          status: 401,
+          error: { status: 401, message: "Invalid refresh token" },
+        });
+
+      const client = new APIClient("https://api.test");
+      await expect(
+        client.doQuery(
+          "/api-keys/1",
+          Methods.DELETE,
+          undefined,
+          client.defaultTokenAcquirer(),
+        ),
+      ).rejects.toEqual({ status: 401, message: "Unauthorized" });
+
+      expect(makeRequestMock).toHaveBeenCalledTimes(2);
+      expect(localStorage.getItem("user")).toBeNull();
+      expect(localStorage.getItem("user_refreshToken")).toBeNull();
+      expect(localStorage.getItem("user_remember")).toBeNull();
+    });
+
+    it("keeps a caller-supplied non-bearer Authorization header", async () => {
+      localStorage.setItem("user", "session-token");
+      makeRequestMock.mockResolvedValue({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+      const client = new APIClient("https://api.test");
+      await client.doQuery("/legacy", Methods.GET, undefined, {
+        Authorization: "Basic abc",
+      });
+
+      expect(makeRequestMock).toHaveBeenCalledWith(
+        "https://api.test/legacy",
+        Methods.GET,
+        undefined,
+        { Authorization: "Basic abc" },
+        undefined,
+      );
+    });
+
+    it("keeps a caller-supplied bearer when the request opts out of access-token auth", async () => {
+      localStorage.setItem("user", "session-token");
+      makeRequestMock.mockResolvedValue({
+        data: { ok: true },
+        status: 200,
+        error: null,
+      });
+
+      const client = new APIClient("https://api.test");
+      await client.doQuery("/logout", Methods.POST, undefined, {
+        authMode: "none",
+        requestConfig: { Authorization: "Bearer explicit-token" },
+      });
+
+      expect(makeRequestMock).toHaveBeenCalledWith(
+        "https://api.test/logout",
+        Methods.POST,
+        undefined,
+        { Authorization: "Bearer explicit-token" },
+        undefined,
+      );
+    });
+  });
 });

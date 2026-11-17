@@ -95,7 +95,7 @@ All: `hidden = false`, `disabled = false`, tooltip auto-translated. Only `onClic
 | `export`     | `(filters?) => Promise<TDto[]>`                           |
 | `import`     | `(data: ImportDto<TImportPreviewDto>) => Promise<number>` |
 
-Auth refresh/retry is centralized in `APIClient`/`BaseClient`: pre-flight refresh on near-expiry, single retry on `401`, in-flight mutex, clears local keys on failure. Do not reimplement in consumer apps.
+Auth refresh/retry is centralized in `APIClient`/`BaseClient`: pre-flight refresh on near-expiry, single retry on `401`, in-flight mutex, clears local keys on failure. In `access-token` mode the token is read at send time and replaces any caller `Authorization: Bearer` header (use `authMode: "none"` for an explicit bearer). Do not reimplement in consumer apps.
 
 ### Dialog hook choice
 
